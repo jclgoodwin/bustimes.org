@@ -1,3 +1,4 @@
+from collections import namedtuple
 import functools
 import io
 import json
@@ -27,6 +28,11 @@ from bustimes.models import Route, Trip
 from ...models import Vehicle, VehicleCode, VehicleJourney, VehicleLocation
 from ...utils import redis_client
 from ..import_live_vehicles import ImportLiveVehiclesCommand, logger
+
+
+Status = namedtuple(
+    "Status", ("fetched_at", "timestamp", "total_items", "changed_items")
+)
 
 
 def get_destination_ref(destination_ref):
@@ -61,7 +67,7 @@ def get_destination_name(destination_ref):
 
 
 def get_line_name_query(line_ref):
-    line_name = line_ref.replace("_", " ")
+    line_name = line_ref.replace("_", " ").strip()
     return (
         Exists(
             ServiceCode.objects.filter(
@@ -77,12 +83,12 @@ def get_line_name_query(line_ref):
 
 class Command(ImportLiveVehiclesCommand):
     source_name = "Bus Open Data"
-    reg_operators = {"BDRB", "COMT", "TDY", "ROST", "CT4N", "TBTN", "OTSS"}
     services = (
         Service.objects.using(settings.READ_DATABASE)
         .filter(current=True)
         .defer("geometry", "search_vector")
     )
+    fallback_mode = False
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -164,44 +170,26 @@ class Command(ImportLiveVehiclesCommand):
             defaults["operator"] = operators[0]
             vehicles = self.vehicles.filter(operator__in=operators)
 
-        if operator_ref == "MSOT":  # Marshalls of Sutton on Trent
-            defaults["fleet_code"] = vehicle_ref
-        elif "fleet_number" not in defaults and vehicle_unique_id:
+        condition = Q(code__iexact=vehicle_ref)
+        if vehicle_ref.isdigit():
+            defaults["fleet_number"] = vehicle_ref
+            if operators:
+                condition |= Q(code__endswith=f"-{vehicle_ref}") | Q(
+                    code__startswith=f"{vehicle_ref}_"
+                )
+        elif "_-_" in vehicle_ref:
+            fleet_number, reg = vehicle_ref.split("_-_", 2)
+            if fleet_number.isdigit():
+                defaults["fleet_number"] = fleet_number
+                reg = reg.replace("_", "")
+                defaults["reg"] = reg
+        if "fleet_number" not in defaults and vehicle_unique_id:
             # VehicleUniqueId
             if len(vehicle_unique_id) < len(vehicle_ref):
                 defaults["fleet_code"] = vehicle_unique_id
                 if vehicle_unique_id.isdigit():
                     defaults["fleet_number"] = vehicle_unique_id
 
-        condition = Q(code__iexact=vehicle_ref)
-        if operators:
-            if vehicle_ref.isdigit():
-                defaults["fleet_number"] = vehicle_ref
-                condition |= Q(code__endswith=f"-{vehicle_ref}") | Q(
-                    code__startswith=f"{vehicle_ref}_"
-                )
-            elif (
-                operator_ref[:1] == "F"
-                and "fleet_number" in defaults
-                and len(defaults["fleet_number"]) == 5
-            ):
-                # 20 may 2022 - some First vehicle refs changed :(
-                condition |= Q(fleet_code__iexact=defaults["fleet_number"])
-            else:
-                if "_-_" in vehicle_ref:
-                    fleet_number, reg = vehicle_ref.split("_-_", 2)
-                    if fleet_number.isdigit():
-                        defaults["fleet_number"] = fleet_number
-                        reg = reg.replace("_", "")
-                        defaults["reg"] = reg
-                        if operator_ref in self.reg_operators:
-                            condition |= Q(reg__iexact=reg)
-                elif operator_ref in self.reg_operators:
-                    reg = vehicle_ref.replace("_", "")
-                    condition |= Q(reg__iexact=reg)
-                elif operator_ref == "WHIP":
-                    code = vehicle_ref.replace("_", "")
-                    condition |= Q(fleet_code__iexact=code)
         vehicles = vehicles.filter(condition)
 
         try:
@@ -380,7 +368,7 @@ class Command(ImportLiveVehiclesCommand):
                 framed = monitored_vehicle_journey["FramedVehicleJourneyRef"]
                 journey_ref = framed["DatedVehicleJourneyRef"]
                 journey_date = date.fromisoformat(framed["DataFrameRef"])
-            except KeyError:
+            except (KeyError, ValueError):
                 pass
 
         if journey_ref == "UNKNOWN":
@@ -463,8 +451,8 @@ class Command(ImportLiveVehiclesCommand):
                     logger.warning(
                         "TFL vehicle with non-UTC time, so bug may have been fixed"
                     )
-                elif difference > timedelta(minutes=50):
-                    origin_aimed_departure_time -= timedelta(hours=1)
+                if abs(difference) > timedelta(hours=1):
+                    origin_aimed_departure_time = None
 
         latest_journey = vehicle.latest_journey
         if latest_journey:
@@ -631,20 +619,23 @@ class Command(ImportLiveVehiclesCommand):
         return location
 
     def get_items(self):
-        response = self.session.get(
-            self.source.url, params=self.source.settings, timeout=30
-        )
+        url = self.source.url
+        if self.fallback_mode:
+            url = self.source.settings.get("fallback_url") or url
+
+        response = self.session.get(url, timeout=61)
+
         if not response.ok:
             return []
 
-        if "datafeed" in self.source.url:
-            data = response.content
-        else:
+        if response.headers["content-type"] == "application/zip":
             with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
                 namelist = archive.namelist()
                 assert len(namelist) == 1
                 with archive.open(namelist[0]) as open_file:
                     data = open_file.read()
+        else:
+            data = response.content
 
         data = xmltodict.parse(
             data,
@@ -652,8 +643,18 @@ class Command(ImportLiveVehiclesCommand):
             force_list=["VehicleActivity"],
         )
 
-        self.when = data["Siri"]["ServiceDelivery"]["ResponseTimestamp"]
-        self.source.datetime = parse_datetime(self.when)
+        previous_time = self.source.datetime
+
+        self.source.datetime = parse_datetime(
+            data["Siri"]["ServiceDelivery"]["ResponseTimestamp"]
+        )
+
+        if (
+            self.source.datetime
+            and previous_time
+            and self.source.datetime < previous_time
+        ):
+            return  # don't return old data
 
         return data["Siri"]["ServiceDelivery"]["VehicleMonitoringDelivery"].get(
             "VehicleActivity"
@@ -677,6 +678,9 @@ class Command(ImportLiveVehiclesCommand):
     @staticmethod
     def get_journey_identity(item):
         monitored_vehicle_journey = item["MonitoredVehicleJourney"]
+        line_ref = monitored_vehicle_journey.get("LineRef")
+        line_name = monitored_vehicle_journey.get("PublishedLineName")
+
         try:
             journey_ref = monitored_vehicle_journey["FramedVehicleJourneyRef"]
         except (KeyError, ValueError):
@@ -686,7 +690,7 @@ class Command(ImportLiveVehiclesCommand):
         direction = monitored_vehicle_journey.get("DirectionRef")
         destination = monitored_vehicle_journey.get("DestinationName")
 
-        return f"{journey_ref} {departure} {direction} {destination}"
+        return f"{line_ref} {line_name} {journey_ref} {departure} {direction} {destination}"
 
     def handle_items(self, items, identities):
         vehicle_codes = VehicleCode.objects.filter(
@@ -758,7 +762,7 @@ class Command(ImportLiveVehiclesCommand):
 
         total_items = 0
 
-        for i, item in enumerate(items or self.get_items()):
+        for i, item in enumerate(items or self.get_items() or ()):
             vehicle_identity = self.get_vehicle_identity(item)
 
             journey_identity = self.get_journey_identity(item)
@@ -800,7 +804,7 @@ class Command(ImportLiveVehiclesCommand):
             total_items,
         ) = self.get_changed_items()
 
-        age = (now - self.source.datetime).total_seconds()
+        age = int((now - self.source.datetime).total_seconds())
         self.hist[now.second % 10] = age
         print(self.hist)
         print(
@@ -810,10 +814,10 @@ class Command(ImportLiveVehiclesCommand):
         self.handle_items(changed_items, changed_item_identities)
         self.handle_items(changed_journey_items, changed_journey_identities)
 
-        # stats for last 10 updates:
+        # stats for last 50 updates:
         bod_status = cache.get("bod_avl_status", [])
         bod_status.append(
-            (
+            Status(
                 now,
                 self.source.datetime,
                 total_items,
@@ -825,6 +829,13 @@ class Command(ImportLiveVehiclesCommand):
 
         time_taken = (timezone.now() - now).total_seconds()
         print(f"{time_taken=}")
+
+        if self.fallback_mode:
+            self.fallback_mode = False
+            return 30  # wait
+        elif age > 150 and not changed_items:
+            self.fallback_mode = True
+            logger.warning("falling back")
 
         # bods updates "every 10 seconds",
         # it's usually worth waiting 0-9 seconds

@@ -184,7 +184,9 @@ class VehicleAdmin(admin.ModelAdmin):
             try:
                 if vehicle.reg:
                     duplicate = models.Vehicle.objects.get(
-                        id__lt=vehicle.id, reg__iexact=vehicle.reg
+                        id__lt=vehicle.id,
+                        operator=vehicle.operator_id,
+                        reg__iexact=vehicle.reg,
                     )  # vehicle with lower id number we will keep
                 else:
                     duplicate = models.Vehicle.objects.get(
@@ -222,7 +224,15 @@ class VehicleAdmin(admin.ModelAdmin):
             duplicate.save(
                 update_fields=["code", "fleet_code", "fleet_number", "reg", "withdrawn"]
             )
-            self.message_user(request, f"{vehicle} deleted, merged with {duplicate}")
+            self.message_user(
+                request,
+                format_html(
+                    "{} deleted, merged with <a href='{}'>{}</a>",
+                    vehicle,
+                    duplicate.get_absolute_url(),
+                    duplicate,
+                ),
+            )
 
     def spare_ticket_machine(self, request, queryset):
         queryset.update(
@@ -448,6 +458,22 @@ class VehicleRevisionAdmin(admin.ModelAdmin):
         "user",
         "approved_by",
     ]
+
+    def has_module_permission(self, request):
+        return request.user.is_superuser
+
+    def has_view_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_add_permission(self, request):
+        return request.user.is_superuser
+
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser
+
     list_display = ["created_at", "vehicle", "__str__", user, "message"]
     actions = ["revert"]
     list_filter = [
@@ -472,3 +498,4 @@ class VehicleCodeAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.VehicleFeature)
+admin.site.register(models.SiriSubscription)

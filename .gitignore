@@ -4,6 +4,7 @@
 /data
 /node_modules/
 /staticfiles/
+/.kamal/secrets
 /.env
 /.coverage
 /slim-bustimes.sql
@@ -17,3 +18,4 @@
 .env.sentry-build-plugin
 
 /.parcel-cache/
+/.vscode/

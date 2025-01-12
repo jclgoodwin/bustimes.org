@@ -1,13 +1,16 @@
 import datetime
+from http import HTTPStatus
 import json
 import logging
 from itertools import pairwise
-from urllib.parse import unquote, urlencode
+from urllib.parse import unquote
 
 import lightningcss
 import xmltodict
 from django.conf import settings
+from django.contrib.auth.models import Permission
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import redirect_to_login
 from django.contrib.gis.geos import GEOSException, Point
 from django.contrib.postgres.aggregates import StringAgg
 from django.core.cache import cache
@@ -34,6 +37,7 @@ from buses.utils import cache_page
 from busstops.models import SERVICE_ORDER_REGEX, Operator, Service
 from busstops.utils import get_bounding_box
 from bustimes.models import Garage, Route, StopTime, Trip
+from bustimes.utils import contiguous_stoptimes_only
 
 from . import filters, forms
 from .management.commands import import_bod_avl
@@ -124,17 +128,30 @@ features_string_agg = StringAgg(
 )
 
 
-def get_vehicle_order(vehicle):
+def get_vehicle_order(vehicle) -> tuple[str, int, str]:
     if vehicle.notes == "Spare ticket machine":
         return ("", vehicle.fleet_number or 99999, vehicle.code)
 
     if vehicle.fleet_number:
         return ("", vehicle.fleet_number)
 
+    # age-based ordering
+    if not vehicle.fleet_code and len(reg := vehicle.reg) == 7 and reg[-3:].isalpha():
+        if reg[:2].isalpha() and reg[2:4].isdigit():
+            year = int(reg[2:4])
+            if year > 50:
+                return ("Z", (year - 50) * 2 + 1, "")  # year 64 (september 2014) - 29
+            return ("Z", year * 2, "")  # year 14 (march 2014) - 28
+
+        if reg[1:4].isdigit():
+            return reg[0], int(reg[1:4]), reg[-3:]
+
     prefix, number, suffix = SERVICE_ORDER_REGEX.match(
         vehicle.fleet_code or vehicle.code
     ).groups()
     number = int(number) if number else 0
+    if " " in prefix:  # McGill's
+        return (suffix, number, prefix)
     return (prefix, number, suffix)
 
 
@@ -291,8 +308,8 @@ def operator_debug(request, slug):
         pipe.exists(f"service{service.id}vehicles")
     tracking = pipe.execute()
 
-    for i, service in enumerate(services):
-        service.last_tracked = tracking[i]
+    for service, service_tracking in zip(services, tracking):
+        service.last_tracked = service_tracking
 
     return render(
         request,
@@ -323,7 +340,7 @@ def vehicles_json(request) -> JsonResponse:
         bounds = get_bounding_box(request)
     except KeyError:
         bounds = None
-    except GEOSException:
+    except (GEOSException, ValueError):
         return HttpResponseBadRequest()
 
     all_vehicles = (
@@ -383,17 +400,23 @@ def vehicles_json(request) -> JsonResponse:
     if set_names:
         vehicle_ids = list(redis_client.sunion(set_names))
 
+    vehicle_ids = [int(vehicle_id) for vehicle_id in vehicle_ids]
+
     vehicle_ids.sort()  # for etag stableness
 
     vehicle_locations = redis_client.mget(
-        [f"vehicle{int(vehicle_id)}" for vehicle_id in vehicle_ids]
+        [f"vehicle{vehicle_id}" for vehicle_id in vehicle_ids]
     )
     vehicle_locations = [
         json.loads(item) if item else item for item in vehicle_locations
     ]
 
     # remove expired items from 'vehicle_location_locations'
-    to_remove = [vehicle_ids[i] for i, item in enumerate(vehicle_locations) if not item]
+    to_remove = [
+        vehicle_id
+        for vehicle_id, item in zip(vehicle_ids, vehicle_locations)
+        if not item
+    ]
 
     if to_remove:
         redis_client.zrem("vehicle_location_locations", *to_remove)
@@ -406,8 +429,8 @@ def vehicles_json(request) -> JsonResponse:
     try:
         vehicles = all_vehicles.in_bulk(
             [
-                vehicle_ids[i]
-                for i, item in enumerate(vehicle_locations)
+                vehicle_id
+                for vehicle_id, item in zip(vehicle_ids, vehicle_locations)
                 if item and f"journey{item['journey_id']}" not in journeys
             ]
         )
@@ -422,8 +445,7 @@ def vehicles_json(request) -> JsonResponse:
 
     journeys_to_cache_later = {}
 
-    for i, item in enumerate(vehicle_locations):
-        vehicle_id = int(vehicle_ids[i])
+    for vehicle_id, item in zip(vehicle_ids, vehicle_locations):
         if item:
             journey_cache_key = f"journey{item['journey_id']}"
 
@@ -446,10 +468,8 @@ def vehicles_json(request) -> JsonResponse:
                     journeys_to_cache_later[journey_cache_key] = journey
                     item.update(journey)
 
-            del item["journey_id"]
-
             if (
-                "delay" not in item
+                "progress" not in item
                 and "trip_id" in item
                 and (len(vehicle_ids) == 1 or trip and item["trip_id"] == trip)
             ):
@@ -469,13 +489,11 @@ def vehicles_json(request) -> JsonResponse:
     if journeys_to_cache_later:
         cache.set_many(journeys_to_cache_later, 3600)  # an hour
 
-    return respond_conditionally(
-        request,
-        JsonResponse(
-            locations,
-            safe=False,
-        ),
-    )
+    response = JsonResponse(locations, safe=False)
+    if not locations:
+        response.status_code = HTTPStatus.NOT_FOUND
+
+    return respond_conditionally(request, response)
 
 
 def get_dates(vehicle=None, service=None):
@@ -574,11 +592,10 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
 
             locations = pipe.execute()
         except (ConnectionError, AttributeError):
-            for journey in journeys:
-                journey.locations = True
+            pass
         else:
-            for i, journey in enumerate(journeys):
-                journey.locations = locations[i]
+            for journey, location in zip(journeys, locations):
+                journey.locations = bool(location)
 
     # "Track this bus" button
     if vehicle and vehicle.latest_journey_id:
@@ -679,11 +696,6 @@ class VehicleDetailView(DetailView):
             if len(garages) == 1:
                 context["garage"] = Garage.objects.get(id=garages.pop())
 
-        context["pending_edits"] = self.object.vehiclerevision_set.filter(pending=True)
-        context["revisions"] = self.object.vehiclerevision_set.filter(
-            pending=False, disapproved=False
-        )
-
         if self.object.operator:
             context["breadcrumb"] = [
                 self.object.operator,
@@ -704,6 +716,15 @@ def record_ip_address(request):
 
 
 def check_user(request):
+    if settings.DISABLE_EDITING and not request.user.has_perm(
+        "vehicles.change_vehicle"
+    ):
+        raise PermissionDenied(
+            """This bit of the website is in “read-only” mode.
+            Sorry for the inconvenience.
+            Don’t worry, you can still enjoy all of the main features of the website."""
+        )
+
     if request.user.trusted is False:
         raise PermissionDenied
 
@@ -713,7 +734,7 @@ def check_user(request):
         and request.user.vehiclerevision_set.count() > 4
     ):
         raise PermissionDenied(
-            "As your account is so new, you must wait a bit before editing any more vehicles "
+            "As your account is so new, please wait a bit before editing any more vehicles"
         )
 
 
@@ -735,13 +756,26 @@ def edit_vehicle(request, **kwargs):
     vehicle = get_object_or_404(
         Vehicle.objects.select_related(
             "vehicle_type", "livery", "operator", "latest_journey"
-        ),
+        ).filter(locked=False),
         **kwargs,
     )
 
+    form_data = request.POST or None
+
+    if not request.user.has_perm("vehicles.add_vehiclerevision"):
+        form = forms.RulesForm(form_data)
+        if form.is_valid():
+            request.user.user_permissions.add(
+                Permission.objects.get(codename="add_vehiclerevision")
+            )
+            form_data = None
+        else:
+            return render(
+                request, "rules.html", {"breadcrumb": [vehicle], "form": form}
+            )
+
     if (
         vehicle.operator_id
-        and not request.user.trusted
         and User.operators.through.objects.filter(operator=vehicle.operator_id)
         .exclude(user=request.user)
         .exists()
@@ -751,22 +785,12 @@ def edit_vehicle(request, **kwargs):
             f'Editing {vehicle.operator} vehicles is restricted to "local experts"'
         )
 
-    context = {}
-    revision = None
-    initial = {
-        "operator": vehicle.operator,
-        "reg": vehicle.reg,
-        "vehicle_type": vehicle.vehicle_type,
-        "features": vehicle.features.all(),
-        "colours": vehicle.livery_id,
-        "other_colour": vehicle.colours or "",
-        "branding": vehicle.branding,
-        "name": vehicle.name,
-        "previous_reg": vehicle.data and vehicle.data.get("Previous reg") or None,
-        "notes": vehicle.notes,
-        "withdrawn": vehicle.withdrawn,
-        "spare_ticket_machine": vehicle.is_spare_ticket_machine(),
+    context = {
+        "previous": vehicle.get_previous(),
+        "next": vehicle.get_next(),
     }
+
+    revision = None
 
     try:
         context["vehicle_unique_id"] = vehicle.latest_journey_data["Extensions"][
@@ -775,21 +799,16 @@ def edit_vehicle(request, **kwargs):
     except (KeyError, TypeError):
         pass
 
-    if vehicle.fleet_code:
-        initial["fleet_number"] = vehicle.fleet_code
-    elif vehicle.fleet_number is not None:
-        initial["fleet_number"] = str(vehicle.fleet_number)
-
     form = forms.EditVehicleForm(
-        request.POST or None,
-        initial=initial,
+        form_data,
         vehicle=vehicle,
         user=request.user,
+        sibling_vehicles=(context["previous"], context["next"]),
     )
 
     context["livery"] = vehicle.livery
 
-    if request.POST:
+    if form_data:
         if form.has_changed() is False or form.changed_data == ["summary"]:
             form.add_error(None, "You haven't changed anything")
 
@@ -810,11 +829,6 @@ def edit_vehicle(request, **kwargs):
                         apply_revision(revision, features)
                         revision.pending = False
                         revision.save(update_fields=["pending"])
-
-                    # score decrements with each edit!
-                    User.objects.filter(id=revision.user_id).update(
-                        score=Coalesce("score", 0) - 1
-                    )
 
                     context["revision"] = revision
                     form = None
@@ -838,7 +852,9 @@ def edit_vehicle(request, **kwargs):
 
     if form:
         context["pending_edits"] = (
-            vehicle.vehiclerevision_set.filter(pending=True)
+            vehicle.vehiclerevision_set.filter(
+                Q(pending=True) | Q(created_at__gte=Now() - datetime.timedelta(days=7))
+            )
             .select_related(*revision_display_related_fields)
             .prefetch_related("vehiclerevisionfeature_set__feature")
         )
@@ -856,8 +872,6 @@ def edit_vehicle(request, **kwargs):
             "form": form,
             "object": vehicle,
             "vehicle": vehicle,
-            "previous": vehicle.get_previous(),
-            "next": vehicle.get_next(),
         },
     )
 
@@ -869,7 +883,6 @@ def vehicle_revision_vote(request, revision_id, direction):
 
     assert request.user.id != revision.user_id
     assert request.user.trusted is not False
-    assert request.user.score and request.user.score > 0
 
     positive = direction == "up"
     score_change = 1 if positive else -1
@@ -894,14 +907,12 @@ def vehicle_revision_vote(request, revision_id, direction):
     if score_change != 0:
         revision.score = F("score") + score_change
         revision.save(update_fields=["score"])
-        User.objects.filter(id=revision.user_id).update(
-            score=Coalesce("score", 0) + score_change
-        )
 
     # referesh from DB
     revision = VehicleRevision.objects.select_related(
         *revision_display_related_fields, "vehicle"
     ).get(id=revision_id)
+
     return render(request, "vehicle_revision.html", {"revision": revision})
 
 
@@ -924,14 +935,17 @@ def vehicle_revision_action(request, revision_id, action):
     revision = get_object_or_404(
         VehicleRevision.objects.select_related(
             *revision_display_related_fields, "vehicle"
-        ).select_for_update(of=["self"]),
+        )
+        .filter(Q(pending=True) | Q(approved_by=request.user))
+        .select_for_update(of=["self"]),
         id=revision_id,
     )
 
-    if not request.user.has_perm("vehicles.change_vehicle"):
-        assert (
-            action == "disapprove" and request.user.id == revision.user_id
-        ) or request.user.trusted
+    if action == "disapprove" and request.user.id == revision.user_id:
+        revision.delete()  # cancel one's own edit
+        return HttpResponse("")
+    else:
+        assert request.user.trusted
 
     revision.disapproved_reason = unquote(request.headers.get("HX-Prompt", ""))
     revision.approved_by = request.user
@@ -942,10 +956,6 @@ def vehicle_revision_action(request, revision_id, action):
         revision.pending = False
         revision.disapproved = False
     elif action == "disapprove":
-        assert revision.pending
-        if request.user.id == revision.user_id:
-            revision.delete()  # cancel one's own edit
-            return HttpResponse("")
         revision.pending = False
         revision.disapproved = True
 
@@ -965,10 +975,12 @@ def vehicle_edits(request):
     )
 
     f = filters.VehicleRevisionFilter(
-        request.GET or {"status": "pending"}, queryset=revisions
+        request.GET or {"status": "approved"}, queryset=revisions
     )
 
     if f.is_valid():
+        if f.form.cleaned_data["status"] != "approved" and request.user.is_anonymous:
+            return redirect_to_login(request.get_full_path())
         paginator = Paginator(f.qs, 100)
         page = paginator.get_page(request.GET.get("page"))
     else:
@@ -980,9 +992,12 @@ def vehicle_edits(request):
         {
             "filter": f,
             "revisions": page,
-            "parameters": urlencode(f.data),
         },
     )
+
+
+class VehicleJourneyDetailView(DetailView):
+    model = VehicleJourney
 
 
 @require_safe
@@ -992,6 +1007,9 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
     )
 
     data = {
+        "vehicle_id": journey.vehicle_id,
+        "service_id": journey.service_id,
+        "trip_id": journey.trip_id,
         "datetime": journey.datetime,
         "route_name": journey.route_name,
         "code": journey.code,
@@ -1050,13 +1068,16 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
 
         trips = journey.trip.get_trips()
         if trips == [journey.trip]:
-            stoptimes = trips[0].stoptime_set
+            stoptimes = trips[0].stoptime_set.select_related("stop__locality")
         else:
-            stoptimes = StopTime.objects.filter(trip__in=trips).order_by(
-                "trip__start", "id"
+            stoptimes = (
+                StopTime.objects.filter(trip__in=trips)
+                .order_by("trip__start", "id")
+                .select_related("stop__locality")
             )
+            stoptimes = contiguous_stoptimes_only(stoptimes, journey.trip.id)
 
-        for stoptime in stoptimes.select_related("stop__locality"):
+        for stoptime in stoptimes:
             stop = stoptime.stop
             # if stop := stoptime.stop:
             #     if stop.latlong:
@@ -1097,14 +1118,14 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
             except ValueError as e:
                 logging.exception(e)
             else:
-                for i, distances in enumerate(haversine_vector_results):
-                    minimum, index_of_minimum = min(
-                        ((value, index) for index, value in enumerate(distances))
+                for distances, location in zip(
+                    haversine_vector_results, data["locations"]
+                ):
+                    distance, nearest_stop = min(
+                        zip(distances, stops), key=lambda x: x[0]
                     )
-                    if minimum < 100:
-                        stops[index_of_minimum]["actual_departure_time"] = data[
-                            "locations"
-                        ][i]["datetime"]
+                    if distance < 100:
+                        nearest_stop["actual_departure_time"] = location["datetime"]
 
     if vehicle_id:
         next_previous_filter = {"vehicle_id": vehicle_id}
@@ -1191,3 +1212,48 @@ def siri_post(request, uuid):
     handle_siri_post(uuid, data)
 
     return HttpResponse("")
+
+
+@csrf_exempt
+@require_POST
+def overland(request, uuid):
+    get_object_or_404(SiriSubscription, uuid=uuid)
+
+    data = json.loads(request.body)
+
+    for item in data["locations"][-1:]:
+        when = item["properties"]["timestamp"]
+        device_id = item["properties"]["device_id"]
+        operator, vehicle, line_name, journey_ref = device_id.split(":")
+        lon, lat = item["geometry"]["coordinates"]
+        activity = {
+            "RecordedAtTime": when,
+            "MonitoredVehicleJourney": {
+                "OperatorRef": operator,
+                "VehicleRef": vehicle,
+                "PublishedLineName": line_name,
+                "VehicleJourneyRef": journey_ref,
+                "VehicleLocation": {
+                    "Longitude": lon,
+                    "Latitude": lat,
+                },
+            },
+        }
+
+        handle_siri_post(
+            uuid,
+            {
+                "Siri": {
+                    "ServiceDelivery": {
+                        "ResponseTimestamp": when,
+                        "VehicleMonitoringDelivery": {
+                            "VehicleActivity": [activity],
+                            "SubscriptionRef": "",
+                        },
+                    }
+                }
+            },
+        )
+
+    # https://github.com/aaronpk/Overland-iOS#api
+    return JsonResponse({"result": "ok"})

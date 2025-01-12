@@ -87,7 +87,7 @@ class BusStopsAdminTests(TestCase):
         )
 
         # merged into 1:
-        self.assertEqual(Service.objects.all().count(), 1)
+        self.assertEqual(Service.objects.count(), 1)
 
         # unmerge back into 2:
         self.client.post(
@@ -97,7 +97,7 @@ class BusStopsAdminTests(TestCase):
                 "_selected_action": [self.service_a.id],
             },
         )
-        self.assertEqual(Service.objects.all().count(), 2)
+        self.assertEqual(Service.objects.count(), 2)
 
     def test_split_service_filter(self):
         self.client.force_login(self.staff_user)

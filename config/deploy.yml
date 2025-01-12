@@ -10,17 +10,20 @@ servers:
     hosts:
       - 10.131.29.248  # everglory
       - 10.131.0.24    # eveready
-      - 10.131.240.95
+      - 10.131.240.95  # evergood
     env:
       clear:
         WEB_CONCURRENCY: 8
         ALLOWED_HOSTS: "*"
         EMAIL_HOST: email-smtp.eu-west-1.amazonaws.com
+        DISABLE_EDITING: ""
+        DISABLE_REGISTRATION: yes
       secret:
-        - TURNSTILE_SECRET
+        - SECRET_KEY
         - DATABASE_URL
         - REDIS_URL
         - SENTRY_DSN
+        - TURNSTILE_SECRET
         - EMAIL_HOST_USER
         - EMAIL_HOST_PASSWORD
         - TFL_APP_ID
@@ -28,8 +31,12 @@ servers:
         - NTA_API_KEY
         - AWS_ACCESS_KEY_ID
         - AWS_SECRET_ACCESS_KEY
+
 builder:
-  multiarch: false
+  arch: amd64
+  cache:
+    type: registry
+    options: mode=max
 
 # Credentials for your image host.
 registry:
@@ -43,23 +50,13 @@ registry:
 
 asset_path: /staticfiles
 
-# Configure a custom healthcheck (default is /up on port 3000)
-healthcheck:
-  path: /version
-  port: 8000
-
-# use `kamal traefik reboot --hosts=HOST` to deploy changes to this - best not to do all hosts at once
-traefik:
-  args:
-    accesslog: true
-    accesslog.fields.headers.names.user-agent: keep
-    accesslog.fields.headers.names.referer: keep
-    entrypoints.http.address: ":80" # for some reason, if trustedIPs is set then this must be set too
-    entrypoints.http.forwardedHeaders.trustedIPs: 10.131.0.0/16
-
-#accessories:
-#  valkey:
-#    service: valkey
-#    image: valkey/valkey
-#    roles:
-#      - redis
+proxy:
+  app_port: 8000
+  healthcheck:
+    path: /version
+  buffering:
+    responses: false
+  logging:
+    request_headers:
+      - Referer
+    response_headers: []

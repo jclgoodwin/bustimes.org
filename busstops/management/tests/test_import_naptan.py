@@ -13,6 +13,10 @@ from ...models import AdminArea, DataSource, Locality, Region, StopArea, StopPoi
 class NaptanTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        DataSource.objects.create(
+            name="NaPTAN",
+            url="https://naptan.api.dft.gov.uk/v1/access-nodes?dataFormat=xml",
+        )
         Region.objects.create(id="EA", name="East Anglia")
         AdminArea.objects.create(id=91, atco_code="290", name="Norfolk", region_id="EA")
         AdminArea.objects.create(
@@ -38,36 +42,37 @@ class NaptanTest(TestCase):
     def test_download(self):
         fixtures_dir = Path(__file__).resolve().parent / "fixtures"
 
-        with TemporaryDirectory() as temp_dir:
-            with vcr.use_cassette(str(fixtures_dir / "naptan.yml")) as cassette:
-                temp_dir_path = Path(temp_dir)
+        with (
+            TemporaryDirectory() as temp_dir,
+            vcr.use_cassette(str(fixtures_dir / "naptan.yml")) as cassette,
+        ):
+            temp_dir_path = Path(temp_dir)
 
-                with override_settings(DATA_DIR=temp_dir_path):
-                    self.assertFalse((temp_dir_path / "naptan.xml").exists())
+            with override_settings(DATA_DIR=temp_dir_path):
+                self.assertFalse((temp_dir_path / "NaPTAN.xml").exists())
 
-                    with self.assertNumQueries(26):
-                        with self.assertLogs(
-                            "busstops.management.commands.naptan_new", "WARNING"
-                        ):
-                            call_command("naptan_new")
+                with self.assertNumQueries(24), self.assertLogs(
+                    "busstops.management.commands.naptan_new", "WARNING"
+                ):
+                    call_command("naptan_new")
 
-                    source = DataSource.objects.get(name="NaPTAN")
-                    self.assertEqual(str(source.datetime), "2022-01-19 12:56:29+00:00")
+                source = DataSource.objects.get(name="NaPTAN")
+                self.assertEqual(str(source.datetime), "2022-01-19 12:56:29+00:00")
 
-                    self.assertTrue((temp_dir_path / "naptan.xml").exists())
+                self.assertTrue((temp_dir_path / "NaPTAN.xml").exists())
 
-                    cassette.rewind()
+                cassette.rewind()
 
-                    with self.assertNumQueries(3):
-                        call_command("naptan_new")
+                with self.assertNumQueries(4):
+                    call_command("naptan_new")
 
-                    cassette.rewind()
+                cassette.rewind()
 
-                    with self.assertNumQueries(3):
-                        call_command("naptan_new")
+                with self.assertNumQueries(4):
+                    call_command("naptan_new")
 
-                    source = DataSource.objects.get(name="NaPTAN")
-                    self.assertEqual(str(source.datetime), "2022-01-19 12:56:29+00:00")
+                source = DataSource.objects.get(name="NaPTAN")
+                self.assertEqual(str(source.datetime), "2022-01-19 12:56:29+00:00")
 
         # inactive stop in Wroxham
         stop = StopPoint.objects.get(atco_code="2900FLEX1")

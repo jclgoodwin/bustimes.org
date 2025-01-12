@@ -1,10 +1,18 @@
 from django.conf import settings
-from django.core.management import call_command
 from django.test import TestCase
 from vcr import use_cassette
 
-from busstops.models import Operator, Region, Service, StopPoint, StopUsage
+from busstops.models import (
+    Operator,
+    DataSource,
+    OperatorCode,
+    Region,
+    Service,
+    StopPoint,
+    StopUsage,
+)
 
+from .siri_sx import bods_disruptions
 from .models import Situation
 
 VCR_DIR = settings.BASE_DIR / "fixtures" / "vcr"
@@ -17,6 +25,8 @@ class SiriSXTest(TestCase):
         operator = Operator.objects.create(
             region=region, noc="HATT", name="Hattons of Huyton"
         )
+        source = DataSource.objects.create(name="National Operator Codes")
+        OperatorCode.objects.create(operator=operator, source=source, code="HATT")
         service = Service.objects.create(
             line_name="156",
             service_code="156",
@@ -89,14 +99,20 @@ class SiriSXTest(TestCase):
         StopUsage.objects.create(service=service, stop_id="2800S11053A", order=69)
 
     def test_siri_sx_request(self):
-        cassette = str(VCR_DIR / "siri_sx.yaml")
-
-        with use_cassette(cassette):
+        with use_cassette(str(VCR_DIR / "siri_sx.yaml")) as cassette:
             with self.assertNumQueries(123):
-                call_command("import_siri_sx")
-        with use_cassette(cassette):
+                bods_disruptions()
+
+            cassette.rewind()
+
             with self.assertNumQueries(11):
-                call_command("import_siri_sx")
+                bods_disruptions()
+
+            cassette.rewind()
+            Situation.objects.all().update(data="")
+
+            with self.assertNumQueries(151):
+                bods_disruptions()
 
         situation = Situation.objects.first()
 

@@ -1,3 +1,4 @@
 ﻿service_id,date,exception_type
 "Mo-Fr","20171225","2"
 "Mo-Fr","20171224","1"
+"999","20220101","1"

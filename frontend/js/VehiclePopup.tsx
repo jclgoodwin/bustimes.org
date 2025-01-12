@@ -1,5 +1,5 @@
-import React, { ReactNode } from "react";
-import { Popup, PopupEvent } from "react-map-gl/maplibre";
+import React, { type ReactNode } from "react";
+import { Popup, type PopupEvent } from "react-map-gl/maplibre";
 import TimeAgo from "react-timeago";
 import { Link } from "wouter";
 import type { Vehicle } from "./VehicleMarker";
@@ -9,7 +9,7 @@ function getTimeDelta(seconds: number) {
   if (minutes === 1) {
     return "1 minute";
   }
-  return minutes + " minutes";
+  return `${minutes} minutes`;
 }
 
 export function Delay({
@@ -21,7 +21,7 @@ export function Delay({
 }) {
   const delay = item.delay;
   if (typeof delay !== "undefined") {
-    let delayString;
+    let delayString: string;
     const abs = Math.abs(delay);
 
     if (abs < 45) {
@@ -32,7 +32,7 @@ export function Delay({
       } else {
         delayString = "late";
       }
-      delayString = getTimeDelta(abs) + " " + delayString;
+      delayString = `${getTimeDelta(abs)} ${delayString}`;
     }
     return <div>{delayString}</div>;
   }
@@ -59,7 +59,17 @@ export default function VehiclePopup({
     line_name += item.destination;
   }
 
-  if (item.tfl_code) {
+  if (item.journey_id) {
+    if (!activeLink) {
+      if (snazzyTripLink) {
+        line_name = (
+          <Link href={`/journeys/${item.journey_id}`}>{line_name}</Link>
+        );
+      } else {
+        line_name = <a href={`/journeys/${item.journey_id}`}>{line_name}</a>;
+      }
+    }
+  } else if (item.tfl_code) {
     // if (!activeLink && snazzyTripLink) {
     //   line_name = <Link href={`/vehicles/tfl/${item.tfl_code}`}>{line_name}</Link>;
     // }

@@ -1,19 +1,20 @@
-@import 'base';
+@use "sass:meta";
+@use 'base';
 
 @media (min-width: 30em) {
-    @import '30em';
+    @include meta.load-css('30em');
 }
 
 @media (min-width: 48em) {
-    @import '48em';
+    @include meta.load-css('48em');
 }
 
 @media (min-width: 62.5em) {
-    @import '62em';
+    @include meta.load-css('62em');
 }
 
 @media print {
-    @import 'print';
+    @include meta.load-css('print');
 }
 
 @media (min-width: 970px) {

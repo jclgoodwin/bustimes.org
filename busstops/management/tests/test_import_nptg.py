@@ -20,32 +20,31 @@ class ImportNPTGTest(TestCase):
     def test_nptg(self):
         fixtures_dir = Path(__file__).resolve().parent / "fixtures"
 
-        with TemporaryDirectory() as temp_dir:
-            with vcr.use_cassette(
-                str(fixtures_dir / "nptg.yml"), decode_compressed_response=True
-            ) as cassette:
-                temp_dir_path = Path(temp_dir)
+        with TemporaryDirectory() as temp_dir, vcr.use_cassette(
+            str(fixtures_dir / "nptg.yml"), decode_compressed_response=True
+        ) as cassette:
+            temp_dir_path = Path(temp_dir)
 
-                with override_settings(DATA_DIR=temp_dir_path):
-                    self.assertFalse((temp_dir_path / "nptg.xml").exists())
+            with override_settings(DATA_DIR=temp_dir_path):
+                self.assertFalse((temp_dir_path / "nptg.xml").exists())
 
-                    with self.assertNumQueries(565):
-                        call_command("nptg_new")
+                with self.assertNumQueries(565):
+                    call_command("nptg_new")
 
-                    source = DataSource.objects.get(name="NPTG")
-                    self.assertEqual(str(source.datetime), "2022-08-29 18:57:00+00:00")
+                source = DataSource.objects.get(name="NPTG")
+                self.assertEqual(str(source.datetime), "2022-08-29 18:57:00+00:00")
 
-                    self.assertTrue((temp_dir_path / "nptg.xml").exists())
+                self.assertTrue((temp_dir_path / "nptg.xml").exists())
 
-                    cassette.rewind()
+                cassette.rewind()
 
-                    with self.assertNumQueries(6):
-                        call_command("nptg_new")
+                with self.assertNumQueries(6):
+                    call_command("nptg_new")
 
-                    cassette.rewind()
+                cassette.rewind()
 
-                    with self.assertNumQueries(6):
-                        call_command("nptg_new")
+                with self.assertNumQueries(6):
+                    call_command("nptg_new")
 
-                    source = DataSource.objects.get(name="NPTG")
-                    self.assertEqual(str(source.datetime), "2022-08-29 18:57:00+00:00")
+                source = DataSource.objects.get(name="NPTG")
+                self.assertEqual(str(source.datetime), "2022-08-29 18:57:00+00:00")

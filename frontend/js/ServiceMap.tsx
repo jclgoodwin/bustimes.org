@@ -1,14 +1,14 @@
-import React, { lazy, MouseEvent, Suspense } from "react";
+import React, { lazy, Suspense } from "react";
 import { createPortal } from "react-dom";
 
 import loadjs from "loadjs";
-import { Vehicle } from "./VehicleMarker";
+import LoadingSorry from "./LoadingSorry";
+import type { Vehicle } from "./VehicleMarker";
 
 const ServiceMapMap = lazy(() => import("./ServiceMapMap"));
 
 const apiRoot = process.env.API_ROOT;
 
-let hasHistory = false;
 let hasCss = false;
 
 declare global {
@@ -25,18 +25,12 @@ const mapContainer = document.getElementById("map");
 
 export default function ServiceMap({ serviceId }: ServiceMapProps) {
   const [isOpen, setOpen] = React.useState(() => {
-    return window.location.hash.indexOf("#map") === 0;
+    return window.location.hash === "#map";
   });
-
-  const openMap = React.useCallback((e: MouseEvent) => {
-    hasHistory = true;
-    window.location.hash = "#map";
-    e.preventDefault();
-  }, []);
 
   const closeMap = React.useCallback(() => {
     if (isOpen) {
-      if (hasHistory) {
+      if (window.history.state?.hasHistory) {
         window.history.back();
       } else {
         window.location.hash = "";
@@ -52,8 +46,9 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
 
   React.useEffect(() => {
     const handleHashChange = () => {
-      if (window.location.hash.indexOf("#map") === 0) {
+      if (window.location.hash === "#map") {
         setOpen(true);
+        window.history.replaceState({ hasHistory: true }, "");
       } else {
         setOpen(false);
       }
@@ -83,7 +78,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
     if (isOpen) {
       document.body.classList.add("has-overlay");
       if (!hasCss) {
-        loadjs(window.LIVERIES_CSS_URL, function () {
+        loadjs(window.LIVERIES_CSS_URL, () => {
           hasCss = true;
         });
       }
@@ -112,7 +107,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
         return;
       }
 
-      const url = apiRoot + "vehicles.json?service=" + window.SERVICE_ID;
+      const url = `${apiRoot}vehicles.json?service=${window.SERVICE_ID}`;
       fetch(url).then(
         (response) => {
           if (response.ok) {
@@ -154,7 +149,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
     };
   }, [isOpen, serviceId]);
 
-  const count = vehicles && vehicles.length;
+  const count = vehicles?.length;
   let countString: string | undefined;
 
   if (count) {
@@ -166,7 +161,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
   }
 
   const button = (
-    <a href="#map" onClick={openMap}>
+    <a href="#map">
       Map
       {countString ? ` (tracking ${countString})` : null}
     </a>
@@ -177,7 +172,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
   }
 
   const closeButton = (
-    <button onClick={closeMap} className="map-button">
+    <button type="button" onClick={closeMap} className="map-button">
       Close map
     </button>
   );
@@ -188,7 +183,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
       {createPortal(
         <div className="service-map">
           {closeButton}
-          <Suspense fallback={<div className="sorry">Loading…</div>}>
+          <Suspense fallback={<LoadingSorry />}>
             <ServiceMapMap
               vehicles={vehicles}
               geometry={geometry}

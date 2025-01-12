@@ -17,15 +17,17 @@ class GTFSRTTest(TestCase):
 
         StopPoint.objects.bulk_create(
             [
-                StopPoint(atco_code="8220DB004962", active=True),
-                StopPoint(atco_code="8220DB004725", active=True),
-                StopPoint(atco_code="8220DB000408", active=True),
+                StopPoint(atco_code="8220DB000405", active=True),
+                StopPoint(atco_code="8220DB000409", active=True),
+                StopPoint(atco_code="8220DB000410", active=True),
                 StopPoint(atco_code="8220DB000412", active=True),
+                StopPoint(atco_code="8220DB000413", active=True),
+                StopPoint(atco_code="8220DB000414", active=True),
+                StopPoint(atco_code="8220DB000415", active=True),
                 StopPoint(atco_code="8220DB000416", active=True),
                 StopPoint(atco_code="8220DB000418", active=True),
                 StopPoint(atco_code="8220DB000420", active=True),
                 StopPoint(atco_code="8220DB000421", active=True),
-                StopPoint(atco_code="8220DB000424", active=True),
                 StopPoint(atco_code="8250DB000427", active=True),
                 StopPoint(atco_code="8250DB000429", active=True),
             ]
@@ -52,94 +54,44 @@ class GTFSRTTest(TestCase):
 
         cls.trip = Trip.objects.create(
             route=route,
-            ticket_machine_code="1767.2.60-7-b12-1.138.O",
-            start="06:45:00",
-            end="07:49:00",
+            ticket_machine_code="4323_12791",
+            start="13:45:00",
+            end="15:08:00",
             calendar=calendar,
         )
         cls.cancellable_trip = Trip.objects.create(
             route=route,
-            ticket_machine_code="3966.2.60-77A-b12-1.56.I",
-            start="06:45:00",
+            ticket_machine_code="4323_10231",
+            start="13:00:00",
             end="07:49:00",
             calendar=calendar,
         )
         StopTime.objects.bulk_create(
             [
-                StopTime(
-                    trip=cls.trip,
-                    sequence=1,
-                    stop_id="8220DB004962",
-                    departure="06:45:00",
-                ),
-                StopTime(
-                    trip=cls.trip,
-                    sequence=2,
-                    stop_id="8220DB004725",
-                    departure="06:45:00",
-                ),
-                StopTime(
-                    trip=cls.trip,
-                    sequence=5,
-                    stop_id="8220DB000408",
-                    departure="06:45:00",
-                ),
-                StopTime(
-                    trip=cls.trip,
-                    sequence=9,
-                    stop_id="8220DB000412",
-                    departure="06:45:00",
-                ),
-                StopTime(
-                    trip=cls.trip,
-                    sequence=13,
-                    stop_id="8220DB000416",
-                    departure="06:45:00",
-                ),
-                StopTime(
-                    trip=cls.trip,
-                    sequence=15,
-                    stop_id="8220DB000418",
-                    departure="06:45:00",
-                ),
-                StopTime(
-                    trip=cls.trip,
-                    sequence=17,
-                    stop_id="8220DB000420",
-                    departure="06:45:00",
-                ),
-                StopTime(
-                    trip=cls.trip,
-                    sequence=18,
-                    stop_id="8220DB000421",
-                    departure="06:45:00",
-                ),
-                StopTime(
-                    trip=cls.trip,
-                    sequence=21,
-                    stop_id="8220DB000424",
-                    departure="06:45:00",
-                ),
-                StopTime(
-                    trip=cls.trip,
-                    sequence=24,
-                    stop_id="8250DB000427",
-                    arrival="06:45:00",
-                    departure="06:50:00",
-                ),
-                StopTime(
-                    trip=cls.trip,
-                    sequence=26,
-                    stop_id="8250DB000429",
-                    departure="06:50:00",
-                ),
+                StopTime(trip=cls.trip, sequence=i, stop_id=stop_id, departure=time)
+                for i, stop_id, time in (
+                    (4, "8220DB000405", "06:45:00"),
+                    (6, "8220DB000409", "06:45:00"),
+                    (7, "8220DB000410", "06:45:00"),
+                    (9, "8220DB000412", "06:45:00"),
+                    (10, "8220DB000413", "06:45:00"),
+                    (11, "8220DB000414", "06:45:00"),
+                    (12, "8250DB000429", "06:45:00"),
+                    (13, "8220DB000416", "06:45:00"),
+                    (15, "8220DB000418", "06:45:00"),
+                    (17, "8220DB000420", "06:45:00"),
+                    (18, "8220DB000421", "06:45:00"),
+                    (24, "8250DB000427", "06:45:00"),
+                )
+            ]
+            + [
                 StopTime(
                     trip=cls.cancellable_trip,
                     sequence=1,
                     stop_id="8250DB000429",
                     departure="06:45:00",
                 ),
-            ]
+            ],
         )
 
         StopUsage.objects.create(service=service, stop_id="8250DB000429", order=0)
@@ -150,7 +102,7 @@ class GTFSRTTest(TestCase):
     )
     def test_nta_ie(self):
         with override_settings(
-            NTA_API_KEY="letsturn",
+            NTA_API_KEY="poopants",
             CACHES={
                 "default": {
                     "BACKEND": "django.core.cache.backends.redis.RedisCache",
@@ -158,30 +110,27 @@ class GTFSRTTest(TestCase):
                     "OPTIONS": {"connection_class": fakeredis.FakeConnection},
                 }
             },
-        ):
-            with vcr.use_cassette("fixtures/vcr/nta_ie_trip_updates.yaml"):
-                # trip with some delays
-                with self.assertNumQueries(7):
-                    response = self.client.get(self.trip.get_absolute_url())
-                self.assertContains(response, '"06:47"')
+        ), vcr.use_cassette("fixtures/vcr/nta_ie_trip_updates.yaml"):
+            # trip with some delays
+            with self.assertNumQueries(7):
+                response = self.client.get(self.trip.get_absolute_url())
+            self.assertContains(response, '"06:46"')
 
-                response = self.client.get("/trip_updates")
-                self.assertContains(response, "1785 trip_updates")
-                self.assertContains(response, "2 matching trips")
+            response = self.client.get("/trip_updates")
+            self.assertContains(response, "3051 trip_updates")
+            self.assertContains(response, "2 matching trips")
 
-                response = self.client.get(
-                    "/stops/8250DB000429?date=2022-05-04&time=05:00"
-                )
-                self.assertContains(response, "Ex&shy;pected")
-                self.assertContains(response, "Sched&shy;uled")
-                self.assertContains(response, "06:52")
-                self.assertContains(
-                    response, "<del>06:45</del>", html=True
-                )  # cancelled - struck through
+            response = self.client.get("/stops/8250DB000429?date=2022-05-04&time=05:00")
+            self.assertContains(response, "Ex&shy;pected")
+            self.assertContains(response, "Sched&shy;uled")
+            self.assertContains(response, "06:46")
+            self.assertContains(
+                response, "<del>06:45</del>", html=True
+            )  # cancelled - struck through
 
-                # cancelled trip:
-                response = self.client.get(self.cancellable_trip.get_absolute_url())
-                self.assertTrue(response.context["stops_json"])
+            # cancelled trip:
+            response = self.client.get(self.cancellable_trip.get_absolute_url())
+            self.assertTrue(response.context["stops_json"])
 
     def test_no_feed(self):
         with patch("departures.gtfsr.get_feed_entities", return_value=None):

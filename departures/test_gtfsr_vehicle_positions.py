@@ -67,13 +67,12 @@ class GTFSRTTest(TestCase):
                     "OPTIONS": {"connection_class": fakeredis.FakeConnection},
                 }
             },
-        ):
-            with vcr.use_cassette("fixtures/vcr/nta_ie_vehicle_positions.yaml"):
-                c = Command()
-                c.do_source()
-                c.update()
+        ), vcr.use_cassette("fixtures/vcr/nta_ie_vehicle_positions.yaml"):
+            c = Command()
+            c.do_source()
+            c.update()
 
-        self.assertEqual(VehicleJourney.objects.all().count(), 51)
+        self.assertEqual(VehicleJourney.objects.count(), 51)
         self.assertEqual(self.service.vehiclejourney_set.count(), 5)
         self.assertEqual(self.trip_1.vehiclejourney_set.count(), 1)
         self.assertEqual(self.trip_2.vehiclejourney_set.count(), 0)

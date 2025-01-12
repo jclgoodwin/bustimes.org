@@ -1,11 +1,11 @@
+import * as Sentry from "@sentry/react";
 import React, { lazy } from "react";
 import { createRoot } from "react-dom/client";
-import * as Sentry from "@sentry/react";
 
 import "./maps.css";
 import "maplibre-gl/dist/maplibre-gl.css";
 
-import { Trip } from "./TripTimetable";
+import LoadingSorry from "./LoadingSorry";
 import ServiceMap from "./ServiceMap";
 const History = lazy(() => import("./History"));
 const MapRouter = lazy(() => import("./MapRouter"));
@@ -42,7 +42,6 @@ if (process.env.NODE_ENV === "production") {
 declare global {
   interface Window {
     SERVICE_ID?: number;
-    STOPS?: Trip;
     OPERATOR_ID?: string;
     VEHICLE_ID: number;
     globalThis: Window;
@@ -53,9 +52,9 @@ if (typeof window.globalThis === "undefined") {
   window.globalThis = window;
 }
 
-const error = <div className="sorry">Sorry, something has gone wrong</div>;
+const error = <LoadingSorry text="Sorry, something has gone wrong" />;
 
-let rootElement;
+let rootElement: HTMLElement | null;
 if ((rootElement = document.getElementById("history"))) {
   // vehicle journey history
   const root = createRoot(rootElement);

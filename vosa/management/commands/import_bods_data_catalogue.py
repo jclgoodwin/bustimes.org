@@ -7,7 +7,7 @@ from datetime import datetime
 from django.conf import settings
 from django.core.management import BaseCommand
 
-from bustimes.download_utils import download_if_changed
+from bustimes.download_utils import download_if_modified
 
 from ...models import Licence, Registration  # , Variation
 
@@ -25,50 +25,50 @@ class Command(BaseCommand):
             yield from csv.DictReader(open_file)
 
     def handle(self, **kwargs) -> None:
-        is_modified, modified_at = download_if_changed(
+        is_modified, modified_at = download_if_modified(
             settings.DATA_DIR / "data_catalogue.zip",
-            "https://data.bus-data.dft.gov.uk/catalogue/",
+            url="https://data.bus-data.dft.gov.uk/catalogue/",
         )
         print(is_modified, modified_at)
 
-        lics = Licence.objects.all().in_bulk(field_name="licence_number")
+        lics = Licence.objects.in_bulk(field_name="licence_number")
         lics_to_create = []
         # lics_to_update = []
 
-        regs = Registration.objects.all().in_bulk(field_name="registration_number")
+        regs = Registration.objects.in_bulk(field_name="registration_number")
         regs_to_create = []
         regs_to_update = []
 
-        with zipfile.ZipFile(settings.DATA_DIR / "data_catalogue.zip") as z:
-            with z.open("timetables_data_catalogue.csv", mode="r") as f:
-                with io.TextIOWrapper(f) as wrapped_f:
-                    for row in csv.DictReader(wrapped_f):
-                        if row["OTC:Registration Number"]:
-                            reg = regs.get(row["OTC:Registration Number"])
-                            if not reg:
-                                lic = lics.get(row["OTC:Licence Number"])
-                                assert row["OTC Status"] == "Registered"
+        with (
+            zipfile.ZipFile(settings.DATA_DIR / "data_catalogue.zip") as z,
+            z.open("timetables_data_catalogue.csv", mode="r") as f,
+            io.TextIOWrapper(f) as wrapped_f,
+        ):
+            for row in csv.DictReader(wrapped_f):
+                if row["OTC:Registration Number"]:
+                    reg = regs.get(row["OTC:Registration Number"])
+                    if not reg:
+                        lic = lics.get(row["OTC:Licence Number"])
+                        assert row["OTC Status"] == "Registered"
 
-                                if not lic:
-                                    continue
+                        if not lic:
+                            continue
 
-                                reg = Registration(
-                                    registration_number=row["OTC:Registration Number"],
-                                    registered=True,
-                                    licence=lic,
-                                )
-                            reg.service_number = row["OTC:Service Number"]
-                            reg.start_point = row["OTC:Start Point"]
-                            reg.finish_point = row["OTC:Finish Point"]
-                            reg.via = row["OTC:Via"]
-                            reg.service_type_description = row[
-                                "OTC:Service Type Description"
-                            ]
+                        reg = Registration(
+                            registration_number=row["OTC:Registration Number"],
+                            registered=True,
+                            licence=lic,
+                        )
+                    reg.service_number = row["OTC:Service Number"]
+                    reg.start_point = row["OTC:Start Point"]
+                    reg.finish_point = row["OTC:Finish Point"]
+                    reg.via = row["OTC:Via"]
+                    reg.service_type_description = row["OTC:Service Type Description"]
 
-                            if reg.id:
-                                regs_to_update.append(reg)
-                            else:
-                                regs_to_create.append(reg)
+                    if reg.id:
+                        regs_to_update.append(reg)
+                    else:
+                        regs_to_create.append(reg)
 
         Licence.objects.bulk_create(lics_to_create)
         Registration.objects.bulk_create(regs_to_create)

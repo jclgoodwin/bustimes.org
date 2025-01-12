@@ -1,17 +1,18 @@
-import io
 import logging
+import xml.etree.cElementTree as ET
+from ciso8601 import parse_datetime
+from django.db.backends.postgresql.psycopg_any import DateTimeTZRange
+from django.db.models import Q
+
+import io
 import xml.etree.cElementTree as ET
 import zipfile
 
 import requests
-from ciso8601 import parse_datetime
-from django.core.management.base import BaseCommand
-from django.db.backends.postgresql.psycopg_any import DateTimeTZRange
-from django.db.models import Q
 
 from busstops.models import DataSource, Operator, Service, StopPoint
+from .models import Consequence, Link, Situation, ValidityPeriod
 
-from ...models import Consequence, Link, Situation, ValidityPeriod
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +21,13 @@ def get_period(element):
     start = element.find("StartTime").text
     end = element.findtext("EndTime")
     return DateTimeTZRange(start, end, "[]")
+
+
+def get_operators(operator_ref):
+    return Operator.objects.filter(
+        operatorcode__code=operator_ref,
+        operatorcode__source__name="National Operator Codes",
+    )
 
 
 def handle_item(item, source):
@@ -120,7 +128,9 @@ def handle_item(item, source):
             for operator_ref in line.findall("AffectedOperator/OperatorRef"):
                 operator_ref = operator_ref.text
 
-                matching_services = services.filter(line_filter, operator=operator_ref).distinct()
+                matching_services = services.filter(
+                    line_filter, operator__in=get_operators(operator_ref)
+                ).distinct()
                 if len(matching_services) > 1:
                     matching_services = matching_services.filter(stops_filter)
 
@@ -134,42 +144,36 @@ def handle_item(item, source):
         ):
             operator_ref = operator.findtext("OperatorRef")
             try:
-                operator = Operator.objects.get(noc=operator_ref)
+                consequence.operators.add(*get_operators(operator_ref))
             except Operator.DoesNotExist as e:
                 logger.exception(e)
-            else:
-                consequence.operators.add(operator)
 
     return situation.id
 
 
-class Command(BaseCommand):
-    def fetch(self):
-        url = "https://data.bus-data.dft.gov.uk/disruptions/download/bulk_archive"
+def bods_disruptions():
+    url = "https://data.bus-data.dft.gov.uk/disruptions/download/bulk_archive"
 
-        source = DataSource.objects.get_or_create(name="Bus Open Data")[0]
+    source = DataSource.objects.get_or_create(name="Bus Open Data")[0]
 
-        situations = []
+    situations = []
 
-        response = requests.get(url, timeout=10)
-        assert response.ok
-        archive = zipfile.ZipFile(io.BytesIO(response.content))
+    response = requests.get(url, timeout=61)
+    assert response.ok
+    archive = zipfile.ZipFile(io.BytesIO(response.content))
 
-        namelist = archive.namelist()
-        assert len(namelist) == 1
-        open_file = archive.open(namelist[0])
+    namelist = archive.namelist()
+    assert len(namelist) == 1
+    open_file = archive.open(namelist[0])
 
-        for _, element in ET.iterparse(open_file):
-            if element.tag[:29] == "{http://www.siri.org.uk/siri}":
-                element.tag = element.tag[29:]
+    for _, element in ET.iterparse(open_file):
+        if element.tag[:29] == "{http://www.siri.org.uk/siri}":
+            element.tag = element.tag[29:]
 
-            if element.tag.endswith("PtSituationElement"):
-                situations.append(handle_item(element, source))
-                element.clear()
+        if element.tag.endswith("PtSituationElement"):
+            situations.append(handle_item(element, source))
+            element.clear()
 
-        source.situation_set.filter(current=True).exclude(id__in=situations).update(
-            current=False
-        )
-
-    def handle(self, *args, **options):
-        self.fetch()
+    source.situation_set.filter(current=True).exclude(id__in=situations).update(
+        current=False
+    )

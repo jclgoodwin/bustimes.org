@@ -97,6 +97,23 @@ def apply_trip_update(stops, trip_update: dict) -> None:
             )
 
 
+def update_departure(departure: dict, trip_update: dict) -> None:
+    if trip_update["tripUpdate"]["trip"]["scheduleRelationship"] == "CANCELED":
+        departure["cancelled"] = True
+        return
+    stop_time_update = None
+    for update in trip_update["tripUpdate"]["stopTimeUpdate"]:
+        if update["stopSequence"] > departure["stop_time"].sequence:
+            break
+        stop_time_update = update
+    if stop_time_update:
+        if stop_time_update["scheduleRelationship"] == "SKIPPED":
+            departure["cancelled"] = True
+        elif "departure" in stop_time_update:
+            delay = timedelta(seconds=stop_time_update["departure"]["delay"])
+            departure["live"] = departure["time"] + delay
+
+
 def update_stop_departures(departures: list) -> None:
     feed = get_feed_entities()
     if not feed:
@@ -107,19 +124,4 @@ def update_stop_departures(departures: list) -> None:
         trip = stop_time.trip
         trip_update = feed["entity"].get(trip.ticket_machine_code)
         if trip_update:
-            if trip_update["tripUpdate"]["trip"]["scheduleRelationship"] == "CANCELED":
-                departure["cancelled"] = True
-            else:
-                stop_time_update = None
-                for update in trip_update["tripUpdate"]["stopTimeUpdate"]:
-                    if update["stopSequence"] > stop_time.sequence:
-                        break
-                    stop_time_update = update
-                if stop_time_update:
-                    if stop_time_update["scheduleRelationship"] == "SKIPPED":
-                        departure["cancelled"] = True
-                    elif "departure" in stop_time_update:
-                        delay = timedelta(
-                            seconds=stop_time_update["departure"]["delay"]
-                        )
-                        departure["live"] = departure["time"] + delay
+            update_departure(departure, trip_update)

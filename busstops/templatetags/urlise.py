@@ -10,7 +10,7 @@ register = template.Library()
 @stringfilter
 def urlise(value, autoescape=None):
     """Like the built-in Django urlize filter,
-    but strips the 'http://' from the link text,
+    but strips the 'https://www.' from the link text,
     and replaces Megabus and National Express URLs with venal affiliate ones
     """
 
@@ -18,11 +18,11 @@ def urlise(value, autoescape=None):
         urlize(value, nofollow=True)
         .replace('">https://', '">', 1)
         .replace('">http://', '">', 1)
+        .replace('">www.', '">', 1)
     )
     markup = markup.replace("/</a>", "</a>", 1)
     if "megabus" in markup:
-        megabus = "https%3A%2F%2Fuk.megabus.com"
-        megabus = f'"https://www.awin1.com/awclick.php?mid=2678&amp;id=242611&amp;clickref=urlise&amp;p={megabus}"'
+        megabus = '"https://www.awin1.com/awclick.php?mid=2678&amp;id=242611&amp;clickref=urlise&amp;p=https%3A%2F%2Fuk.megabus.com"'
         markup = markup.replace('"http://megabus.com"', megabus, 1)
         markup = markup.replace('"https://uk.megabus.com"', megabus, 1)
     elif "nationalexpress" in markup:

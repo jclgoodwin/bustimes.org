@@ -1,31 +1,31 @@
 """Tests for importing Ireland stops and gazetteer"""
 
-import os
 from pathlib import Path
 from unittest.mock import patch
 
 from django.core.management import call_command
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
-from ...models import AdminArea, Locality, Region, StopPoint
+from ...models import AdminArea, Locality, Region, StopPoint, DataSource
 
 
 class ImportIrelandTest(TestCase):
-    """Test the import_ie_nptg and import_ie_nptg command"""
+    """Test the NaPTAN and NPTG importers using Irish data"""
 
     def test_ie_nptg_and_naptan(self):
         fixtures_dir = Path(__file__).resolve().parent / "fixtures"
+        DataSource.objects.create(name="ie_naptan")
 
         # NPTG (places):
 
         call_command("nptg_new", fixtures_dir / "ie_nptg.xml")
 
-        regions = Region.objects.all().order_by("name")
+        regions = Region.objects.order_by("name")
         self.assertEqual(len(regions), 5)
         self.assertEqual(regions[0].name, "Connaught")
         self.assertEqual(regions[2].name, "Munster")
 
-        areas = AdminArea.objects.all().order_by("name")
+        areas = AdminArea.objects.order_by("name")
         self.assertEqual(len(areas), 40)
 
         self.assertEqual(areas[0].name, "Antrim")
@@ -49,9 +49,15 @@ class ImportIrelandTest(TestCase):
 
         # NaPTAN (stops):
 
-        call_command("naptan_new", fixtures_dir / "ie_naptan.xml")
+        DataSource.objects.create(name="Irish NaPTAN")
 
-        stops = StopPoint.objects.all().order_by("atco_code")
+        with override_settings(DATA_DIR=fixtures_dir), patch(
+            "busstops.management.commands.naptan_new.download_if_modified",
+            return_value=(True, None),
+        ):
+            call_command("naptan_new", "ie_naptan")
+
+        stops = StopPoint.objects.order_by("atco_code")
         self.assertEqual(len(stops), 6)
         self.assertEqual(stops[0].atco_code, "700000004096")
         self.assertEqual(stops[0].common_name, "Rathfriland")
@@ -83,11 +89,3 @@ class ImportIrelandTest(TestCase):
         self.assertAlmostEqual(stop.latlong.y, 53.2719763661735)
         self.assertEqual(stop.admin_area_id, 846)
         self.assertEqual(stop.locality_id, "E0846001")
-
-        with patch("builtins.print") as mocked_print:
-            call_command(
-                "import_ie_transxchange",
-                os.path.join(fixtures_dir, "ie_transxchange.xml"),
-            )
-        mocked_print.assert_called_with("Bal-briggan")
-        # self.assertEqual(Locality.objects.get(id='E0824005').name, 'Bal-briggan')

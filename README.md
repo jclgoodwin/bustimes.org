@@ -1,5 +1,5 @@
-[![Python application](https://github.com/jclgoodwin/bustimes.org/workflows/Python%20application/badge.svg)](https://github.com/jclgoodwin/bustimes.org/actions)
-[![codecov](https://codecov.io/gh/jclgoodwin/bustimes.org/branch/main/graph/badge.svg?token=J0OTOXEHZ2)](https://codecov.io/gh/jclgoodwin/bustimes.org)
+[![Test](https://github.com/jclgoodwin/bustimes.org/actions/workflows/test.yml/badge.svg)](https://github.com/jclgoodwin/bustimes.org/actions/workflows/test.yml)
+[![Coverage badge](https://raw.githubusercontent.com/jclgoodwin/bustimes.org/python-coverage-comment-action-data/badge.svg)](https://htmlpreview.github.io/?https://github.com/jclgoodwin/bustimes.org/blob/python-coverage-comment-action-data/htmlcov/index.html)
 
 ## What's this?
 
@@ -30,7 +30,7 @@ I will try to document some things for my own reference.
 
 ## Installing
 
-### Using Docker Compose (recommended)
+### Using Docker Compose
 
 ```
 docker compose up
@@ -46,7 +46,7 @@ npm run watch
 
 These need to be available:
 
-- Python 3.10+
+- Python 3.12
 - [Poetry](https://python-poetry.org/) to install necessary Python packages (Django, etc)
 - PostgreSQL with PostGIS
     - On my Macintosh computer I use [Postgres.app](https://postgresapp.com/)
@@ -57,7 +57,7 @@ These need to be available:
 Some environment variables need to be set.
 Many of them control settings in [buses/settings.py](buses/settings.py).
 
-```
+```bash
 DEBUG=1
 SECRET_KEY=blablabla
 DATABASE_URL=postgis://user:password@host/database-name
@@ -65,22 +65,24 @@ DATABASE_URL=postgis://user:password@host/database-name
 
 Then run these commands:
 
-```
+```bash
 npm install
-poetry install
-poetry run ./manage.py migrate
-poetry run ./manage.py runserver 0.0.0.0:8000
+poetry install --with dev --with test  # install Python dependencies including special ones for development and testing
+poetry run ./manage.py migrate  # create database tables
+poetry run ./manage.py runserver 0.0.0.0:8000  # run the Django development server (not suitable for production, use gunicorn for that!)
 ```
 
-[.github/workflows/pythonapp.yml](.github/workflows/pythonapp.yml) sort of documents the process of installing dependencies and running tests.
+[.github/workflows/test.yml](.github/workflows/test.yml) sort of documents the process of installing dependencies and running tests.
 
 ## Importing data
 
 ### Static data (stops, timetables, etc)
 
-    poetry run ./import.sh
-
-will download *some* data from various [sources](https://bustimes.org/data) and run the necessary Django [management commands](busstops/management/commands) to import it, in a sensible order (place names, then stops, then timetables).
+```bash
+poetry run ./import.sh
+```
+will download *some* data from various [sources](https://bustimes.org/data) and run the necessary Django [management commands](busstops/management/commands) to import it,
+in a sensible order (place names, then stops, then timetables).
 When run repeatedly, it will only download and import the stuff that's changed.
 It needs a username and password for the Traveline National Dataset step.
 
@@ -92,3 +94,8 @@ Some "live" data – departure times at stops, and vehicle locations – is/are 
 
 For the rest, there are some Django management commands that need to be run indefinitely in the background.
 These update [the big map of bus locations](https://bustimes.org/map), etc.
+I use supervisord (see [config/supervisor.conf](config/supervisor.conf)).
+
+## Deploying
+
+Uses Kamal (see [config/deploy.yml](config/deploy.yml))

@@ -2,7 +2,7 @@
 
 {% block head %}
     <meta property="og:title" content="{{ object }}">
-{% endblock %}
+{% endblock head %}
 
 {% block content %}
 
@@ -25,14 +25,16 @@
 </div>
 
 <ul class="tabs">
-    <li>{{ services|length }} route{{ services|length|pluralize }}</li>
-    {% if tickets %}
-        <li><a href="{{ object.get_absolute_url }}/tickets">Tickets</a></li>
+    {% if services %}
+        <li>{{ services|length }} route{{ services|length|pluralize }}</li>
+    {% endif %}
+    {% if map %}
+        <li><a href="{{ object.get_absolute_url }}/map">Map</a></li>
+    {% endif %}
+    {% if tickets_link %}
+        <li><a href="{{ tickets_link }}">Tickets</a></li>
     {% endif %}
     {% if vehicles %}
-        {% if map %}
-            <li><a href="{{ object.get_absolute_url }}/map">Map</a></li>
-        {% endif %}
         <li><a href="{{ object.get_absolute_url }}/vehicles">Vehicles</a></li>
     {% endif %}
 </ul>
@@ -45,4 +47,4 @@
     <p><a href="{% url 'admin:busstops_operator_change' object.noc %}">✎</a></p>
 {% endif %}
 
-{% endblock %}
+{% endblock content %}

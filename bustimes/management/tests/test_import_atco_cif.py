@@ -33,7 +33,7 @@ class ImportAtcoCifTest(TestCase):
         )
 
         StopPoint.objects.bulk_create(
-            StopPoint(atco_code, latlong=Point(0, 0), active=True)
+            StopPoint(atco_code=atco_code, latlong=Point(0, 0), active=True)
             for atco_code in (
                 "700000015363",
                 "700000015687",
@@ -49,9 +49,9 @@ class ImportAtcoCifTest(TestCase):
             write_files_to_zipfile(zipfile_path, ["218 219.cif"])
 
             with time_machine.travel("2019-10-09"):
-                with self.assertNumQueries(360):
+                with self.assertNumQueries(359):
                     call_command("import_atco_cif", zipfile_path)
-                with self.assertNumQueries(368):
+                with self.assertNumQueries(365):
                     call_command("import_atco_cif", zipfile_path)
 
         self.assertEqual(5, Route.objects.count())
@@ -59,7 +59,7 @@ class ImportAtcoCifTest(TestCase):
         self.assertEqual(106, StopUsage.objects.count())
 
         service = Service.objects.get(service_code="219A_GLE")
-        route = Route.objects.get(code="219A_GLE")
+        route = Route.objects.get(service__service_code="219A_GLE")
         self.assertEqual(
             "Belfast, Europa Buscentre - Antrim, Buscentre", service.description
         )
@@ -76,11 +76,10 @@ class ImportAtcoCifTest(TestCase):
         self.assertEqual("Goldline Express", trip.operator.name)
         self.assertEqual("1700", trip.ticket_machine_code)
 
-        with time_machine.travel("2019-10-01"):
-            with self.assertNumQueries(10):
-                response = self.client.get(
-                    f"/services/{service.id}/timetable?date=2019-10-01"
-                )
+        with time_machine.travel("2019-10-01"), self.assertNumQueries(11):
+            response = self.client.get(
+                f"/services/{service.id}/timetable?date=2019-10-01"
+            )
         self.assertContains(
             response,
             '<option selected value="2019-10-01">Tuesday 1 October 2019</option>',
@@ -88,11 +87,10 @@ class ImportAtcoCifTest(TestCase):
         self.assertNotContains(response, "Sunday")
         self.assertContains(response, '17:05<abbr title="pick up only">p</abbr>')
 
-        with time_machine.travel("2019-08-12"):
-            with self.assertNumQueries(7):
-                response = self.client.get(
-                    f"/services/{service.id}/timetable?date=2019-08-12"
-                )
+        with time_machine.travel("2019-08-12"), self.assertNumQueries(7):
+            response = self.client.get(
+                f"/services/{service.id}/timetable?date=2019-08-12"
+            )
         self.assertContains(
             response,
             '<option selected value="2019-08-12">Monday 12 August 2019</option>',
@@ -100,22 +98,20 @@ class ImportAtcoCifTest(TestCase):
         self.assertNotContains(response, "Sunday")
         self.assertContains(response, "Sorry, no journeys found")
 
-        with time_machine.travel("2019-08-12"):
-            with self.assertNumQueries(10):
-                response = self.client.get(
-                    f"/services/{service.id}/timetable?date=2019-12-25"
-                )
+        with time_machine.travel("2019-08-12"), self.assertNumQueries(11):
+            response = self.client.get(
+                f"/services/{service.id}/timetable?date=2019-12-25"
+            )
         self.assertContains(
             response,
             '<option selected value="2019-12-25">Wednesday 25 December 2019</option>',
         )
         self.assertNotContains(response, "Sunday")
 
-        with time_machine.travel("2019-08-12"):
-            with self.assertNumQueries(10):
-                response = self.client.get(
-                    f"/services/{service.id}/timetable?date=2019-12-25"
-                )
+        with time_machine.travel("2019-08-12"), self.assertNumQueries(11):
+            response = self.client.get(
+                f"/services/{service.id}/timetable?date=2019-12-25"
+            )
         self.assertContains(
             response,
             '<option selected value="2019-12-25">Wednesday 25 December 2019</option>',
@@ -123,21 +119,15 @@ class ImportAtcoCifTest(TestCase):
         self.assertNotContains(response, "Sunday")
 
         # no journeys on this date - CalendarDate with operation = False - so should skip to next date of operation
-        with time_machine.travel("2019-07-20"):
-            with self.assertNumQueries(18):
-                response = self.client.get(
-                    "/services/219-belfast-europa-buscentre-ballymena-buscentre"
-                )
-                self.assertEqual(
-                    "2019-07-27", str(response.context_data["timetable"].date)
-                )
-                self.assertEqual(1, len(response.context_data["timetable"].groupings))
+        with time_machine.travel("2019-07-20"), self.assertNumQueries(19):
+            response = self.client.get(
+                "/services/219-belfast-europa-buscentre-ballymena-buscentre"
+            )
+            self.assertEqual("2019-07-27", str(response.context_data["timetable"].date))
+            self.assertEqual(1, len(response.context_data["timetable"].groupings))
         self.assertContains(response, "set down only")
 
         service = Service.objects.get(service_code="218_GLE")
-        with time_machine.travel("2019-10-01"):
-            with self.assertNumQueries(18):
-                response = self.client.get(
-                    service.get_absolute_url() + "?date=2019-10-01"
-                )
+        with time_machine.travel("2019-10-01"), self.assertNumQueries(19):
+            response = self.client.get(service.get_absolute_url() + "?date=2019-10-01")
         self.assertContains(response, "set down only")

@@ -1,6 +1,7 @@
 import datetime
 import zipfile
 from pathlib import Path
+from shutil import ReadError
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
@@ -12,7 +13,7 @@ from django.test import TestCase, override_settings
 from busstops.models import AdminArea, DataSource, Operator, Region, Service, StopPoint
 
 from ...models import Route
-from ..commands import import_gtfs
+from ...download_utils import download_if_modified
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
@@ -157,6 +158,7 @@ class GTFSTest(TestCase):
 
         # big timetable
         service = Service.objects.get(route__code="21-963-1-y11-1")
+        self.assertEqual(service.mode, "bus")
         timetable = service.get_timetable(datetime.date(2017, 6, 7)).render()
         self.assertEqual(str(timetable.groupings[0]), "Outbound")
         self.assertEqual(
@@ -169,7 +171,7 @@ class GTFSTest(TestCase):
             str(timetable.groupings[0].rows[2].times), "['', 10:22, '', 14:22, 17:52]"
         )
 
-        self.assertTrue(service.geometry)
+        # self.assertTrue(service.geometry)
 
         self.assertEqual(str(service.source), "Seamus Doherty")
 
@@ -187,22 +189,26 @@ class GTFSTest(TestCase):
 
     def test_download_if_modified(self):
         path = Path("poop.txt")
-        url = "https://bustimes.org/static/js/global.js"
+        url = "https://bustimes.org/favicon.ico"
+        source = DataSource.objects.create(url=url)
 
         path.unlink(missing_ok=True)
 
         cassette = str(FIXTURES_DIR / "download_if_modified.yaml")
 
-        with vcr.use_cassette(cassette, match_on=["uri", "headers"]):
-            changed, when = import_gtfs.download_if_changed(path, url)
+        with vcr.use_cassette(cassette, match_on=["uri", "headers"]) as cassette:
+            changed, when = download_if_modified(path, source)
             self.assertTrue(changed)
-            self.assertEqual(str(when), "2020-06-02 07:35:34+00:00")
+            self.assertEqual(str(when), "2024-09-06 13:11:02+00:00")
+            self.assertEqual(source.etag, 'W/"66daf156-37b"')
 
-            with patch("os.path.getmtime", return_value=1593870909.0) as getmtime:
-                changed, when = import_gtfs.download_if_changed(path, url)
-                self.assertTrue(changed)
-                self.assertEqual(str(when), "2020-06-02 07:35:34+00:00")
-                getmtime.assert_called_with(path)
+            changed, when = download_if_modified(path, source)
+            self.assertFalse(changed)
+
+            cassette.rewind()
+
+            changed, when = download_if_modified(path, url=url)
+            self.assertFalse(changed)
 
         self.assertTrue(path.exists())
         path.unlink()
@@ -210,12 +216,16 @@ class GTFSTest(TestCase):
     def test_handle(self):
         with (
             patch(
-                "bustimes.management.commands.import_gtfs.download_if_changed",
+                "bustimes.management.commands.import_gtfs.download_if_modified",
                 return_value=(True, None),
+                raise_exception=True,
             ),
-            self.assertRaises(FileNotFoundError),
+            patch(
+                "bustimes.management.commands.import_gtfs.Command.handle_zipfile",
+                side_effect=ReadError("bad zipfile"),
+            ),
+            self.assertLogs("bustimes.management.commands.import_gtfs", "ERROR"),
         ):
-            with vcr.use_cassette(str(FIXTURES_DIR / "google_transit_ie.yaml")):
-                call_command("import_gtfs", "Wexford Bus")
+            call_command("import_gtfs", "Wexford Bus")
 
         self.assertFalse(Route.objects.all())

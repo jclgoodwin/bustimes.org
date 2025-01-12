@@ -47,7 +47,7 @@ def get_version(dates, url):
 def get_versions(session, url):
     versions = []
     try:
-        response = session.get(url, timeout=5)
+        response = session.get(url, timeout=61)
     except requests.RequestException as e:
         logger.warning(f"{url} {e}")
         sleep(5)

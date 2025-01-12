@@ -18,7 +18,7 @@ class VehicleFilter(FilterSet):
     reg = CharFilter(lookup_expr="iexact")
     slug = CharFilter()
     operator = CharFilter()
-    code = CharFilter("vehiclecode__code")
+    code = CharFilter("vehiclecode__code", label="Code")
 
     ordering = OrderingFilter(fields=(("id", "id"),))
 
@@ -55,7 +55,12 @@ class ServiceFilter(FilterSet):
 class OperatorFilter(FilterSet):
     class Meta:
         model = Operator
-        fields = ["name", "slug", "vehicle_mode", "parent", "region"]
+        fields = {
+            "name": ["icontains"],
+            "slug": ["exact"],
+            "vehicle_mode": ["exact"],
+            "region": ["exact"],
+        }
 
 
 class TripFilter(FilterSet):
@@ -68,17 +73,23 @@ class TripFilter(FilterSet):
 
 
 class LiveryFilter(FilterSet):
-    name = CharFilter(lookup_expr="icontains")
     vehicle__operator = CharFilter(label="Operator", distinct=True)
 
     class Meta:
         model = Livery
-        fields = ["name", "published"]
+        fields = {
+            "name": ["icontains"],
+            "published": ["exact"],
+            "id": ["exact", "in"],
+        }
 
 
 class VehicleTypeFilter(FilterSet):
-    name = CharFilter(lookup_expr="icontains")
+    vehicle__operator = CharFilter(label="Operator", distinct=True)
 
     class Meta:
         model = VehicleType
-        fields = ["name"]
+        fields = {
+            "id": ["exact", "in"],
+            "name": ["icontains"],
+        }

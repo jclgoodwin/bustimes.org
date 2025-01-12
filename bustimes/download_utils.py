@@ -16,41 +16,44 @@ def write_file(path, response):
 
 
 def download(path, url):
-    response = session.get(url, stream=True, timeout=60)
+    response = session.get(url, stream=True, timeout=61)
     assert response.ok
     write_file(path, response)
 
 
-def download_if_changed(path, url, params=None):
-    logger = logging.getLogger(__name__)
+def download_if_modified(path, source=None, url=None):
+    url = url or source.url
 
     headers = {"User-Agent": "bustimes.org"}
-    modified = True
     if path.exists():
-        headers["if-modified-since"] = http_date(os.path.getmtime(path))
-        response = session.head(url, params=params, headers=headers, timeout=10)
-        if response.status_code == HTTPStatus.NOT_MODIFIED:
-            modified = False
-
-    if modified:
-        response = session.get(
-            url, params=params, headers=headers, stream=True, timeout=10
-        )
-
-        if response.status_code == HTTPStatus.NOT_MODIFIED:
-            modified = False
-        elif not response.ok:
-            modified = False
-            logger.error(f"{response} {url}")
+        if source and source.last_modified:
+            headers["if-modified-since"] = http_date(source.last_modified.timestamp())
         else:
-            write_file(path, response)
+            headers["if-modified-since"] = http_date(os.path.getmtime(path))
 
-    last_modified = response.headers.get("last-modified") or response.headers.get(
-        "x-amz-meta-cb-modifiedtime"
-    )
-    if last_modified:
+        if source and source.etag:
+            headers["if-none-match"] = source.etag
+
+    response = session.get(url, headers=headers, stream=True, timeout=61)
+
+    modified = response.status_code != HTTPStatus.NOT_MODIFIED
+
+    if last_modified := response.headers.get("last-modified"):
         last_modified = datetime.fromtimestamp(
             parse_http_date(last_modified), timezone.utc
         )
+
+    if not response.ok:
+        logger = logging.getLogger(__name__)
+        logger.error(f"{response} {response.url}")
+    elif modified:
+        write_file(path, response)
+        if last_modified:
+            os.utime(path, (last_modified.timestamp(), last_modified.timestamp()))
+
+        if source:
+            source.last_modified = last_modified
+            source.etag = response.headers.get("etag", "")
+            source.save(update_fields=["last_modified", "etag"])
 
     return modified, last_modified

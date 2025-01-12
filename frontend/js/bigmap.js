@@ -12,7 +12,7 @@ function isWebglSupported() {
       const context = canvas.getContext("webgl2") || canvas.getContext("webgl");
       if (
         context &&
-        typeof context.getParameter == "function" &&
+        typeof context.getParameter === "function" &&
         !context.isContextLost()
       ) {
         return true;

@@ -19,12 +19,21 @@
     }
 
     function data(params) {
+        // return the query for the vehicle types/liveries API
         var query = {
             limit: 100,
-            name: params.term,
             published: true,
             offset: ((params.page | 1) - 1) * 100,
-            delay: 250
+        };
+        if (params.term) {
+            query.name__icontains = params.term;
+        } else {
+            var suggested = this.data("suggested");
+            if (suggested) {
+                query.id__in = this.data("suggested");
+            } else {
+                query.vehicle__operator = $('#id_operator').val();
+            }
         }
         return query;
     }
@@ -32,9 +41,13 @@
     function processResults(data) {
         return {
             results: data.results.map(function(item) {
+                var name = item.name;
+                if (item.noc) {
+                    name += " (" + item.noc + ")";
+                }
                 return {
-                    id: item.id,
-                    text: item.name,
+                    id: item.id || item.noc,
+                    text: name,
                     css: item.left_css
                 };
             }),
@@ -51,7 +64,8 @@
             url: '/api/vehicletypes/',
             data: data,
             processResults: processResults,
-        }
+            delay: 250
+        },
     });
 
     $('#id_colours').select2({
@@ -61,8 +75,23 @@
             url: '/api/liveries/',
             data: data,
             processResults: processResults,
+            delay: 250
         },
         templateResult: formatLivery,
         templateSelection: formatLivery,
     });
+
+
+    $('#id_operator').select2({
+        allowClear: true,
+        placeholder: "",
+        ajax: {
+            url: '/api/operators/',
+            data: data,
+            processResults: processResults,
+            delay: 250
+        },
+        minimumInputLength: 1
+    });
+
 })();

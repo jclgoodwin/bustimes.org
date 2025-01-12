@@ -1,13 +1,11 @@
 # coding=utf-8
 """Tests for live departures"""
 
-from datetime import date, datetime
+from datetime import datetime
 from unittest.mock import patch
 
-import fakeredis
 import time_machine
 import vcr
-from django.core.management import call_command
 from django.shortcuts import render
 from django.test import TestCase, override_settings
 
@@ -109,7 +107,7 @@ class LiveDeparturesTest(TestCase):
         StopUsage.objects.create(
             stop_id=cls.worcester_stop.pk, service=worcester_44, order=1
         )
-        cls.user = User.objects.create()
+        cls.user = User.objects.create(is_staff=True, is_superuser=True)
 
     def test_abstract(self):
         departures = sources.RemoteDepartures(None, ())
@@ -197,44 +195,6 @@ class LiveDeparturesTest(TestCase):
         response = self.client.get(f"/stops/{self.london_stop.pk}/debug")
         self.assertContains(response, "<code>")
 
-    @time_machine.travel(date(2018, 10, 27))
-    def test_translink_metro(self):
-        operator = Operator.objects.create(
-            noc="MET", name="Translink Metro", region_id="W"
-        )
-        stop = StopPoint.objects.create(
-            atco_code="700000001415", active=True, locality_centre=False
-        )
-        service = Service.objects.create(
-            service_code="2D_MET",
-            line_name="2D",
-            region_id="W",
-        )
-        service.operator.add(operator)
-        StopUsage.objects.create(stop=stop, service=service, order=0)
-        route = Route.objects.create(source=self.source, service=service)
-        trip = Trip.objects.create(route=route, start="0", end="1")
-        StopTime.objects.create(trip=trip, stop=stop)
-
-        with vcr.use_cassette("fixtures/vcr/translink_metro.yaml"):
-            res = self.client.get(stop.get_absolute_url())
-        self.assertNotContains(res, "<h3>")
-        self.assertContains(
-            res,
-            "<tr><td>14B</td><td>City Express</td><td>08:22</td><td></td></tr>",
-            html=True,
-        )
-        self.assertContains(
-            res,
-            "<tr><td>1A</td><td>City Centre</td><td></td><td>07:54</td></tr>",
-            html=True,
-        )
-
-    def test_translink_metro_no_services_running(self):
-        with vcr.use_cassette("fixtures/vcr/translink_metro.yaml", match_on=["body"]):
-            departures = live.AcisHorizonDepartures(StopPoint(pk="700000000748"), ())
-            self.assertEqual([], departures.get_departures())
-
     def test_edinburgh(self):
         vehicle_source = DataSource.objects.create(name="TfE")
         stop = StopPoint.objects.create(
@@ -268,100 +228,11 @@ class LiveDeparturesTest(TestCase):
         )
         Vehicle.objects.create(source=vehicle_source, code="686")
 
-        with time_machine.travel(datetime(2022, 6, 14, 12)):
-            with vcr.use_cassette(
-                "fixtures/vcr/edinburgh.yaml", decode_compressed_response=True
-            ):
-                with self.assertNumQueries(8):
-                    response = self.client.get(stop.get_absolute_url())
+        with time_machine.travel(datetime(2022, 6, 14, 12)), vcr.use_cassette(
+            "fixtures/vcr/edinburgh.yaml", decode_compressed_response=True
+        ), self.assertNumQueries(9):
+            response = self.client.get(stop.get_absolute_url())
         self.assertContains(response, '<a href="/vehicles/none-686#journeys/None">')
-
-    @override_settings(
-        CACHES={
-            "default": {
-                "BACKEND": "django.core.cache.backends.redis.RedisCache",
-                "LOCATION": "redis://",
-                "OPTIONS": {"connection_class": fakeredis.FakeConnection},
-            }
-        },
-        TFWM_OPERATORS={"National Express Coventry", "Jim's Great Buses"},
-    )
-    def test_west_midlands(self):
-        DataSource.objects.create(
-            name="TfWM",
-            settings={
-                "app_id": "",
-                "app_key": "",
-            },
-        )
-
-        stop = StopPoint.objects.create(
-            atco_code="43000342101",
-            common_name="Stone Road",
-            active=True,
-        )
-        operator = Operator.objects.create(noc="TCVW", name="National Express Coventry")
-        service = Service.objects.create(line_name="63")
-        service.operator.add(operator)
-        StopUsage.objects.create(stop=stop, service=service, order=1)
-        route = Route.objects.create(
-            line_name="63", service=service, source=self.source, start_date="2022-06-13"
-        )
-        calendar = Calendar.objects.create(
-            mon=False,
-            tue=False,
-            wed=False,
-            thu=False,
-            fri=True,
-            sat=True,
-            sun=True,
-            start_date="2022-06-13",
-        )
-        trip = Trip.objects.create(
-            calendar=calendar, route=route, destination=stop, start="0", end="24:00:00"
-        )
-        StopTime.objects.create(
-            trip=trip, sequence=0, arrival="13:19:00", departure="13:19:00", stop=stop
-        )
-
-        with time_machine.travel(datetime(2023, 1, 20, 2)):
-            with patch(
-                "bustimes.management.commands.tfwm_gtfs_rt.Command.get_routes_and_trips",
-                return_value=(
-                    {"1": {"route_short_name": "63"}},
-                    {
-                        "VJ591d74605aead85fca695a71e8b0bca8fe84fe8f": {
-                            "trip_headsign": "Shilbottle",
-                            "route_id": "1",
-                        },
-                        "VJ76f23858b8d11620f602f736c9a059e8c8b31ade": {
-                            "trip_headsign": "Shilbottle",
-                            "route_id": "1",
-                        },
-                        "VJ8f51e62e07d2b3cf3ffc3f45c1cb1b63df4e5206": {
-                            "trip_headsign": "Shilbottle",
-                            "route_id": "1",
-                        },
-                        "VJe60b412bf94622ae9e7e3eaad893379e1fa499d7": {
-                            "trip_headsign": "Shilbottle",
-                            "route_id": "1",
-                        },
-                        "VJec663a51d5a011591a75c98da19e9e056c3239f7": {
-                            "trip_headsign": "Shilbottle",
-                            "route_id": "1",
-                        },
-                    },
-                ),
-            ):
-                with vcr.use_cassette(
-                    "fixtures/vcr/tfwm.yaml", decode_compressed_response=True
-                ):
-                    with self.assertNumQueries(1):
-                        call_command("tfwm_gtfs_rt")
-
-                    with self.assertNumQueries(8):
-                        response = self.client.get(stop.get_absolute_url())
-        self.assertContains(response, "04:41")
 
     def test_blend(self):
         service = Service(line_name="X98")
@@ -455,15 +326,17 @@ class LiveDeparturesTest(TestCase):
         CACHES={"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
     )
     def test_worcestershire(self, mocked_log_vehicle_journey):
-        with time_machine.travel("Sat Feb 09 10:45:45 GMT 2019"):
-            with vcr.use_cassette("fixtures/vcr/worcester.yaml"):
-                with self.assertNumQueries(8):
-                    response = self.client.get(self.worcester_stop.get_absolute_url())
+        with (
+            time_machine.travel("Sat Feb 09 10:45:45 GMT 2019"),
+            vcr.use_cassette("fixtures/vcr/worcester.yaml"),
+        ):
+            with self.assertNumQueries(9):
+                response = self.client.get(self.worcester_stop.get_absolute_url())
 
-                self.client.force_login(self.user)
-                debug_response = self.client.get(
-                    f"{self.worcester_stop.get_absolute_url()}/debug"
-                )
+            self.client.force_login(self.user)
+            debug_response = self.client.get(
+                f"{self.worcester_stop.get_absolute_url()}/debug"
+            )
 
         trip_url = f"{self.trip.get_absolute_url()}"
 

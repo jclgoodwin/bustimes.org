@@ -8,6 +8,7 @@ import csv
 import datetime
 import logging
 import os
+from pathlib import Path
 import re
 import zipfile
 from functools import cache
@@ -96,7 +97,7 @@ def get_summary(summary: str):
 
     summary = re.sub(r"(?i)(school(day)?s)", "school", summary)
 
-    return summary
+    return summary[:255]
 
 
 def get_service_code(filename):
@@ -135,7 +136,7 @@ def get_operator_by(scheme, code):
         except Operator.DoesNotExist:
             pass
         except Operator.MultipleObjectsReturned as e:
-            logger.error(e, exc_info=True)
+            logger.exception(e)
 
 
 def get_open_data_operators():
@@ -207,14 +208,13 @@ class Command(BaseCommand):
 
         self.open_data_operators, self.incomplete_operators = get_open_data_operators()
 
-        for archive_name in options["archives"]:
-            self.handle_archive(archive_name, options["files"])
+        for archive_path in options["archives"]:
+            self.handle_archive(Path(archive_path), options["files"])
 
     def set_region(self, archive_name):
         """
         Set region_id and source based on the name of the TNDS archive, creating a DataSource if necessary
         """
-        archive_name = os.path.basename(archive_name)  # ea.zip
         region_id, _ = os.path.splitext(archive_name)  # ea
         self.region_id = region_id.upper()  # EA
 
@@ -338,7 +338,19 @@ class Command(BaseCommand):
         return outbound, inbound
 
     def mark_old_services_as_not_current(self):
-        old_routes = self.source.route_set.filter(~Q(id__in=self.route_ids))
+        old_routes = self.source.route_set.filter(
+            ~Q(id__in=self.route_ids)
+            | Q(
+                ~Exists(
+                    Route.objects.filter(
+                        Q(source=OuterRef("source")) | Q(service=OuterRef("service")),
+                        Q(end_date=None) | Q(end_date__gte=self.source.datetime),
+                        service_code=OuterRef("service_code"),
+                    )
+                ),
+                end_date__lte=self.source.datetime,
+            ),
+        )
         # do this first to prevent IntegrityError (VehicleJourney trip field)
         old_routes.update(service=None)
         for route in old_routes:
@@ -353,31 +365,34 @@ class Command(BaseCommand):
     def handle_sub_archive(self, archive, sub_archive_name):
         if sub_archive_name.startswith("__MACOSX"):
             return
-        with archive.open(sub_archive_name) as open_file:
-            with zipfile.ZipFile(open_file) as sub_archive:
-                for filename in sub_archive.namelist():
-                    if filename.startswith("__MACOSX"):
-                        continue
-                    if filename.endswith(".xml"):
-                        with sub_archive.open(filename) as open_file:
-                            self.handle_file(
-                                open_file, f"{sub_archive_name}/{filename}"
-                            )
-                    elif filename.endswith(".zip"):
-                        self.handle_sub_archive(sub_archive, filename)
 
-    def handle_archive(self, archive_name, filenames):
+        with (
+            archive.open(sub_archive_name) as open_file,
+            zipfile.ZipFile(open_file) as sub_archive,
+        ):
+            for filename in sub_archive.namelist():
+                if filename.startswith("__MACOSX"):
+                    continue
+                if filename.endswith(".xml"):
+                    with sub_archive.open(filename) as open_file:
+                        self.handle_file(open_file, f"{sub_archive_name}/{filename}")
+                elif filename.endswith(".zip"):
+                    self.handle_sub_archive(sub_archive, filename)
+
+    def handle_archive(self, archive_path: Path, filenames):
         self.service_ids = set()
         self.route_ids = set()
 
-        self.set_region(archive_name)
+        basename = archive_path.name
+
+        self.set_region(basename)
 
         self.source.datetime = datetime.datetime.fromtimestamp(
-            os.path.getmtime(archive_name), datetime.timezone.utc
+            os.path.getmtime(archive_path), datetime.timezone.utc
         )
 
         try:
-            with zipfile.ZipFile(archive_name) as archive:
+            with zipfile.ZipFile(archive_path) as archive:
                 self.set_service_descriptions(archive)
 
                 namelist = archive.namelist()
@@ -397,8 +412,8 @@ class Command(BaseCommand):
                         with archive.open(filename) as open_file:
                             self.handle_file(open_file, filename)
         except zipfile.BadZipfile:
-            with open(archive_name) as open_file:
-                self.handle_file(open_file, archive_name)
+            with archive_path.open() as open_file:
+                self.handle_file(open_file, str(archive_path))
 
         if not filenames:
             self.mark_old_services_as_not_current()
@@ -417,13 +432,13 @@ class Command(BaseCommand):
             active=False,
         ).update(active=True)
 
-        if archive_name == "NCSD.zip" or archive_name == "L.zip":
+        if basename in ("NCSD.zip", "L.zip"):
             import boto3
 
             client = boto3.client(
                 "s3", endpoint_url="https://ams3.digitaloceanspaces.com"
             )
-            client.upload_file(archive_name, "bustimes-data", "TNDS/" + archive_name)
+            client.upload_file(archive_path, "bustimes-data", "TNDS/" + basename)
 
     def finish_services(self):
         """update/create StopUsages, search_vector and geometry fields"""
@@ -864,7 +879,7 @@ class Command(BaseCommand):
                 batch_size=1000,
             )
             existing_trips = [t.id for t in existing_trips]
-            (Trip.notes.through.objects.filter(trip__in=existing_trips).delete(),)
+            Trip.notes.through.objects.filter(trip__in=existing_trips).delete()
             StopTime.objects.filter(trip__in=existing_trips).delete()
         else:
             Trip.objects.bulk_create(trips, batch_size=1000)
@@ -993,6 +1008,9 @@ class Command(BaseCommand):
 
         operators = self.get_operators(transxchange, txc_service)
 
+        if "NATX-National_Express_Ireland" in filename:
+            return
+
         if self.is_tnds():
             if self.source.name != "L":
                 if operators and all(
@@ -1102,7 +1120,7 @@ class Command(BaseCommand):
                 elif not existing:
                     # assume service code is at least unique within a TNDS region:
                     existing = self.source.service_set.filter(
-                        Q(service_code=service_code)
+                        Q(service_code=service_code, operator__in=operators.values())
                         | Q(description=description, line_name__iexact=line.line_name)
                     ).first()
             elif unique_service_code:

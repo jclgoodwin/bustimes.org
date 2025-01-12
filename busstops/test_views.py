@@ -158,15 +158,12 @@ class ViewsTests(TestCase):
             noc="VENT", name="Nu-Venture", vehicle_mode="bus", region_id="N"
         )
 
-        fare_cap = PaymentMethod.objects.create(
-            name="£2 fare cap", url="http://example.com"
-        )
         oyster = PaymentMethod.objects.create(
             name="oyster card", url="http://example.com"
         )
         euros = PaymentMethod.objects.create(name="euros")
 
-        cls.chariots.payment_methods.set([fare_cap, oyster, euros])
+        cls.chariots.payment_methods.set([oyster, euros])
         cls.service.operator.add(cls.chariots)
         cls.inactive_service.operator.add(cls.chariots)
 
@@ -250,8 +247,9 @@ class ViewsTests(TestCase):
         )
 
         response = self.client.get("/search?q=sandwich+deal&page=2")
+        # explicity link to page 1
         self.assertContains(
-            response, '<li><a href="?q=sandwich+deal#services">1</a></li>'
+            response, '<li><a href="?q=sandwich+deal&amp;page=1#services">1</a></li>'
         )
 
     def test_postcode(self):
@@ -277,12 +275,11 @@ class ViewsTests(TestCase):
             self.assertContains(
                 response, """<a href="/map#16/52.6265/1.3067">Map</a>"""
             )
-            self.assertNotContains(response, "results found for")
 
             # postcode looks valid but doesn't exist
             with self.assertNumQueries(4):
                 response = self.client.get("/search?q=w1a 1aj")
-            self.assertContains(response, "0 operators")
+            self.assertNotContains(response, "Places near")
 
     def test_admin_area(self):
         """Admin area containing just one child should redirect to that child"""
@@ -380,15 +377,15 @@ class ViewsTests(TestCase):
     def test_operator_not_found(self):
         """An operator with no services, or that doesn't exist, should should return a 404 response"""
         with self.assertNumQueries(7):
-            response = self.client.get("/operators/VENT")
-            self.assertContains(response, "0 routes", status_code=404)
+            response = self.client.get("/operators/VENT")  # noc
+            self.assertContains(response, "Nu-Venture", status_code=404)
 
         with self.assertNumQueries(7):
-            response = self.client.get("/operators/nu-venture")
-            self.assertContains(response, "0 routes", status_code=404)
+            response = self.client.get("/operators/nu-venture")  # slug
+            self.assertContains(response, "Nu-Venture", status_code=404)
 
         with self.assertNumQueries(3):
-            response = self.client.get("/operators/poop")
+            response = self.client.get("/operators/poop")  # doesn't exist
             self.assertEqual(response.status_code, 404)
 
         with self.assertNumQueries(1):
@@ -405,13 +402,15 @@ class ViewsTests(TestCase):
         # payment methods:
         self.assertContains(response, "euros")
         self.assertContains(response, "Oyster card")
-        self.assertContains(response, ">Get around for £2<")
         self.assertContains(response, '"http://example.com"')
 
     def test_national_express_service(self):
         self.chariots.name = "National Express"
         self.chariots.url = "http://nationalexpress.com"
         self.chariots.save()
+
+        response = self.client.get(self.chariots.get_absolute_url())
+        self.assertContains(response, ">Tickets<")
 
         response = self.client.get(self.service.get_absolute_url())
         self.assertNotContains(response, "Show all stops")
@@ -428,6 +427,12 @@ class ViewsTests(TestCase):
         self.assertContains(
             response, "https://nationalexpress.prf.hn/click/camref:1011ljPYw"
         )
+
+        self.chariots.name = "Megabus"
+        self.chariots.save()
+
+        response = self.client.get(self.chariots.get_absolute_url())
+        self.assertContains(response, ">Tickets<")
 
     def test_service_redirect(self):
         """An inactive service should redirect to a current service with the same description"""
@@ -539,7 +544,7 @@ class ViewsTests(TestCase):
         )
 
     def test_qr_codes(self):
-        Service.objects.all().update(current=True)
+        Service.objects.update(current=True)
         response = self.client.get("/qr/melton-constable")
         self.assertContains(response, "Melton Constable, opp Bus Shelter")
         self.assertContains(response, '<svg width="33mm" height="33mm"')

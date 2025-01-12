@@ -9,7 +9,8 @@ from . import fields
 from .models import Livery, Vehicle, VehicleFeature, VehicleType, get_text_colour
 
 
-class AutcompleteWidget(forms.Select):
+class AutocompleteWidget(forms.Select):
+    # optgroups method from the Django admin AutocompleteSelect widget
     optgroups = AutocompleteSelect.optgroups
 
     def __init__(self, field=None, attrs=None, choices=(), using=None):
@@ -34,8 +35,8 @@ class EditVehicleForm(forms.Form):
         )
 
     field_order = [
-        "spare_ticket_machine",
         "withdrawn",
+        "spare_ticket_machine",
         "fleet_number",
         "reg",
         "operator",
@@ -52,12 +53,12 @@ class EditVehicleForm(forms.Form):
     ]
     spare_ticket_machine = forms.BooleanField(
         required=False,
-        help_text="Only to be used if the ticket machine code is something like SPARE",
+        help_text="i.e. the ticket machine code is something like SPARE",
     )
     withdrawn = forms.BooleanField(
         label="Remove from list",
         required=False,
-        help_text="""Don't feel you need to "tidy up" by removing vehicles you only *think* have been withdrawn""",
+        help_text="Rarely necessary, unless you're sure this vehicle has definitely been withdrawn for good",
     )
 
     fleet_number = forms.CharField(required=False, max_length=24)
@@ -65,25 +66,24 @@ class EditVehicleForm(forms.Form):
 
     operator = forms.ModelChoiceField(
         queryset=Operator.objects,
+        widget=AutocompleteWidget(field=Vehicle.operator.field),
         required=False,
         empty_label="",
-        widget=forms.TextInput(),
-        help_text="This only needs to change for permanent transfers, not for short-term loans to another depot",
     )
 
     vehicle_type = forms.ModelChoiceField(
-        widget=AutcompleteWidget(field=Vehicle.vehicle_type.field),
+        widget=AutocompleteWidget(field=Vehicle.vehicle_type.field),
         queryset=VehicleType.objects,
         required=False,
         empty_label="",
     )
 
     colours = forms.ModelChoiceField(
-        widget=AutcompleteWidget(field=Vehicle.livery.field),
+        widget=AutocompleteWidget(field=Vehicle.livery.field),
         label="Current livery",
         queryset=Livery.objects,
         required=False,
-        help_text="""Please wait until the bus has *finished being repainted*
+        help_text="""Don't change this until the bus has *been painted*
 (<em>not</em> just "in the paint shop" or "awaiting repaint")""",
     )
     other_colour = forms.CharField(
@@ -97,6 +97,7 @@ class EditVehicleForm(forms.Form):
         label="Other branding",
         required=False,
         max_length=40,
+        help_text="If it's interesting or unusual",
     )
     name = forms.CharField(
         label="Vehicle name",
@@ -119,8 +120,6 @@ class EditVehicleForm(forms.Form):
         min_length=10,
         max_length=255,
         help_text="""Please briefly explain your changes and provide proof of your edit.
-E.g. how you *know* a vehicle has *definitely been* withdrawn or repainted,
-link to a picture to prove it. Be polite.""",
     )
     rules = forms.BooleanField(
         label="I agree that my edit is made in good faith and complies with the editing rules. I also acknowledge that abusing the vehicle editing feature may lead to a ban",
@@ -142,20 +141,53 @@ link to a picture to prove it. Be polite.""",
 
     def clean_reg(self):
         reg = self.cleaned_data["reg"].replace(".", "")
-        if self.cleaned_data["spare_ticket_machine"] and reg:
+        if self.cleaned_data.get("spare_ticket_machine") and reg:
             raise ValidationError(
                 "A spare ticket machine can\u2019t have a number plate"
             )
         return reg
 
-    def __init__(self, data, *args, user, vehicle, **kwargs):
+    def __init__(self, data, *args, user, vehicle, sibling_vehicles, **kwargs):
         super().__init__(data, *args, **kwargs)
 
+        self.fields["operator"].initial = vehicle.operator
+        self.fields["reg"].initial = vehicle.reg
+        self.fields["vehicle_type"].initial = vehicle.vehicle_type
+        self.fields["colours"].initial = vehicle.livery_id
+
+        if not vehicle.vehicle_type_id:
+            self.fields["vehicle_type"].widget.attrs["data-suggested"] = ",".join(
+                str(v.vehicle_type_id)
+                for v in sibling_vehicles
+                if v and v.vehicle_type_id
+            )
+        if not vehicle.livery_id:
+            self.fields["colours"].widget.attrs["data-suggested"] = ",".join(
+                str(v.livery_id) for v in sibling_vehicles if v and v.livery_id
+            )
+
+        self.fields["other_colour"].initial = vehicle.colours or ""
+        self.fields["features"].initial = vehicle.features.all()
+        self.fields["branding"].initial = vehicle.branding
+        self.fields["name"].initial = vehicle.name
+        self.fields["previous_reg"].initial = (
+            vehicle.data and vehicle.data.get("Previous reg") or None
+        )
+        self.fields["notes"].initial = vehicle.notes
+        self.fields["withdrawn"].initial = vehicle.withdrawn
+        self.fields["spare_ticket_machine"].initial = vehicle.is_spare_ticket_machine()
+
+        if vehicle.fleet_code:
+            self.fields["fleet_number"].initial = vehicle.fleet_code
+        elif vehicle.fleet_number is not None:
+            self.fields["fleet_number"].intial = str(vehicle.fleet_number)
+
         if vehicle.vehicle_type_id and not vehicle.is_spare_ticket_machine():
-            self.fields["spare_ticket_machine"].disabled = True
+            del self.fields["spare_ticket_machine"]
 
         if not (vehicle.livery_id and vehicle.vehicle_type_id and vehicle.reg):
             self.fields["summary"].required = False
+            self.fields["summary"].label = "Summary (optional)"
 
         if not user.is_superuser:
             if not (
@@ -189,6 +221,10 @@ link to a picture to prove it. Be polite.""",
             ):
                 del self.fields["colours"]
                 del self.fields["other_colour"]
+            if not vehicle.branding:
+                del self.fields["branding"]
+            if not vehicle.features:
+                del self.fields["features"]
 
 
 class DebuggerForm(forms.Form):
@@ -197,3 +233,7 @@ class DebuggerForm(forms.Form):
 
 class DateForm(forms.Form):
     date = forms.DateField()
+
+
+class RulesForm(forms.Form):
+    rules = forms.BooleanField(label="I've read the rules", required=True)

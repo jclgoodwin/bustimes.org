@@ -18,7 +18,7 @@ from django.utils import timezone
 
 from busstops.models import DataSource, Operator, Service
 
-from ...download_utils import download, download_if_changed
+from ...download_utils import download, download_if_modified
 from ...models import Route, TimetableDataSource
 from ...utils import log_time_taken
 from .import_transxchange import Command as TransXChangeCommand
@@ -102,17 +102,11 @@ def handle_file(command, path, qualify_filename=False):
                         # source has multiple versions (Passsenger) so add a prefix like 'gonortheast_123.zip/'
                         filename = str(Path(path) / filename)
                     try:
-                        try:
-                            command.handle_file(open_file, filename)
-                        except ET.ParseError:
-                            open_file.seek(0)
-                            content = open_file.read().decode("utf-16")
-                            fake_file = StringIO(content)
-                            command.handle_file(fake_file, filename)
+                        command.handle_file(open_file, filename)
                     except (ET.ParseError, ValueError, AttributeError, DataError) as e:
                         if filename.endswith(".xml"):
                             logger.info(filename)
-                            logger.error(e, exc_info=True)
+                            logger.exception(e)
     except zipfile.BadZipFile:
         # plain XML
         with full_path.open() as open_file:
@@ -123,7 +117,7 @@ def handle_file(command, path, qualify_filename=False):
             try:
                 command.handle_file(open_file, filename)
             except (AttributeError, DataError) as e:
-                logger.error(e, exc_info=True)
+                logger.exception(e)
 
 
 def get_bus_open_data_paramses(sources, api_key):
@@ -332,7 +326,7 @@ def ticketer(specific_operator=None):
             sleep(2)
             need_to_sleep = False
 
-        modified, last_modified = download_if_changed(path, source.url)
+        modified, last_modified = download_if_modified(path, command.source)
 
         if (
             specific_operator
@@ -430,7 +424,7 @@ def stagecoach(specific_operator=None):
             {"name": source.name}, url=source.url
         )
 
-        modified, last_modified = download_if_changed(path, source.url)
+        modified, last_modified = download_if_modified(path, command.source)
         sha1 = get_sha1(path)
 
         if command.source.datetime != last_modified:

@@ -2,8 +2,6 @@
 
 {% block title %}Edit details – {{ vehicle }} – bustimes.org{% endblock %}
 
-{% block fuse %}{% endblock %}
-
 {% block bodyclass %}narrow{% endblock %}
 
 {% block content %}
@@ -18,27 +16,16 @@
         <p>Details updated, and recorded in <a href="/vehicles/edits?status=approved">the changelog for all to see</a>:</p>
     {% endif %}
 
-    <p>
-        {% include "vehicle_revision.html" %}
-    </p>
-
+    {% include "vehicle_revision_changes.html" %}
 
 {% else %}
 
-    <h1>Edit vehicle details</h1>
-
     {% if pending_edits %}
-        <div class="message">
-            <p>❗ There’s already a pending edit for this vehicle</p>
-
-            {% include 'vehicle_revisions.html' with revisions=pending_edits %}
-        </div>
+        <p class="message">❗ This vehicle has already been edited recently:</p>
+        {% include 'vehicle_revisions.html' with revisions=pending_edits %}
     {% endif %}
 
-    <p>Please <a href="/rules">read the guidelines</a> first</p>
-
-    <p>ID:<br>
-    <code>{{ vehicle.id }}</code> <button class="button" onclick="javascript:navigator.clipboard.writeText('{{ vehicle.id }}');this.blur()">Copy</button></p>
+    <h1>Edit vehicle details</h1>
 
     <p>
         Ticket machine code:<br>
@@ -74,4 +61,4 @@
     <p class="next"><a href="{{ next.get_edit_url }}">{{ next }} &rarr;</a></p>
 {% endif %}
 
-{% endblock %}
+{% endblock content %}

@@ -1,12 +1,16 @@
 def ad(request):
+    path = request.path
     if (
-        request.path.endswith("/edit")
-        or request.path.startswith("/accounts/")
-        or request.path.startswith("/fares/")
+        "/edit" in path
+        or path.endswith("/debug")
+        or path.startswith("/accounts/")
+        or path.startswith("/fares/")
+        or path.startswith("/sources/")
+        or "/tickets" in path
     ):
         return {"ad": False}
 
-    if request.headers.get("cf-connecting-ip", "").startswith("138.38.229."):
-        return {"ad": not request.path.startswith("/stops/")}
+    if getattr(request.user, "trusted", None):
+        return {"ad": False}
 
     return {"ad": True}

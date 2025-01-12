@@ -5,11 +5,9 @@
 {% load static %}
 
 {% block footer %}
-    <script>
-        window.STOPS = {{ stops_json }};
-        {% if object %}
-            window.VEHICLE_ID = {{ object.id }};
-        {% endif %}
-    </script>
+    {{ stops_data|json_script:"trip-data" }}
+    {% if object %}
+        <script>window.VEHICLE_ID = {{ object.id }};</script>
+    {% endif %}
     <script src="{% static 'dist/js/app.js' %}"></script>
-{% endblock %}
+{% endblock footer %}

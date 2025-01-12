@@ -11,46 +11,70 @@ interactions:
       User-Agent:
       - bustimes.org
     method: GET
-    uri: https://bustimes.org/static/js/global.js
+    uri: https://bustimes.org/favicon.ico
   response:
     body:
       string: !!binary |
-        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
+        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
+        AAA=
     headers:
-      Cache-Control:
-      - max-age=2592000
+      Age:
+      - '23'
+      CF-Cache-Status:
+      - HIT
+      CF-RAY:
+      - 8c48df2e2922941e-LHR
       Connection:
       - keep-alive
       Content-Encoding:
       - gzip
       Content-Type:
-      - application/javascript
+      - image/x-icon
       Date:
-      - Sat, 04 Jul 2020 14:26:37 GMT
-      ETag:
-      - W/"5ed60146-7a9"
-      Expires:
-      - Mon, 03 Aug 2020 14:26:37 GMT
-      Last-Modified:
-      - Tue, 02 Jun 2020 07:35:34 GMT
+      - Tue, 17 Sep 2024 11:49:14 GMT
+      NEL:
+      - '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
+      Report-To:
+      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v4?s=GxVDie6D9PBhwJWAlP1lrbRh2OWOOj%2FqznapeuwVg3DAgMzwt%2F2TKZndYPF1%2FxROYqPP957GLdj5hAk13FGSVzK6WjgofBOfVBLhehtW3VubTGUALTHk7T9M5uBSdaOAJ3VwJr0L8wfJSwQ%3D"}],"group":"cf-nel","max_age":604800}'
       Server:
-      - nginx
+      - cloudflare
       Transfer-Encoding:
       - chunked
+      Vary:
+      - Accept-Encoding
+      access-control-allow-origin:
+      - '*'
+      alt-svc:
+      - h3=":443"; ma=86400
+      cache-control:
+      - max-age=60, public
+      cross-origin-opener-policy:
+      - same-origin
+      etag:
+      - W/"66daf156-37b"
+      last-modified:
+      - Fri, 06 Sep 2024 13:11:02 GMT
+      referrer-policy:
+      - origin-when-cross-origin
+      strict-transport-security:
+      - max-age=2592000
+      x-content-type-options:
+      - nosniff
     status:
       code: 200
       message: OK
@@ -66,34 +90,50 @@ interactions:
       User-Agent:
       - bustimes.org
       if-modified-since:
-      - Sat, 04 Jul 2020 13:55:09 GMT
-    method: HEAD
-    uri: https://bustimes.org/static/js/global.js
+      - Fri, 06 Sep 2024 13:11:02 GMT
+      if-none-match:
+      - W/"66daf156-37b"
+    method: GET
+    uri: https://bustimes.org/favicon.ico
   response:
     body:
       string: ''
     headers:
-      Cache-Control:
-      - max-age=2592000
+      Age:
+      - '23'
+      CF-Cache-Status:
+      - HIT
+      CF-RAY:
+      - 8c48df2e597a941e-LHR
       Connection:
       - keep-alive
-      Content-Encoding:
-      - gzip
-      Content-Type:
-      - application/javascript
       Date:
-      - Sat, 04 Jul 2020 14:26:38 GMT
-      ETag:
-      - W/"5ed60146-7a9"
-      Expires:
-      - Mon, 03 Aug 2020 14:26:38 GMT
-      Last-Modified:
-      - Tue, 02 Jun 2020 07:35:34 GMT
+      - Tue, 17 Sep 2024 11:49:14 GMT
       Server:
-      - nginx
+      - cloudflare
+      Vary:
+      - Accept-Encoding
+      access-control-allow-origin:
+      - '*'
+      alt-svc:
+      - h3=":443"; ma=86400
+      cache-control:
+      - max-age=60, public
+      cross-origin-opener-policy:
+      - same-origin
+      etag:
+      - '"66daf156-37b"'
+      last-modified:
+      - Fri, 06 Sep 2024 13:11:02 GMT
+      referrer-policy:
+      - origin-when-cross-origin
+      strict-transport-security:
+      - max-age=2592000
+      x-content-type-options:
+      - nosniff
     status:
-      code: 200
-      message: OK
+      code: 304
+      message: Not Modified
 - request:
     body: null
     headers:
@@ -106,49 +146,47 @@ interactions:
       User-Agent:
       - bustimes.org
       if-modified-since:
-      - Sat, 04 Jul 2020 13:55:09 GMT
+      - Fri, 06 Sep 2024 13:11:02 GMT
     method: GET
-    uri: https://bustimes.org/static/js/global.js
+    uri: https://bustimes.org/favicon.ico
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAA4VV32/TMBB+719hXkiKqNOOgcSmIsE0CSR+SSDxgBBy41vrzbWD7bYLo/87d7GT
-        pl0HeagSn++7u+++uxZPrr1WJrCZsxsP7owFt4InxWCgrlhuxFrNRbCOo2mtSvhm3Q049vgx07YU
-        QVnDK2eDLa1m0+mUZYsQKn+WDdndgOGzUUbaDRdSXq7BhPfKBzDg8kxbIbOn7GplSkLJWwdy+kdk
-        XloTnNUaXN+DvB7ItefBK+vDB/BezCG/y0q7XAojszOWBaeWF6JcgM+2w/Mmc4LcMtAeUil0QM9D
-        cRzMqTqsrUhkbRqy+LXHQiMdESH++tJWgLGLrItHhu2QI7HlIj9KTQtQFMzAGjuxRIIP/Hv5Nxaq
-        aDsYdICsI3stHCutvVGQWGFTJm25WmKr+BzCpQZ6fVO/kznSRRdHy8hflmiiXu1DoDY6jGjhmCPc
-        frrKMw9gfsbDnwloWiPpw0Y8o0m/p3uo3IdaA5fKV1rUmGY2QwHeZLtaD2LSlQeinbOluB2hBqbP
-        Js+fvRiPx+esEmExLRIckkU8B1f32kaFkub1FxwHdG5noP3mCyXhtfT9EgjFQVg5s8tzG3vCmiaz
-        HJyze1K+39mUDjVLSH+8Rf5NfaGF9x/FEvIMr83qubVzDf0+PcJzrsHMw6KfZT/DmF03tR0MRs2P
-        nP75w77/SEq4b+YOfq3Ah4/WfAbnrRFa/QaJJCHcJFJCVfnSqSr0CysdiABJfiib5kJbSvziUgTh
-        IeBuudAKVYr+WSlG1Wo2Oj09GZ9MXk4mp5MX+DpOfU2OwtempNvNy77Nu8YSt1hRVNhoIU945BL9
-        pEpbD5dHshbXvugRTuMeS+sUObOy5qKqwMiLhdIyj4kgb40WsOMkrsTfO4M7xEOzFT/NaJPsVh3e
-        pIc4s8mEdRjYsGNe3cDnyI5T0EkzwRBUsvAr6y5x/+271K1Keg7kRNmSY82V3wU2cxqJR9EQhMP9
-        gYOPy/7t1w/vH0AitCO6qVZ+kd+1m/ggepRo7/DgXu8zTQ4Wx3IiTSFbuxlgIxQhnr2aMtwAio1Q
-        lG2elBiGoEpbpg9MdKM18fSSI/h31Q5Ewrj3J/LfglvHuCkG22GOUvkLC1tn16kHAAA=
+      string: ''
     headers:
-      Cache-Control:
-      - max-age=2592000
+      Age:
+      - '23'
+      CF-Cache-Status:
+      - HIT
+      CF-RAY:
+      - 8c48df2e597a941e-LHR
       Connection:
       - keep-alive
-      Content-Encoding:
-      - gzip
-      Content-Type:
-      - application/javascript
       Date:
-      - Sat, 04 Jul 2020 14:26:38 GMT
-      ETag:
-      - W/"5ed60146-7a9"
-      Expires:
-      - Mon, 03 Aug 2020 14:26:38 GMT
-      Last-Modified:
-      - Tue, 02 Jun 2020 07:35:34 GMT
+      - Tue, 17 Sep 2024 11:49:14 GMT
       Server:
-      - nginx
-      Transfer-Encoding:
-      - chunked
+      - cloudflare
+      Vary:
+      - Accept-Encoding
+      access-control-allow-origin:
+      - '*'
+      alt-svc:
+      - h3=":443"; ma=86400
+      cache-control:
+      - max-age=60, public
+      cross-origin-opener-policy:
+      - same-origin
+      etag:
+      - '"66daf156-37b"'
+      last-modified:
+      - Fri, 06 Sep 2024 13:11:02 GMT
+      referrer-policy:
+      - origin-when-cross-origin
+      strict-transport-security:
+      - max-age=2592000
+      x-content-type-options:
+      - nosniff
     status:
-      code: 200
-      message: OK
+      code: 304
+      message: Not Modified
+
 version: 1

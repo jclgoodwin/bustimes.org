@@ -1,0 +1,67 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.3
+    method: GET
+    uri: https://data.bus-data.dft.gov.uk/avl/download/sirivm_tfl
+  response:
+    body:
+      string: !!binary |
+        UEsDBBQAAAAIALaCMVmy7XyJQAEAAJwCAAAMAAAAc2lyaV90ZmwueG1srZIxb8IwEIX/CspaOXYc
+        CG1kshR1AgmRtOrqOAexmtipbQj8+zpRBwqlU7eT73t379lmuTRycgRjpVaLgIYkmJzaRtlFUDvX
+        pRj3fR9aD4Xa7MPDBx7qbyY9WfmD6+OBwpSQCL+vV7mooeVIKuu4EuBVVqZ2PFxpwd248o81k3u9
+        cQT2ZvHJViMa+iLIWA7mKAUsoZE+0zljW7CdVhYK2YJ30XYZJXSKyBOK5kU0S2mUxo9hQukDISkh
+        DN8K2Mbo6iDAbGGXLaHjxrWg3Is2heHK08YxfMmwN6ilaGCtlXTaSLX/Xz9b+Dz4eg3W8j0MG0VM
+        EqCzHaJlVaIpj0rEy2mCRFKVVcwFmSd0GHWtY2+8kdWrcrK59pFc+bggWV77zH7SRlsrywaezz5t
+        tilmOcO/97z+/p3gm1fDw6/MvgBQSwECFAMUAAAACAC2gjFZsu18iUABAACcAgAADAAAAAAAAAAA
+        AAAAgAEAAAAAc2lyaV90ZmwueG1sUEsFBgAAAAABAAEAOgAAAGoBAAAAAA==
+    headers:
+      Connection:
+      - keep-alive
+      Content-Disposition:
+      - attachment; filename="sirivm_tfl_2024-09-17_152144.zip"
+      Content-Length:
+      - '442'
+      Content-Security-Policy:
+      - 'worker-src ''self'' blob:; connect-src ''self'' https://*.mapbox.com http://*.localhost:8000
+        https://*.bus-data.dft.gov.uk; frame-ancestors ''self''; img-src ''self''
+        data: blob:; object-src ''none''; style-src ''self'' ''unsafe-inline''; default-src
+        ''self''; font-src ''self''; script-src ''self'' ''unsafe-inline'' https://www.googletagmanager.com
+        https://ajax.googleapis.com/ajax/libs/jquery'
+      Content-Type:
+      - application/zip
+      Cross-Origin-Opener-Policy:
+      - same-origin
+      Date:
+      - Tue, 17 Sep 2024 15:21:48 GMT
+      Permissions-Policy:
+      - geolocation=(self), microphone=(self), camera=(self)
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - gunicorn
+      Set-Cookie:
+      - AWSALB=77eKcEQaM9ADx5M1QUP9KEwM647Kf0gREqKG5Cxq6jtgIleD4cy9ydTkRev8WHFqvE2CYy2ClvbmNT+suE7XNkqKV7MojIxQq/F+fVBwD5sQqOYRXD8YFeWNq6qb;
+        Expires=Tue, 24 Sep 2024 15:21:48 GMT; Path=/
+      - AWSALBCORS=77eKcEQaM9ADx5M1QUP9KEwM647Kf0gREqKG5Cxq6jtgIleD4cy9ydTkRev8WHFqvE2CYy2ClvbmNT+suE7XNkqKV7MojIxQq/F+fVBwD5sQqOYRXD8YFeWNq6qb;
+        Expires=Tue, 24 Sep 2024 15:21:48 GMT; Path=/; SameSite=None; Secure
+      Strict-Transport-Security:
+      - max-age=31536000
+      Vary:
+      - Cookie
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+version: 1

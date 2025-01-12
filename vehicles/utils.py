@@ -1,5 +1,4 @@
 import math
-import re
 
 from django.core.cache import caches
 from django.core.cache.backends.base import InvalidCacheBackendError
@@ -30,17 +29,6 @@ def calculate_bearing(a, b):
         bearing_degrees += 360
 
     return int(round(bearing_degrees))
-
-
-def match_reg(string):
-    if "," in string:
-        return all(match_reg(reg) for reg in string.split(","))
-    return re.match(
-        "(^[A-Z]{2}[0-9]{2} ?[A-Z]{3}$)|(^[A-Z][0-9]{1,3}[A-Z]{3}$)"
-        "|(^[A-Z]{3}[0-9]{1,3}[A-Z]$)|(^[0-9]{1,4}[A-Z]{1,2}$)|(^[0-9]{1,3}[A-Z]{1,3}$)"
-        "|(^[A-Z]{1,2}[0-9]{1,4}$)|(^[A-Z]{1,3}[0-9]{1,3}$)|(^[A-Z]{1,3}[0-9]{1,4}$)",
-        string,
-    )
 
 
 def get_revision(vehicle, data):
@@ -163,8 +151,10 @@ def apply_revision(revision, features=None):
 
         elif field == "fleet number":
             vehicle.fleet_code = to_value
-            if vehicle.fleet_code.isdigit():
-                vehicle.fleet_number = int(vehicle.fleet_code)
+            if "/" in to_value:
+                to_value = to_value.split("/", 1)[1]
+            if to_value.isdigit():
+                vehicle.fleet_number = int(to_value)
             else:
                 vehicle.fleet_number = None
             changed_fields.append("fleet_number")

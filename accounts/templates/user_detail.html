@@ -4,28 +4,30 @@
 
 {% block canonical %}<meta name="robots" content="noindex,noarchive">{% endblock %}
 
-{% block fuse %}{% endblock %}
-
 {% block bodyclass %}narrow{% endblock %}
 
 {% block content %}
 
     <h1>
         {% if object.trusted is False %}<del>{% endif %}
-        User {{ object.id }}
+        User {{ object }}
         {% if object.trusted is False %}</del>{% endif %}
     </h1>
+
+    {% if request.user.is_superuser %}
+        <p><a href="{% url 'admin:accounts_user_change' object.id %}">✎</a></p>
+    {% endif %}
 
     {% if object == user %}
         <p>That's you!</p>
     {% endif %}
 
-    {% if object.score %}
-        <dl>
-            <dt>Score</dt>
-            <dd>{{ object.score }}</dd>
-        </dl>
-    {% endif %}
+    <ul class="horizontal">
+        <li><a href="/vehicles/edits?user={{ object.id }}">{{ object.total_count }} edit{{ object.total_count|pluralize }}</a></li>
+        <li><a href="/vehicles/edits?user={{ object.id }}&amp;status=pending">{{ object.pending_count }} pending</a></li>
+        <li><a href="/vehicles/edits?user={{ object.id }}&amp;status=approved">{{ object.approved_count }} approved</a></li>
+        <li><a href="/vehicles/edits?user={{ object.id }}&amp;status=disapproved">{{ object.disapproved_count }} disapproved</a></li>
+    </ul>
 
     {% if form %}
         <form method="POST" autocomplete="off">
@@ -52,12 +54,4 @@
         <p>{{ ou.operator }}</p>
     {% endfor %}
 
-    <h2>Activity</h2>
-
-    {% include 'pagination.html' with page=revisions %}
-
-    {% include 'vehicle_revisions.html' with revisions=revisions by_user=object %}
-
-    {% include 'pagination.html' with page=revisions %}
-
-{% endblock %}
+{% endblock content %}

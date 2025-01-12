@@ -1,3 +1,6 @@
+[project]
+name = "bustimes.org"
+
 [tool.poetry]
 name = "bustimes.org"
 version = "0.1.0"
@@ -6,8 +9,7 @@ authors = ["Josh Goodwin <j@joshuagoodw.in>"]
 package-mode = false
 
 [tool.poetry.dependencies]
-python = "<3.13,>=3.11"
-asgiref = "^3.4.1"
+python = "<3.14,>=3.11"
 beautifulsoup4 = "^4.12.1"
 boto3 = "^1.18.42"
 ciso8601 = "^2.2.0"
@@ -22,43 +24,45 @@ django-simple-history = "^3.0.0"
 django-sql-utils = "^0.7.0"
 django-template-minifier = "^1.1.0"
 gtfs-realtime-bindings = "^1.0.0"
-gunicorn = "^22.0.0"
+gunicorn = "^23.0.0"
 haversine = "^2.5.1"
 huey = "^2.4.3"
-numpy = "^1.26"
-polyline = "^2.0.0"
 protobuf = "^5.26.0"
 psycopg = "^3.1.8"
 PyYAML = "^6.0.0"
 redis = "^5.0.0"
 sentry-sdk = {extras = ["django"], version = "^2.4.0"}
-Shapely = "^2.0.1"
-time-machine = "^2.4.0"
 titlecase = "^2.3"
 uk-postcode-utils = "^1.1"
 webcolors = "^24.6.0"
 whitenoise = "^6.2.0"
-xmltodict = "^0.13.0"
+xmltodict = "^0.14.1"
 django-cors-headers = "^4.2.0"
 pygments = "^2.15.1"
 django-turnstile = "^0.1.0"
-tenacity = "^8.2.2"
-requests-toolbelt = "^1.0.0"
-gtfs-kit = "^6.0.0"
-websockets = "^12.0"
+tenacity = "^9.0.0"
 lxml = "^5.0.0"
-qrcode = "^7.4.2"
+qrcode = "^8.0"
 lightningcss = "^0.2.0"
+jinja2 = "^3.1.4"
+requests = "^2.32.3"
+numpy = "^1.26"
 
 [tool.poetry.group.test]
 optional = true
 
 [tool.poetry.group.test.dependencies]
-vcrpy = "^6.0.0"
-requests-cache = "^1.1.0"
-django-coverage-plugin = "^3.0.0"
+asgiref = "^3.4.1"
+Shapely = "^2.0.1"
+gtfs-kit = "^10.0.0"
+websockets = "^14.0"
+requests-toolbelt = "^1.0.0"
+time-machine = "^2.4.0"
+vcrpy = "^7.0.0"
 django-slowtests = "^1.1.1"
 fakeredis = "^2.12.1"
+tblib = "^3.0.0"
+coverage = "^7.6.1"
 
 [tool.poetry.group.dev]
 optional = true
@@ -69,7 +73,6 @@ django-debug-toolbar-force = "^0.2"
 django-debug-toolbar-template-profiler = "^2.1.0"
 ipdb = "^0.13.9"
 ipython = "^8.5.0"
-pre-commit = "^3.3.3"
 uritemplate = "^4.1.1"
 
 [build-system]
@@ -77,5 +80,11 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.coverage.run]
-#plugins = ["django_coverage_plugin"]
+relative_files = true
 omit =  ["*/migrations/*"]
+
+[tool.ruff]
+unsafe-fixes = true
+
+[tool.ruff.lint]
+select = ["SIM117", "F401"]

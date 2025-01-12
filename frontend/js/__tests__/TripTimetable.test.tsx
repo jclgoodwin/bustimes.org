@@ -1,7 +1,7 @@
 import React from "react";
 import renderer from "react-test-renderer";
-import TripTimetable, { Trip } from "../TripTimetable";
-import { Vehicle } from "../VehicleMarker";
+import TripTimetable, { type Trip } from "../TripTimetable";
+import type { Vehicle } from "../VehicleMarker";
 
 const trip: Trip = {
   id: 273819070,

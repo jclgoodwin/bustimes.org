@@ -93,9 +93,11 @@ class Command(ImportLiveVehiclesCommand):
         if not operator:
             return journey
 
-        latest_journey = vehicle.latest_journey
-
-        if latest_journey and latest_journey.route_name == journey.route_name:
+        if (latest_journey := vehicle.latest_journey) and (
+            latest_journey.route_name,
+            latest_journey.direction,
+            latest_journey.destination,
+        ) == (journey.route_name, journey.direction, journey.destination):
             journey.service_id = latest_journey.service_id
         else:
             services = Service.objects.filter(

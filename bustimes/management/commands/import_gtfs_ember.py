@@ -4,23 +4,20 @@ from pathlib import Path
 import gtfs_kit
 from django.conf import settings
 
-# from django.contrib.gis.geos import GEOSGeometry, LineString, MultiLineString
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from busstops.models import DataSource, Operator, Service, StopPoint
 
-from ...download_utils import download_if_changed
+from ...download_utils import download_if_modified
 from ...models import Calendar, CalendarDate, Route, StopTime, Trip
 
 logger = logging.getLogger(__name__)
 
 
 def get_calendars(feed) -> dict:
-    calendars = {}
-
-    for i, row in feed.calendar.iterrows():
-        calendars[row.service_id] = Calendar(
+    calendars = {
+        row.service_id: Calendar(
             mon=row.monday,
             tue=row.tuesday,
             wed=row.wednesday,
@@ -31,20 +28,39 @@ def get_calendars(feed) -> dict:
             start_date=row.start_date,
             end_date=row.end_date,
         )
-    Calendar.objects.bulk_create(calendars.values())
+        for row in feed.calendar.itertuples()
+    }
 
     calendar_dates = []
-    for i, row in feed.calendar_dates.iterrows():
-        operation = row["exception_type"] == 1  # '1' = operates, '2' = does not operate
-        calendar_dates.append(
-            CalendarDate(
-                calendar=calendars[row.service_id],
-                start_date=row.date,
-                end_date=row.date,
-                operation=operation,
-                special=operation,  # additional date of operation
+
+    if feed.calendar_dates is not None:
+        for row in feed.calendar_dates.itertuples():
+            operation = row.exception_type == 1
+            # 1: operates, 2: does not operate
+
+            if (calendar := calendars.get(row.service_id)) is None:
+                calendar = Calendar(
+                    mon=False,
+                    tue=False,
+                    wed=False,
+                    thu=False,
+                    fri=False,
+                    sat=False,
+                    sun=False,
+                    start_date=row.date,  # dummy date
+                )
+                calendars[row.service_id] = calendar
+            calendar_dates.append(
+                CalendarDate(
+                    calendar=calendar,
+                    start_date=row.date,
+                    end_date=row.date,
+                    operation=operation,
+                    special=operation,  # additional date of operation
+                )
             )
-        )
+
+    Calendar.objects.bulk_create(calendars.values())
     CalendarDate.objects.bulk_create(calendar_dates)
 
     return calendars
@@ -54,15 +70,15 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         path = settings.DATA_DIR / Path("ember_gtfs.zip")
 
-        url = "https://api.ember.to/v1/gtfs/static/"
+        source = DataSource.objects.get(name="Ember")
+        source.url = "https://api.ember.to/v1/gtfs/static/"
 
-        modified, last_modified = download_if_changed(path, url)
+        modified, last_modified = download_if_modified(path, source)
         assert modified
 
         feed = gtfs_kit.read_feed(path, dist_units="km")
 
         operator = Operator.objects.get(name="Ember")
-        source = DataSource.objects.get(name="Ember")
 
         existing_services = {
             service.line_name: service for service in operator.service_set.all()
@@ -74,7 +90,7 @@ class Command(BaseCommand):
 
         calendars = get_calendars(feed)
 
-        for i, row in gtfs_kit.routes.geometrize_routes(feed).iterrows():
+        for row in gtfs_kit.routes.get_routes(feed, as_gdf=True).itertuples():
             if row.route_id in existing_services:
                 service = existing_services[row.route_id]
             else:
@@ -91,8 +107,8 @@ class Command(BaseCommand):
             service.description = route.description = row.route_long_name
             service.current = True
             service.colour_id = operator.colour_id
-            # service.region_id = "S"
-            service.geometry = row.geometry.wkt
+            if row.geometry:
+                service.geometry = row.geometry.wkt
 
             service.save()
             service.operator.add(operator)
@@ -106,7 +122,7 @@ class Command(BaseCommand):
             trip.vehicle_journey_code: trip for trip in operator.trip_set.all()
         }
         trips = {}
-        for i, row in feed.trips.iterrows():
+        for row in feed.trips.itertuples():
             trip = Trip(
                 route=existing_routes[row.route_id],
                 calendar=calendars[row.service_id],
@@ -121,7 +137,7 @@ class Command(BaseCommand):
         del existing_trips
 
         stop_times = []
-        for i, row in feed.stop_times.iterrows():
+        for row in feed.stop_times.itertuples():
             trip = trips[row.trip_id]
             if not trip.start:
                 trip.start = row.arrival_time

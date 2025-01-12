@@ -44,7 +44,7 @@ class Command(BaseCommand):
                     pprint.pprint(resource)
 
                     url = resource["url"]
-                    path = Path(settings.DATA_DIR) / Path(url).name
+                    path = Path(settings.DATA_DIR) / f"{source.id}.zip"
                     download(path, url)
 
                     command = ImportAtcoCif()

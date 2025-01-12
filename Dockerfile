@@ -6,25 +6,24 @@ COPY package.json package-lock.json /app/
 RUN npm install
 
 COPY frontend /app/frontend
-COPY .eslintrc.js tsconfig.json /app/
+COPY tsconfig.json /app/
 RUN npm run lint && npm run build
 
 
 FROM python:3.12
 
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PIP_NO_CACHE_DIR=off PIP_DISABLE_PIP_VERSION_CHECK=on
 
-# install GDAL (https://docs.djangoproject.com/en/4.1/ref/contrib/gis/install/geolibs/)
+# install GDAL (https://docs.djangoproject.com/en/5.1/ref/contrib/gis/install/geolibs/)
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends curl gdal-bin libgdal-dev libxslt1.1 && \
+    apt-get install -y --no-install-recommends binutils libproj-dev gdal-bin && \
     rm -rf /var/lib/apt && \
     rm -rf /var/lib/dpkg/info/*
 
 ENV VIRTUAL_ENV=/opt/poetry
 RUN python -m venv $VIRTUAL_ENV
 ENV PATH=$VIRTUAL_ENV/bin:$PATH
-RUN $VIRTUAL_ENV/bin/pip install poetry==1.8.3
+RUN $VIRTUAL_ENV/bin/pip install poetry==2.0.0
 
 WORKDIR /app/
 
@@ -36,8 +35,8 @@ COPY --from=0 /app/node_modules/reqwest/reqwest.min.js /app/node_modules/reqwest
 COPY --from=0 /app/busstops/static /app/busstops/static
 COPY . /app/
 
-ENV PORT=8000 SECRET_KEY=f STATIC_ROOT=/staticfiles
-RUN ./manage.py collectstatic --noinput
+ENV PORT=8000 STATIC_ROOT=/staticfiles
+RUN SECRET_KEY= ./manage.py collectstatic --noinput
 
 EXPOSE 8000
 ENTRYPOINT ["gunicorn", "buses.wsgi"]

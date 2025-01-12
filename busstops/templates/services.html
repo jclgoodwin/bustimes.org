@@ -7,8 +7,14 @@
 }
 {% endfor %}
 </style>
-<ul class="services">
 {% for service in services %}
+{% ifchanged service.group %}
+    {% if not forloop.first %}
+        </ul>
+        <h2>{{ service.group }}</h2>
+    {% endif %}
+    <ul class="services">
+{% endifchanged %}
     <li>
         <a href="{{ service.get_absolute_url }}">
             {% for line_name in service.get_line_names %}

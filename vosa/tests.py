@@ -24,24 +24,47 @@ class VosaTest(TestCase):
             username="Roger", is_staff=True, is_superuser=True
         )
 
+        Licence.objects.create(
+            traffic_area="F",
+            licence_number="PF0000705",
+            address="10 King Road, Ipswich",
+            discs=0,
+            authorised_discs=0,
+        )
+        Licence.objects.create(
+            traffic_area="F",
+            licence_number="PF0000102",
+            discs=0,
+            authorised_discs=0,
+        )
+
     @override_settings(DATA_DIR=Path(__file__).resolve().parent / "fixtures")
     def test(self):
         with mock.patch(
-            "vosa.management.commands.import_vosa.download_if_changed",
+            "vosa.management.commands.import_vosa.download_utils.download_if_modified",
             return_value=(True, None),
         ):
-            with self.assertNumQueries(6):
+            with self.assertNumQueries(18):
                 call_command("import_vosa", "F")
 
-            with self.assertNumQueries(6):
+            with self.assertNumQueries(8):
                 call_command("import_vosa", "F")
 
         # multiple trading names
         licence = Licence.objects.get(licence_number="PF0000705")
         self.assertEqual(
             licence.trading_name,
-            "R O SIMONDS\nSimonds Coach& Travel\nSimonds Countrylink",
+            """R O SIMONDS
+Simonds Coach& Travel
+Simonds Countrylink""",
         )
+        # updated other details
+        self.assertEqual(
+            licence.address,
+            "Roswald House, Simonds, Oak Drive, DISS, IP22 4GX, GB",
+        )
+        self.assertEqual(licence.discs, 44)
+        self.assertEqual(licence.authorised_discs, 50)
 
         # linked operator
         self.operator.licences.add(licence)
@@ -95,3 +118,5 @@ class VosaTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get("/admin/vosa/licence/")
         self.assertContains(response, ">AINS<")
+
+        self.assertEqual(Licence.objects.count(), 3)

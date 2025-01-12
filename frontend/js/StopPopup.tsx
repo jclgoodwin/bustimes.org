@@ -1,4 +1,4 @@
-import React from "react";
+import React, { type ReactElement } from "react";
 import { Popup } from "react-map-gl/maplibre";
 
 export type Stop = {
@@ -18,7 +18,7 @@ type StopPopupProps = {
 };
 
 export default function StopPopup({ item, onClose }: StopPopupProps) {
-  let name;
+  let name: ReactElement;
 
   if (item.properties.url) {
     name = (

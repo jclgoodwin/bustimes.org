@@ -40,6 +40,7 @@ class Command(ImportLiveVehiclesCommand):
     def get_journey(self, item, vehicle):
         journey = VehicleJourney()
         journey.route_name = item["line"]
+        journey.direction = item["direction"][:8]
         return journey
 
     def create_vehicle_location(self, item):

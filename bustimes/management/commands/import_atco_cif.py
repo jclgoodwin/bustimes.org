@@ -3,10 +3,10 @@ import zipfile
 from datetime import date, datetime, timedelta, timezone
 from functools import cache
 
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import GEOSGeometry
 from django.core.management.base import BaseCommand
 
-from busstops.models import DataSource, Service, StopPoint
+from busstops.models import DataSource, Service, StopPoint, Operator
 
 from ...models import (
     BankHoliday,
@@ -20,6 +20,21 @@ from ...models import (
 )
 
 
+@cache
+def get_operator(code, source):
+    if code:
+        try:
+            return Operator.objects.get(noc=code)
+        except Operator.DoesNotExist as e:
+            pass
+        try:
+            return Operator.objects.get(
+                operatorcode__code=code, operatorcode__source=source
+            )
+        except (Operator.DoesNotExist, Operator.MultipleObjectsReturned) as e:
+            print(e, code)
+
+
 def parse_date(string):
     if string == b"99999999":
         return
@@ -27,6 +42,11 @@ def parse_date(string):
         return date(year=int(string[:4]), month=int(string[4:6]), day=int(string[6:]))
     except ValueError:
         print(string)
+
+
+@cache
+def get_note(note_code, note_text):
+    return Note.objects.get_or_create(code=note_code or "", text=note_text[:255])[0]
 
 
 def parse_time(string):
@@ -63,7 +83,7 @@ class Command(BaseCommand):
 
         with zipfile.ZipFile(archive_name) as archive:
             for filename in archive.namelist():
-                if filename.endswith(".cif"):
+                if filename.endswith(".cif") and "/archive/" not in filename.lower() and "/Y20/" not in filename.upper():
                     with archive.open(filename) as open_file:
                         self.handle_file(open_file)
         assert self.stop_times == []
@@ -84,7 +104,10 @@ class Command(BaseCommand):
                 "description",
             ],
         )
-        Route.objects.bulk_update(self.routes.values(), ["inbound_description"])
+        Route.objects.bulk_update(
+            self.routes.values(),
+            ["inbound_description", "revision_number", "start_date"],
+        )
         for service in services:
             service.update_search_vector()
 
@@ -99,10 +122,6 @@ class Command(BaseCommand):
             )
         )
         self.source.save(update_fields=["datetime"])
-
-    @cache
-    def get_note(self, note_code, note_text):
-        return Note.objects.get_or_create(code=note_code or "", text=note_text[:255])[0]
 
     def handle_file(self, open_file):
         self.route = None
@@ -124,31 +143,28 @@ class Command(BaseCommand):
                     if name and stop_code not in self.stops:
                         name = name.decode(encoding).strip()
                         self.stops[stop_code] = StopPoint(
-                            atco_code=stop_code, common_name=name, active=True
+                            atco_code=stop_code,
+                            common_name=name,
+                            active=True,
+                            source=self.source,
                         )
                 elif stop_code in self.stops:
-                    easting = line[15:23].strip()
-                    northing = line[23:31].strip()
+                    easting = line[15:23].strip().decode()
+                    northing = line[23:31].strip().decode()
                     if easting:
-                        self.stops[stop_code].latlong = Point(
-                            int(easting),
-                            int(northing),
-                            srid=29902,  # Irish Grid
+                        self.stops[stop_code].latlong = GEOSGeometry(
+                            f"SRID=29902;POINT({easting} {northing})"
                         )
-        existing_stops = StopPoint.objects.in_bulk(self.stops.keys())
-        stops_to_update = []
-        new_stops = []
-        for stop_code in self.stops:
-            if stop_code in existing_stops:
-                stops_to_update.append(self.stops[stop_code])
-            else:
-                new_stops.append(self.stops[stop_code])
-        StopPoint.objects.bulk_update(
-            stops_to_update, fields=["common_name", "latlong"]
+        StopPoint.objects.bulk_create(
+            self.stops.values(),
+            update_conflicts=True,
+            update_fields=["common_name", "latlong", "active", "source"],
+            unique_fields=["atco_code"],
         )
-        StopPoint.objects.bulk_create(new_stops)
 
         open_file.seek(0)
+
+        self.filename = open_file.name
 
         # everything else
         previous_line = None
@@ -213,6 +229,7 @@ class Command(BaseCommand):
                 start_date=parse_date(exception[2:10]),
                 end_date=parse_date(exception[10:18]),
                 operation=exception[18:19] == b"1",
+                special=exception[18:19] == b"1",
             )
             for exception in self.exceptions
         )
@@ -225,13 +242,14 @@ class Command(BaseCommand):
 
         match identity:
             case b"QD":
-                operator = line[3:7].decode().strip()
+                operator_code = line[3:7].decode().strip()
                 line_name = line[7:11].decode().strip()
-                key = f"{line_name}_{operator}".upper()
+                service_code = f"{line_name}_{operator_code}".upper()
+                route_code = f"{self.filename}#{service_code}"
                 direction = line[11:12]
-                description = line[12:].decode().strip()
-                if key in self.routes:
-                    self.route = self.routes[key]
+                description = line[12:80].decode().strip()
+                if route_code in self.routes:
+                    self.route = self.routes[route_code]
                     if direction == b"O":
                         self.route.service.description = description
                         self.route.description = description
@@ -249,7 +267,8 @@ class Command(BaseCommand):
                     }
                     route_defaults = {
                         "line_name": line_name,
-                        "description": "description",
+                        "description": description,
+                        "service_code": service_code,
                     }
                     if direction == b"O":
                         defaults["description"] = description
@@ -258,29 +277,26 @@ class Command(BaseCommand):
                     else:
                         route_defaults["inbound_description"] = description
                     service, _ = Service.objects.update_or_create(
-                        defaults, service_code=key
+                        defaults, service_code=service_code
                     )
                     route_defaults["service"] = service
-                    if operator:
-                        if operator == "BE":
-                            operator = "ie-01"
+                    if operator := get_operator(operator_code, self.source):
                         service.operator.add(operator)
                     self.route, created = Route.objects.update_or_create(
                         route_defaults,
-                        code=key,
+                        code=route_code,
                         source=self.source,
                     )
                     if not created:
                         self.route.trip_set.all().delete()
-                    self.routes[key] = self.route
+                    self.routes[route_code] = self.route
 
             case b"QS":
                 self.sequence = 0
                 self.trip_header = line
                 self.exceptions = []
-                self.operator = self.trip_header[3:7].decode().strip() or None
-                if self.operator == "BE":
-                    self.operator = "ie-01"
+                operator_code = self.trip_header[3:7].decode().strip()
+                self.operator = get_operator(operator_code, self.source)
 
             case b"QE":
                 self.exceptions.append(line)
@@ -296,6 +312,7 @@ class Command(BaseCommand):
                     stop_time.stop_id = stop_id
                     self.stops[stop_id] = True
                 else:
+                    print(stop_id)
                     stop_time.stop_code = stop_id
                 self.stop_times.append(stop_time)
 
@@ -308,7 +325,7 @@ class Command(BaseCommand):
                         self.stop_times = []
 
                     self.trip = Trip(
-                        operator_id=self.operator,
+                        operator=self.operator,
                         ticket_machine_code=self.trip_header[7:13].decode().strip(),
                         block=self.trip_header[42:48].decode().strip(),
                         start=departure,
@@ -319,6 +336,15 @@ class Command(BaseCommand):
                     stop_time.trip = self.trip
                     stop_time.departure = departure
                     stop_time.sequence = 0
+
+                    if (
+                        not self.route.start_date
+                        or calendar.start_date < self.route.start_date
+                    ):
+                        self.route.start_date = calendar.start_date
+                        self.route.revision_number = calendar.start_date.strftime(
+                            "%Y%m%d"
+                        )
 
                 elif identity == b"QI":  # intermediate stop
                     timing_status = line[26:28]
@@ -358,7 +384,7 @@ class Command(BaseCommand):
 
             case b"QN":  # note
                 previous_identity = previous_line[:2]
-                note = line[7:].decode(encoding).strip()
+                note = line[7:81].decode(encoding).strip()
                 code = line[2:7].decode(encoding).strip()
                 if (
                     previous_identity == b"QO"
@@ -378,7 +404,7 @@ class Command(BaseCommand):
                         if previous_identity != b"QT":
                             self.stop_times[-1].pick_up = False
                     else:
-                        note = self.get_note(code, note)
+                        note = get_note(code, note)
                         if self.stop_times:
                             self.stop_time_notes.append(
                                 StopTime.notes.through(
@@ -392,7 +418,7 @@ class Command(BaseCommand):
                     or previous_identity == b"QN"
                 ):
                     # trip note
-                    note = self.get_note(code, note)
+                    note = get_note(code, note)
                     self.notes.append(note)
                 else:
                     print(previous_identity[:2], line)

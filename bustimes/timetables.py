@@ -318,19 +318,19 @@ class Timetable:
                 destination = self.origins_and_destinations[0][-1]
                 actual_origin = rows[0].stop.get_qualified_name()
                 actual_destination = rows[-1].stop.get_qualified_name()
-                if origin in actual_destination and origin not in actual_origin:
-                    if (
-                        destination in actual_origin
-                        and destination not in actual_destination
-                    ):
-                        self.origins_and_destinations = [
-                            tuple(reversed(pair))
-                            for pair in self.origins_and_destinations
-                        ]
-                        self.inbound_outbound_descriptions = [
-                            tuple(reversed(pair))
-                            for pair in self.inbound_outbound_descriptions
-                        ]
+                if (
+                    origin in actual_destination
+                    and origin not in actual_origin
+                    or destination in actual_origin
+                    and destination not in actual_destination
+                ):
+                    self.origins_and_destinations = [
+                        tuple(reversed(pair)) for pair in self.origins_and_destinations
+                    ]
+                    self.inbound_outbound_descriptions = [
+                        tuple(reversed(pair))
+                        for pair in self.inbound_outbound_descriptions
+                    ]
 
         return self
 

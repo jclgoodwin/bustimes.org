@@ -4,11 +4,11 @@
 
 {% block canonical %}
     <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}/vehicles">
-{% endblock %}
+{% endblock canonical %}
 
 {% block head %}
     <link rel="stylesheet" href="/liveries.{{ liveries_css_version }}.css">
-{% endblock %}
+{% endblock head %}
 
 {% block bodyclass %}{% endblock %}
 
@@ -26,13 +26,17 @@
     </ul>
 {% endif %}
 
-<p>This is <strong>not a fleet list</strong>. It’s a list of {% firstof parent object %}
-{% if parent and operators and operators|length < 10 %} ({% for operator in operators %}{% if not forloop.first and not forloop.last %}, {% elif forloop.last and not forloop.first %} and {% endif %}{{ operator }}{% endfor %}){% endif %} ticket machines, created as a by-product of the live bus tracking system.</p>
+<p>This is <strong>not intended to be a complete fleet list</strong>. It’s really a list of
+{% firstof parent object %}
+{% if parent and operators and operators|length < 10 %}
+    ({% for operator in operators %}{% if not forloop.first and not forloop.last %}, {% elif forloop.last and not forloop.first %} and {% endif %}{{ operator }}{% endfor %})
+{% endif %}
+ticket machines, a byproduct of the live bus tracking.</p>
 
 <p>Remember:</p>
 
 <ul class="bulleted">
-    <li>Ticket machines IDs might not correspond with the actual vehicles they’re attached to. Equipment is often swapped between vehicles.</li>
+    <li>Ticket machines IDs sometimes don’t correspond with the actual vehicles they’re attached to. (Equipment gets swapped between vehicles, etc.)</li>
     <li>Vehicles don’t always track all the time. If a journey isn’t listed, it doesn’t necessarily mean it didn’t operate.</li>
     {% if garage_column %}
         <li>“Garage” information is worked out automatically, using the Garage field in the operator’s timetable data and the last trip a vehicle worked.</li>
@@ -40,13 +44,13 @@
 </ul>
 
 {% if not parent and object.parent %}
-    <p>There’s also <a href="/groups/{{ object.parent}}/vehicles">a list of all {{ object.parent }} vehicles</a>.</p>
+    <p>There’s also <a href="/groups/{{ object.parent }}/vehicles">a list of all {{ object.parent }} vehicles</a>.</p>
 {% endif %}
 
 {% if not parent %}
     <ul class="horizontal">
-        <li><a href="/vehicles/edits?vehicle__operator={{ object.noc }}&status=approved">Recent changes</a></li>
-        <li><a href="/vehicles/edits?vehicle__operator={{ object.noc }}&status=pending">Pending vehicle edits</a></li>
+        <li><a href="/vehicles/edits?operator={{ object.noc }}&status=approved">Recent changes</a></li>
+        <li><a href="/vehicles/edits?operator={{ object.noc }}&status=pending">Pending vehicle edits</a></li>
         {% if request.user.is_superuser %}
             <li><a href="{% url 'admin:vehicles_vehicle_changelist' %}?operator={{ object.noc }}">✎</a></li>
         {% endif %}
@@ -84,7 +88,7 @@
                 </td>
                 {% if vehicle.reg %}
                     <td>
-                        <a href="{{ vehicle.get_absolute_url }}"{% if vehicle.has_uk_reg %} class="reg"{% endif %}>
+                        <a href="{{ vehicle.get_absolute_url }}" class="reg">
                             {{ vehicle.get_reg }}
                         </a>
                     </td>
@@ -95,7 +99,7 @@
                 <td class="last-seen">
                     {% if vehicle.last_seen.today %}
                         {{ vehicle.last_seen.when|time:"H:i" }}
-                    {% elif vehicle.last_seen.when.year == today.year  %}
+                    {% elif vehicle.last_seen.when.year == today.year %}
                         {{ vehicle.last_seen.when|date:"j M" }}
                     {% else %}
                         {{ vehicle.last_seen.when|date:"j M Y" }}
@@ -125,4 +129,4 @@
 
 {% include 'pagination.html' with page=vehicles %}
 
-{% endblock %}
+{% endblock content %}

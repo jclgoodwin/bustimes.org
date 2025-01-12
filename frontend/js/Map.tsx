@@ -2,18 +2,26 @@ import React, { memo, useEffect, createContext } from "react";
 import { createRoot } from "react-dom/client";
 // import { captureException } from "@sentry/react";
 
-import Map, {
+import MapGL, {
   NavigationControl,
   GeolocateControl,
   AttributionControl,
-  MapProps,
+  type MapProps,
   useControl,
   useMap,
+  Popup,
+  type LngLat,
+  type MapLayerMouseEvent,
+  type PopupEvent,
 } from "react-map-gl/maplibre";
 
-import stopMarker from "data-url:../stop-marker.png";
-import routeStopMarker from "data-url:../route-stop-marker.png";
 import arrow from "data-url:../history-arrow.png";
+import routeStopMarkerCircle from "data-url:../route-stop-marker-circle.png";
+import routeStopMarkerDarkCircle from "data-url:../route-stop-marker-dark-circle.png";
+import routeStopMarkerDark from "data-url:../route-stop-marker-dark.png";
+import routeStopMarker from "data-url:../route-stop-marker.png";
+import stopMarkerCircle from "data-url:../stop-marker-circle.png";
+import stopMarker from "data-url:../stop-marker.png";
 import type {
   Map as MapLibreMap,
   MapStyleImageMissingEvent,
@@ -21,17 +29,19 @@ import type {
 
 const imagesByName: { [imageName: string]: string } = {
   "stop-marker": stopMarker,
+  "stop-marker-circle": stopMarkerCircle,
   "route-stop-marker": routeStopMarker,
+  "route-stop-marker-circle": routeStopMarkerCircle,
+  "route-stop-marker-dark": routeStopMarkerDark,
+  "route-stop-marker-dark-circle": routeStopMarkerDarkCircle,
   arrow: arrow,
 };
 
 const mapStyles: { [key: string]: string } = {
   alidade_smooth: "Light",
   alidade_smooth_dark: "Dark",
+  alidade_satellite: "Satellite",
   osm_bright: "Bright",
-  // outdoors: "Outdoors",
-  // alidade_satellite: "Satellite",
-  // ordnance_survey: "Ordnance Survey",
 };
 
 type StyleSwitcherProps = {
@@ -101,11 +111,11 @@ function MapChild({ onInit }: { onInit?: (map: MapLibreMap) => void }) {
         onInit(_map);
       }
 
-      const onStyleImageMissing = function (e: MapStyleImageMissingEvent) {
+      const onStyleImageMissing = (e: MapStyleImageMissingEvent) => {
         if (e.id in imagesByName) {
           const image = new Image();
           image.src = imagesByName[e.id];
-          image.onload = function () {
+          image.onload = () => {
             if (!map.hasImage(e.id)) {
               map.addImage(e.id, image, {
                 pixelRatio: 2,
@@ -187,32 +197,35 @@ export default function BusTimesMap(
     [darkModeQuery.matches],
   );
 
+  const [contextMenu, setContextMenu] = React.useState<LngLat>();
+
+  const onContextMenu = (e: MapLayerMouseEvent | PopupEvent) => {
+    if ("lngLat" in e) {
+      setContextMenu(e.lngLat);
+    } else {
+      setContextMenu(undefined);
+    }
+  };
+
   useEffect(() => {
     document.body.classList.toggle("dark-mode", mapStyle.endsWith("_dark"));
   }, [mapStyle]);
 
-  let mapStyleUrl;
-  if (mapStyle === "ordnance_survey") {
-    mapStyleUrl =
-      "https://api.os.uk/maps/vector/v1/vts/resources/styles?key=b45dBXyI0RA7DGx5hcftaqVk5GFBUCEY&srs=3857";
-  } else {
-    mapStyleUrl = `https://tiles.stadiamaps.com/styles/${mapStyle}.json`;
-  }
   return (
     <ThemeContext.Provider value={mapStyle}>
-      <Map
+      <MapGL
         {...props}
         reuseMaps
         touchPitch={false}
         pitchWithRotate={false}
         dragRotate={false}
-        minZoom={6}
+        minZoom={2}
         maxZoom={18}
-        mapStyle={mapStyleUrl}
+        mapStyle={`https://tiles.stadiamaps.com/styles/${mapStyle}.json`}
         RTLTextPlugin={""}
         attributionControl={false}
         // onError={(e) => captureException(e.error)}
-
+        onContextMenu={onContextMenu}
         // workaround for wrong react-map-gl type definitions?
         transformRequest={undefined}
         maxTileCacheSize={undefined}
@@ -223,17 +236,31 @@ export default function BusTimesMap(
           style={mapStyle}
           onChange={handleMapStyleChange}
         />
-
-        {mapStyle === "ordnance_survey" ? (
-          <AttributionControl customAttribution="© Ordnance Survey" />
-        ) : (
-          <AttributionControl />
-        )}
-
+        <AttributionControl />
         <MapChild onInit={props.onMapInit} />
 
         {props.children}
-      </Map>
+        {contextMenu ? (
+          <Popup
+            longitude={contextMenu.lng}
+            latitude={contextMenu.lat}
+            onClose={onContextMenu}
+          >
+            <a
+              href={`https://www.openstreetmap.org/#map=15/${contextMenu.lat}/${contextMenu.lng}`}
+              rel="noopener noreferrer"
+            >
+              OpenStreetMap
+            </a>
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${contextMenu.lat},${contextMenu.lng}`}
+              rel="noopener noreferrer"
+            >
+              Google Maps
+            </a>
+          </Popup>
+        ) : null}
+      </MapGL>
     </ThemeContext.Provider>
   );
 }

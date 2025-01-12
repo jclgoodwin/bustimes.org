@@ -1,4 +1,5 @@
 import datetime
+import lightningcss
 import re
 import struct
 import uuid
@@ -6,7 +7,6 @@ from collections import Counter
 from math import ceil
 from urllib.parse import quote
 
-import lightningcss
 from autoslug import AutoSlugField
 from django.conf import settings
 from django.contrib.gis.db import models
@@ -38,6 +38,8 @@ def format_reg(reg):
 
 
 def get_css(colours, direction=None, horizontal=False, angle=None):
+    if angle is None:
+        angle = 90
     if len(colours) == 1:
         return colours[0]
     if direction is None:
@@ -48,14 +50,9 @@ def get_css(colours, direction=None, horizontal=False, angle=None):
     if horizontal:
         background += "to top"
     elif direction < 180:
-        if angle:
-            background += f"{360-angle}deg"
-        else:
-            background += "to left"
-    elif angle:
-        background += f"{angle}deg"
+        background += f"{360-angle}deg"
     else:
-        background += "to right"
+        background += f"{angle}deg"
     percentage = 100 / len(colours)
     for i, colour in enumerate(colours):
         if i != 0 and colour != colours[i - 1]:
@@ -97,6 +94,7 @@ class VehicleTypeType(models.TextChoices):
     ARTICULATED = "articulated", "articulated"
     TRAIN = "train", "train"
     TRAM = "tram", "tram"
+    AMPHIBIOUS = "amphibious", "amphibious"
 
 
 class FuelType(models.TextChoices):
@@ -109,9 +107,6 @@ class FuelType(models.TextChoices):
 
 class VehicleType(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    # double_decker = models.BooleanField(null=True)
-    # coach = models.BooleanField(null=True)
-    # electric = models.BooleanField(null=True)
     style = models.CharField(choices=VehicleTypeType.choices, max_length=13, blank=True)
     fuel = models.CharField(choices=FuelType.choices, max_length=8, blank=True)
 
@@ -130,16 +125,9 @@ class Livery(models.Model):
     colours = models.CharField(
         max_length=512,
         blank=True,
-        help_text="""Keep it simple.
-Simplicity (and being able to read the route number on the map) is much more important than 'accuracy'.""",
+        help_text="""Left and right CSS will be generated from this""",
     )
-    css = models.CharField(
-        max_length=1024,
-        blank=True,
-        verbose_name="CSS",
-        help_text="""Leave this blank.
-A livery can be adequately represented with a list of colours and an angle.""",
-    )
+    angle = models.PositiveSmallIntegerField(null=True, blank=True)
     left_css = models.CharField(
         max_length=1024,
         blank=True,
@@ -150,7 +138,7 @@ A livery can be adequately represented with a list of colours and an angle.""",
         max_length=1024,
         blank=True,
         verbose_name="Right CSS",
-        help_text="Automatically generated from colours and angle",
+        help_text="Should be a mirror image of the left CSS",
     )
     white_text = models.BooleanField(default=False)
     text_colour = models.CharField(max_length=7, blank=True)
@@ -160,7 +148,6 @@ A livery can be adequately represented with a list of colours and an angle.""",
     horizontal = models.BooleanField(
         default=False, help_text="Equivalent to setting the angle to 90"
     )
-    angle = models.PositiveSmallIntegerField(null=True, blank=True)
     updated_at = models.DateTimeField(null=True, blank=True)
     published = models.BooleanField(
         help_text="Tick to include in the CSS and be able to apply this livery to vehicles"
@@ -185,16 +172,7 @@ A livery can be adequately represented with a list of colours and an angle.""",
         return css[19:-1]
 
     def set_css(self):
-        if self.css:
-            css = self.css
-            self.left_css = self.css
-            for angle in re.findall(r"\((\d+)deg,", css):
-                replacement = 360 - int(angle)
-                css = css.replace(f"({angle}deg,", f"({replacement}deg,", 1)
-                # doesn't work with e.g. angles {a, b} where a = 360 - b
-            self.right_css = css.replace("left", "right")
-
-        elif self.colours:
+        if self.colours:
             self.left_css = get_css(
                 self.colours.split(), None, self.horizontal, self.angle
             )
@@ -229,7 +207,7 @@ A livery can be adequately represented with a list of colours and an angle.""",
                 except ValueError as e:
                     raise ValidationError({attr: str(e)})
 
-        for attr in ("css", "left_css", "right_css"):
+        for attr in ("left_css", "right_css"):
             value = getattr(self, attr)
             if value.count("(") != value.count(")"):
                 raise ValidationError({attr: "Must contain equal numbers of ( and )"})
@@ -239,7 +217,7 @@ A livery can be adequately represented with a list of colours and an angle.""",
     def save(self, *args, update_fields=None, **kwargs):
         self.updated_at = timezone.now()
         if update_fields is None:
-            if self.css or self.colours:
+            if self.colours:
                 self.set_css()
                 if self.colours and not self.id:
                     self.white_text = get_text_colour(self.colours) == "#fff"
@@ -314,9 +292,6 @@ class Vehicle(models.Model):
     def is_spare_ticket_machine(self) -> bool:
         return self.notes == "Spare ticket machine"
 
-    def has_uk_reg(self):
-        return " " in self.get_reg()
-
     def is_editable(self) -> bool:
         return not self.locked
 
@@ -368,19 +343,31 @@ class Vehicle(models.Model):
             return str(fleet_code)
         return self.code.replace("_", " ")
 
-    def get_previous(self):
-        if self.fleet_number and self.operator:
-            vehicles = self.operator.vehicle_set.filter(
-                withdrawn=False, fleet_number__lt=self.fleet_number
-            )
-            return vehicles.order_by("-fleet_number").first()
+    def get_next(self, order=""):
+        lookup = "lt" if order == "-" else "gt"
+        if self.operator:
+            filter = {}
+            if self.fleet_number:
+                filter[f"fleet_number__{lookup}"] = self.fleet_number
+                order_by = f"{order}fleet_number"
+            elif self.fleet_code:
+                filter[f"fleet_code__{lookup}"] = self.fleet_code
+                order_by = f"{order}fleet_code"
+            else:
+                filter[f"code__{lookup}"] = self.code
+                order_by = f"{order}code"
 
-    def get_next(self):
-        if self.fleet_number and self.operator:
-            vehicles = self.operator.vehicle_set.filter(
-                withdrawn=False, fleet_number__gt=self.fleet_number
+            return (
+                self.operator.vehicle_set.filter(
+                    **filter,
+                    withdrawn=False,
+                )
+                .order_by(order_by)
+                .first()
             )
-            return vehicles.order_by("fleet_number").first()
+
+    def get_previous(self):
+        return self.get_next(order="-")
 
     def get_reg(self):
         return format_reg(self.reg)
@@ -424,48 +411,18 @@ class Vehicle(models.Model):
     def get_edit_url(self):
         return reverse("vehicle_edit", args=(self.slug or self.id,))
 
-    def get_history_url(self):
-        return reverse("vehicle_history", args=(self.slug or self.id,))
-
     def get_flickr_url(self):
         if self.reg:
             reg = self.get_reg()
             search = f'{self.reg} or "{reg}"'
-            if self.fleet_number and self.operator and self.operator.parent:
-                number = str(self.fleet_number)
-                if len(number) >= 5:
-                    search = f"{search} or {self.operator.parent} {number}"
-        else:
-            if self.fleet_code or self.fleet_number:
-                search = self.fleet_code or str(self.fleet_number)
-            else:
-                search = str(self).replace("/", " ")
-            if self.operator:
-                name = str(self.operator).split(" (", 1)[0]
-                if "Yellow" not in name:
-                    name = (
-                        str(self.operator)
-                        .replace(" Buses", "", 1)
-                        .replace(" Coaches", "", 1)
-                    )
-                if (
-                    name.startswith("First ")
-                    or name.startswith("Stagecoach ")
-                    or name.startswith("Arriva ")
-                ):
-                    name = name.split()[0]
-                search = f"{name} {search}"
-        return (
-            f"https://www.flickr.com/search/?text={quote(search)}&sort=date-taken-desc"
-        )
+            return f"https://www.flickr.com/search/?text={quote(search)}&sort=date-taken-desc"
 
     def get_flickr_link(self):
-        if self.is_spare_ticket_machine():
-            return ""
-        return format_html(
-            '<a href="{}" target="_blank" rel="noopener">Flickr</a>',
-            self.get_flickr_url(),
-        )
+        if url := self.get_flickr_url():
+            return format_html(
+                '<a href="{}" target="_blank" rel="noopener">Flickr</a>', url
+            )
+        return ""
 
     get_flickr_link.short_description = "Flickr"
 
@@ -864,3 +821,6 @@ class SiriSubscription(models.Model):
     name = models.CharField(max_length=64, blank=True, unique=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     sample = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name

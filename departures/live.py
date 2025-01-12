@@ -14,12 +14,10 @@ from vehicles.tasks import log_vehicle_journey
 
 from . import avl, gtfsr
 from .sources import (
-    AcisHorizonDepartures,
     EdinburghDepartures,
     SiriSmDepartures,
     TflDepartures,
     TimetableDepartures,
-    WestMidlandsDepartures,
     get_departure_order,
 )
 
@@ -76,9 +74,9 @@ def update_trip_ids(departures: list, live_rows: list) -> None:
     for live_row in live_rows:
         live_time = live_row["time"] or live_row["live"]
         for row in departures:
-            if row["service"] == live_row["service"] and -datetime.timedelta(
-                minutes=1
-            ) < (row["time"] - live_time) < datetime.timedelta(minutes=1):
+            if row["service"] == live_row["service"] and (
+                abs(row["time"] - live_time) <= datetime.timedelta(minutes=2)
+            ):
                 live_row["link"] = row["link"]
                 trip = row["stop_time"].trip
                 if trip.ticket_machine_code != live_row["tripId"]:
@@ -95,26 +93,20 @@ def get_departures(stop, services, when) -> dict:
         tfl_services = [s for s in services if s.service_code[:4] == "tfl_"]
         if tfl_services:
             live_departures = TflDepartures(stop, tfl_services).get_departures()
-            services = [s for s in services if s.service_code[:4] != "tfl_"]
-            if not services:
-                return {
-                    "departures": live_departures,
-                    "today": timezone.localdate(),
-                }
+            if live_departures:
+                # non-TfL services
+                services = [s for s in services if s.service_code[:4] != "tfl_"]
+                if not services:
+                    return {
+                        "departures": live_departures,
+                        "today": timezone.localdate(),
+                    }
 
     now = timezone.localtime()
 
-    routes_by_service = {}
     routes = Route.objects.filter(
         service__in=[s for s in services if not s.timetable_wrong]
     ).select_related("source")
-
-    for route in routes:
-        if route.service_id in routes_by_service:
-            routes_by_service[route.service_id].append(route)
-        else:
-            routes_by_service[route.service_id] = [route]
-
     departures = None
 
     gtfsr_available = any(
@@ -130,7 +122,7 @@ def get_departures(stop, services, when) -> dict:
 
             if by_trip:
                 departures = TimetableDepartures(
-                    stop, services, now, routes_by_service, by_trip
+                    stop, services, now, routes, by_trip
                 ).get_departures()
 
                 if by_trip:
@@ -142,9 +134,9 @@ def get_departures(stop, services, when) -> dict:
                         ],
                         Prefetch(
                             "stoptime_set",
-                            StopTime.objects.select_related("stop").filter(
-                                stop__latlong__isnull=False
-                            ),
+                            StopTime.objects.select_related("stop")
+                            .only("trip_id", "arrival", "departure", "stop__latlong")
+                            .filter(stop__latlong__isnull=False),
                         ),
                     )
 
@@ -183,7 +175,7 @@ def get_departures(stop, services, when) -> dict:
 
     if departures is None:
         departures = TimetableDepartures(
-            stop, services, when or now, routes_by_service
+            stop, services, when or now, routes
         ).get_departures()
 
     if live_departures:
@@ -203,7 +195,7 @@ def get_departures(stop, services, when) -> dict:
             one_hour_ago.date(),
             datetime.timedelta(hours=one_hour_ago.hour, minutes=one_hour_ago.minute),
             stop,
-            routes_by_service,
+            routes,
         ).exists()
     ):
         live_rows = None
@@ -213,21 +205,7 @@ def get_departures(stop, services, when) -> dict:
             if service.operators:
                 operators.update(service.operators)
 
-        # Belfast
-        if stop.atco_code[0] == "7" and not operators.isdisjoint(
-            settings.ACIS_HORIZON_OPERATORS
-        ):
-            live_rows = AcisHorizonDepartures(stop, services).get_departures()
-            if live_rows:
-                blend(departures, live_rows)
-
-        # West Midlands
-        elif not operators.isdisjoint(settings.TFWM_OPERATORS):
-            live_rows = WestMidlandsDepartures(stop, services).get_departures()
-            if live_rows:
-                blend(departures, live_rows)
-
-        elif departures:
+        if departures:
             # Edinburgh
             if stop.naptan_code and not operators.isdisjoint(settings.TFE_OPERATORS):
                 live_rows = EdinburghDepartures(stop, services, now).get_departures()

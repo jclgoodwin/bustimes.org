@@ -191,12 +191,12 @@ class ServiceTests(TestCase):
             links,
             [
                 (
-                    "http://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST?line=2101A&lineVer=1"
+                    "https://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST?line=2101A&lineVer=1"
                     "&net=swe&project=y08&command=direct&outputFormat=0",
                     "Timetable on the Traveline South West website",
                 ),
                 (
-                    "http://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST?line=2101A&lineVer=2"
+                    "https://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST?line=2101A&lineVer=2"
                     "&net=swe&project=y08&command=direct&outputFormat=0",
                     "Timetable from 1 May on the Traveline South West website",
                 ),

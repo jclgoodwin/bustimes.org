@@ -2,7 +2,6 @@
 
 import datetime
 import logging
-import xml.etree.cElementTree as ET
 from zoneinfo import ZoneInfo
 
 import ciso8601
@@ -17,6 +16,9 @@ from bustimes.utils import get_stop_times
 from vehicles.models import Vehicle
 
 
+TIMEZONE = ZoneInfo("Europe/London")
+
+
 def get_departure_order(departure):
     if departure.get("live") and (
         not departure["time"] or departure["time"].date() == departure["live"].date()
@@ -26,7 +28,7 @@ def get_departure_order(departure):
         time = departure["time"]
     if timezone.is_naive(time):
         return time
-    return timezone.make_naive(time, WestMidlandsDepartures.timezone)
+    return timezone.make_naive(time, TIMEZONE)
 
 
 class Departures:
@@ -138,7 +140,7 @@ class RemoteDepartures(Departures):
             except requests.exceptions.RequestException as e:
                 self.set_poorly(60)  # back off for 1 minute
                 logger = logging.getLogger(__name__)
-                logger.error(e, exc_info=True)
+                logger.exception(e)
                 return
 
             if response.ok:
@@ -173,8 +175,6 @@ class TflDepartures(RemoteDepartures):
         else:
             vehicle = item["vehicleId"]
             link = f"/vehicles/tfl/{vehicle}"
-            if vehicle[:1].isdigit() or vehicle[:3] == "TMP":
-                vehicle = None
         return {
             "live": parse_datetime(item.get("expectedArrival")),
             "service": self.get_service(item.get("lineName")),
@@ -187,26 +187,6 @@ class TflDepartures(RemoteDepartures):
         return sorted(
             [self.get_row(item) for item in res.json()], key=lambda row: row["live"]
         )
-
-
-class WestMidlandsDepartures(RemoteDepartures):
-    timezone = ZoneInfo("Europe/London")
-
-    def get_row(self, item):
-        return {
-            "time": datetime.datetime.fromtimestamp(
-                item["time"] - item["delay"], self.timezone
-            ),
-            "live": datetime.datetime.fromtimestamp(item["time"], self.timezone),
-            "service": self.get_service(item["line_name"]),
-            "destination": item["destination"],
-            "vehicle": item["vehicle"],
-        }
-
-    def get_departures(self):
-        items = cache.get(f"tfwm:{self.stop.atco_code}")
-        if items:
-            return [self.get_row(item) for item in items]
 
 
 class EdinburghDepartures(RemoteDepartures):
@@ -262,69 +242,6 @@ class EdinburghDepartures(RemoteDepartures):
                     else:
                         departure["live"] -= hour
             return departures
-
-
-class AcisHorizonDepartures(RemoteDepartures):
-    """Departures from a SOAP endpoint (lol)"""
-
-    request_url = "https://mobileapp.belfast.vix-its.com/DataService.asmx"
-    headers = {
-        "Content-Type": "text/xml; charset=utf-8",
-        "SOAPAction": "http://www.acishorizon.com/GetArrivalsForStops",
-    }
-    ns = {
-        "a": "http://www.acishorizon.com/",
-        "s": "http://www.w3.org/2003/05/soap-envelope",
-    }
-
-    def get_response(self):
-        data = """
-            <s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope">
-                <s:Body>
-                    <GetArrivalsForStops xmlns="http://www.acishorizon.com/">
-                        <stopRefs>
-                            <string>{}</string>
-                        </stopRefs>
-                        <maxResults>10</maxResults>
-                    </GetArrivalsForStops>
-                </s:Body>
-            </s:Envelope>
-        """.format(self.stop.pk)
-        return requests.post(
-            self.request_url, headers=self.headers, data=data, timeout=2
-        )
-
-    def departures_from_response(self, res):
-        try:
-            items = ET.fromstring(res.text)
-        except ET.ParseError as e:
-            logger = logging.getLogger(__name__)
-            logger.error(e, exc_info=True)
-            return
-        items = items.find(
-            "s:Body/a:GetArrivalsForStopsResponse/a:GetArrivalsForStopsResult", self.ns
-        )
-        items = items.findall(
-            "a:Stops/a:VirtualStop/a:StopArrivals/a:StopRealtime", self.ns
-        )
-        return [item for item in [self.get_row(item) for item in items] if item]
-
-    def get_row(self, item):
-        row = {
-            "service": self.get_service(
-                item.find("a:JourneyPublicServiceCode", self.ns).text
-            ),
-            "destination": item.find("a:Destination", self.ns).text,
-        }
-        time = item.find("a:TimeAsDateTime", self.ns).text
-        if time:
-            time = parse_datetime(time)
-            if item.find("a:IsPredicted", self.ns).text == "true":
-                row["live"] = time
-                row["time"] = None
-            else:
-                row["time"] = time
-            return row
 
 
 class TimetableDepartures(Departures):
@@ -392,19 +309,17 @@ class TimetableDepartures(Departures):
 
         times = [self.get_row(stop_time) for stop_time in today_times]
 
-        # add tomorrow's times until there are 10, or the next day until there more than 0
-        i = 0
-        while not times and i < 3 or len(times) < 10 and i == 0:
-            i += 1
-            date += one_day
-            times += [
-                self.get_row(stop_time)
-                for stop_time in self.get_times(date)[: 10 - len(times)]
-            ]
+        # # add tomorrow's times until there are 10, or the next day until there more than 0
+        # i = 0
+        # while not times and i < 3 or len(times) < 10 and i == 0:
+        #     i += 1
+        #     date += one_day
+        #     times += [
+        #         self.get_row(stop_time)
+        #         for stop_time in self.get_times(date)[: 10 - len(times)]
+        #     ]
 
-        routes = {
-            route.id: route for routes in self.routes.values() for route in routes
-        }
+        routes = {route.id: route for route in self.routes}
         services = {s.id: s for s in self.services}
         for trip in times:
             trip["route"] = routes.get(trip["stop_time"].trip.route_id)
@@ -421,7 +336,7 @@ class TimetableDepartures(Departures):
 
 
 def parse_datetime(string):
-    return ciso8601.parse_datetime(string).astimezone(WestMidlandsDepartures.timezone)
+    return ciso8601.parse_datetime(string).astimezone(TIMEZONE)
 
 
 class SiriSmDepartures(RemoteDepartures):

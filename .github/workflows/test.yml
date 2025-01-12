@@ -6,7 +6,7 @@ on:
 
 jobs:
   test-frontend:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
 
     steps:
@@ -21,15 +21,25 @@ jobs:
     - run: npm test
     - run: npm run build
 
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v4.4.3
       with:
         name: dist
-        path: |
-          busstops/static
+        path: busstops/static
+        if-no-files-found: error
 
   test-backend:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
+    needs: test-frontend
+
+    permissions:
+      # Gives the action the necessary permissions for publishing new
+      # comments in pull requests.
+      pull-requests: write
+      # Gives the action the necessary permissions for pushing data to the
+      # python-coverage-comment-action branch, and for editing existing
+      # comments (to avoid publishing multiple comments in the same PR)
+      contents: write
 
     services:
       postgres:
@@ -78,13 +88,12 @@ jobs:
         DATABASE_URL: postgis://postgres:postgres@localhost/postgres
       run: |
         poetry run ./manage.py collectstatic --noinput && \
-        poetry run coverage run --concurrency=multiprocessing ./manage.py test --parallel 2
+        poetry run coverage run --concurrency=multiprocessing ./manage.py test --parallel 2 --keepdb
 
     - name: generate coverage report
-      run: poetry run coverage combine && poetry run coverage xml
+      run: poetry run coverage combine && poetry run coverage html
 
-    - uses: codecov/codecov-action@v4
+    - name: Coverage comment
+      uses: py-cov-action/python-coverage-comment-action@v3
       with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        fail_ci_if_error: false
-        files: ./coverage.xml
+        GITHUB_TOKEN: ${{ github.token }}

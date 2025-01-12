@@ -20,9 +20,12 @@ urlpatterns = [
     path(
         "vehicles/revisions/<int:revision_id>/vote/<direction>",
         views.vehicle_revision_vote,
+        name="vehicle_revision_vote",
     ),
     path(
-        "vehicles/revisions/<int:revision_id>/<action>", views.vehicle_revision_action
+        "vehicles/revisions/<int:revision_id>/<action>",
+        views.vehicle_revision_action,
+        name="vehicle_revision_action",
     ),
     path("vehicles/<int:pk>", views.VehicleDetailView.as_view()),
     path("vehicles/<slug>", views.VehicleDetailView.as_view(), name="vehicle_detail"),
@@ -34,6 +37,7 @@ urlpatterns = [
         name="latest_journey_debug",
     ),
     path("vehicles/<slug>/debug", views.latest_journey_debug),
+    path("journeys/<int:pk>", views.VehicleJourneyDetailView.as_view()),
     path("journeys/<int:pk>.json", views.journey_json),
     path(
         "vehicles/<int:vehicle_id>/journeys/<int:pk>.json",
@@ -51,4 +55,5 @@ urlpatterns = [
     path("maps", TemplateView.as_view(template_name="map.html")),
     path("map/old", TemplateView.as_view(template_name="map_classic.html")),
     path("siri/<uuid:uuid>", views.siri_post),
+    path("overland/<uuid:uuid>", views.overland),
 ]

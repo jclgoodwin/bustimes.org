@@ -44,11 +44,13 @@ class TNDSTest(TestCase):
             ]
         )
 
-        with time_machine.travel("2021-01-01", tick=False):
-            with self.assertLogs("bustimes.management.commands.import_tnds") as cm:
-                with TemporaryDirectory() as directory:
-                    with override_settings(TNDS_DIR=Path(directory)):
-                        call_command("import_tnds", "u", "p")
+        with (
+            time_machine.travel("2021-01-01", tick=False),
+            self.assertLogs("bustimes.management.commands.import_tnds") as cm,
+            TemporaryDirectory() as directory,
+            override_settings(TNDS_DIR=Path(directory)),
+        ):
+            call_command("import_tnds", "u", "p")
 
         self.assertEqual(
             cm.output,

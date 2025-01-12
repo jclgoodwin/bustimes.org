@@ -46,5 +46,5 @@ class SituationAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         if "changelist" in request.resolver_match.view_name:
-            return queryset.annotate(stops=SubqueryCount("consequence__stops"))
+            queryset = queryset.annotate(stops=SubqueryCount("consequence__stops"))
         return queryset

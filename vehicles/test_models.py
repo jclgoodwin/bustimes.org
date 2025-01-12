@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from .models import Livery, Operator, Vehicle
+from .models import Livery, Vehicle
 
 
 class VehicleModelTests(TestCase):
@@ -18,26 +18,9 @@ class VehicleModelTests(TestCase):
         vehicle.reg = "J122018"
         self.assertEqual(str(vehicle), "J122018")
 
-        vehicle.notes = "Spare ticket machine"
-        self.assertEqual("", vehicle.get_flickr_link())
-
         vehicle = Vehicle(code="RML2604")
-        self.assertIn("search/?text=RML2604&sort", vehicle.get_flickr_url())
-
-        vehicle.operator = Operator(name="Lynx")
-        self.assertIn("search/?text=Lynx%20RML2604&sort", vehicle.get_flickr_url())
-
-        vehicle.fleet_number = "11111"
-        self.assertIn("search/?text=Lynx%2011111&sort", vehicle.get_flickr_url())
-
-        vehicle.reg = "YN69GHA"
-        vehicle.operator.parent = "Stagecoach"
-        vehicle.fleet_number = "11111"
-
-        self.assertIn(
-            "search/?text=YN69GHA%20or%20%22YN69%20GHA%22%20or%20Stagecoach%2011111&sort",
-            vehicle.get_flickr_url(),
-        )
+        self.assertIsNone(vehicle.get_flickr_url())
+        self.assertEqual("", vehicle.get_flickr_link())
 
     def test_vehicle_validation(self):
         vehicle = Vehicle(colours="ploop")
@@ -69,7 +52,8 @@ class VehicleModelTests(TestCase):
         self.assertEqual(
             livery.get_styles(),
             [
-                f""".livery-{livery.id} {{\n  background: linear-gradient(#fdee00 66%,#7d287d 66%);
+                f""".livery-{livery.id} {{
+  background: linear-gradient(#fdee00 66%,#7d287d 66%);
   color:#c0c0c0;fill:#c0c0c0;stroke:#ffee99\n}}\n"""
             ],
         )
@@ -78,10 +62,10 @@ class VehicleModelTests(TestCase):
         livery.angle = 45
         livery.save()
         self.assertEqual(
-            "linear-gradient(45deg,#7d287d 34%,#fdee00 34%)", livery.left_css
+            "linear-gradient(45deg,#7d287d 34%,#fdee00 34%)", livery.left_css.lower()
         )
         self.assertEqual(
-            "linear-gradient(315deg,#7d287d 34%,#fdee00 34%)", livery.right_css
+            "linear-gradient(315deg,#7d287d 34%,#fdee00 34%)", livery.right_css.lower()
         )
 
         livery.angle = None
@@ -89,24 +73,14 @@ class VehicleModelTests(TestCase):
 
         vehicle = Vehicle(livery=livery)
         self.assertEqual(
-            "linear-gradient(270deg,#7d287d 34%,#fdee00 34%)", vehicle.get_livery(179)
+            "linear-gradient(270deg,#7d287d 34%,#fdee00 34%)",
+            vehicle.get_livery(179).lower(),
         )
         self.assertIsNone(vehicle.get_text_colour())
 
         vehicle.livery.colours = "#c0c0c0"
         vehicle.livery.save()
         self.assertEqual("silver", vehicle.get_livery(200))
-
-        livery.css = "linear-gradient(45deg,#ed1b23 35%,#fff 35%,#fff 45%,#ed1b23 45%)"
-        livery.set_css()
-        self.assertEqual(
-            livery.left_css,
-            "linear-gradient(45deg,#ed1b23 35%,#fff 35%,#fff 45%,#ed1b23 45%)",
-        )
-        self.assertEqual(
-            livery.right_css,
-            "linear-gradient(315deg,#ed1b23 35%,#fff 35%,#fff 45%,#ed1b23 45%)",
-        )
 
     def test_livery_validation(self):
         livery = Livery()

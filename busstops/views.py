@@ -5,7 +5,6 @@ import os
 import sys
 import traceback
 from http import HTTPStatus
-from urllib.parse import urlencode
 
 import qrcode
 import qrcode.image.svg
@@ -21,7 +20,7 @@ from django.contrib.sitemaps import Sitemap
 from django.core.cache import cache
 from django.core.mail import EmailMessage
 from django.core.paginator import Paginator
-from django.db.models import F, OuterRef, Prefetch, Q
+from django.db.models import F, OuterRef, Prefetch, Q, When, Case, Value
 from django.db.models.functions import Coalesce, Now
 from django.http import (
     Http404,
@@ -32,7 +31,7 @@ from django.http import (
 )
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import get_template
-from django.urls import resolve
+from django.urls import resolve, reverse
 from django.utils import timezone
 from django.utils.cache import patch_response_headers
 from django.utils.functional import SimpleLazyObject
@@ -174,6 +173,7 @@ def robots_txt(request):
 
     if request.get_host() == "bustimes.org":  # live site
         content = """User-agent: *
+Disallow: /trips/
 Disallow: /api/
 Disallow: /accounts/
 Disallow: /fares/
@@ -181,6 +181,18 @@ Disallow: /vehicles/tfl/
 Disallow: /services/*/*
 Disallow: /sources
 Disallow: /*/debug
+
+User-Agent: ImagesiftBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: GPTBot
+Disallow: /
 """
     else:  # staging site/other
         content = """User-agent: Mediapartners-Google
@@ -263,7 +275,7 @@ def qr(request, slug):
 def status(request):
     context = {
         "sources": DataSource.objects.filter(
-            name__in=["National Operator Codes", "NPTG", "NaPTAN"]
+            name__in=["National Operator Codes", "NPTG", "NaPTAN", "Irish NaPTAN"]
         ),
         "bod_avl_status": {},
     }
@@ -284,10 +296,12 @@ def status(request):
     context["statuses"] = cache.get_many(
         [
             "Realtime_Transport_Operators_status",
-            "acis_status",
+            "Irish_Citylink_status",
+            "Translink_status",
+            "Stagecoach_status",
+            "Ember_status",
             "TfE_status",
             "jersey_status",
-            "Stagecoach_status",
         ]
     ).items()
 
@@ -600,25 +614,25 @@ def get_departures_context(stop, services, form_data) -> dict:
             time = datetime.time()  # 00:00
         when = datetime.datetime.combine(date, time)
     context["when"] = when
-
     departures = live.get_departures(stop, services, when)
     context.update(departures)
 
-    next_page = {}
     if context["departures"]:
         context["has_live"] = any(item.get("live") for item in context["departures"])
         context["has_scheduled"] = any(
             item.get("time") for item in context["departures"]
         )
-        last_time = context["departures"][-1].get("time")
-        if last_time:
-            next_page = {
+    if context["when"]:
+        if len(context["departures"]) < 12:
+            context["next_page"] = {
+                "date": context["when"].date() + datetime.timedelta(days=1),
+                "time": None,
+            }
+        elif last_time := context["departures"][-1].get("time"):
+            context["next_page"] = {
                 "date": last_time.date(),
                 "time": last_time.time().strftime("%H:%M"),
             }
-
-    if next_page:
-        context["next_page"] = f"?{urlencode(next_page)}"
 
     return context
 
@@ -866,6 +880,18 @@ class OperatorDetailView(DetailView):
             .defer("geometry", "search_vector")
         )
         services = services.annotate(start_date=SubqueryMin("route__start_date"))
+
+        if self.object.name == "National Express":
+            services = services.annotate(
+                group=Case(
+                    When(
+                        route__code__contains="_Events-",
+                        then=Value("Festival & event travel"),
+                    ),
+                    default=Value(""),
+                )
+            )
+
         context["services"] = sorted(services, key=Service.get_order)
 
         if context["services"]:
@@ -884,9 +910,18 @@ class OperatorDetailView(DetailView):
         )
 
         # tickets tab:
-        context["tickets"] = any(
-            code.source_name == "MyTrip" for code in operator_codes
-        )
+        if any(code.source_name == "MyTrip" for code in operator_codes):
+            context["tickets_link"] = reverse(
+                "operator_tickets", kwargs={"slug": self.object.slug}
+            )
+        elif self.object.name == "Megabus":
+            context["tickets_link"] = (
+                "https://www.awin1.com/cread.php?awinmid=2678&awinaffid=242611&ued=https%3A%2F%2Fuk.megabus.com"
+            )
+        elif self.object.name == "National Express":
+            context["tickets_link"] = (
+                "https://nationalexpress.prf.hn/click/camref:1011ljPYw"
+            )
 
         context["nocs"] = [
             code.code
@@ -899,7 +934,9 @@ class OperatorDetailView(DetailView):
         context["vehicles"] = self.object.vehicle_set.filter(
             withdrawn=False, latest_journey__isnull=False
         ).exists()
-        if redis_client and context["vehicles"]:
+        if redis_client and (
+            context["vehicles"] or any(s.tracking for s in context["services"])
+        ):
             try:
                 context["map"] = redis_client.exists(
                     f"operator{self.object.noc}vehicles"
@@ -940,7 +977,7 @@ class ServiceDetailView(DetailView):
     )
 
     def get_object(self, **kwargs):
-        services = Service.objects.all()
+        services = Service.objects
 
         try:
             service = super().get_object(**kwargs)
@@ -1011,14 +1048,7 @@ class ServiceDetailView(DetailView):
         operators = self.object.operator.all()
         context["operators"] = operators
 
-        # if self.object.public_use is False and (
-        #     self.object.source.name.startswith("First Bus_")
-        #     or self.object.source.name.startswith("Stagecoach")
-        # ):
-        #     self.object.public_use = None
-
         context["related"] = self.object.get_similar_services()
-
         if context["related"]:
             context["colours"] = get_colours(context["related"])
 
@@ -1027,9 +1057,6 @@ class ServiceDetailView(DetailView):
         date = None
 
         if not self.object.timetable_wrong:
-            if context["related"]:
-                context["linked_services"] = self.object.get_linked_services()
-
             form = forms.TimetableForm(
                 self.request.GET or None,
                 service=self.object,
@@ -1089,11 +1116,9 @@ class ServiceDetailView(DetailView):
         #         for stop in consequence.stops.all():
         #             stop_situations[stop.atco_code] = situation
 
-        context["stopusages"] = (
-            self.object.stopusage_set.all()
-            .select_related("stop__locality")
-            .defer("stop__latlong", "stop__locality__latlong")
-        )
+        context["stopusages"] = self.object.stopusage_set.select_related(
+            "stop__locality"
+        ).defer("stop__latlong", "stop__locality__latlong")
         context["has_minor_stops"] = SimpleLazyObject(
             lambda: any(stop_usage.is_minor() for stop_usage in context["stopusages"])
         )
@@ -1120,14 +1145,6 @@ class ServiceDetailView(DetailView):
 
         context["links"] = []
 
-        if self.object.is_megabus():
-            context["links"].append(
-                {
-                    "url": self.object.get_megabus_url(),
-                    "text": "Buy tickets at megabus.com",
-                }
-            )
-
         if operators:
             operator = operators[0]
             context["breadcrumb"].append(operator)
@@ -1135,7 +1152,7 @@ class ServiceDetailView(DetailView):
 
             if operator.operatorcode_set.filter(source__name="MyTrip").exists():
                 context["app"] = {
-                    "url": f"{operator.get_absolute_url()}/tickets",
+                    "url": reverse("operator_tickets", kwargs={"slug": operator.slug}),
                     "name": "MyTrip app",
                 }
             for method in PaymentMethod.objects.filter(
@@ -1162,19 +1179,29 @@ class ServiceDetailView(DetailView):
             ):
                 if "app" in method.name and method.url:
                     context["app"] = method
-                elif "fare cap" in method.name and method.url:
-                    context["fare_cap"] = method
                 else:
                     context["payment_methods"].append(method)
             for operator in operators:
                 if operator.name == "National Express":
+                    context["tickets_link"] = (
+                        "https://nationalexpress.prf.hn/click/camref:1011ljPYw"
+                    )
                     context["links"].append(
                         {
-                            "url": "https://nationalexpress.prf.hn/click/camref:1011ljPYw",
+                            "url": context["tickets_link"],
                             "text": "Buy tickets at National Express",
                         }
                     )
-                    break
+                elif operator.name == "Megabus":
+                    context["tickets_link"] = (
+                        "https://www.awin1.com/cread.php?awinmid=2678&awinaffid=242611&ued=https%3A%2F%2Fuk.megabus.com"
+                    )
+                    context["links"].append(
+                        {
+                            "url": context["tickets_link"],
+                            "text": "Buy tickets at megabus.com",
+                        }
+                    )
 
         fare_tables = (
             FareTable.objects.filter(
@@ -1244,7 +1271,11 @@ class ServiceDetailView(DetailView):
             generator = template.template.generate(
                 **context, ad=True, request=self.request
             )
-            return StreamingHttpResponse(generator, content_type="text/html")
+            return StreamingHttpResponse(
+                generator,
+                content_type="text/html",
+                headers={"X-Accel-Buffering": "no", "Cache-Control": "no-cache"},
+            )
 
         return super().render_to_response(context)
 
@@ -1459,8 +1490,6 @@ def search(request):
             services = services.annotate(
                 operators=ArrayAgg("operator__name", distinct=True, default=None)
             )
-
-            context["parameters"] = urlencode({"q": query_text})
 
             for key, queryset in (
                 ("localities", localities),

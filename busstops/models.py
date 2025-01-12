@@ -3,7 +3,6 @@
 import datetime
 import logging
 import re
-import time
 from urllib.parse import urlencode
 
 import yaml
@@ -15,7 +14,7 @@ from django.contrib.postgres.aggregates import ArrayAgg, StringAgg
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.core.cache import cache
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Q
 from django.db.models.functions import Coalesce, Now, Upper
 from django.urls import reverse
 from django.utils.html import escape, format_html
@@ -207,6 +206,8 @@ class DataSource(models.Model):
     source = models.ForeignKey(
         TimetableDataSource, models.CASCADE, null=True, blank=True
     )
+    last_modified = models.DateTimeField(null=True, blank=True)
+    etag = models.CharField(max_length=255, blank=True)
 
     class Meta:
         ordering = ["id"]
@@ -273,7 +274,9 @@ class DataSource(models.Model):
             else:
                 text = escape(text)
             if date:
-                text = mark_safe(f"{text}, {date:%-d %B %Y}")
+                text = mark_safe(
+                    f"""{text}, <time datetime="{date.date()}">{date:%-d %B %Y}</time>"""
+                )
             return text
 
         return ""
@@ -288,7 +291,9 @@ class StopPoint(models.Model):
     """The smallest type of geographical point.
     A point at which vehicles stop"""
 
-    atco_code = models.CharField(max_length=16, primary_key=True)
+    source = models.ForeignKey(DataSource, models.DO_NOTHING, null=True, blank=True)
+
+    atco_code = models.CharField(max_length=36, primary_key=True)
     naptan_code = models.CharField(max_length=16, null=True, blank=True)
 
     common_name = models.CharField(max_length=48)
@@ -507,6 +512,8 @@ class OperatorManager(models.Manager):
 
 class Operator(SearchMixin, models.Model):
     """An entity that operates public transport services"""
+
+    source = models.ForeignKey(DataSource, models.DO_NOTHING, null=True, blank=True)
 
     noc = models.CharField(max_length=10, primary_key=True)  # e.g. 'YCST'
     name = models.CharField(max_length=100, db_index=True)
@@ -763,6 +770,8 @@ class Service(models.Model):
         return reverse("service_detail", args=(self.slug,))
 
     def get_order(self):
+        if hasattr(self, "group"):
+            return self.group, self.get_line_name_order(self.get_line_names()[0])
         return self.get_line_name_order(self.get_line_names()[0])
 
     @staticmethod
@@ -776,45 +785,22 @@ class Service(models.Model):
     def get_tfl_url(self):
         return f"https://tfl.gov.uk/bus/timetable/{self.line_name}/"
 
-    def get_trapeze_link(self, date):
+    def get_trapeze_link(self):
         domain = "travelinescotland.com"
         name = "Timetable on the Traveline Scotland website"
-        if date:
-            date = int(time.mktime(date.timetuple()) * 1000)
-        else:
-            date = ""
-        query = (
-            ("timetableId", self.service_code),
-            ("direction", "OUTBOUND"),
-            ("queryDate", date),
-            ("queryTime", date),
-        )
-        return f"http://www.{domain}/lts/#/timetables?{urlencode(query)}", name
-
-    def is_megabus(self):
-        return (
-            self.line_name in {"FAL", "TUBE"}
-            or self.service_code == "PF0000459:197"  # X5
-            or any(o.pk in {"MEGA", "SCMG", "SCLK"} for o in self.operator.all())
-        )
-
-    def get_megabus_url(self):
-        # Using a tuple of tuples, instead of a dict, because the order is important for tests
-        query = (
-            ("mid", 2678),
-            ("id", 242611),
-            ("clickref", "links"),
-            ("clickref2", self.service_code),
-            ("p", "https://uk.megabus.com"),
-        )
-        return "https://www.awin1.com/awclick.php?" + urlencode(query)
+        query = (("serviceId", self.service_code.replace("_", " ")),)
+        return f"https://www.{domain}/timetables?{urlencode(query)}", name
 
     def get_traveline_links(self, date=None):
-        if not self.source:
+        if not self.source_id:
             return
 
-        if self.source.name == "S" and "_" not in self.service_code:
-            yield self.get_trapeze_link(date)
+        if (
+            self.source.name == "S"
+            and "_" in self.service_code
+            and not self.service_code.startswith("S_")
+        ):
+            yield self.get_trapeze_link()
             return
 
         if self.source.name == "W" or self.region_id == "W":
@@ -829,7 +815,7 @@ class Service(models.Model):
             return
 
         base_url = (
-            "http://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST?"
+            "https://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST?"
         )
 
         base_query = [("command", "direct"), ("outputFormat", 0)]
@@ -881,64 +867,43 @@ class Service(models.Model):
             except (ValueError, IndexError):
                 pass
 
-    def get_linked_services_cache_key(self):
-        return f"{self.id}linked_services{self.modified_at.timestamp()}"
-
-    def get_similar_services_cache_key(self):
-        return f"{self.id}similar_services{self.modified_at.timestamp()}"
-
-    def get_linked_services(self):
-        services = cache.get(key := self.get_linked_services_cache_key())
-        if services is None:
-            services = list(
-                Service.objects.filter(
-                    Exists(
-                        ServiceLink.objects.filter(
-                            Q(from_service=self, to_service=OuterRef("pk"))
-                            | Q(from_service=OuterRef("pk"), to_service=self),
-                            how="parallel",
-                        )
-                    )
-                )
-                .order_by()
-                .defer("search_vector", "geometry")
-            )
-            cache.set(key, services, 86400)
-        return services
-
     def get_similar_services(self):
-        services = cache.get(key := self.get_similar_services_cache_key())
-        if services is None:
-            q = Q(
-                id__in=self.link_from.values("to_service").union(
-                    self.link_to.values("from_service")
-                )
-            )
-            q |= Q(
-                id__in=Route.objects.filter(
-                    Q(registration__in=self.route_set.values("registration"))
-                    | Q(
-                        ~Q(service_code=""),
-                        ~Q(service_code__endswith=":"),
-                        service_code__in=self.route_set.values("service_code"),
-                        registration=None,
-                        source=self.source_id,
-                    ),
-                ).values("service")
-            )
-            services = (
-                Service.objects.with_line_names()
-                .filter(q, ~Q(pk=self.pk), current=True)
-                .order_by()
-                .defer("search_vector", "geometry")
-            )
-            services = sorted(
-                services.annotate(
-                    operators=ArrayAgg("operator__name", distinct=True, default=None)
-                ),
-                key=Service.get_order,
-            )
-            cache.set(key, services, 86400)
+        ids = self.link_from.values("to_service").union(
+            self.link_to.values("from_service")
+        )
+
+        # if self.service_code:
+        #     ids = ids.union(
+        #         Service.objects.filter(
+        #             ~Q(id=self.id),
+        #             source=self.source_id,
+        #             service_code=self.service_code
+        #         ).values("id")
+        #     )
+        # else:
+
+        ids = ids.union(
+            Route.objects.filter(
+                ~Q(service=self.id),
+                ~Q(service_code=""),
+                ~Q(service_code__endswith=":"),
+                service_code__in=self.route_set.values("service_code"),
+                source=self.source_id,
+            ).values("service")
+        )
+
+        services = (
+            Service.objects.with_line_names()
+            .filter(id__in=ids, current=True)
+            .order_by()
+            .defer("search_vector", "geometry")
+        )
+        services = sorted(
+            services.annotate(
+                operators=ArrayAgg("operator__name", distinct=True, default=None)
+            ),
+            key=Service.get_order,
+        )
         return services
 
     def get_timetable(
@@ -976,7 +941,7 @@ class Service(models.Model):
             except (IndexError, UnboundLocalError, AssertionError) as e:
                 logger = logging.getLogger(__name__)
 
-                logger.error(e, exc_info=True)
+                logger.exception(e)
                 return
 
         cache_key = [

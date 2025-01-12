@@ -3,6 +3,8 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+import pandas as pd
+from shapely.errors import EmptyPartError
 import gtfs_kit
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -10,13 +12,33 @@ from django.db import transaction
 from django.db.models import Min
 from django.utils.dateparse import parse_duration
 
-from busstops.models import DataSource, Operator, Service
+from busstops.models import DataSource, Operator, Service, StopPoint
 
-from ...download_utils import download_if_changed
+from ...download_utils import download_if_modified
 from ...models import Route, StopTime, Trip
 from .import_gtfs_ember import get_calendars
 
 logger = logging.getLogger(__name__)
+
+
+def get_stoppoint(stop, source):
+    stoppoint = StopPoint(
+        atco_code=stop.stop_id,
+        naptan_code=stop.stop_code,
+        common_name=stop.stop_name,
+        active=True,
+        source=source,
+        latlong=f"POINT({stop.stop_lon} {stop.stop_lat})",
+    )
+
+    if len(stoppoint.common_name) > 48:
+        if " (" in stoppoint.common_name and stoppoint.common_name[-1] == ")":
+            stoppoint.common_name, stoppoint.indicator = stoppoint.common_name.split(
+                " (", 1
+            )
+        stoppoint.indicator = stoppoint.indicator[:-1]
+
+    return stoppoint
 
 
 class Command(BaseCommand):
@@ -26,9 +48,9 @@ class Command(BaseCommand):
 
         path = settings.DATA_DIR / Path("flixbus_eu.zip")
 
-        url = "https://gtfs.gis.flix.tech/gtfs_generic_eu.zip"
+        source.url = "https://gtfs.gis.flix.tech/gtfs_generic_eu.zip"
 
-        modified, last_modified = download_if_changed(path, url)
+        modified, last_modified = download_if_modified(path, source)
 
         if not modified:
             return
@@ -36,14 +58,14 @@ class Command(BaseCommand):
         feed = gtfs_kit.read_feed(path, dist_units="km")
 
         feed = feed.restrict_to_routes(
-            [route_id for route_id in feed.routes.route_id if route_id.startswith("UK")]
+            feed.routes[feed.routes.route_id.str.startswith("UK")].route_id
         )
 
-        stops_data = {row.stop_id: row for i, row in feed.stops.iterrows()}
+        stops_data = {row.stop_id: row for row in feed.stops.itertuples()}
         stop_codes = {
             stop_code.code: stop_code.stop_id for stop_code in source.stopcode_set.all()
         }
-        missing_stops = set()
+        missing_stops = {}
 
         existing_services = {
             service.line_name: service for service in operator.service_set.all()
@@ -66,10 +88,15 @@ class Command(BaseCommand):
         }
 
         geometries = {}
-        for i, row in gtfs_kit.routes.geometrize_routes(feed).iterrows():
-            geometries[row.route_id] = row.geometry.wkt
+        try:
+            for row in gtfs_kit.routes.get_routes(feed, as_gdf=True).itertuples():
+                if row.geometry:
+                    print(row.geometry, row.geometry.wkt)
+                    geometries[row.route_id] = row.geometry.wkt
+        except EmptyPartError:
+            pass
 
-        for i, row in feed.routes.iterrows():
+        for row in feed.routes.itertuples():
             line_name = row.route_id.removeprefix("UK")
 
             if line_name in existing_services:
@@ -102,7 +129,7 @@ class Command(BaseCommand):
             trip.vehicle_journey_code: trip for trip in operator.trip_set.all()
         }
         trips = {}
-        for i, row in feed.trips.iterrows():
+        for row in feed.trips.itertuples():
             trip = Trip(
                 route=existing_routes[row.route_id],
                 calendar=calendars[row.service_id],
@@ -117,7 +144,7 @@ class Command(BaseCommand):
         del existing_trips
 
         stop_times = []
-        for i, row in feed.stop_times.iterrows():
+        for row in feed.stop_times.itertuples():
             trip = trips[row.trip_id]
             offset = utc_offsets[trip.calendar.start_date]
 
@@ -133,14 +160,21 @@ class Command(BaseCommand):
                 departure=departure_time,
                 sequence=row.stop_sequence,
                 trip=trip,
-                timing_status="PTP" if row.timepoint else "OTH",
             )
+            if pd.notna(row.timepoint) and row.timepoint == 1:
+                stop_time.timing_status = "PTP"
+            else:
+                stop_time.timing_status = "OTH"
+
             if row.stop_id in stop_codes:
                 stop_time.stop_id = stop_codes[row.stop_id]
             else:
                 stop = stops_data[row.stop_id]
-                stop_time.stop_code = stop.stop_name
+                stop_time.stop_id = row.stop_id
+
                 if row.stop_id not in missing_stops:
+                    missing_stops[row.stop_id] = get_stoppoint(stop, source)
+
                     logger.info(
                         f"{stop.stop_name} {stop.stop_code} {stop.stop_timezone} {stop.platform_code}"
                     )
@@ -148,13 +182,18 @@ class Command(BaseCommand):
                         f"https://bustimes.org/map#16/{stop.stop_lat}/{stop.stop_lon}"
                     )
                     logger.info(
-                        f"https://bustimes.org/admin/busstops/stopcode/add/?code={stop.stop_id}\n"
+                        f"https://bustimes.org/admin/busstops/stopcode/add/?code={row.stop_id}\n"
                     )
-                    missing_stops.add(row.stop_id)
 
             trip.destination_id = stop_time.stop_id
 
             stop_times.append(stop_time)
+        StopPoint.objects.bulk_create(
+            missing_stops.values(),
+            update_conflicts=True,
+            update_fields=["common_name", "indicator", "naptan_code", "latlong"],
+            unique_fields=["atco_code"],
+        )
 
         with transaction.atomic():
             Trip.objects.bulk_create([trip for trip in trips.values() if not trip.id])

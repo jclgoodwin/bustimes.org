@@ -28,6 +28,7 @@ class VehicleSerializer(serializers.ModelSerializer):
     operator = serializers.SerializerMethodField()
     livery = serializers.SerializerMethodField()
     vehicle_type = VehicleTypeSerializer()
+    special_features = serializers.ListField()
 
     def get_operator(self, obj):
         if obj.operator_id:
@@ -64,6 +65,7 @@ class VehicleSerializer(serializers.ModelSerializer):
             "name",
             "notes",
             "withdrawn",
+            "special_features",
         ]
 
 
@@ -98,9 +100,13 @@ class ServiceSerializer(serializers.ModelSerializer):
 
 
 class StopSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
     long_name = serializers.SerializerMethodField()
     location = serializers.SerializerMethodField()
     icon = serializers.SerializerMethodField()
+
+    def get_name(self, obj):
+        return obj.get_name_for_timetable()
 
     def get_long_name(self, obj):
         return obj.get_long_name()
@@ -118,6 +124,7 @@ class StopSerializer(serializers.ModelSerializer):
             "atco_code",
             "naptan_code",
             "common_name",
+            "name",
             "long_name",
             "location",
             "indicator",
@@ -170,7 +177,8 @@ class TripSerializer(serializers.ModelSerializer):
     times = serializers.SerializerMethodField()
     notes = NoteSerializer(many=True)
 
-    def get_service(self, obj):
+    @staticmethod
+    def get_service(obj):
         return {
             "id": obj.route.service_id,
             "line_name": obj.route.line_name,
@@ -178,7 +186,8 @@ class TripSerializer(serializers.ModelSerializer):
             "mode": obj.route.service and obj.route.service.mode,
         }
 
-    def get_operator(self, obj):
+    @staticmethod
+    def get_operator(obj):
         if obj.operator:
             return {
                 "noc": obj.operator_id,
@@ -187,14 +196,17 @@ class TripSerializer(serializers.ModelSerializer):
                 "slug": obj.operator.slug,
             }
 
-    def get_times(self, obj):
+    @staticmethod
+    def get_times(obj):
         if not hasattr(obj, "stops"):
             return
 
-        route_links = {}
-        if obj.route.service:
-            for link in obj.route.service.routelink_set.all():
-                route_links[(link.from_stop_id, link.to_stop_id)] = link
+        route_links = {
+            (link.from_stop_id, link.to_stop_id): link
+            for link in (
+                obj.route.service.routelink_set.all() if obj.route.service else ()
+            )
+        }
         previous_stop_id = None
 
         for stop_time in obj.stops:
@@ -247,6 +259,7 @@ class TripSerializer(serializers.ModelSerializer):
 
 class VehicleJourneySerializer(serializers.ModelSerializer):
     vehicle = serializers.SerializerMethodField()
+    times = serializers.SerializerMethodField()
 
     def get_vehicle(self, obj):
         if obj.vehicle_id:
@@ -257,6 +270,17 @@ class VehicleJourneySerializer(serializers.ModelSerializer):
                 "reg": obj.vehicle.reg,
             }
 
+    def get_times(self, obj):
+        return TripSerializer.get_times(obj.trip)
+
     class Meta:
         model = VehicleJourney
-        fields = ["id", "datetime", "vehicle", "trip_id", "route_name", "destination"]
+        fields = [
+            "id",
+            "datetime",
+            "vehicle",
+            "route_name",
+            "destination",
+            "trip_id",
+            "times",
+        ]

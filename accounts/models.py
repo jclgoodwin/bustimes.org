@@ -31,6 +31,6 @@ class User(AbstractUser):
         return reverse("user_detail", args=(self.id,))
 
     def __str__(self):
-        if "@" not in self.username:
+        if self.trusted is not False and "@" not in self.username:
             return f"{self.id}: {self.username}"
         return f"{self.id}"

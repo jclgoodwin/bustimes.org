@@ -15,7 +15,7 @@ from sentry_sdk.integrations.redis import RedisIntegration
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ["SECRET_KEY"]
 ALLOWED_HOSTS = os.environ.get(
-    "ALLOWED_HOSTS", "[::1] 127.0.0.1 localhost joshuas-macbook-pro.local"
+    "ALLOWED_HOSTS", "[::1] 127.0.0.1 localhost 16.local"
 ).split()
 
 CSRF_TRUSTED_ORIGINS = os.environ.get(
@@ -114,7 +114,7 @@ ASGI_APPLICATION = "buses.asgi.application"
 
 DATABASES = {"default": dj_database_url.config(conn_max_age=None)}
 
-DATABASES["default"]["options"] = {
+DATABASES["default"]["OPTIONS"] = {
     "application_name": os.environ.get("APPLICATION_NAME") or " ".join(sys.argv)[-63:],
     "connect_timeout": 9,
 }
@@ -172,12 +172,15 @@ STORAGES = {
     },
 }
 WHITENOISE_ROOT = BASE_DIR / "busstops" / "static" / "root"
+WHITENOISE_MIMETYPES = {
+    ".webmanifest": "application/manifest+json",
+}
 TEMPLATE_MINIFER_STRIP_FUNCTION = "buses.utils.minify"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "OPTIONS": {
-            "debug": DEBUG or TEST,
+            "debug": DEBUG,
             "context_processors": [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
@@ -265,14 +268,17 @@ def traces_sampler(context):
     return 0.001
 
 
-if "SENTRY_DSN" in os.environ and not TEST:
-    sentry_sdk.init(
-        dsn=os.environ.get("SENTRY_DSN"),
-        integrations=[DjangoIntegration(), RedisIntegration(), HueyIntegration()],
-        ignore_errors=[KeyboardInterrupt, RuntimeError],
-        release=os.environ.get("COMMIT_HASH") or os.environ.get("KAMAL_CONTAINER_NAME"),
-    )
-    ignore_logger("django.security.DisallowedHost")
+if not TEST:  # pragma: nocover
+    if "SENTRY_DSN" in os.environ:
+        sentry_sdk.init(
+            dsn=os.environ.get("SENTRY_DSN"),
+            integrations=[DjangoIntegration(), RedisIntegration(), HueyIntegration()],
+            ignore_errors=[KeyboardInterrupt, RuntimeError],
+            release=os.environ.get("COMMIT_HASH")
+            or os.environ.get("KAMAL_CONTAINER_NAME"),
+            traces_sampler=traces_sampler,
+        )
+        ignore_logger("django.security.DisallowedHost")
 
     LOGGING = {
         "version": 1,
@@ -291,20 +297,6 @@ if "SENTRY_DSN" in os.environ and not TEST:
 TFL = {  # London
     "app_id": os.environ.get("TFL_APP_ID"),
     "app_key": os.environ.get("TFL_APP_KEY"),
-}
-TFWM_OPERATORS = {
-    # "National Express West Midlands",
-    # "National Express Coventry",
-    # "Diamond Bus",
-    # "Landflight",
-    # "West Midlands Metro",
-    # "Stagecoach Midlands",
-}
-ACIS_HORIZON_OPERATORS = {
-    "Ulsterbus",
-    "Ulsterbus Town Services",
-    "Translink Metro",
-    "Translink Glider",
 }
 TFE_OPERATORS = {
     "Lothian Buses",
@@ -330,8 +322,10 @@ else:
     DATA_DIR = BASE_DIR / "data"
 TNDS_DIR = DATA_DIR / "TNDS"
 
+# captchas
 TURNSTILE_SITEKEY = os.environ.get("TURNSTILE_SITEKEY", "0x4AAAAAAAFWiyCqdh2c-5sy")
 TURNSTILE_SECRET = os.environ.get("TURNSTILE_SECRET")
 
-ABBREVIATE_HOURLY = False
-DISABLE_REGISTRATION = True
+ABBREVIATE_HOURLY = False  # we override this in some tests, that's all
+DISABLE_REGISTRATION = os.environ.get("DISABLE_REGISTRATION", False)
+DISABLE_EDITING = os.environ.get("DISABLE_EDITING", False)

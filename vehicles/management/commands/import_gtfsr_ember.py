@@ -17,6 +17,10 @@ class Command(BaseCommand):
 
     @cache
     def get_note(self, note_code, note_text):
+        # note_code = note_code or ""
+        # note_text = note_text[:255]
+        # if (note_code, note_text) in self.existing_notes:
+        #     return self.existing_notes[(note_code, note_text)]
         return Note.objects.get_or_create(code=note_code or "", text=note_text[:255])[0]
 
     def do_source(self):
@@ -35,6 +39,10 @@ class Command(BaseCommand):
         items = []
         vehicle_codes = []
 
+        self.existing_notes = {
+            (note.code, note.text): note
+            for note in Note.objects.filter(trip__operator="EMBR")
+        }
         stop_notes = {}
 
         # build list of vehicles that have moved
@@ -64,6 +72,11 @@ class Command(BaseCommand):
                     stop_notes[note] = [item.alert.informed_entity[0].stop_id]
 
         self.prefetch_vehicles(vehicle_codes)
+
+        for note in self.existing_notes.values():
+            if note not in stop_notes:
+                note.stoptime_set.clear()
+                note.trip_set.clear()
 
         for note in stop_notes:
             stop_times = StopTime.objects.filter(

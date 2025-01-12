@@ -25,16 +25,16 @@ class ImportPassengerTest(TestCase):
             name="Unilink",
         )
 
-        with override_settings(DATA_DIR=fixtures_dir):
-            with use_cassette(
+        with (
+            override_settings(DATA_DIR=fixtures_dir),
+            use_cassette(
                 str(fixtures_dir / "passenger.yaml"), decode_compressed_response=True
-            ):
-                with patch("bustimes.management.commands.import_passenger.write_file"):
-                    with self.assertRaises(FileNotFoundError):
-                        with self.assertLogs(
-                            "bustimes.management.commands.import_bod_timetables"
-                        ) as cm:
-                            call_command("import_passenger")
+            ),
+            patch("bustimes.management.commands.import_passenger.write_file"),
+            self.assertRaises(FileNotFoundError),
+            self.assertLogs("bustimes.management.commands.import_bod_timetables") as cm,
+        ):
+            call_command("import_passenger")
 
         self.assertEqual(
             cm.output,
@@ -56,5 +56,6 @@ class ImportPassengerTest(TestCase):
         # date from timestamp in code (1653042367)
         self.assertEqual(
             source.credit(route),
-            """<a href="https://data.discoverpassenger.com/operator/unilink" rel="nofollow">Unilink</a>, 20 May 2022""",
+            """<a href="https://data.discoverpassenger.com/operator/unilink" rel="nofollow">Unilink</a>, """
+            + """<time datetime="2022-05-20">20 May 2022</time>""",
         )

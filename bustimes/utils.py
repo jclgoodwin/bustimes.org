@@ -1,6 +1,7 @@
 import logging
 from datetime import date, datetime, timedelta
 from difflib import Differ
+from itertools import pairwise
 
 from ciso8601 import parse_datetime
 from django.db.models import (
@@ -8,15 +9,15 @@ from django.db.models import (
     DateTimeField,
     ExpressionWrapper,
     F,
-    OuterRef,
     Q,
     Value,
     When,
+    OuterRef,
 )
 from django.utils import timezone
 from sql_util.utils import Exists
 
-from .models import Calendar, CalendarBankHoliday, CalendarDate, StopTime, Trip
+from .models import Calendar, CalendarBankHoliday, CalendarDate, StopTime, Trip, Route
 
 differ = Differ(charjunk=lambda _: True)
 logger = logging.getLogger(__name__)
@@ -34,6 +35,31 @@ class log_time_taken:
 
 
 def get_routes(routes, when=None, from_date=None):
+    if when:
+        if type(routes) is list:
+            if filter_by_revision_number := any(
+                route.revision_number for route in routes
+            ):
+                routes = Route.objects.filter(
+                    id__in=[route.id for route in routes]
+                ).select_related("source")
+        else:
+            filter_by_revision_number = True
+        if filter_by_revision_number:
+            routes = routes.filter(
+                Q(start_date=None) | Q(start_date__lte=when),
+                ~Exists(
+                    Route.objects.filter(
+                        Q(start_date__gt=OuterRef("start_date"))
+                        | ~Q(end_date=OuterRef("end_date")),  # for bad data
+                        source=OuterRef("source"),
+                        service_code=OuterRef("service_code"),
+                        start_date__lte=when,
+                        revision_number__gt=OuterRef("revision_number"),
+                    )
+                ),
+            ).order_by("id")
+
     # complicated way of working out which Passenger .zip applies
     current_prefixes = {}
     for route in routes:
@@ -60,93 +86,34 @@ def get_routes(routes, when=None, from_date=None):
         ]
         return routes
 
-    revision_numbers = set(route.revision_number for route in routes)
+    if when:
+        routes = [route for route in routes if route.contains(when)]
 
-    if len(revision_numbers) == 1:
-        if when:
-            routes = [route for route in routes if route.contains(when)]
-
-        if from_date:
-            # just filter out previous versions
-            routes = [
-                route
-                for route in routes
-                if route.end_date is None or route.end_date >= from_date
-            ]
+    if from_date:
+        # just filter out previous versions
+        routes = [
+            route
+            for route in routes
+            if route.end_date is None or route.end_date >= from_date
+        ]
 
     if len(routes) <= 1:
         return routes
 
-    sources = set(route.source for route in routes)
-    if len(sources) > 1 and any(
-        route.code.startswith("Merged") and route.source.name == "W" for route in routes
-    ):
-        routes = [route for route in routes if route.source.name == "W"]
-        if len(routes) <= 1:
-            return routes
-
+    # TfL: parse Service Change Number from filename (like a revision number) and use the highest one
     # https://techforum.tfl.gov.uk/t/duplicate-files-in-journey-planner-datastore-is-there-a-way-to-choose-the-right-one/2571
-    if routes and all(
-        route.source.name == "L"
-        and route.code.split("-")[:-1] == routes[0].code.split("-")[:-1]
-        and route.start_date == routes[0].start_date
-        and route.end_date == routes[0].end_date
-        for route in routes[1:]
-    ):
-        return [max(routes, key=lambda r: r.code)]
-
-    # use maximum revision number for each service_code (TxC Service)
-    if when and len(revision_numbers) > 1:
-        routes = list(routes)
-        routes.sort(key=lambda r: r.revision_number)
-        revision_numbers = {}
-        for route in routes:
-            route.key = route.service_code.replace(":0", ":")
-
-            if route.source.name.startswith(
-                "First Bus_"
-            ) or route.source.name.startswith(
-                "National Express West Midlands"
-            ):  # journeys may be split between sources (First Bristol)
-                route.key = f"{route.key}:{route.source_id}"
-
-            # use some clues in the filename (or a very good clue in the source URL)
-            # to tell if the data is from Ticketer, and adapt accordingly
-            # - the revision number applies to a bit of the filename
-            # (e.g. the '10W' bit in 'AMSY_10W_AMSYP...') *not* the service_code
-            parts = route.code.split("_")
-            looks_like_ticketer_route = (
-                7 >= len(parts) >= 6
-                and parts[3].isdigit()
-                and (parts[4].isdigit() or parts[4] == "-")
-            )
-
-            if ".ticketer." in route.source.url:
-                if not looks_like_ticketer_route:
-                    logger.warning(
-                        "Ticketer %s in %s doesn't look like Ticketer data",
-                        route.code,
-                        route.source.url,
-                    )
-                route.key = f"{route.key}:{parts[1]}"
-            elif looks_like_ticketer_route:
-                route.key = f"{route.key}:{parts[1]}"
-
-            if route.key not in revision_numbers or (
-                route.revision_number > revision_numbers[route.key]
-                and (not route.start_date or route.start_date <= when)
-            ):
-                revision_numbers[route.key] = route.revision_number
+    if when and any(route.source.name == "L" for route in routes):
         routes = [
             route
             for route in routes
-            if route.revision_number == revision_numbers[route.key]
+            if route.source.name != "L"
+            or not any(
+                route.code[:-5] == r.code[:-5] and route.code < r.code for r in routes
+            )
         ]
 
-    sources = set(route.source_id for route in routes)
-
     # remove duplicates
-    if len(sources) > 1:
+    if len(set(route.source_id for route in routes)) > 1:
         sources_by_sha1 = {
             route.source.sha1: route.source_id for route in routes if route.source.sha1
         }
@@ -157,18 +124,6 @@ def get_routes(routes, when=None, from_date=None):
             if not route.source.sha1
             or route.source_id == sources_by_sha1[route.source.sha1]
         ]
-    elif len(routes) == 2 and all(
-        route.code.startswith("NCSD_TXC") for route in routes
-    ):
-        # favour the TxC 2.1 version of NCSD data, if both versions' dates are current
-        routes = [route for route in routes if route.code.startswith("NCSD_TXC/")]
-
-    if when and len(sources) == 1:
-        override_routes = [
-            route for route in routes if route.start_date == route.end_date == when
-        ]
-        if override_routes:  # e.g. Lynx BoxingDayHoliday
-            routes = override_routes
 
     return routes
 
@@ -196,23 +151,22 @@ def get_calendars(when: date | datetime, calendar_ids=None):
         calendar=OuterRef("id"),
     )
     bank_holiday_inclusions = Exists(calendar_bank_holidays.filter(operation=True))
-    bank_holiday_exclusions = Exists(calendar_bank_holidays.filter(operation=False))
 
-    return calendars.filter(
+    return calendars.annotate(
+        bank_holiday_exclusions=Exists(calendar_bank_holidays.filter(operation=False))
+    ).filter(
         Q(
             Q(**{f"{when:%a}".lower(): True}),  # day of week
             ~only_certain_dates | Exists(inclusions),  # special dates of operation
-            ~bank_holiday_exclusions,
+            bank_holiday_exclusions=False,
         )
         | special_inclusions
-        | bank_holiday_inclusions & ~bank_holiday_exclusions,
+        | bank_holiday_inclusions & Q(bank_holiday_exclusions=False),
         ~Exists(exclusions),
     )
 
 
-def get_stop_times(
-    date: date, time: timedelta | None, stop, services_routes: dict, trip_ids=None
-):
+def get_stop_times(date: date, time: timedelta | None, stop, routes, trip_ids=None):
     times = StopTime.objects.filter(pick_up=True).annotate(date=Value(date))
 
     try:
@@ -224,9 +178,7 @@ def get_stop_times(
         trips = Trip.objects.filter(id__in=trip_ids, start__lt=time)
         times = times.filter(departure__lt=time)
     else:
-        routes = []
-        for service_routes in services_routes.values():
-            routes += get_routes(service_routes, date)
+        routes = get_routes(routes, date)
 
         if not routes:
             times = times.none()
@@ -245,7 +197,7 @@ def get_stop_times(
 
             times = times.annotate(
                 departure_time=ExpressionWrapper(
-                    int(midnight.timestamp()) + F("departure"),
+                    F("departure") + midnight.timestamp(),
                     output_field=DateTimeField(),
                 )
             ).order_by("departure_time")
@@ -426,3 +378,16 @@ def get_trip(
                 trips = filtered_trips
 
         return trips[0]
+
+
+def contiguous_stoptimes_only(stoptimes, trip_id):
+    for a, b in pairwise(stoptimes):
+        if a.trip_id != b.trip_id:
+            if a.stop_id != b.stop_id:
+                # trips are not contiguous, return only the stops for trip_id
+                return [stop for stop in stoptimes if stop.trip_id == trip_id]
+            else:
+                a.departure_time = b.departure_time
+
+    # trips were contiguous, return all stops
+    return stoptimes

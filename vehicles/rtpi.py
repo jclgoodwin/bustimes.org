@@ -8,6 +8,7 @@ from django.contrib.gis.geos import LineString, Point
 from django.utils import timezone
 
 from bustimes.models import RouteLink, StopTime, Trip
+from bustimes.utils import contiguous_stoptimes_only
 from vehicles.utils import calculate_bearing
 
 
@@ -15,12 +16,18 @@ def get_stop_times(item):
     trip = Trip.objects.get(pk=item["trip_id"])
     trips = trip.get_trips()
 
-    return (
+    stop_times = (
         StopTime.objects.filter(trip__in=trips)
         .filter(stop__latlong__isnull=False)
         .select_related("stop")
+        .only("arrival", "departure", "stop__latlong")
         .order_by("trip__start", "id")
     )
+
+    if len(trips) > 1:
+        return contiguous_stoptimes_only(stop_times, trip.id)
+
+    return stop_times
 
 
 class Progress:
@@ -46,9 +53,12 @@ def get_progress(item, stop_time=None):
     point = Point(*item["coordinates"])
 
     if stop_time:
-        stop_times = stop_time.trip.stoptime_set.all()
+        stop_times = stop_time.trip.stoptime_set.all()  # prefetched earlier
     else:
-        stop_times = get_stop_times(item)
+        try:
+            stop_times = get_stop_times(item)
+        except Trip.DoesNotExist:
+            return
 
     pairs = [
         (a, b, LineString([a.stop.latlong, b.stop.latlong]))
@@ -78,7 +88,7 @@ def get_progress(item, stop_time=None):
         difference = (vehicle_heading - route_bearing + 180) % 360 - 180
         next_closest, next_closest_distance = nearby_pairs[1]
 
-        if not (-90 < difference < 90) and next_closest_distance < 0.001:
+        if not (abs(difference) < 90) and next_closest_distance < 0.001:
             # bus seems to be heading the wrong way - does the bus go both ways on this road?
             # try the next closest pair of stops:
             route_bearing = calculate_bearing(
@@ -86,7 +96,7 @@ def get_progress(item, stop_time=None):
             )
 
             difference = (vehicle_heading - route_bearing + 180) % 360 - 180
-            if -90 < difference < 90:
+            if abs(difference) < 90:
                 closest = next_closest
                 distance = next_closest_distance
 

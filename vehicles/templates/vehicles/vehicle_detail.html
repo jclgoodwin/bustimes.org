@@ -9,17 +9,17 @@
     {% else %}
         <meta name="robots" content="noindex,noarchive">
     {% endif %}
-{% endblock %}
+{% endblock canonical %}
 
 {% block head %}
     {% if vehicle %}
         <meta property="og:title" content="{{ object }}">
-        <meta property="og:description" content="{{ object.vehicle_type }}{% if object.name %}
+        <meta property="og:description" content="{% firstof object.vehicle_type object.operator %}{% if object.name %}
 
 {{ object.name }}{% endif %}">
 
     {% endif %}
-{% endblock %}
+{% endblock head %}
 
 {% block bodyclass %}narrow{% endblock %}
 
@@ -27,7 +27,7 @@
 
 {% if vehicle %}
     <h1>
-        {% if vehicle.has_uk_reg %}
+        {% if vehicle.reg %}
             {% if vehicle.fleet_code or vehicle.fleet_number %}
                 {% if vehicle.withdrawn %}<del>{% endif %}
                 {% firstof vehicle.fleet_code vehicle.fleet_number %}
@@ -63,16 +63,22 @@
     <p><a href="{{ tracking }}" class="button">Track this bus</a></p>
 {% endif %}
 
+{% load static %}
+
+<div id="journeys" hx-history-elt>
+
 {% if date %}
-    <form class="timetable-date" autocomplete="off">
+    <script src="{% static 'js/htmx.org/htmx.min.js' %}"></script>
+
+    <form class="timetable-date" autocomplete="off" hx-trigger="change" hx-get="{% if vehicle %}{{ vehicle.get_absolute_url }}{% endif %}" hx-select="#journeys" hx-target="#journeys" hx-indicator="#journeys" hx-swap="outerHTML" hx-push-url="true">
         {% if dates %}
-            <select onchange="this.form.submit()" name="date" id="date" aria-label="Date">
+            <select name="date" id="date" aria-label="Date">
                 {% for option in dates %}
                     <option{% if option == date %} selected{% endif %} value="{{ option.isoformat }}">{{ option|date:"l j F Y" }}</option>
                 {% endfor %}
             </select>
         {% else %}
-            <input type="date" onchange="this.form.submit()" name="date" id="date" aria-label="Date" value="{{ date.isoformat }}">
+            <input type="date" name="date" id="date" aria-label="Date" value="{{ date.isoformat }}">
         {% endif %}
         <noscript><input type="submit" value="Go"></noscript>
     </form>
@@ -111,13 +117,13 @@
             <td class="tabular">{% if journey.code|length < 20 %}{{ journey.code }}{% endif %}</td>
             {% if journey.trip_id %}
                 <td class="link tabular">
-                    <a href="{% if journey.locations %}#journeys/{{ journey.id }}{% else %}{{ journey.trip.get_absolute_url }}{% endif %}">{{ journey.datetime|time:"H:i" }}</a>
+                    <a href="{% if journey.locations is not False %}#journeys/{{ journey.id }}{% else %}{{ journey.trip.get_absolute_url }}{% endif %}">{{ journey.datetime|time:"H:i" }}</a>
                 </td>
             {% else %}
                 <td class="tabular">{{ journey.datetime|time:"H:i" }}</td>
             {% endif %}
             <td>{% firstof journey.destination journey.direction %}</td>
-            {% if journey.locations %}
+            {% if journey.locations is not False %}
                 <td class="link"><a href="#journeys/{{ journey.id }}">Map</a></td>
             {% endif %}
             {% if request.user.is_superuser %}
@@ -141,14 +147,15 @@
         </tr>
     {% endfor %}
     </tbody></table></div>
-
-    <div id="history"></div>
-
 {% endif %}
 
 {% if garage %}
     <p>{{ garage }}</p>
 {% endif %}
+
+</div>
+
+<div id="history"></div>
 
 {% if vehicle and request.user.is_superuser %}
     <p><a href="{% url 'latest_journey_debug' vehicle.pk %}">Debug</a></p>
@@ -166,15 +173,14 @@
     </nav>
 {% endif %}
 
-{% endblock %}
+{% endblock content %}
 
 {% block foot %}
-    {% if journeys %}
+    {% if journeys or date %}
         <script>
             {% if vehicle %}VEHICLE_ID{% else %}SERVICE_ID{% endif %} = {{ object.id }};
             {% if not vehicle %}LIVERIES_CSS_URL = "/liveries.{{ liveries_css_version }}.css";{% endif %}
         </script>
-        {% load static %}
         <link rel="stylesheet" href="{% static 'dist/js/app.css' %}">
         <script async src="{% static 'dist/js/app.js' %}"></script>
         {% if vehicle.livery %}
@@ -182,4 +188,4 @@
         {% endif %}
 
     {% endif %}
-{% endblock %}
+{% endblock foot %}
