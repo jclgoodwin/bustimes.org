@@ -168,6 +168,7 @@ class Command(ImportLiveVehiclesCommand):
                 vehicles = self.vehicles.filter(operator=operator)
         else:
             defaults["operator"] = operators[0]
+            defaults["livery_id"] = 164
             vehicles = self.vehicles.filter(operator__in=operators)
 
         condition = Q(code__iexact=vehicle_ref)
