@@ -140,7 +140,6 @@ class Command(BaseCommand):
 
         if atco_code.startswith(stop.admin_area_id):
             stop.admin_area = self.admin_areas.get(stop.admin_area_id)
-            logger.info(f"{atco_code} {stop.admin_area}")
 
         for xml_path, key in self.mapping:
             value = element.findtext(xml_path, "")
