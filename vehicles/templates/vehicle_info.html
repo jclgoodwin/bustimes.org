@@ -1,6 +1,6 @@
 {% if vehicle.colours or vehicle.livery %}
     <div class="livery" style="background:{{ vehicle.get_livery }}"></div>
-    {% if vehicle.livery and not (vehicle.livery_id == 164 and vehicle.branding) %}{{ vehicle.livery }}{% if vehicle.branding %}/{% endif %}{% endif %}{{ vehicle.branding }}
+    {% if vehicle.livery %}{% if not vehicle.livery_id == 164 or not vehicle.branding %}{{ vehicle.livery }}{% if vehicle.branding %}/{% endif %}{% endif %}{% endif %}{{ vehicle.branding }}
 {% endif %}
 
 {% if vehicle.notes %}
