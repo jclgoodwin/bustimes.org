@@ -68,7 +68,7 @@ coverage = "^7.6.1"
 optional = true
 
 [tool.poetry.group.dev.dependencies]
-django-debug-toolbar = "^4.0.0"
+django-debug-toolbar = "^5.0.0"
 django-debug-toolbar-force = "^0.2"
 django-debug-toolbar-template-profiler = "^2.1.0"
 ipdb = "^0.13.9"
