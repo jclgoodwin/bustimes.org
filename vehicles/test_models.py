@@ -23,15 +23,17 @@ class VehicleModelTests(TestCase):
         self.assertEqual("", vehicle.get_flickr_link())
 
     def test_vehicle_validation(self):
-        vehicle = Vehicle(colours="ploop")
+        vehicle = Vehicle(
+            colours="transparent", reg="3990ME", slug="3990me", code="3990ME"
+        )
         with self.assertRaises(ValidationError):
-            vehicle.clean()
+            vehicle.full_clean()
 
         vehicle.colours = ""
-        vehicle.clean()
+        vehicle.full_clean()
 
     def test_livery(self):
-        livery = Livery(name="Go-Coach", published=False)
+        livery = Livery(name="Go-Coach", colour="#ffffff", published=False)
         livery.text_colour = "#c0c0c0"
         livery.stroke_colour = "#ffee99"
         self.assertEqual("Go-Coach", str(livery))
@@ -83,38 +85,50 @@ class VehicleModelTests(TestCase):
         self.assertEqual("silver", vehicle.get_livery(200))
 
     def test_livery_validation(self):
-        livery = Livery()
+        livery = Livery(name="test", colour="#ffffff", published=False)
 
-        livery.clean()  # should not raise an exception
+        livery.clean_fields()  # should not raise an exception
 
         livery.text_colour = "#c0c0c0"
         livery.stroke_colour = "#ff00a9"
         livery.right_css = "{"
         with self.assertRaises(ValidationError) as cm:
-            livery.clean()
+            livery.clean_fields()
         self.assertEqual(
-            cm.exception.args, ({"right_css": "Must not contain { or }"}, None, None)
+            cm.exception.args,
+            ({"right_css": [ValidationError("Must not contain { or }")]}, None, None),
         )
 
         livery.right_css = ""
         livery.left_css = "url(("
         with self.assertRaises(ValidationError) as cm:
-            livery.clean()
-        self.assertEqual(
-            cm.exception.args,
-            ({"left_css": "Must contain equal numbers of ( and )"}, None, None),
-        )
-
-        livery.left_css = ""
-        livery.stroke_colour = "red"
-        with self.assertRaises(ValidationError) as cm:
-            livery.clean()
+            livery.clean_fields()
         self.assertEqual(
             cm.exception.args,
             (
                 {
-                    "stroke_colour": "An HTML5 simple color must be a Unicode string "
-                    "seven characters long."
+                    "left_css": [
+                        ValidationError("Must contain equal numbers of ( and )")
+                    ]
+                },
+                None,
+                None,
+            ),
+        )
+
+        livery.left_css = ""
+        livery.stroke_colour = "transparent"
+        with self.assertRaises(ValidationError) as cm:
+            livery.full_clean()
+        self.assertEqual(
+            cm.exception.args,
+            (
+                {
+                    "stroke_colour": [
+                        ValidationError(
+                            'HTML5 legacy color parsing forbids "transparent" as a value.'
+                        )
+                    ]
                 },
                 None,
                 None,

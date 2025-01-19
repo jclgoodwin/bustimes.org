@@ -119,7 +119,7 @@ class VehicleType(models.Model):
 
 class Livery(models.Model):
     name = models.CharField(max_length=255, db_index=True)
-    show_name = models.BooleanField(default=True)
+    # show_name = models.BooleanField(default=True)
     colour = ColourField(help_text="For the most simplified version of the livery")
     colours = ColoursField(
         max_length=512,
@@ -147,7 +147,8 @@ class Livery(models.Model):
     )
     updated_at = models.DateTimeField(null=True, blank=True)
     published = models.BooleanField(
-        help_text="Tick to include in the CSS and be able to apply this livery to vehicles"
+        default=False,
+        help_text="Tick to include in the CSS and be able to apply this livery to vehicles",
     )
 
     history = HistoricalRecords()
@@ -640,6 +641,7 @@ class VehicleJourney(models.Model):
     destination = models.CharField(max_length=255, blank=True)
     direction = models.CharField(max_length=8, blank=True)
     trip = models.ForeignKey("bustimes.Trip", models.SET_NULL, null=True, blank=True)
+    # trip_matched = models.BooleanField(default=True)
     # block = models.ForeignKey("bustimes.Block", models.SET_NULL, null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
 
