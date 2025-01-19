@@ -10,14 +10,13 @@ from urllib.parse import quote
 from autoslug import AutoSlugField
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.core.exceptions import ValidationError
 from django.db.models import Q, UniqueConstraint
 from django.db.models.functions import TruncDate, Upper
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import escape, format_html
 from simple_history.models import HistoricalRecords
-from webcolors import html5_parse_simple_color
+from webcolors import html5_parse_legacy_color
 
 from busstops.models import DataSource, Operator, Service
 from bustimes.utils import get_trip
@@ -70,10 +69,10 @@ def get_brightness(colour):
 
 
 def get_text_colour(colours):
-    if not colours or colours == "Other":
+    if not colours:
         return
     colours = colours.split()
-    colours = [html5_parse_simple_color(colour) for colour in colours]
+    colours = [html5_parse_legacy_color(colour) for colour in colours]
     brightnesses = [get_brightness(colour) for colour in colours]
     colours_length = len(colours)
     if colours_length > 2:
@@ -193,24 +192,6 @@ class Livery(models.Model):
             return format_html(div + "></div> {}", self.name)
         else:
             return format_html(div + ' title="{}"></div>', self.name)
-
-    def clean(self):
-        Vehicle.clean(self)  # validate colours field
-
-        for attr in ("colour", "stroke_colour", "text_colour"):
-            value = getattr(self, attr)
-            if value:
-                try:
-                    html5_parse_simple_color(value)
-                except ValueError as e:
-                    raise ValidationError({attr: str(e)})
-
-        for attr in ("left_css", "right_css"):
-            value = getattr(self, attr)
-            if value.count("(") != value.count(")"):
-                raise ValidationError({attr: "Must contain equal numbers of ( and )"})
-            if "{" in value or "}" in value:
-                raise ValidationError({attr: "Must not contain { or }"})
 
     def save(self, *args, update_fields=None, **kwargs):
         self.updated_at = timezone.now()
@@ -423,12 +404,6 @@ class Vehicle(models.Model):
         return ""
 
     get_flickr_link.short_description = "Flickr"
-
-    def clean(self):
-        try:
-            get_text_colour(self.colours)
-        except ValueError as e:
-            raise ValidationError({"colours": str(e)})
 
     def get_json(self):
         json = {
