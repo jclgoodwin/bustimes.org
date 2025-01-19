@@ -21,6 +21,7 @@ from webcolors import html5_parse_simple_color
 
 from busstops.models import DataSource, Operator, Service
 from bustimes.utils import get_trip
+from .fields import ColourField, ColoursField, CSSField
 
 
 def format_reg(reg):
@@ -119,32 +120,29 @@ class VehicleType(models.Model):
 
 class Livery(models.Model):
     name = models.CharField(max_length=255, db_index=True)
-    colour = models.CharField(
-        max_length=7, help_text="For the most simplified version of the livery"
-    )
-    colours = models.CharField(
+    show_name = models.BooleanField(default=True)
+    colour = ColourField(help_text="For the most simplified version of the livery")
+    colours = ColoursField(
         max_length=512,
         blank=True,
         help_text="""Left and right CSS will be generated from this""",
     )
     angle = models.PositiveSmallIntegerField(null=True, blank=True)
-    left_css = models.CharField(
+    left_css = CSSField(
         max_length=1024,
         blank=True,
         verbose_name="Left CSS",
         help_text="Automatically generated from colours and angle",
     )
-    right_css = models.CharField(
+    right_css = CSSField(
         max_length=1024,
         blank=True,
         verbose_name="Right CSS",
         help_text="Should be a mirror image of the left CSS",
     )
     white_text = models.BooleanField(default=False)
-    text_colour = models.CharField(max_length=7, blank=True)
-    stroke_colour = models.CharField(
-        max_length=7, blank=True, help_text="Use sparingly, often looks shit"
-    )
+    text_colour = ColourField(blank=True)
+    stroke_colour = ColourField(blank=True, help_text="Use sparingly, often looks shit")
     horizontal = models.BooleanField(
         default=False, help_text="Equivalent to setting the angle to 90"
     )
@@ -268,7 +266,7 @@ class Vehicle(models.Model):
     vehicle_type = models.ForeignKey(
         VehicleType, models.SET_NULL, null=True, blank=True
     )
-    colours = models.CharField(max_length=255, blank=True)
+    colours = ColoursField(max_length=255, blank=True)
     livery = models.ForeignKey(Livery, models.SET_NULL, null=True, blank=True)
     name = models.CharField(max_length=255, blank=True)
     branding = models.CharField(max_length=255, blank=True)
