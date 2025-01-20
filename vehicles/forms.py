@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from busstops.models import Operator
 
 from . import fields
-from .models import Livery, Vehicle, VehicleFeature, VehicleType, get_text_colour
+from .models import Livery, Vehicle, VehicleFeature, VehicleType
 
 
 class AutocompleteWidget(forms.Select):
@@ -87,6 +87,7 @@ class EditVehicleForm(forms.Form):
     other_colour = forms.CharField(
         label="Other colours",
         help_text="E.g. '#c0c0c0 #ff0000 #ff0000' (red with a silver front)",
+        validators=[fields.validate_colours],
         required=False,
         max_length=255,
     )
@@ -121,15 +122,6 @@ if they need explaining.
 E.g. how you *know* a vehicle has *definitely been* withdrawn or repainted,
 link to a picture to prove it. Be polite.""",
     )
-
-    def clean_other_colour(self):
-        if self.cleaned_data["other_colour"]:
-            try:
-                get_text_colour(self.cleaned_data["other_colour"])
-            except ValueError as e:
-                raise ValidationError(str(e))
-
-        return self.cleaned_data["other_colour"]
 
     def clean_reg(self):
         reg = self.cleaned_data["reg"].replace(".", "")

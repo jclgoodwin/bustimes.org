@@ -625,7 +625,7 @@ class ServiceColour(models.Model):
     foreground = models.CharField(max_length=20, blank=True)
     background = models.CharField(max_length=20, blank=True)
     border = models.CharField(max_length=20, blank=True)
-    use_name_as_brand = models.BooleanField(default=True)
+    use_name_as_brand = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

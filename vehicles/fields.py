@@ -2,7 +2,7 @@ import re
 from django import forms
 from django.utils.text import normalize_newlines
 from django.db.models import CharField
-from webcolors import html5_parse_legacy_color
+from webcolors import html5_parse_simple_color
 
 
 class RegField(forms.CharField):
@@ -28,7 +28,7 @@ class SummaryField(forms.CharField):
 def validate_colour(value):
     if value:
         try:
-            html5_parse_legacy_color(value)
+            html5_parse_simple_color(value)
         except ValueError as e:
             raise forms.ValidationError(str(e))
 

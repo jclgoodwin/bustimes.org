@@ -126,7 +126,7 @@ class VehicleModelTests(TestCase):
                 {
                     "stroke_colour": [
                         ValidationError(
-                            'HTML5 legacy color parsing forbids "transparent" as a value.'
+                            "An HTML5 simple color must be a Unicode string seven characters long."
                         )
                     ]
                 },

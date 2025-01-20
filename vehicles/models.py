@@ -119,8 +119,10 @@ class VehicleType(models.Model):
 
 class Livery(models.Model):
     name = models.CharField(max_length=255, db_index=True)
-    # show_name = models.BooleanField(default=True)
-    colour = ColourField(help_text="For the most simplified version of the livery")
+    show_name = models.BooleanField(default=True)
+    colour = ColourField(
+        max_length=7, help_text="For the most simplified version of the livery"
+    )
     colours = ColoursField(
         max_length=512,
         blank=True,
@@ -140,8 +142,10 @@ class Livery(models.Model):
         help_text="Should be a mirror image of the left CSS",
     )
     white_text = models.BooleanField(default=False)
-    text_colour = ColourField(blank=True)
-    stroke_colour = ColourField(blank=True, help_text="Use sparingly, often looks shit")
+    text_colour = ColourField(max_length=7, blank=True)
+    stroke_colour = ColourField(
+        max_length=7, blank=True, help_text="Use sparingly, often looks shit"
+    )
     horizontal = models.BooleanField(
         default=False, help_text="Equivalent to setting the angle to 90"
     )
