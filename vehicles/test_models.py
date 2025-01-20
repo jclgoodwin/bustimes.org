@@ -95,8 +95,7 @@ class VehicleModelTests(TestCase):
         with self.assertRaises(ValidationError) as cm:
             livery.clean_fields()
         self.assertEqual(
-            cm.exception.args,
-            ({"right_css": [ValidationError("Must not contain { or }")]}, None, None),
+            cm.exception.message_dict, {"right_css": ["Must not contain { or }"]}
         )
 
         livery.right_css = ""
@@ -104,16 +103,8 @@ class VehicleModelTests(TestCase):
         with self.assertRaises(ValidationError) as cm:
             livery.clean_fields()
         self.assertEqual(
-            cm.exception.args,
-            (
-                {
-                    "left_css": [
-                        ValidationError("Must contain equal numbers of ( and )")
-                    ]
-                },
-                None,
-                None,
-            ),
+            cm.exception.message_dict,
+            {"left_css": ["Must contain equal numbers of ( and )"]},
         )
 
         livery.left_css = ""
@@ -121,16 +112,11 @@ class VehicleModelTests(TestCase):
         with self.assertRaises(ValidationError) as cm:
             livery.full_clean()
         self.assertEqual(
-            cm.exception.args,
-            (
-                {
-                    "stroke_colour": [
-                        ValidationError(
-                            "An HTML5 simple color must be a Unicode string seven characters long."
-                        )
-                    ]
-                },
-                None,
-                None,
-            ),
+            cm.exception.message_dict,
+            {
+                "stroke_colour": [
+                    "An HTML5 simple color must be a Unicode string seven characters long.",
+                    "Ensure this value has at most 7 characters (it has 11).",
+                ]
+            },
         )
