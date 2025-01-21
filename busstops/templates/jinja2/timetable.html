@@ -191,8 +191,7 @@
     {% endfor %}
 
     {% for credit in timetable.credits() %}{% if loop.first %}
-        <p class="credit">Timetable data from {% else %}, {% endif %}{{ credit }}{% if loop.last %}{% if 'bus-data.dft.gov.uk' in credit %}.
-        We’re not endorsed by, affiliated with or supported by them, and they don’t warrant the accuracy or quality of the information.{% endif %}
+        <p class="credit">Timetable data from {% else %}, {% endif %}{{ credit }}{% if loop.last %}
     </p>{% endif %}{% endfor %}
 
     {% endcache %}
