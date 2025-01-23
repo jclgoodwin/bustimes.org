@@ -71,19 +71,19 @@ lxml = ["lxml"]
 
 [[package]]
 name = "boto3"
-version = "1.36.2"
+version = "1.36.4"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 markers = "python_version == \"3.11\" or python_version >= \"3.12\""
 files = [
-    {file = "boto3-1.36.2-py3-none-any.whl", hash = "sha256:76cfc9a705be46e8d22607efacc8d688c064f923d785a01c00b28e9a96425d1a"},
-    {file = "boto3-1.36.2.tar.gz", hash = "sha256:fde1c29996b77274a60b7bc9f741525afa6267bb1716eb644a764fb7c124a0d2"},
+    {file = "boto3-1.36.4-py3-none-any.whl", hash = "sha256:9f8f699e75ec63fcc98c4dd7290997c7c06c68d3ac8161ad4735fe71f5fe945c"},
+    {file = "boto3-1.36.4.tar.gz", hash = "sha256:eeceeb74ef8b65634d358c27aa074917f4449dc828f79301f1075232618eb502"},
 ]
 
 [package.dependencies]
-botocore = ">=1.36.2,<1.37.0"
+botocore = ">=1.36.4,<1.37.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.11.0,<0.12.0"
 
@@ -92,15 +92,15 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.36.2"
+version = "1.36.4"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 markers = "python_version == \"3.11\" or python_version >= \"3.12\""
 files = [
-    {file = "botocore-1.36.2-py3-none-any.whl", hash = "sha256:bc3b7e3b573a48af2bd7116b80fe24f9a335b0b67314dcb2697a327d009abf29"},
-    {file = "botocore-1.36.2.tar.gz", hash = "sha256:a1fe6610983f0214b0c7655fe6990b6a731746baf305b182976fc7b568fc3cb0"},
+    {file = "botocore-1.36.4-py3-none-any.whl", hash = "sha256:3f183aa7bb0c1ba02171143a05f28a4438abdf89dd6b8c0a7727040375a90520"},
+    {file = "botocore-1.36.4.tar.gz", hash = "sha256:ef54f5e3316040b6ff775941e6ed052c3230dda0079d17d9f9e3c757375f2027"},
 ]
 
 [package.dependencies]
@@ -662,15 +662,15 @@ django = ">=4.2"
 
 [[package]]
 name = "executing"
-version = "2.1.0"
+version = "2.2.0"
 description = "Get the currently executing AST node of a frame, and other information"
 optional = false
 python-versions = ">=3.8"
 groups = ["dev"]
 markers = "python_version == \"3.11\" or python_version >= \"3.12\""
 files = [
-    {file = "executing-2.1.0-py2.py3-none-any.whl", hash = "sha256:8d63781349375b5ebccc3142f4b30350c0cd9c79f921cde38be2be4637e98eaf"},
-    {file = "executing-2.1.0.tar.gz", hash = "sha256:8ea27ddd260da8150fa5a708269c4a10e76161e2496ec3e587da9e3c0fe4b9ab"},
+    {file = "executing-2.2.0-py2.py3-none-any.whl", hash = "sha256:11387150cad388d62750327a53d3339fad4888b39a6fe233c3afbb54ecffd3aa"},
+    {file = "executing-2.2.0.tar.gz", hash = "sha256:5d108c028108fe2551d1a7b2e8b713341e2cb4fc0aa7dcf966fa4327a5226755"},
 ]
 
 [package.extras]
@@ -750,15 +750,15 @@ dev = ["black", "codecov", "pre-commit", "pytest (>=3.1.0)", "pytest-cov", "pyte
 
 [[package]]
 name = "gtfs-kit"
-version = "10.1.0"
+version = "10.1.1"
 description = "A Python library for analyzing GTFS feeds."
 optional = false
 python-versions = ">=3.10"
 groups = ["test"]
 markers = "python_version == \"3.11\" or python_version >= \"3.12\""
 files = [
-    {file = "gtfs_kit-10.1.0-py3-none-any.whl", hash = "sha256:2ee6598646204c74392a5c4465f74ace1f6b9c49699096be4a24c7e2bdb1fca6"},
-    {file = "gtfs_kit-10.1.0.tar.gz", hash = "sha256:47ae260200a9f6ac8492cb87de7370efa809c90a693a0516dcea3e2e9aab4c92"},
+    {file = "gtfs_kit-10.1.1-py3-none-any.whl", hash = "sha256:2a54982d30993c365ee082eb3f5dc981ecd89c294728199a1f39776dee6c71b2"},
+    {file = "gtfs_kit-10.1.1.tar.gz", hash = "sha256:b94135883fbb4a5135b33d66215e12507a0480218f53df8c6a3a88ee359e7ab4"},
 ]
 
 [package.dependencies]
@@ -2466,14 +2466,14 @@ markers = {main = "python_version == \"3.11\" or python_version >= \"3.12\"", de
 
 [[package]]
 name = "tzdata"
-version = "2024.2"
+version = "2025.1"
 description = "Provider of IANA time zone data"
 optional = false
 python-versions = ">=2"
 groups = ["main", "dev", "test"]
 files = [
-    {file = "tzdata-2024.2-py2.py3-none-any.whl", hash = "sha256:a48093786cdcde33cad18c2555e8532f34422074448fbc874186f0abd79565cd"},
-    {file = "tzdata-2024.2.tar.gz", hash = "sha256:7d85cc416e9382e69095b7bdf4afd9e3880418a2413feec7069d533d6b4e31cc"},
+    {file = "tzdata-2025.1-py2.py3-none-any.whl", hash = "sha256:7e127113816800496f027041c570f50bcd464a020098a3b6b199517772303639"},
+    {file = "tzdata-2025.1.tar.gz", hash = "sha256:24894909e88cdb28bd1636c6887801df64cb485bd593f2fd83ef29075a81d694"},
 ]
 markers = {main = "(python_version == \"3.11\" or python_version >= \"3.12\") and sys_platform == \"win32\"", dev = "(python_version == \"3.11\" or python_version >= \"3.12\") and sys_platform == \"win32\"", test = "python_version == \"3.11\" or python_version >= \"3.12\""}
 
