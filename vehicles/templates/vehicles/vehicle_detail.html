@@ -70,7 +70,7 @@
 {% if date %}
     <script src="{% static 'js/htmx.org/htmx.min.js' %}"></script>
 
-    <form class="timetable-date" autocomplete="off" hx-trigger="change" hx-get="{% if vehicle %}{{ vehicle.get_absolute_url }}{% endif %}" hx-select="#journeys" hx-target="#journeys" hx-indicator="#journeys" hx-swap="outerHTML" hx-push-url="true">
+    <form class="timetable-date" autocomplete="off" hx-trigger="change" hx-get="{{ request.path }}" hx-select="#journeys" hx-target="#journeys" hx-indicator="#journeys" hx-swap="outerHTML" hx-push-url="true">
         {% if dates %}
             <select name="date" id="date" aria-label="Date">
                 {% for option in dates %}
