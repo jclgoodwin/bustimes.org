@@ -49,7 +49,6 @@ class EditVehicleForm(forms.Form):
         "features",
         "notes",
         "rules",
-        "trustedrules",
     ]
     spare_ticket_machine = forms.BooleanField(
         required=False,
@@ -124,10 +123,6 @@ class EditVehicleForm(forms.Form):
     )
     rules = forms.BooleanField(
         label="I agree that my edit is made in good faith and complies with the editing rules. I also acknowledge that abusing the vehicle editing feature may lead to a ban",
-        required=true,
-    )
-    trustedrules = forms.BooleanField(
-        label="I agree that my edit is made in good faith and I am not abusing any additional privilages. I also acknowledge that abusing editing feature may lead to privilaged being removed",
         required=true,
     )
 
