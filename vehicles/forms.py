@@ -124,7 +124,7 @@ E.g. how you *know* a vehicle has *definitely been* withdrawn or repainted,
 link to a picture to prove it. Be polite.""",
     )
     rules = forms.BooleanField(
-        label="I agree that my edit is made in good faith and complies with the "<a href="/rules">editing rules</a>"
+        label="I agree that my edit is made in good faith and complies with the "<a href="/rules">editing rules</a>
         required=true,
     )
 
