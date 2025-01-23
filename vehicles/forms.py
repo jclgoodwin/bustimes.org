@@ -187,12 +187,6 @@ class EditVehicleForm(forms.Form):
                 or vehicle.operator_id in settings.ALLOW_VEHICLE_NOTES_OPERATORS
             ):
                 del self.fields["notes"]
-            
-
-        if user.is_trusted:
-            del self.fields["rules"]
-        else
-            del self.fields["trustedrules"]
 
         if vehicle.is_spare_ticket_machine():
             del self.fields["notes"]
