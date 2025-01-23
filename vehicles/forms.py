@@ -125,7 +125,7 @@ link to a picture to prove it. Be polite.""",
     )
     rules = forms.BooleanField(
         label="I agree that my edit is made in good faith and complies with the <a href=\"/rules\">editing rules</a>",
-        required=true,
+        required=True,
     )
 
     def clean_reg(self):
