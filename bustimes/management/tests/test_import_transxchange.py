@@ -1213,7 +1213,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(
             res,
             """<p>Book at <a
-                href="https://www.awin1.com/awclick.php?mid=2678&amp;id=242611&amp;clickref=urlise&amp;p=https%3A%2F%2Fuk.megabus.com"
+                href="https://www.awin1.com/awclick.php?mid=2678&amp;id=242611&amp;clickref=urlise"
                 rel="nofollow">
                 megabus.com</a> or 0900 1600900 (65p/min + network charges)</p>""",
             html=True,
