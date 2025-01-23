@@ -119,7 +119,8 @@ class EditVehicleForm(forms.Form):
     summary = fields.SummaryField(
         min_length=10,
         max_length=255,
-        help_text="""Please briefly explain your changes and provide proof of your edit.
+        help_text="help_text="""Explain your changes, if they need explaining.
+E.g. how you *know* a vehicle has *definitely been* withdrawn or repainted, link to a picture to prove it. Be polite.",
     )
     rules = forms.BooleanField(
         label="I agree that my edit is made in good faith and complies with the editing rules. I also acknowledge that abusing the vehicle editing feature may lead to a ban",
