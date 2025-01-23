@@ -21,14 +21,11 @@ def urlise(value, autoescape=None):
         .replace('">www.', '">', 1)
     )
     markup = markup.replace("/</a>", "</a>", 1)
+    print(markup)
     if "megabus" in markup:
         megabus = '"https://www.awin1.com/awclick.php?mid=2678&amp;id=242611&amp;clickref=urlise"'
-        markup = markup.replace('"http://megabus.co.uk"', megabus, 1)
-        markup = markup.replace('"http://megabus.com"', megabus, 1)
-        markup = markup.replace('"https://uk.megabus.com"', megabus, 1)
+        markup = markup.replace('"https://www.megabus.co.uk"', megabus, 1)
     elif "nationalexpress" in markup:
         replacement = '"https://nationalexpress.prf.hn/click/camref:1011ljPYw"'
-        markup = markup.replace('"http://nationalexpress.com"', replacement, 1)
         markup = markup.replace('"http://www.nationalexpress.com"', replacement, 1)
-        markup = markup.replace('"https://www.nationalexpress.com"', replacement, 1)
     return mark_safe(markup)

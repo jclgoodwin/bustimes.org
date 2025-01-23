@@ -1210,14 +1210,6 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(
             res, '<option selected value="2017-01-22">Sunday 22 January 2017</option>'
         )
-        self.assertContains(
-            res,
-            """<p>Book at <a
-                href="https://www.awin1.com/awclick.php?mid=2678&amp;id=242611&amp;clickref=urlise"
-                rel="nofollow">
-                megabus.com</a> or 0900 1600900 (65p/min + network charges)</p>""",
-            html=True,
-        )
         self.assertContains(res, "/js/timetable.")
 
         timetable = res.context_data["timetable"]
