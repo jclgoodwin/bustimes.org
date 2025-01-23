@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_2c17191315bcbf2a_admin_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2025-01-23 05:16 +0000
+            created at 2025-01-23 06:45 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -274,7 +274,7 @@
     <p class="run"><span class="n"><a id="t192" href="#t192">192</a></span><span class="t">        <span class="nam">context</span> <span class="op">=</span> <span class="op">{</span><span class="str">"object"</span><span class="op">:</span> <span class="nam">operator</span><span class="op">,</span> <span class="str">"breadcrumb"</span><span class="op">:</span> <span class="op">[</span><span class="nam">operator</span><span class="op">.</span><span class="nam">region</span><span class="op">,</span> <span class="nam">operator</span><span class="op">]</span><span class="op">}</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t193" href="#t193">193</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t194" href="#t194">194</a></span><span class="t">    <span class="nam">vehicles</span> <span class="op">=</span> <span class="nam">vehicles</span><span class="op">.</span><span class="nam">annotate</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t195" href="#t195">195</a></span><span class="t">        <span class="nam">livery_name</span><span class="op">=</span><span class="nam">F</span><span class="op">(</span><span class="str">"livery__name"</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t195" href="#t195">195</a></span><span class="t">        <span class="nam">livery_name</span><span class="op">=</span><span class="nam">Case</span><span class="op">(</span><span class="nam">When</span><span class="op">(</span><span class="nam">Q</span><span class="op">(</span><span class="nam">livery__show_name</span><span class="op">=</span><span class="key">True</span><span class="op">)</span><span class="op">,</span> <span class="nam">F</span><span class="op">(</span><span class="str">"livery__name"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t196" href="#t196">196</a></span><span class="t">        <span class="nam">vehicle_type_name</span><span class="op">=</span><span class="nam">F</span><span class="op">(</span><span class="str">"vehicle_type__name"</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t197" href="#t197">197</a></span><span class="t">        <span class="nam">garage_name</span><span class="op">=</span><span class="nam">Case</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t198" href="#t198">198</a></span><span class="t">            <span class="nam">When</span><span class="op">(</span><span class="nam">garage__name</span><span class="op">=</span><span class="str">""</span><span class="op">,</span> <span class="nam">then</span><span class="op">=</span><span class="str">"garage__code"</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
@@ -1348,7 +1348,7 @@
             <a class="nav" href="z_2c17191315bcbf2a_admin_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2025-01-23 05:16 +0000
+            created at 2025-01-23 06:45 +0000
         </p>
     </div>
 </footer>
