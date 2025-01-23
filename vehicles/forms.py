@@ -213,7 +213,7 @@ link to a picture to prove it. Be polite.""",
             if not vehicle.features:
                 del self.fields["features"]
 
-        if vehicle.is_withdrawn():
+        if vehicle.withdrawn:
             del self.fields["spare_ticket_machine"]
             del self.fields["notes"]
             del self.fields["operator"]
