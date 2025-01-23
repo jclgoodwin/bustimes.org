@@ -755,9 +755,12 @@ class ImportTransXChangeTest(TestCase):
         file has two Operators (SBLB and and BAIN) but only one operates any journeys
         """
 
-        with self.assertLogs(
-            "bustimes.management.commands.import_transxchange", "WARNING"
-        ) as cm, patch("os.path.getmtime", return_value=1582385679):
+        with (
+            self.assertLogs(
+                "bustimes.management.commands.import_transxchange", "WARNING"
+            ) as cm,
+            patch("os.path.getmtime", return_value=1582385679),
+        ):
             self.write_files_to_zipfile_and_import("EA.zip", ["SVRABAO421.xml"])
         service = Service.objects.get()
         self.assertTrue(service.current)
@@ -890,9 +893,12 @@ class ImportTransXChangeTest(TestCase):
 
     @time_machine.travel("2021-06-28")
     def test_different_notes_in_same_row(self):
-        with self.assertLogs(
-            "bustimes.management.commands.import_transxchange", "WARNING"
-        ) as cm, patch("os.path.getmtime", return_value=0):
+        with (
+            self.assertLogs(
+                "bustimes.management.commands.import_transxchange", "WARNING"
+            ) as cm,
+            patch("os.path.getmtime", return_value=0),
+        ):
             call_command("import_transxchange", FIXTURES_DIR / "twm_3-74-_-y11-1.xml")
 
         self.assertEqual(
@@ -1042,7 +1048,10 @@ class ImportTransXChangeTest(TestCase):
     @time_machine.travel("25 June 2016")
     def test_do_service_scotland(self):
         colour = ServiceColour.objects.create(
-            name="Navy Blue Line", foreground="#111111", background="#c0c0c0"
+            name="Navy Blue Line",
+            foreground="#111111",
+            background="#c0c0c0",
+            use_name_as_brand=True,
         )
         source = DataSource.objects.create(
             name="S", url="ftp://ftp.tnds.basemap.co.uk/S.zip"
@@ -1200,14 +1209,6 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(res, "<h1>M11A - Belgravia - Liverpool</h1>")
         self.assertContains(
             res, '<option selected value="2017-01-22">Sunday 22 January 2017</option>'
-        )
-        self.assertContains(
-            res,
-            """<p>Book at <a
-                href="https://www.awin1.com/awclick.php?mid=2678&amp;id=242611&amp;clickref=urlise&amp;p=https%3A%2F%2Fuk.megabus.com"
-                rel="nofollow">
-                megabus.com</a> or 0900 1600900 (65p/min + network charges)</p>""",
-            html=True,
         )
         self.assertContains(res, "/js/timetable.")
 

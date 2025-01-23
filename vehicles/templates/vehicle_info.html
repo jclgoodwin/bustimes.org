@@ -1,6 +1,6 @@
 {% if vehicle.colours or vehicle.livery %}
     <div class="livery" style="background:{{ vehicle.get_livery }}"></div>
-    {% if vehicle.livery %}{{ vehicle.livery }}{% if vehicle.branding %}/{% endif %}{% endif %}{{ vehicle.branding }}
+    {% if vehicle.livery.show_name %}{{ vehicle.livery }}{% if vehicle.branding %}/{% endif %}{% endif %}{{ vehicle.branding }}
 {% endif %}
 
 {% if vehicle.notes %}

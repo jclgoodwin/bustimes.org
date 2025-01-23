@@ -1200,6 +1200,7 @@ class Command(BaseCommand):
             if (
                 not line_brand
                 and service.colour
+                and service.colour.use_name_as_brand
                 and service.colour.name
                 and service.colour.name != service.line_name
             ):

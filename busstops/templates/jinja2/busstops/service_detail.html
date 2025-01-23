@@ -35,6 +35,7 @@
     <div id="AFM_inContentTop_ad"></div>
 </div>
 
+
 {% if object.geometry %}
     <div id="map"><div class="service-map"><a href="#" class="map-button">Close map</a></div></div>
 
@@ -45,6 +46,17 @@
             <li><a href="{{ tickets_link }}">Tickets</a></li>
         {% endif %}
     </ul>
+
+    <script>
+        SERVICE_ID = {{ object.id }};
+        EXTENT = [{{ object.geometry.extent|join(",") }}];
+        LIVERIES_CSS_URL  = "/liveries.{{ liveries_css_version() }}.css";
+    </script>
+    <script async src="{{ static('dist/js/app.js') }}"></script>
+{% else %}
+    <script>
+        SERVICE_ID = {{ object.id }};
+    </script>
 {% endif %}
 
 <div id="timetable">
@@ -112,16 +124,6 @@
 {% endblock content %}
 
 {% block foot %}
-    <script>
-    SERVICE_ID = {{ object.id }};
-    {% if object.geometry %}
-        {% if object.tracking %}SERVICE_TRACKING = true;{% endif %}
-        EXTENT = [{{ object.geometry.extent|join(",") }}];
-            LIVERIES_CSS_URL  = "/liveries.{{ liveries_css_version() }}.css";
-    </script>
-    <script async src="{{ static('dist/js/app.js') }}"></script>
-    {% else %}</script>{% endif %}
-
     <script src="{{ static('js/reqwest.min.js') }}"></script>
     <script async src="{{ static('js/timetable.js') }}"></script>
     {% if fare_tables %}

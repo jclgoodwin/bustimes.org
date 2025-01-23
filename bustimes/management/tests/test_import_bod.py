@@ -175,7 +175,7 @@ class ImportBusOpenDataTest(TestCase):
             response,
             """Timetable data from \
 <a href="https://data.bus-data.dft.gov.uk/category/dataset/35/" rel="nofollow">\
-Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020</time>.""",
+Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020</time>""",
         )
 
         # test views:

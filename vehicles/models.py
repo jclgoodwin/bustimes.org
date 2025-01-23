@@ -10,17 +10,17 @@ from urllib.parse import quote
 from autoslug import AutoSlugField
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.core.exceptions import ValidationError
 from django.db.models import Q, UniqueConstraint
 from django.db.models.functions import TruncDate, Upper
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import escape, format_html
 from simple_history.models import HistoricalRecords
-from webcolors import html5_parse_simple_color
+from webcolors import html5_parse_legacy_color
 
 from busstops.models import DataSource, Operator, Service
 from bustimes.utils import get_trip
+from .fields import ColourField, ColoursField, CSSField
 
 
 def format_reg(reg):
@@ -69,10 +69,10 @@ def get_brightness(colour):
 
 
 def get_text_colour(colours):
-    if not colours or colours == "Other":
+    if not colours:
         return
     colours = colours.split()
-    colours = [html5_parse_simple_color(colour) for colour in colours]
+    colours = [html5_parse_legacy_color(colour) for colour in colours]
     brightnesses = [get_brightness(colour) for colour in colours]
     colours_length = len(colours)
     if colours_length > 2:
@@ -119,30 +119,31 @@ class VehicleType(models.Model):
 
 class Livery(models.Model):
     name = models.CharField(max_length=255, db_index=True)
-    colour = models.CharField(
+    show_name = models.BooleanField(default=True)
+    colour = ColourField(
         max_length=7, help_text="For the most simplified version of the livery"
     )
-    colours = models.CharField(
+    colours = ColoursField(
         max_length=512,
         blank=True,
         help_text="""Left and right CSS will be generated from this""",
     )
     angle = models.PositiveSmallIntegerField(null=True, blank=True)
-    left_css = models.CharField(
+    left_css = CSSField(
         max_length=1024,
         blank=True,
         verbose_name="Left CSS",
         help_text="Automatically generated from colours and angle",
     )
-    right_css = models.CharField(
+    right_css = CSSField(
         max_length=1024,
         blank=True,
         verbose_name="Right CSS",
         help_text="Should be a mirror image of the left CSS",
     )
     white_text = models.BooleanField(default=False)
-    text_colour = models.CharField(max_length=7, blank=True)
-    stroke_colour = models.CharField(
+    text_colour = ColourField(max_length=7, blank=True)
+    stroke_colour = ColourField(
         max_length=7, blank=True, help_text="Use sparingly, often looks shit"
     )
     horizontal = models.BooleanField(
@@ -150,7 +151,8 @@ class Livery(models.Model):
     )
     updated_at = models.DateTimeField(null=True, blank=True)
     published = models.BooleanField(
-        help_text="Tick to include in the CSS and be able to apply this livery to vehicles"
+        default=False,
+        help_text="Tick to include in the CSS and be able to apply this livery to vehicles",
     )
 
     history = HistoricalRecords()
@@ -195,24 +197,6 @@ class Livery(models.Model):
             return format_html(div + "></div> {}", self.name)
         else:
             return format_html(div + ' title="{}"></div>', self.name)
-
-    def clean(self):
-        Vehicle.clean(self)  # validate colours field
-
-        for attr in ("colour", "stroke_colour", "text_colour"):
-            value = getattr(self, attr)
-            if value:
-                try:
-                    html5_parse_simple_color(value)
-                except ValueError as e:
-                    raise ValidationError({attr: str(e)})
-
-        for attr in ("left_css", "right_css"):
-            value = getattr(self, attr)
-            if value.count("(") != value.count(")"):
-                raise ValidationError({attr: "Must contain equal numbers of ( and )"})
-            if "{" in value or "}" in value:
-                raise ValidationError({attr: "Must not contain { or }"})
 
     def save(self, *args, update_fields=None, **kwargs):
         self.updated_at = timezone.now()
@@ -268,7 +252,7 @@ class Vehicle(models.Model):
     vehicle_type = models.ForeignKey(
         VehicleType, models.SET_NULL, null=True, blank=True
     )
-    colours = models.CharField(max_length=255, blank=True)
+    colours = ColoursField(max_length=255, blank=True)
     livery = models.ForeignKey(Livery, models.SET_NULL, null=True, blank=True)
     name = models.CharField(max_length=255, blank=True)
     branding = models.CharField(max_length=255, blank=True)
@@ -425,12 +409,6 @@ class Vehicle(models.Model):
         return ""
 
     get_flickr_link.short_description = "Flickr"
-
-    def clean(self):
-        try:
-            get_text_colour(self.colours)
-        except ValueError as e:
-            raise ValidationError({"colours": str(e)})
 
     def get_json(self):
         json = {
@@ -667,6 +645,7 @@ class VehicleJourney(models.Model):
     destination = models.CharField(max_length=255, blank=True)
     direction = models.CharField(max_length=8, blank=True)
     trip = models.ForeignKey("bustimes.Trip", models.SET_NULL, null=True, blank=True)
+    # trip_matched = models.BooleanField(default=True)
     # block = models.ForeignKey("bustimes.Block", models.SET_NULL, null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
 
