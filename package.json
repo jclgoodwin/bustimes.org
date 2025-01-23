@@ -26,7 +26,7 @@
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "@types/react-timeago": "^4.1.3",
-    "htmx.org": "^1.9.10",
+    "htmx.org": "^2.0.4",
     "leaflet": "^1.9.4",
     "leaflet.locatecontrol": "^0.81.0",
     "loadjs": "^4.2.0",

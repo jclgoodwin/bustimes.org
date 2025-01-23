@@ -192,7 +192,7 @@ def operator_vehicles(request, slug=None, parent=None):
         context = {"object": operator, "breadcrumb": [operator.region, operator]}
 
     vehicles = vehicles.annotate(
-        livery_name=F("livery__name"),
+        livery_name=Case(When(Q(livery__show_name=True), F("livery__name"))),
         vehicle_type_name=F("vehicle_type__name"),
         garage_name=Case(
             When(garage__name="", then="garage__code"),
@@ -776,7 +776,6 @@ def edit_vehicle(request, **kwargs):
 
     if (
         vehicle.operator_id
-        and not request.user.trusted
         and User.operators.through.objects.filter(operator=vehicle.operator_id)
         .exclude(user=request.user)
         .exists()

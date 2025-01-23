@@ -58,8 +58,7 @@ gtfs-kit = "^10.0.0"
 websockets = "^14.0"
 requests-toolbelt = "^1.0.0"
 time-machine = "^2.4.0"
-vcrpy = "^6.0.1"
-urllib3 = "<2.3.0"
+vcrpy = "^7.0.0"
 django-slowtests = "^1.1.1"
 fakeredis = "^2.12.1"
 tblib = "^3.0.0"
@@ -69,7 +68,7 @@ coverage = "^7.6.1"
 optional = true
 
 [tool.poetry.group.dev.dependencies]
-django-debug-toolbar = "^4.0.0"
+django-debug-toolbar = "^5.0.0"
 django-debug-toolbar-force = "^0.2"
 django-debug-toolbar-template-profiler = "^2.1.0"
 ipdb = "^0.13.9"

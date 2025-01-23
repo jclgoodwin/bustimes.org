@@ -617,7 +617,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         # add and remove a feature, change type
         initial["features"] = self.usb.id
         initial["vehicle_type"] = self.vehicle_2.vehicle_type_id
-        with self.assertNumQueries(24):
+        with self.assertNumQueries(25):
             response = self.client.post(url, initial)
         revision = response.context["revision"]
         self.assertFalse(revision.pending)
@@ -629,7 +629,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         # colour, spare ticket machine
         initial["colours"] = self.livery.id
         initial["spare_ticket_machine"] = True
-        with self.assertNumQueries(18):
+        with self.assertNumQueries(19):
             response = self.client.post(url, initial)
             revision = response.context["revision"]
             self.assertEqual(revision.to_livery, self.livery)
@@ -863,7 +863,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         response = self.client.get(self.vehicle_3.get_absolute_url())
         self.assertContains(response, ">K292 JVF, P44 CEX<")
 
-        with self.assertNumQueries(16):
+        with self.assertNumQueries(17):
             # trusted user - can edit colour
             response = self.client.post(
                 self.vehicle_2.get_edit_url(),

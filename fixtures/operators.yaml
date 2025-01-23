@@ -60,7 +60,7 @@ SBDR:
 PCLT:
   name: Rural Link
 MEGA:
-  url: https://uk.megabus.com
+  url: https://www.megabus.co.uk
 NSLA:
   url: http://www.gatwickairport.com/to-and-from/by-coach-or-bus/hotel-buses/
 DOCC:
@@ -288,10 +288,9 @@ TYSW:
   twitter: ""
 YYTG:
   name: Yorkshire Buses
-  # url: https://www.yorkshirebuses.co.uk/
+  url: https://www.yorkshirebuses.co.uk
   phone: 0113 246 4914
-  email: Office@yorkshiretravelgroup.co.uk
-  twitter: YorkshireBuses_
+  email: traffic@yorkshirebuses.co.uk
 WNGS:
   url: https://www.diamondbuses.com/
 MINS:
@@ -356,3 +355,5 @@ SUNB:
   twitter: ""
 ELNV:
   url: https://ellenvale.co.uk/
+SBLB:
+  name: Stagecoach North Scotland

@@ -916,7 +916,7 @@ class OperatorDetailView(DetailView):
             )
         elif self.object.name == "Megabus":
             context["tickets_link"] = (
-                "https://www.awin1.com/cread.php?awinmid=2678&awinaffid=242611&ued=https%3A%2F%2Fuk.megabus.com"
+                "https://www.awin1.com/cread.php?awinmid=2678&awinaffid=242611"
             )
         elif self.object.name == "National Express":
             context["tickets_link"] = (
@@ -1179,8 +1179,6 @@ class ServiceDetailView(DetailView):
             ):
                 if "app" in method.name and method.url:
                     context["app"] = method
-                elif "fare cap" in method.name and method.url:
-                    context["fare_cap"] = method
                 else:
                     context["payment_methods"].append(method)
             for operator in operators:
@@ -1194,9 +1192,12 @@ class ServiceDetailView(DetailView):
                             "text": "Buy tickets at National Express",
                         }
                     )
-                elif operator.name == "Megabus":
+                elif (
+                    operator.name == "Megabus"
+                    or self.object.service_code == "PH1020951:281"
+                ):  # Falcon
                     context["tickets_link"] = (
-                        "https://www.awin1.com/cread.php?awinmid=2678&awinaffid=242611&ued=https%3A%2F%2Fuk.megabus.com"
+                        "https://www.awin1.com/cread.php?awinmid=2678&awinaffid=242611"
                     )
                     context["links"].append(
                         {
