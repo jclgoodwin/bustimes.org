@@ -182,6 +182,7 @@ link to a picture to prove it. Be polite.""",
 
         if vehicle.is_spare_ticket_machine():
             del self.fields["notes"]
+            del self.fields["features"]
             if not vehicle.fleet_code:
                 del self.fields["fleet_number"]
             if not vehicle.reg:
@@ -201,8 +202,7 @@ link to a picture to prove it. Be polite.""",
                 del self.fields["other_colour"]
             if not vehicle.branding:
                 del self.fields["branding"]
-            if not vehicle.features:
-                del self.fields["features"]
+                
 
 
 class DebuggerForm(forms.Form):
