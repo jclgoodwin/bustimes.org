@@ -201,7 +201,7 @@ link to a picture to prove it. Be polite.""",
                 del self.fields["other_colour"]
             if not vehicle.branding:
                 del self.fields["branding"]
-            if not vehicle.features:
+            if not vehicle.features.all():
                 del self.fields["features"]
 
 
