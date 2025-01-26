@@ -57,7 +57,7 @@
 | bustimes/management/\_\_init\_\_.py                             |        0 |        0 |    100% |           |
 | bustimes/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
 | bustimes/management/commands/import\_atco\_cif.py               |      235 |       25 |     89% |28-35, 40, 43-44, 66, 193, 195, 198, 200, 208, 214, 278, 311-316, 356-357, 424 |
-| bustimes/management/commands/import\_bod\_timetables.py         |      268 |       23 |     91% |48, 99, 103, 106-109, 114, 119-120, 140, 169, 179, 190, 258, 268-272, 288-289, 310, 326-327, 343 |
+| bustimes/management/commands/import\_bod\_timetables.py         |      267 |       24 |     91% |47, 98, 102, 105-108, 113, 118-119, 139, 168, 178, 189, 257, 267-271, 287-289, 310, 326-327, 343 |
 | bustimes/management/commands/import\_gtfs.py                    |      235 |       23 |     90% |75, 79, 129-130, 146, 215, 217, 277-278, 280-281, 317-318, 324-325, 329-332, 340-342, 390, 412 |
 | bustimes/management/commands/import\_gtfs\_ember.py             |       89 |        0 |    100% |           |
 | bustimes/management/commands/import\_gtfs\_flixbus.py           |      124 |        4 |     97% |93-95, 165 |
@@ -161,7 +161,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **15775** | **1058** | **93%** |           |
+|                                                       **TOTAL** | **15774** | **1059** | **93%** |           |
 
 
 ## Setup coverage badge
