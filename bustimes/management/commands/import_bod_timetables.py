@@ -4,7 +4,6 @@ import hashlib
 import logging
 import xml.etree.cElementTree as ET
 import zipfile
-from io import StringIO
 from pathlib import Path
 from time import sleep
 
@@ -51,7 +50,7 @@ def clean_up(timetable_data_source, sources, incomplete=False):
     routes = Route.objects.filter(id__in=route_ids)
     # do this first to prevent IntegrityError
     routes.update(service=None)
-    routes.delete()
+    # routes.delete()
     Service.objects.filter(
         ~Q(source__name="bustimes.org"),
         operator__in=operators,
@@ -271,7 +270,7 @@ def bus_open_data(api_key, specific_operator):
         ).exists():
             logger.warning(
                 f"""{operators} has no current data
-https://bustimes.org/admin/busstops/service/?operator__noc__in={','.join(operators)}"""
+https://bustimes.org/admin/busstops/service/?operator__noc__in={",".join(operators)}"""
             )
 
         command.service_ids = service_ids
@@ -286,7 +285,8 @@ https://bustimes.org/admin/busstops/service/?operator__noc__in={','.join(operato
         )
         if to_delete:
             logger.info(to_delete)
-            logger.info(to_delete.delete())
+            for source in to_delete:  # one by one to use less memory
+                source.delete()
 
 
 def ticketer(specific_operator=None):
