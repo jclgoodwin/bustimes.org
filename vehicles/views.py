@@ -36,8 +36,8 @@ from accounts.models import User
 from buses.utils import cache_page
 from busstops.models import SERVICE_ORDER_REGEX, Operator, Service
 from busstops.utils import get_bounding_box
-from bustimes.models import Garage, Route, StopTime, Trip
-from bustimes.utils import contiguous_stoptimes_only
+from bustimes.models import Garage, Route, StopTime
+from bustimes.utils import contiguous_stoptimes_only, get_other_trips_in_block
 
 from . import filters, forms
 from .management.commands import import_bod_avl
@@ -611,15 +611,13 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
                     trip.block == last_trip.block for trip in trips[-3:-1]
                 ):
                     context["predictions"] = (
-                        Trip.objects.filter(
-                            calendar=last_trip.calendar_id,
-                            start__gte=last_trip.end,
-                            block=last_trip.block,
-                            operator=last_trip.operator_id,
-                            garage=last_trip.garage_id,
+                        get_other_trips_in_block(
+                            last_trip,
+                            date,
                         )
-                        .distinct("start")
-                        .order_by("start")
+                        .filter(
+                            start__gte=last_trip.end,
+                        )
                         .annotate(
                             destination_name=Coalesce(
                                 F("destination__locality__name"),

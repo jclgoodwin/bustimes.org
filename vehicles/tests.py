@@ -949,8 +949,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         self.assertContains(response, "/vehicles/")
         self.assertContains(
             response,
-            '<input type="date" name="date" id="date" aria-label="Date" '
-            'value="2020-10-20">',
+            '<input type="date" name="date" aria-label="Date" value="2020-10-20">',
             # '<option selected value="2020-10-20">Tuesday 20 October 2020</option>'
         )
         self.assertContains(response, "1 - FD54 JYA")

@@ -46,12 +46,13 @@ from busstops.models import (
     StopPoint,
 )
 from departures import avl, gtfsr, live
+from vehicles.forms import DateForm
 from vehicles.models import Vehicle, VehicleCode
 from vehicles.rtpi import add_progress_and_delay
 
 from .download_utils import download
 from .models import Garage, Route, StopTime, Trip
-from .utils import contiguous_stoptimes_only
+from .utils import contiguous_stoptimes_only, get_other_trips_in_block
 
 
 class ServiceDebugView(DetailView):
@@ -510,19 +511,26 @@ def trip_block(request, pk: int):
     if not trip.block:
         raise Http404
 
-    trips = (
-        Trip.objects.filter(
-            block=trip.block,
-            route__source=trip.route.source,
-        )
-        .order_by("start", "calendar")
-        .select_related("route", "destination__locality")
-    )
+    form = DateForm(request.GET)
+    if form.is_valid():
+        date = form.cleaned_data["date"]
+    else:
+        date = timezone.localdate()
+
+    trips = get_other_trips_in_block(trip, date)
+
+    trips = trips.select_related("route", "destination__locality")
 
     return render(
         request,
         "bustimes/block_detail.html",
-        {"object": trip.block, "trips": trips},
+        {
+            "object": trip.block,
+            "form": form,
+            "date": date,
+            "trips": trips,
+            "trip": trip,
+        },
     )
 
 

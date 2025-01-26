@@ -65,20 +65,20 @@
 
 {% load static %}
 
-<div id="journeys" hx-history-elt>
+<div id="journeys" hx-history="false">
 
 {% if date %}
     <script src="{% static 'js/htmx.org/htmx.min.js' %}"></script>
 
     <form class="timetable-date" autocomplete="off" hx-trigger="change" hx-get="{{ request.path }}" hx-select="#journeys" hx-target="#journeys" hx-indicator="#journeys" hx-swap="outerHTML" hx-push-url="true">
         {% if dates %}
-            <select name="date" id="date" aria-label="Date">
+            <select name="date" aria-label="Date">
                 {% for option in dates %}
                     <option{% if option == date %} selected{% endif %} value="{{ option.isoformat }}">{{ option|date:"l j F Y" }}</option>
                 {% endfor %}
             </select>
         {% else %}
-            <input type="date" name="date" id="date" aria-label="Date" value="{{ date.isoformat }}">
+            <input type="date" name="date" aria-label="Date" value="{{ date.isoformat }}">
         {% endif %}
         <noscript><input type="submit" value="Go"></noscript>
     </form>
@@ -132,7 +132,7 @@
                 </td>
                 {% if journey.trip.block %}
                 <td class="link">
-                    <a href="{{ journey.trip.get_absolute_url }}/block">{{ journey.trip.block }}</a>
+                    <a href="{{ journey.trip.get_absolute_url }}/block?date={{ date.isoformat }}">{{ journey.trip.block }}</a>
                 </td>
                 {% endif %}
             {% endif %}

@@ -166,6 +166,18 @@ def get_calendars(when: date | datetime, calendar_ids=None):
     )
 
 
+def get_other_trips_in_block(trip, date):
+    trips = Trip.objects.filter(
+        block=trip.block,
+        route__source=trip.route.source,
+    )
+    routes = Route.objects.filter(trip__in=trips).select_related("source")
+
+    calendars = get_calendars(date, [trip.calendar_id for trip in trips])
+    routes = get_routes(routes, date)
+    return trips.filter(calendar__in=calendars, route__in=routes).order_by("start")
+
+
 def get_stop_times(date: date, time: timedelta | None, stop, routes, trip_ids=None):
     times = StopTime.objects.filter(pick_up=True).annotate(date=Value(date))
 

@@ -6,7 +6,16 @@
 
 {% block content %}
 
+{% load static %}
+
     <h1>{{ object }}</h1>
+
+    <form>
+        <input type="date" name="date" aria-label="Date" value="{{ date.isoformat }}">
+        <input type="submit" value="Go">
+    </form>
+
+    <h2>{{ date.date }}</h2>
 
     <div class="table-wrapper">
         <table>
@@ -20,7 +29,6 @@
 
     {% for trip in trips %}
         <tr>
-            <td>{% ifchanged trip.calendar_id %}{{ trip.calendar }}{% endifchanged %}</td>
             <td>{{ trip.route.line_name }}</td>
             <td class="link">
                 <a href="{{ trip.get_absolute_url }}">{{ trip }}</a>
@@ -36,5 +44,7 @@
             </tbody>
         </table>
     </div>
+
+    <p class="credit">Timetable data from {{ trip.route.source.credit }}</p>
 
 {% endblock content %}
