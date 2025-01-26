@@ -78,7 +78,7 @@
                                     <tr class="link">
                                         <th scope="col">Block</th>
                                         {% for trip in grouping.trips %}
-                                            <td><a href="{{ trip.get_absolute_url() }}/block">{{ trip.block }}</a></td>
+                                            <td><a href="{{ trip.get_absolute_url() }}/block{% if timetable.date %}?date={{ timetable.date }}{% endif %}">{{ trip.block }}</a></td>
                                         {% endfor %}
                                     </tr>
                                 {% endif %}
