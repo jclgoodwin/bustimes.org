@@ -195,6 +195,11 @@ class Command(BaseCommand):
             unique_fields=["atco_code"],
         )
 
+        # if no timing points specified (FlixBus), set all stops as timing points
+        if all(stop_time.timing_status == "OTH" for stop_time in stop_times):
+            for stop_time in stop_times:
+                stop_time.timing_status = "PTP"
+
         with transaction.atomic():
             Trip.objects.bulk_create([trip for trip in trips.values() if not trip.id])
             existing_trips = [trip for trip in trips.values() if trip.id]
