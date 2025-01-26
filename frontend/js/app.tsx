@@ -5,10 +5,10 @@ import { createRoot } from "react-dom/client";
 import "./maps.css";
 import "maplibre-gl/dist/maplibre-gl.css";
 
+import History from "./History";
 import LoadingSorry from "./LoadingSorry";
+import MapRouter from "./MapRouter";
 import ServiceMap from "./ServiceMap";
-const History = lazy(() => import("./History"));
-const MapRouter = lazy(() => import("./MapRouter"));
 
 if (process.env.NODE_ENV === "production") {
   Sentry.init({
