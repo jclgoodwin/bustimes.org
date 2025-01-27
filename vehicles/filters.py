@@ -16,9 +16,9 @@ class VehicleRevisionFilter(FilterSet):
         label="Vehicle ID", queryset=Vehicle.objects, widget=NumberInput
     )
     user = ModelChoiceFilter(label="User ID", queryset=User.objects, widget=NumberInput)
-    approved_by = ModelChoiceFilter(
-        label="(Dis)approver", queryset=User.objects, widget=NumberInput
-    )
+    # approved_by = ModelChoiceFilter(
+    #     label="(Dis)approver", queryset=User.objects, widget=NumberInput
+    # )
     status = ChoiceFilter(
         label="Status",
         choices=[

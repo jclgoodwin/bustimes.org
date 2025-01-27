@@ -24,27 +24,16 @@
     {% endif %}
 
     <p class="actions" hx-target="#revision-{{ revision.id }}">
-        <span class="score">{{ revision.score }}</span>
         {% if revision.pending %}
             {% if revision.user_id == user.id %}
                 <button type="button" class="button" hx-post="{% url 'vehicle_revision_action' revision.id 'disapprove' %}">⚠️ Cancel</button>
-            {% elif user.trusted %}
+            {% elif user.is_superuser %}
                 <button type="button" class="button" hx-post="{% url 'vehicle_revision_action' revision.id 'apply' %}" hx-prompt="Reason for approving">👍 Apply changes</button>
-                <button type="button" class="button" hx-post="{% url 'vehicle_revision_vote' revision.id 'up' %}">👍</button>
-                <button type="button" class="button" hx-post="{% url 'vehicle_revision_vote' revision.id 'down' %}">👎</button>
                 <button type="button" class="button" hx-post="{% url 'vehicle_revision_action' revision.id 'disapprove' %}" hx-prompt="Reason for declining">⚠️ Decline</button>
-            {% elif user.trusted is not False %}
-                <button type="button" class="button" hx-post="{% url 'vehicle_revision_vote' revision.id 'up' %}">👍</button>
-                <button type="button" class="button" hx-post="{% url 'vehicle_revision_vote' revision.id 'down' %}">👎</button>
             {% endif %}
         {% else %}
             {% if user.trusted and revision.disapproved and revision.approved_by_id == user.id %}
                 <button type="button" class="button" hx-post="{% url 'vehicle_revision_action' revision.id 'apply' %}" hx-prompt="Reason for approving">👍 Apply changes</button>
-            {% endif %}
-            {% if user.trusted is not False %}
-                {% if revision.user_id != user.id and not revision.disapproved %}
-                    <button type="button" class="button" hx-post="{% url 'vehicle_revision_vote' revision.id 'up' %}" title="Thank">👍</button>
-                {% endif %}
             {% endif %}
     {% endif %}
 </li>
