@@ -119,7 +119,7 @@
 | vehicles/apps.py                                                |        6 |        0 |    100% |           |
 | vehicles/context\_processors.py                                 |       14 |        0 |    100% |           |
 | vehicles/fields.py                                              |       37 |        0 |    100% |           |
-| vehicles/filters.py                                             |       18 |        0 |    100% |           |
+| vehicles/filters.py                                             |       21 |        0 |    100% |           |
 | vehicles/forms.py                                               |       93 |        3 |     97% |129, 167, 205 |
 | vehicles/management/\_\_init\_\_.py                             |        0 |        0 |    100% |           |
 | vehicles/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
@@ -161,7 +161,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **15777** | **1061** | **93%** |           |
+|                                                       **TOTAL** | **15780** | **1061** | **93%** |           |
 
 
 ## Setup coverage badge
