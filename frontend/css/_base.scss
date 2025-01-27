@@ -779,14 +779,9 @@ table {
 .livery {
     display: inline-block;
     height: 1.5em;
-    margin-right: .5em;
-    vertical-align: text-top;
+    vertical-align: middle;
     width: 2.25em;
     border: 1px solid var(--active-link-color);
-}
-
-table .livery {
-    margin: 0;
 }
 
 table {
@@ -1424,7 +1419,7 @@ input:not(:checked) + label {
     }
 
     .livery {
-        margin-top: .3em;
+        margin: .3em .5em 0 0;
     }
 }
 

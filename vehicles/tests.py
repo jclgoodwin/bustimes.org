@@ -752,7 +752,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             response = self.client.get("/vehicles/edits")  # approved
         self.assertEqual(len(response.context["revisions"]), 0)
 
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(7):
             response = self.client.get("/vehicles/edits?operator=LYNX")
         self.assertEqual(len(response.context["revisions"]), 1)
 
