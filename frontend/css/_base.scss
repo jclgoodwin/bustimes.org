@@ -782,7 +782,7 @@ table {
     margin-right: .5em;
     vertical-align: text-top;
     width: 2.25em;
-    outline: 1px var(--active-link-color) solid;
+    border: 1px solid var(--active-link-color);
 }
 
 table .livery {
@@ -807,9 +807,7 @@ table {
 
 .fleet {
     .livery-cell {
-        padding-left: 3.25em;
         position: relative;
-        max-width: 0;
 
         .livery {
             left: .5em;
