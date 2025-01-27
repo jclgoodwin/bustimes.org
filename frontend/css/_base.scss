@@ -782,6 +782,7 @@ table {
     margin-right: .5em;
     vertical-align: text-top;
     width: 2.25em;
+    outline: 1px var(--active-link-color) solid;
 }
 
 table .livery {
@@ -1422,6 +1423,10 @@ input:not(:checked) + label {
 
     dd {
         margin: 0;
+    }
+
+    .livery {
+        margin-top: .3em;
     }
 }
 
