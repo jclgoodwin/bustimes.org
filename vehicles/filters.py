@@ -1,12 +1,24 @@
-from django_filters import ChoiceFilter, CharFilter, FilterSet, NumberFilter
+from django_filters import ChoiceFilter, FilterSet, ModelChoiceFilter
 from django.db.models import Q
+from django.forms.widgets import TextInput, NumberInput
+from vehicles.models import Vehicle, Operator
+from accounts.models import User
 
 
 class VehicleRevisionFilter(FilterSet):
-    operator = CharFilter(label="Operator ID", method="operator_filter")
-    vehicle = NumberFilter(label="Vehicle ID")
-    user = NumberFilter(label="User ID")
-    approved_by = NumberFilter(label="(Dis)approver")
+    operator = ModelChoiceFilter(
+        label="Operator code",
+        method="operator_filter",
+        queryset=Operator.objects,
+        widget=TextInput,
+    )
+    vehicle = ModelChoiceFilter(
+        label="Vehicle ID", queryset=Vehicle.objects, widget=NumberInput
+    )
+    user = ModelChoiceFilter(label="User ID", queryset=User.objects, widget=NumberInput)
+    approved_by = ModelChoiceFilter(
+        label="(Dis)approver", queryset=User.objects, widget=NumberInput
+    )
     status = ChoiceFilter(
         label="Status",
         choices=[
