@@ -131,14 +131,14 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
     else:
         vehicles = vehicles.filter(code__iexact=vehicle)
 
-    vehicle, _ = vehicles.get_or_create(defaults)
+    try:
+        vehicle, _ = vehicles.get_or_create(defaults)
+    except Vehicle.MultipleObjectsReturned:
+        vehicle = vehicles.filter(operator=operator).first()
 
     time = parse_datetime(time)
 
-    if vehicle.latest_journey and (
-        vehicle.latest_journey.datetime == time
-        or vehicle.latest_journey.source_id != data_source.id
-    ):
+    if vehicle.latest_journey and vehicle.latest_journey.datetime == time:
         return
 
     if (
