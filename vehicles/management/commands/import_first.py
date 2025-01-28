@@ -62,8 +62,14 @@ class Command(ImportLiveVehiclesCommand):
 
         if not journey:
             try:
-                service = Service.objects.get(
-                    current=True, operator=operator, line_name__iexact=item["line_name"]
+                service = (
+                    Service.objects.filter(
+                        current=True,
+                        operator=operator,
+                        route__line_name__iexact=item["line_name"],
+                    )
+                    .distinct()
+                    .get()
                 )
             except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
                 print(e, operator, item["line_name"])
@@ -159,7 +165,7 @@ class Command(ImportLiveVehiclesCommand):
             socket_info["data"]["url"],
             max_size=40000000,
             additional_headers={
-                "Authorization": f'Bearer {socket_info["data"]["access-token"]}'
+                "Authorization": f"Bearer {socket_info['data']['access-token']}"
             },
         ) as websocket:
             await websocket.send(message)
