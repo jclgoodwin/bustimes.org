@@ -616,7 +616,7 @@ def tfl_vehicle(request, reg: str):
             atco_code = item["naptanId"]
 
             if stop := (stops.get(atco_code) or stops.get(f"0{atco_code}")):
-                item["sequence"] = getattr(stop, "sequence", 0) + prev_trip_sequence
+                item["sequence"] = (getattr(stop, "sequence") or 0) + prev_trip_sequence
             else:
                 item["sequence"] = prev_sequence
 
