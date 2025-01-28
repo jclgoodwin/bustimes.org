@@ -610,12 +610,14 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
 
         with self.assertNumQueries(2):
             response = self.client.get("/vehicles/edits?status=disapproved")
-        self.assertEqual(len(response.context["revisions"]), 0)
+        self.assertIsNone(response.context["revisions"])
+
+        self.client.force_login(self.trusted_user)
 
         # add and remove a feature, change type
         initial["features"] = self.usb.id
         initial["vehicle_type"] = self.vehicle_2.vehicle_type_id
-        with self.assertNumQueries(19):
+        with self.assertNumQueries(25):
             response = self.client.post(url, initial)
         revision = response.context["revision"]
         self.assertFalse(revision.pending)
