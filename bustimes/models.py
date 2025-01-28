@@ -145,6 +145,9 @@ class Calendar(models.Model):
     end_date = models.DateField(null=True, blank=True)
     summary = models.CharField(max_length=255, blank=True)
     bank_holidays = models.ManyToManyField(BankHoliday, through=CalendarBankHoliday)
+    source = models.ForeignKey(
+        "busstops.DataSource", models.CASCADE, null=True, blank=True
+    )
 
     contains = Route.contains
 
@@ -318,6 +321,7 @@ class Trip(models.Model):
     destination = models.ForeignKey(
         "busstops.StopPoint", models.DO_NOTHING, null=True, blank=True
     )
+    headsign = models.CharField(max_length=255, blank=True)
     calendar = models.ForeignKey(Calendar, models.DO_NOTHING, null=True, blank=True)
     sequence = models.PositiveSmallIntegerField(null=True, blank=True)
     notes = models.ManyToManyField(Note, blank=True)
