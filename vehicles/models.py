@@ -50,7 +50,7 @@ def get_css(colours, direction=None, horizontal=False, angle=None):
     if horizontal:
         background += "to top"
     elif direction < 180:
-        background += f"{360-angle}deg"
+        background += f"{360 - angle}deg"
     else:
         background += f"{angle}deg"
     percentage = 100 / len(colours)
@@ -277,7 +277,16 @@ class Vehicle(models.Model):
         return self.notes == "Spare ticket machine"
 
     def is_editable(self) -> bool:
-        return not self.locked
+        if self.locked:
+            return False
+        # withrawn and hasn't tracked recently - "let sleeping dogs lie"
+        if self.withdrawn and (
+            not self.latest_journey
+            or timezone.now() - self.latest_journey.datetime
+            > datetime.timedelta(days=30)
+        ):
+            return False
+        return True
 
     def save(self, *args, update_fields=None, **kwargs):
         if (

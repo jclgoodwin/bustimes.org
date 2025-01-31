@@ -4,7 +4,7 @@
 
 <dl class="contact-details">
     {% if vehicle.colours or vehicle.livery %}
-        <div class="livery" style="background:{{ vehicle.get_livery }}"></div>
+        <div class="livery" style="background:{{ vehicle.get_livery }}"{% if vehicle.livery.name %} title="{{ vehicle.livery.name }}"{% endif %}></div>
     {% endif %}
 
     {% if vehicle.vehicle_type %}
@@ -43,12 +43,12 @@
 </dl>
 
 {% with flickr_link=vehicle.get_flickr_link %}
-{% if vehicle.is_editable or request.user.is_superuser or flickr_link %}
     <ul class="horizontal">
         {% if vehicle.is_editable %}
             <li><a href="{{ vehicle.get_edit_url }}">Edit</a></li>
-            <li><a href="/vehicles/edits?vehicle={{ vehicle.id }}&status=approved">History</a></li>
         {% endif %}
+
+        <li><a href="/vehicles/edits?vehicle={{ vehicle.id }}&status=approved">History</a></li>
 
         {% if flickr_link %}
             <li>{{ flickr_link }}</li>
@@ -58,5 +58,4 @@
             <li><a href="{% url 'admin:vehicles_vehicle_change' vehicle.pk %}">✎</a></li>
         {% endif %}
     </ul>
-{% endif %}
 {% endwith %}

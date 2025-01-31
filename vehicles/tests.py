@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from unittest.mock import patch
 
 import fakeredis
@@ -839,6 +840,14 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         revision.vehicle.refresh_from_db()
         self.assertTrue(revision.vehicle.withdrawn)
 
+        # withdrawn so can't edit
+        with self.assertNumQueries(3):
+            response = self.client.get(self.vehicle_3.get_edit_url())
+            self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
+
+        revision.vehicle.withdrawn = False
+        revision.vehicle.save(update_fields=["withdrawn"])
+
         with self.assertNumQueries(12):
             # trusted user - can edit reg
             response = self.client.post(
@@ -852,7 +861,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             )
         self.assertEqual(
             str(response.context["revision"]),
-            "added to list:  → , previous reg:  → K292JVF,P44CEX, reg: D19FOX → DA04DDA",
+            "previous reg:  → K292JVF,P44CEX, reg: D19FOX → DA04DDA",
         )
         self.assertContains(response, "<strong>reg</strong>")
         self.assertContains(response, "to DA04DDA")

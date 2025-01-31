@@ -191,7 +191,7 @@ def operator_vehicles(request, slug=None, parent=None):
         context = {"object": operator, "breadcrumb": [operator.region, operator]}
 
     vehicles = vehicles.annotate(
-        livery_name=Case(When(Q(livery__show_name=True), F("livery__name"))),
+        livery_name=F("livery__name"),
         vehicle_type_name=F("vehicle_type__name"),
         garage_name=Case(
             When(garage__name="", then="garage__code"),
@@ -753,9 +753,12 @@ def edit_vehicle(request, **kwargs):
     vehicle = get_object_or_404(
         Vehicle.objects.select_related(
             "vehicle_type", "livery", "operator", "latest_journey"
-        ).filter(locked=False),
+        ),
         **kwargs,
     )
+
+    if not request.user.is_superuser and not vehicle.is_editable():
+        raise PermissionDenied()
 
     form_data = request.POST or None
 
