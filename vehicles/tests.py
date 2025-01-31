@@ -563,17 +563,6 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
 
         del initial["colours"]
 
-        # try voting for own revision
-        with self.assertRaises(AssertionError):
-            response = self.client.post(f"/vehicles/revisions/{revision.id}/vote/up")
-        with self.assertRaises(AssertionError):
-            response = self.client.post(f"/vehicles/revisions/{revision.id}/vote/down")
-
-        # vote for edit
-        self.client.force_login(self.trusted_user)
-        response = self.client.post(f"/vehicles/revisions/{revision.id}/vote/up")
-        # self.assertContains(response, ">1<")
-
         # apply edit
         self.client.force_login(self.trusted_user)
         response = self.client.post(f"/vehicles/revisions/{revision.id}/apply")
@@ -604,10 +593,6 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         del initial["previous_reg"]
 
         self.client.force_login(self.trusted_user)
-
-        response = self.client.post(f"/vehicles/revisions/{revision.id}/vote/down")
-
-        response = self.client.post(f"/vehicles/revisions/{revision.id}/disapprove")
 
         with self.assertNumQueries(2):
             response = self.client.get("/vehicles/edits?status=disapproved")

@@ -14,14 +14,8 @@ urlpatterns = [
     path("vehicles", views.vehicles),
     path("vehicles.json", views.vehicles_json),
     path("vehicles/debug", views.debug),
-    path("vehicles/history/<int:revision_id>/revert", views.vehicle_revision_revert),
     path("vehicles/history", views.vehicle_edits),
     path("vehicles/edits", views.vehicle_edits),
-    path(
-        "vehicles/revisions/<int:revision_id>/vote/<direction>",
-        views.vehicle_revision_vote,
-        name="vehicle_revision_vote",
-    ),
     path(
         "vehicles/revisions/<int:revision_id>/<action>",
         views.vehicle_revision_action,

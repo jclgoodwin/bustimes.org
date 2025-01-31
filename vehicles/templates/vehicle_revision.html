@@ -27,9 +27,11 @@
         {% if revision.pending %}
             {% if revision.user_id == user.id %}
                 <button type="button" class="button" hx-post="{% url 'vehicle_revision_action' revision.id 'disapprove' %}">⚠️ Cancel</button>
-            {% elif user.is_superuser %}
+            {% elif user.trusted %}
                 <button type="button" class="button" hx-post="{% url 'vehicle_revision_action' revision.id 'apply' %}" hx-prompt="Reason for approving">👍 Apply changes</button>
                 <button type="button" class="button" hx-post="{% url 'vehicle_revision_action' revision.id 'disapprove' %}" hx-prompt="Reason for declining">⚠️ Decline</button>
+            {% else %}
+                Pending
             {% endif %}
         {% else %}
             {% if user.trusted and revision.disapproved and revision.approved_by_id == user.id %}

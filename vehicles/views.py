@@ -44,7 +44,6 @@ from .models import (
     Livery,
     SiriSubscription,
     Vehicle,
-    VehicleEditVote,
     VehicleJourney,
     VehicleLocation,
     VehicleRevision,
@@ -874,58 +873,6 @@ def edit_vehicle(request, **kwargs):
             "vehicle": vehicle,
         },
     )
-
-
-@require_POST
-@login_required
-def vehicle_revision_vote(request, revision_id, direction):
-    revision = get_object_or_404(VehicleRevision, id=revision_id)
-
-    assert request.user.id != revision.user_id
-    assert request.user.trusted is not False
-
-    positive = direction == "up"
-    score_change = 1 if positive else -1
-
-    if not positive:  # can only down-vote pending edits
-        assert revision.pending
-
-    try:
-        VehicleEditVote.objects.create(
-            positive=positive, for_revision=revision, by_user=request.user
-        )
-    except IntegrityError:
-        vote = VehicleEditVote.objects.get(for_revision=revision, by_user=request.user)
-        if vote.positive == positive:
-            # can't vote in the same direction twice
-            score_change = 0
-        else:
-            score_change *= 2
-            vote.positive = positive
-            vote.save(update_fields=["positive"])
-
-    if score_change != 0:
-        revision.score = F("score") + score_change
-        revision.save(update_fields=["score"])
-
-    # referesh from DB
-    revision = VehicleRevision.objects.select_related(
-        *revision_display_related_fields, "vehicle"
-    ).get(id=revision_id)
-
-    return render(request, "vehicle_revision.html", {"revision": revision})
-
-
-@require_POST
-@login_required
-def vehicle_revision_revert(request, revision_id):
-    assert request.user.is_superuser
-
-    revision = get_object_or_404(VehicleRevision, id=revision_id)
-
-    messages = list(revision.revert())
-
-    return HttpResponse("\n".join(messages))
 
 
 @require_POST
