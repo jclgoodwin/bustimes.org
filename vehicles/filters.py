@@ -27,6 +27,7 @@ class VehicleRevisionFilter(FilterSet):
             ("disapproved", "disapproved"),
         ],
         method="status_filter",
+        required=True,
     )
 
     def operator_filter(self, queryset, _, value):

@@ -557,7 +557,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             f'<a href="/admin/vehicles/vehiclerevision/?user={self.staff_user.id}&pending=True">1</a></td>',
         )
         with self.assertNumQueries(5):
-            response = self.client.get("/vehicles/edits?status=")
+            response = self.client.get("/vehicles/edits?status=pending")
         self.assertContains(response, "<strong>previous reg</strong>", html=True)
         self.assertContains(response, "BEAN")
 
@@ -594,9 +594,9 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
 
         self.client.force_login(self.trusted_user)
 
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(3):
             response = self.client.get("/vehicles/edits?status=disapproved")
-        self.assertIsNone(response.context["revisions"])
+        self.assertEqual(len(response.context["revisions"]), 0)
 
         self.client.force_login(self.trusted_user)
 
@@ -731,7 +731,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         self.assertIsNone(revision.approved_at)
 
         with self.assertNumQueries(6):
-            response = self.client.get("/vehicles/edits?status=")
+            response = self.client.get("/vehicles/edits?status=pending")
         self.assertEqual(len(response.context["revisions"]), 1)
 
         with self.assertNumQueries(3):
@@ -739,7 +739,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         self.assertEqual(len(response.context["revisions"]), 0)
 
         with self.assertNumQueries(7):
-            response = self.client.get("/vehicles/edits?operator=LYNX")
+            response = self.client.get("/vehicles/edits?operator=LYNX&status=pending")
         self.assertEqual(len(response.context["revisions"]), 1)
 
         self.client.force_login(self.staff_user)
