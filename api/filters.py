@@ -1,4 +1,5 @@
-from django.db.models import Q
+from django.db.models import Q, F
+from django.contrib.postgres.search import SearchQuery, SearchRank
 from django_filters.rest_framework import (
     CharFilter,
     DateTimeFilter,
@@ -46,6 +47,14 @@ class StopFilter(FilterSet):
 
 class ServiceFilter(FilterSet):
     operator = CharFilter()
+    search = CharFilter(method="search_filter", label="Search")
+
+    def search_filter(self, queryset, name, value):
+        query = SearchQuery(value, search_type="websearch", config="english")
+        rank = SearchRank(F("search_vector"), query)
+        query = Q(search_vector=query)
+        queryset = queryset.annotate(rank=rank).filter(query).order_by("-rank")
+        return queryset
 
     class Meta:
         model = Service
