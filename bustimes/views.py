@@ -1,4 +1,3 @@
-import csv
 import json
 import xml.etree.ElementTree as ET
 import zipfile
@@ -51,7 +50,7 @@ from vehicles.models import Vehicle, VehicleCode
 from vehicles.rtpi import add_progress_and_delay
 
 from .download_utils import download
-from .models import Garage, Route, StopTime, Trip
+from .models import Route, StopTime, Trip
 from .utils import contiguous_stoptimes_only, get_other_trips_in_block
 
 
@@ -719,37 +718,3 @@ def trip_updates(request):
             "trip_updates": trip_updates,
         },
     )
-
-
-@require_GET
-def garages(request):
-    response = HttpResponse(content_type="text/plain")
-
-    writer = csv.writer(response)
-    writer.writerow(["id", "name"])
-    for garage in Garage.objects.all():
-        writer.writerow([garage.id, garage])
-
-    return response
-
-
-@require_GET
-def garage_trips(request, pk):
-    garage = get_object_or_404(Garage, pk=pk)
-
-    response = HttpResponse(content_type="text/plain")
-
-    writer = csv.writer(response)
-    writer.writerow(["id", "calendar", "from_date", "to_date", "block"])
-    for trip in garage.trip_set.select_related("calendar"):
-        writer.writerow(
-            [
-                trip.id,
-                trip.calendar,
-                trip.calendar.start_date,
-                trip.calendar.end_date,
-                trip.block,
-            ]
-        )
-
-    return response

@@ -1534,13 +1534,6 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(response, "15:05")
         self.assertContains(response, "16:00")
 
-        garage = Garage.objects.first()
-        response = self.client.get("/garages.csv")
-        self.assertContains(response, "Vulcan Road")
-
-        response = self.client.get(f"/garages/{garage.id}/trips.csv")
-        self.assertContains(response, "Sundays,2023-10-22,,6021")
-
     @time_machine.travel("2024-01-01")
     def test_frequency(self):
         # import a document with a Frequency structure (journey repeats every 10 minutes)
