@@ -40,7 +40,6 @@ urlpatterns = [
         RedirectView.as_view(url="https://cdn.adfirst.media/adstxt/bustimes-ads.txt"),
     ),
     path("robots.txt", views.robots_txt),
-    path("qr/<slug>", views.qr),
     path("stops.json", views.stops_json),
     path(
         "regions/<pk>",

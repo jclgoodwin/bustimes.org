@@ -6,8 +6,6 @@ import sys
 import traceback
 from http import HTTPStatus
 
-import qrcode
-import qrcode.image.svg
 import requests
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
@@ -35,7 +33,6 @@ from django.urls import resolve, reverse
 from django.utils import timezone
 from django.utils.cache import patch_response_headers
 from django.utils.functional import SimpleLazyObject
-from django.utils.safestring import mark_safe
 from django.views.decorators.cache import cache_control
 from django.views.generic.detail import DetailView
 from redis.exceptions import ConnectionError
@@ -244,32 +241,6 @@ def contact(request):
             initial["email"] = request.user.email
         form = forms.ContactForm(initial=initial)
     return render(request, "contact.html", {"form": form, "submitted": submitted})
-
-
-def qr(request, slug):
-    locality = get_object_or_404(Locality, slug=slug)
-    stops = locality.stoppoint_set.filter(
-        Exists("service", filter=Q(service__current=True))
-    )
-
-    factory = qrcode.image.svg.SvgPathImage
-
-    stops = (
-        (
-            stop,
-            mark_safe(
-                qrcode.make(
-                    f"HTTPS://BUSTIMES.ORG/STOP/{stop.atco_code}",
-                    image_factory=factory,
-                )
-                .to_string()
-                .decode()
-            ),
-        )
-        for stop in stops
-    )
-
-    return render(request, "qr.html", {"stops": stops})
 
 
 def status(request):
