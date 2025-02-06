@@ -1,5 +1,6 @@
 """View definitions."""
 
+import csv
 import datetime
 import os
 import sys
@@ -1268,6 +1269,35 @@ def service_timetable(request, service_id):
     }
 
     return render(request, "timetable.html", context)
+
+
+def service_timetable_csv(request, service_id):
+    services = Service.objects.with_line_names().defer("geometry", "search_vector")
+    service = get_object_or_404(services, id=service_id)
+    form = forms.TimetableForm(request.GET, service=service, related=None)
+
+    response = HttpResponse(
+        content_type="text/plain",
+        headers={"Content-Disposition": f"attachment; filename={service.slug}.csv"},
+    )
+    writer = csv.writer(response)
+
+    for grouping in form.get_timetable(service).render().groupings:
+        writer.writerow(
+            ["stop", "NaPTAN code", "ATCO code"]
+            + [trip.route.line_name for trip in grouping.trips]
+        )
+        for row in grouping.rows:
+            writer.writerow(
+                [
+                    row.stop.get_qualified_name(),
+                    row.stop.naptan_code,
+                    row.stop.atco_code,
+                ]
+                + row.times
+            )
+        writer.writerow(())
+    return response
 
 
 @cache_page(max_age=7200)

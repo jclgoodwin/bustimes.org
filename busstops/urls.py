@@ -94,6 +94,10 @@ urlpatterns = [
         name="service_timetable",
     ),
     path(
+        "services/<int:service_id>/timetable.csv",
+        views.service_timetable_csv,
+    ),
+    path(
         "services/<slug>",
         views.ServiceDetailView.as_view(),
         name="service_detail",
