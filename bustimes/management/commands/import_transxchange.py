@@ -775,7 +775,7 @@ class Command(BaseCommand):
                         ):
                             trip_notes.append(Trip.notes.through(trip=trip, note=note))
                         if not any(
-                            stn.stop_time is stop_time and stn.note is note
+                            stn.stoptime is stop_time and stn.note is note
                             for stn in stop_time_notes
                         ):
                             stop_time_notes.append(
