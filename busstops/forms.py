@@ -36,14 +36,17 @@ class TimetableForm(forms.Form):
 
         line_names = service.get_line_names()
         self.fields["service"].choices = [
-            (line_name, line_name) for line_name in line_names
+            (f"{service.id}:{line_name}", line_name) for line_name in line_names
         ]
-        self.fields["service"].initial = list(line_names)
+        self.fields["service"].initial = [
+            choice[0] for choice in self.fields["service"].choices
+        ]
 
         if self.related:
             for s in self.related:
                 self.fields["service"].choices += [
-                    (line_name, line_name) for line_name in s.get_line_names()
+                    (f"{s.id}:{line_name}", line_name)
+                    for line_name in s.get_line_names()
                 ]
         if len(self.fields["service"].choices) > 1:
             self.fields["service"].choices = sorted(self.fields["service"].choices)

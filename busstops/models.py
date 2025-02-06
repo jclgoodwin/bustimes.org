@@ -928,7 +928,14 @@ class Service(models.Model):
                 routes = self.route_set.all()
 
             if line_names:
-                routes = routes.filter(line_name__in=line_names)
+                line_name_query = Q()
+                for line_name in line_names:
+                    if ":" in line_name:
+                        service_id, line_name = line_name.split(":", 1)
+                        line_name_query |= Q(service=service_id, line_name=line_name)
+                    else:
+                        line_name_query |= Q(line_name=line_name)
+                routes = routes.filter(line_name_query)
 
             operators = self.operator.all()
             try:
