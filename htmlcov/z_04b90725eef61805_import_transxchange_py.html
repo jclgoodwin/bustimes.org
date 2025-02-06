@@ -54,8 +54,8 @@
             </div>
         </aside>
         <h2>
-            <span class="text">774 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">699<span class="text"> run</span></button>
+            <span class="text">775 statements &nbsp;</span>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">700<span class="text"> run</span></button>
             <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">75<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_06bcf2d2e74f1893_test_import_atco_cif_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2025-02-05 22:18 +0000
+            created at 2025-02-06 10:38 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -852,17 +852,17 @@
     <p class="run"><span class="n"><a id="t770" href="#t770">770</a></span><span class="t">                <span class="key">if</span> <span class="nam">cell</span><span class="op">.</span><span class="nam">notes</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t771" href="#t771">771</a></span><span class="t">                    <span class="key">for</span> <span class="nam">note_code</span><span class="op">,</span> <span class="nam">note_text</span> <span class="key">in</span> <span class="nam">cell</span><span class="op">.</span><span class="nam">notes</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t772" href="#t772">772</a></span><span class="t">                        <span class="nam">note</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">get_note</span><span class="op">(</span><span class="nam">note_code</span><span class="op">,</span> <span class="nam">note_text</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t773" href="#t773">773</a></span><span class="t">                        <span class="key">if</span> <span class="key">not</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t774" href="#t774">774</a></span><span class="t">                            <span class="com"># trip_notes</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t775" href="#t775">775</a></span><span class="t">                            <span class="com"># and trip_notes[-1].trip is trip</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t776" href="#t776">776</a></span><span class="t">                            <span class="nam">any</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t777" href="#t777">777</a></span><span class="t">                                <span class="nam">tn</span><span class="op">.</span><span class="nam">trip</span> <span class="key">is</span> <span class="nam">trip</span> <span class="key">and</span> <span class="nam">tn</span><span class="op">.</span><span class="nam">note</span> <span class="key">is</span> <span class="nam">note</span> <span class="key">for</span> <span class="nam">tn</span> <span class="key">in</span> <span class="nam">trip_notes</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t778" href="#t778">778</a></span><span class="t">                            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t779" href="#t779">779</a></span><span class="t">                        <span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t780" href="#t780">780</a></span><span class="t">                            <span class="nam">trip_notes</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">Trip</span><span class="op">.</span><span class="nam">notes</span><span class="op">.</span><span class="nam">through</span><span class="op">(</span><span class="nam">trip</span><span class="op">=</span><span class="nam">trip</span><span class="op">,</span> <span class="nam">note</span><span class="op">=</span><span class="nam">note</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t781" href="#t781">781</a></span><span class="t">                        <span class="nam">stop_time_notes</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t782" href="#t782">782</a></span><span class="t">                            <span class="nam">StopTime</span><span class="op">.</span><span class="nam">notes</span><span class="op">.</span><span class="nam">through</span><span class="op">(</span><span class="nam">stoptime</span><span class="op">=</span><span class="nam">stop_time</span><span class="op">,</span> <span class="nam">note</span><span class="op">=</span><span class="nam">note</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t783" href="#t783">783</a></span><span class="t">                        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t773" href="#t773">773</a></span><span class="t">                        <span class="key">if</span> <span class="key">not</span> <span class="nam">any</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t774" href="#t774">774</a></span><span class="t">                            <span class="nam">tn</span><span class="op">.</span><span class="nam">trip</span> <span class="key">is</span> <span class="nam">trip</span> <span class="key">and</span> <span class="nam">tn</span><span class="op">.</span><span class="nam">note</span> <span class="key">is</span> <span class="nam">note</span> <span class="key">for</span> <span class="nam">tn</span> <span class="key">in</span> <span class="nam">trip_notes</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t775" href="#t775">775</a></span><span class="t">                        <span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t776" href="#t776">776</a></span><span class="t">                            <span class="nam">trip_notes</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">Trip</span><span class="op">.</span><span class="nam">notes</span><span class="op">.</span><span class="nam">through</span><span class="op">(</span><span class="nam">trip</span><span class="op">=</span><span class="nam">trip</span><span class="op">,</span> <span class="nam">note</span><span class="op">=</span><span class="nam">note</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t777" href="#t777">777</a></span><span class="t">                        <span class="key">if</span> <span class="key">not</span> <span class="nam">any</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t778" href="#t778">778</a></span><span class="t">                            <span class="nam">stn</span><span class="op">.</span><span class="nam">stoptime</span> <span class="key">is</span> <span class="nam">stop_time</span> <span class="key">and</span> <span class="nam">stn</span><span class="op">.</span><span class="nam">note</span> <span class="key">is</span> <span class="nam">note</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t779" href="#t779">779</a></span><span class="t">                            <span class="key">for</span> <span class="nam">stn</span> <span class="key">in</span> <span class="nam">stop_time_notes</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t780" href="#t780">780</a></span><span class="t">                        <span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t781" href="#t781">781</a></span><span class="t">                            <span class="nam">stop_time_notes</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t782" href="#t782">782</a></span><span class="t">                                <span class="nam">StopTime</span><span class="op">.</span><span class="nam">notes</span><span class="op">.</span><span class="nam">through</span><span class="op">(</span><span class="nam">stoptime</span><span class="op">=</span><span class="nam">stop_time</span><span class="op">,</span> <span class="nam">note</span><span class="op">=</span><span class="nam">note</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t783" href="#t783">783</a></span><span class="t">                            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t784" href="#t784">784</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t785" href="#t785">785</a></span><span class="t">            <span class="com"># last stop</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t786" href="#t786">786</a></span><span class="t">            <span class="key">if</span> <span class="key">not</span> <span class="nam">stop_time</span><span class="op">.</span><span class="nam">arrival</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -1577,7 +1577,7 @@
             <a class="nav" href="z_06bcf2d2e74f1893_test_import_atco_cif_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2025-02-05 22:18 +0000
+            created at 2025-02-06 10:38 +0000
         </p>
     </div>
 </footer>
