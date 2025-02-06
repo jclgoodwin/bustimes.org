@@ -770,17 +770,17 @@ class Command(BaseCommand):
                 if cell.notes:
                     for note_code, note_text in cell.notes:
                         note = self.get_note(note_code, note_text)
-                        if not (
-                            # trip_notes
-                            # and trip_notes[-1].trip is trip
-                            any(
-                                tn.trip is trip and tn.note is note for tn in trip_notes
-                            )
+                        if not any(
+                            tn.trip is trip and tn.note is note for tn in trip_notes
                         ):
                             trip_notes.append(Trip.notes.through(trip=trip, note=note))
-                        stop_time_notes.append(
-                            StopTime.notes.through(stoptime=stop_time, note=note)
-                        )
+                        if not any(
+                            stn.stop_time is stop_time and stn.note is note
+                            for stn in stop_time_notes
+                        ):
+                            stop_time_notes.append(
+                                StopTime.notes.through(stoptime=stop_time, note=note)
+                            )
 
             # last stop
             if not stop_time.arrival:
