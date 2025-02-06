@@ -76,7 +76,6 @@ class OperatorViewSet(viewsets.ReadOnlyModelViewSet):
 class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Service.objects.filter(current=True).prefetch_related("operator")
     serializer_class = serializers.ServiceSerializer
-    pagination_class = CursorPagination
     filter_backends = [DjangoFilterBackend]
     filterset_class = filters.ServiceFilter
 
