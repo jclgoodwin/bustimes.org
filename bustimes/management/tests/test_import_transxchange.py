@@ -946,7 +946,11 @@ class ImportTransXChangeTest(TestCase):
 
         # combined timetable
         response = self.client.get(
-            f"{service.get_absolute_url()}?service=903&service=904&detailed=true"
+            service.get_absolute_url(),
+            query_params={
+                "service": [f"{route_2.service_id}:903", f"{route_1.service_id}:904"],
+                "detailed": True,
+            },
         )
         self.assertContains(response, '<td colspan="2">Barnstaple</td>')  # garage
         self.assertContains(response, '">904<')  # service
