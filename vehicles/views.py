@@ -775,9 +775,11 @@ def edit_vehicle(request, **kwargs):
 
     if (
         vehicle.operator_id
-        and User.operators.through.objects.filter(operator=vehicle.operator_id)
-        .exclude(user=request.user)
-        .exists()
+        and (
+            User.operators.through.objects.filter(operator=vehicle.operator_id)
+            .exclude(user=request.user)
+            .exists()
+        )
         and not request.user.operators.filter(noc=vehicle.operator_id).exists()
     ):
         raise PermissionDenied(
