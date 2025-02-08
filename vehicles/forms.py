@@ -117,7 +117,7 @@ class EditVehicleForm(forms.Form):
     notes = forms.CharField(required=False, max_length=255)
     summary = fields.SummaryField(
         label="Evidence",
-        required=True
+        required=True,
         max_length=255,
         help_text="""Explain your changes,
 if they need explaining.
