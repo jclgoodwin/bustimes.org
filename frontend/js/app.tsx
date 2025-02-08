@@ -13,8 +13,7 @@ const MapRouter = lazy(() => import("./MapRouter"));
 if (process.env.NODE_ENV === "production") {
   Sentry.init({
     dsn: "https://0d628b6fff45463bb803d045b99aa542@o55224.ingest.sentry.io/1379883",
-    allowUrls: [/bustimes\.org\/static\//],
-    denyUrls: [/bustimes\.org\/static\/js\/consent.js/],
+    allowUrls: [/bustimes\.org\/static\/js/, /bustimes\.org\/static\/dist\/js/],
     ignoreErrors: [
       // ignore errors in third-party advert code
       "Load failed",
