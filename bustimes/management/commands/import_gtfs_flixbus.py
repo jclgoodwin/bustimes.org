@@ -73,7 +73,7 @@ class Command(BaseCommand):
         existing_routes = {route.code: route for route in source.route_set.all()}
         routes = []
 
-        calendars = get_calendars(feed)
+        calendars = get_calendars(feed, source)
 
         # get UTC offset (0 or 1 hours) at midday at the start of each calendar
         # (the data uses UTC times but we want local times)

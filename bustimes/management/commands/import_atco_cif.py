@@ -83,7 +83,11 @@ class Command(BaseCommand):
 
         with zipfile.ZipFile(archive_name) as archive:
             for filename in archive.namelist():
-                if filename.endswith(".cif") and "/archive/" not in filename.lower() and "/Y20/" not in filename.upper():
+                if (
+                    filename.endswith(".cif")
+                    and "/archive/" not in filename.lower()
+                    and "/Y20/" not in filename.upper()
+                ):
                     with archive.open(filename) as open_file:
                         self.handle_file(open_file)
         assert self.stop_times == []
@@ -187,6 +191,7 @@ class Command(BaseCommand):
             sun=line[35:36] == b"1",
             start_date=parse_date(line[13:21]),
             end_date=parse_date(line[21:29]),
+            source=self.source,
         )
         summary = []
         if line[36:37] == b"S":

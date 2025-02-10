@@ -15,7 +15,7 @@ from ...models import Calendar, CalendarDate, Route, StopTime, Trip
 logger = logging.getLogger(__name__)
 
 
-def get_calendars(feed) -> dict:
+def get_calendars(feed, source) -> dict:
     calendars = {
         row.service_id: Calendar(
             mon=row.monday,
@@ -27,6 +27,7 @@ def get_calendars(feed) -> dict:
             sun=row.sunday,
             start_date=row.start_date,
             end_date=row.end_date,
+            source=source,
         )
         for row in feed.calendar.itertuples()
     }
@@ -88,7 +89,7 @@ class Command(BaseCommand):
 
         stops = StopPoint.objects.in_bulk(feed.stops.stop_id.to_list())
 
-        calendars = get_calendars(feed)
+        calendars = get_calendars(feed, source)
 
         for row in gtfs_kit.routes.get_routes(feed, as_gdf=True).itertuples():
             if row.route_id in existing_services:

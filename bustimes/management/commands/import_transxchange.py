@@ -512,6 +512,7 @@ class Command(BaseCommand):
             sun=False,
             start_date=operating_period.start,
             end_date=operating_period.end,
+            source=self.source,
         )
         for day in operating_profile.regular_days:
             match day:
