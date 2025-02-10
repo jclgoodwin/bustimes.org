@@ -167,6 +167,9 @@ def get_calendars(when: date | datetime, calendar_ids=None):
 
 
 def get_other_trips_in_block(trip, date):
+    if trip.start > timedelta(days=1):
+        date -= timedelta(days=1)
+
     trips = Trip.objects.filter(
         block=trip.block,
         route__source=trip.route.source,
