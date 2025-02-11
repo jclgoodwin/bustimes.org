@@ -35,7 +35,7 @@ Status = namedtuple(
 )
 
 
-def get_destination_ref(destination_ref):
+def get_destination_ref(destination_ref: str) -> str | None:
     destination_ref = destination_ref.removeprefix("NT")  # Nottingham City Transport
 
     if (
@@ -45,15 +45,16 @@ def get_destination_ref(destination_ref):
         or destination_ref[:3] == "000"
         or destination_ref[:3] == "999"
         or destination_ref[:3] == "980"
+        or destination_ref[:3] == "900"
     ):
-        # destination ref is a fake ATCO code, or maybe a postcode or other placeholder
+        # destination ref is not in the expected ATCO code format - maybe a postcode or other placeholder
         return
 
     return destination_ref
 
 
 @functools.cache
-def get_destination_name(destination_ref):
+def get_destination_name(destination_ref: str) -> str:
     try:
         return Locality.objects.get(stoppoint=destination_ref).name
     except Locality.DoesNotExist:
@@ -66,7 +67,7 @@ def get_destination_name(destination_ref):
     return ""
 
 
-def get_line_name_query(line_ref):
+def get_line_name_query(line_ref: str) -> Q:
     line_name = line_ref.replace("_", " ").strip()
     return (
         Exists(
@@ -210,16 +211,7 @@ class Command(ImportLiveVehiclesCommand):
     def get_service(self, operators, item, line_ref, vehicle_operator_id):
         monitored_vehicle_journey = item["MonitoredVehicleJourney"]
 
-        destination_ref = monitored_vehicle_journey.get("DestinationRef")
-
-        cache_key = f"{vehicle_operator_id}:{line_ref}:{destination_ref}".replace(
-            " ", ""
-        )
-        service = cache.get(cache_key)
-        if service is not None:
-            return service or None
-
-        if destination_ref:
+        if destination_ref := monitored_vehicle_journey.get("DestinationRef"):
             destination_ref = get_destination_ref(destination_ref)
 
         # filter by LineRef or (if present and different) TicketMachineServiceCode
@@ -282,16 +274,12 @@ class Command(ImportLiveVehiclesCommand):
                     )
                 )
 
-            if len(operators) == 1 or not destination_ref:
-                try:
-                    return services.get()
-                except Service.DoesNotExist:
-                    cache.set(
-                        cache_key, False, 3600
-                    )  # cache 'service not found' for an hour
-                    return
-                except Service.MultipleObjectsReturned:
-                    pass
+            try:
+                return services.get()
+            except Service.DoesNotExist:
+                return
+            except Service.MultipleObjectsReturned:
+                pass
 
         if destination_ref:
             # cope with a missing leading zero
@@ -312,7 +300,6 @@ class Command(ImportLiveVehiclesCommand):
             try:
                 return services.get()
             except Service.DoesNotExist:
-                cache.set(cache_key, False, 3600)
                 return
             except Service.MultipleObjectsReturned:
                 condition = Exists(

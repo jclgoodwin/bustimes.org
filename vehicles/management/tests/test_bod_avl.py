@@ -3,7 +3,6 @@ from unittest import mock
 
 import fakeredis
 import time_machine
-from django.core.cache import cache
 from django.test import TestCase, override_settings
 from vcr import use_cassette
 
@@ -134,12 +133,17 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         ):
             redis_client = fakeredis.FakeStrictRedis(version=7)
 
-            with mock.patch(
-                "vehicles.management.import_live_vehicles.redis_client", redis_client
-            ), mock.patch(
-                "vehicles.management.commands.import_bod_avl.redis_client",
-                redis_client,
-            ), use_cassette(str(self.vcr_path / "bod_avl.yaml")) as cassette:
+            with (
+                mock.patch(
+                    "vehicles.management.import_live_vehicles.redis_client",
+                    redis_client,
+                ),
+                mock.patch(
+                    "vehicles.management.commands.import_bod_avl.redis_client",
+                    redis_client,
+                ),
+                use_cassette(str(self.vcr_path / "bod_avl.yaml")) as cassette,
+            ):
                 command.update()
 
                 cassette.rewind()
@@ -270,13 +274,17 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
         redis_client = fakeredis.FakeStrictRedis(version=7)
 
-        with mock.patch(
-            "vehicles.management.import_live_vehicles.redis_client", redis_client
-        ), mock.patch(
-            "vehicles.management.commands.import_bod_avl.redis_client", redis_client
-        ), mock.patch(
-            "vehicles.management.commands.import_bod_avl.Command.get_items",
-            return_value=items,
+        with (
+            mock.patch(
+                "vehicles.management.import_live_vehicles.redis_client", redis_client
+            ),
+            mock.patch(
+                "vehicles.management.commands.import_bod_avl.redis_client", redis_client
+            ),
+            mock.patch(
+                "vehicles.management.commands.import_bod_avl.Command.get_items",
+                return_value=items,
+            ),
         ):
             with self.assertNumQueries(43):
                 wait = command.update()
@@ -310,9 +318,10 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertEqual(journey.vehicle.reg, "DW18HAM")
 
         # test operator map
-        with mock.patch(
-            "vehicles.views.redis_client", redis_client
-        ), self.assertNumQueries(1):
+        with (
+            mock.patch("vehicles.views.redis_client", redis_client),
+            self.assertNumQueries(1),
+        ):
             response = self.client.get("/vehicles.json?operator=HAMS")
         json = response.json()
         self.assertEqual(
@@ -383,11 +392,6 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             with self.assertNumQueries(0):
                 response = self.client.get("/vehicles.json?service=ff")
             self.assertEqual(response.status_code, 400)
-
-            # test cache
-            self.assertIs(False, cache.get("TGTC:843X:43000280301"))
-            self.assertIsNone(cache.get("HAMS:C:2400103099"))
-            self.assertIsNone(cache.get("WHIP:U:0500CCITY544"))
 
             # test history view
             whippet_journey = VehicleJourney.objects.get(vehicle__operator="WHIP")
@@ -529,9 +533,12 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 )
             self.assertEqual(response.json(), [])
 
-            with mock.patch(
-                "vehicles.views.redis_client.geosearch", return_value=[vehicle.id]
-            ), self.assertNumQueries(1):
+            with (
+                mock.patch(
+                    "vehicles.views.redis_client.geosearch", return_value=[vehicle.id]
+                ),
+                self.assertNumQueries(1),
+            ):
                 response = self.client.get(
                     "/vehicles.json?ymax=52.4&xmax=1.7&ymin=52.3&xmin=1.6"
                 )
