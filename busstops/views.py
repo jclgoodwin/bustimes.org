@@ -1288,16 +1288,19 @@ def service_timetable_csv(request, service_id):
             + [trip.route.line_name for trip in grouping.trips]
         )
         for row in grouping.rows:
-            writer.writerow(
-                [
-                    row.stop.get_qualified_name()
-                    if type(row.stop) is StopPoint
-                    else str(row.stop),
+            if type(row.stop) is StopPoint:
+                stop = [
+                    row.stop.get_qualified_name(),
                     row.stop.naptan_code,
                     row.stop.atco_code,
                 ]
-                + row.times
-            )
+            else:
+                stop = [
+                    str(row.stop),
+                    "",
+                    "",
+                ]
+            writer.writerow(stop + row.times)
         writer.writerow(())
     return response
 
