@@ -1277,7 +1277,7 @@ def service_timetable_csv(request, service_id):
     form = forms.TimetableForm(request.GET, service=service, related=None)
 
     response = HttpResponse(
-        content_type="text/plain",
+        content_type="text/csv",
         headers={"Content-Disposition": f"attachment; filename={service.slug}.csv"},
     )
     writer = csv.writer(response)
