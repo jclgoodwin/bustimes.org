@@ -1290,7 +1290,9 @@ def service_timetable_csv(request, service_id):
         for row in grouping.rows:
             writer.writerow(
                 [
-                    row.stop.get_qualified_name(),
+                    row.stop.get_qualified_name()
+                    if type(row.stop) is StopPoint
+                    else str(row.stop),
                     row.stop.naptan_code,
                     row.stop.atco_code,
                 ]
