@@ -251,7 +251,7 @@ class DataSource(models.Model):
                 text = f"{text}/Bus Open Data Service (BODS)"
         elif "transportforireland" in self.url:
             url = f"https://www.transportforireland.ie/transitData/PT_Data.html#:~:text={self.name}"
-            text = "Transport for Ireland"
+            text = "National Transport Authority"
         elif self.url.startswith("https://opendata.ticketer.com/uk/"):
             text = self.url
         elif self.name == "MET" or self.name == "ULB":
