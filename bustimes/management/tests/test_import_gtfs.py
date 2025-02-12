@@ -140,7 +140,7 @@ class GTFSTest(TestCase):
         self.assertContains(
             response,
             '<a href="https://www.transportforireland.ie/transitData/PT_Data.html#:~:text=Mortons" rel="nofollow">'
-            "Transport for Ireland</a>",
+            "National Transport Authority</a>",
         )
 
         for day in (

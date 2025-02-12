@@ -1277,7 +1277,7 @@ def service_timetable_csv(request, service_id):
     form = forms.TimetableForm(request.GET, service=service, related=None)
 
     response = HttpResponse(
-        content_type="text/plain",
+        content_type="text/csv",
         headers={"Content-Disposition": f"attachment; filename={service.slug}.csv"},
     )
     writer = csv.writer(response)
@@ -1288,14 +1288,19 @@ def service_timetable_csv(request, service_id):
             + [trip.route.line_name for trip in grouping.trips]
         )
         for row in grouping.rows:
-            writer.writerow(
-                [
+            if type(row.stop) is StopPoint:
+                stop = [
                     row.stop.get_qualified_name(),
                     row.stop.naptan_code,
                     row.stop.atco_code,
                 ]
-                + row.times
-            )
+            else:
+                stop = [
+                    str(row.stop),
+                    "",
+                    "",
+                ]
+            writer.writerow(stop + row.times)
         writer.writerow(())
     return response
 

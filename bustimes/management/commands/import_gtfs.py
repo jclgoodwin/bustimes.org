@@ -193,7 +193,7 @@ class Command(BaseCommand):
 
         stops, stops_not_created = self.do_stops(feed)
 
-        calendars = get_calendars(feed)
+        calendars = get_calendars(feed, source=self.source)
 
         trips = {}
         headsigns = {}
