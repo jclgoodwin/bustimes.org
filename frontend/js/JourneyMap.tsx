@@ -169,10 +169,10 @@ export const JourneyStops = React.memo(function Stops({
       .filter((s) => s.coordinates)
       .map((s) => {
         return {
-          type: "Feature",
+          type: "Feature" as const,
           geometry: {
-            type: "Point",
-            coordinates: s.coordinates,
+            type: "Point" as const,
+            coordinates: s.coordinates as [number, number],
           },
           properties: {
             url: `/stops/${s.atco_code}`,

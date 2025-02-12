@@ -2,12 +2,14 @@ import React, { type ReactElement } from "react";
 import { Popup } from "react-map-gl/maplibre";
 
 export type Stop = {
+  type: "Feature";
   properties: {
     name: string;
     url: string;
     services?: string[];
   };
   geometry: {
+    type: "Point";
     coordinates: [number, number];
   };
 };

@@ -148,6 +148,7 @@ function Stops({
   setClickedStop,
 }: {
   stops?: {
+    type: "FeatureCollection";
     features: Stop[];
   };
   times?: Trip["times"];
@@ -259,14 +260,14 @@ const Vehicles = memo(function Vehicles({
       return null;
     }
     return {
-      type: "FeatureCollection",
+      type: "FeatureCollection" as const,
       features: vehicles
         ? vehicles.map((vehicle) => {
             return {
-              type: "Feature",
+              type: "Feature" as const,
               id: vehicle.id,
               geometry: {
-                type: "Point",
+                type: "Point" as const,
                 coordinates: vehicle.coordinates,
               },
               properties: {

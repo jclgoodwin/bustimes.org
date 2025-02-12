@@ -82,6 +82,7 @@ export const Route = React.memo(function Route({ times }: RouteProps) {
                 type: "LineString",
                 coordinates: lineString,
               },
+              properties: null,
             };
           }),
         }}
@@ -100,6 +101,7 @@ export const Route = React.memo(function Route({ times }: RouteProps) {
                 type: "LineString",
                 coordinates: line,
               },
+              properties: null,
             };
           }),
         }}
@@ -118,7 +120,7 @@ export const Route = React.memo(function Route({ times }: RouteProps) {
                 type: "Feature",
                 geometry: {
                   type: "Point",
-                  coordinates: stop.stop.location,
+                  coordinates: stop.stop.location as [number, number],
                 },
                 properties: {
                   url: stop.stop.atco_code
