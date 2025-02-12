@@ -69,13 +69,14 @@ function Stops({ stops }: { stops?: MapGeoJSONFeature[] }) {
     },
   };
 
-  if (stops) {
-    return (
-      <Source type="geojson" data={stops}>
-        <Layer {...stopsStyle} />
-      </Source>
-    );
-  }
+  // if (stops) {
+  //   return (
+  //     <Source type="geojson" data={stops}>
+  //       <Layer {...stopsStyle} />
+  //     </Source>
+  //   );
+  // }
+  return null;
 }
 
 export default function ServiceMapMap({
