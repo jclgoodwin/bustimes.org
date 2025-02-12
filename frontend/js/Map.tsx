@@ -139,13 +139,6 @@ function MapChild({ onInit }: { onInit?: (map: MapLibreMap) => void }) {
 export default function BusTimesMap(
   props: MapProps & {
     onMapInit?: (map: MapLibreMap) => void;
-    // workaround for wrong react-map-gl type definitions?
-    minPitch?: number;
-    maxPitch?: number;
-    scrollZoom?: boolean;
-    touchZoomRotate?: boolean;
-    localIdeographFontFamily?: string;
-    pitchWithRotate?: boolean;
   },
 ) {
   const darkModeQuery = window.matchMedia("(prefers-color-scheme: dark)");
@@ -219,6 +212,7 @@ export default function BusTimesMap(
         touchPitch={false}
         pitchWithRotate={false}
         dragRotate={false}
+        projection="globe"
         minZoom={2}
         maxZoom={18}
         mapStyle={`https://tiles.stadiamaps.com/styles/${mapStyle}.json`}
@@ -226,9 +220,6 @@ export default function BusTimesMap(
         attributionControl={false}
         // onError={(e) => captureException(e.error)}
         onContextMenu={onContextMenu}
-        // workaround for wrong react-map-gl type definitions?
-        transformRequest={undefined}
-        maxTileCacheSize={undefined}
       >
         <NavigationControl showCompass={false} />
         <GeolocateControl trackUserLocation />
