@@ -66,7 +66,7 @@ def get_css(colours, direction=None, horizontal=False, angle=None):
 
 def get_brightness(colour: HTML5SimpleColor) -> float:
     """Returns a "relative luminance" between 0 and 255"""
-    return 0.299 * colour.red + 0.587 * colour.green + 0.144 * colour.blue
+    return 0.299 * colour.red + 0.587 * colour.green + 0.114 * colour.blue
 
 
 def get_text_colour(colours) -> str:
