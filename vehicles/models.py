@@ -16,7 +16,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import escape, format_html
 from simple_history.models import HistoricalRecords
-from webcolors import html5_parse_legacy_color
+from webcolors import HTML5SimpleColor, html5_parse_legacy_color
 
 from busstops.models import DataSource, Operator, Service
 from bustimes.utils import get_trip
@@ -64,12 +64,13 @@ def get_css(colours, direction=None, horizontal=False, angle=None):
     return background
 
 
-def get_brightness(colour):
-    return (0.299 * colour.red + 0.587 * colour.green + 0.114 * colour.blue) / 255
+def get_brightness(colour: HTML5SimpleColor) -> float:
+    """Returns a "relative luminance" between 0 and 255"""
+    return 0.299 * colour.red + 0.587 * colour.green + 0.144 * colour.blue
 
 
-def get_text_colour(colours):
-    """Return "#fff" if the colour is dark, otherwise None"""
+def get_text_colour(colours) -> str:
+    """Returns "#fff" if the colour is dark, otherwise None"""
     if not colours:
         return
     colours = colours.split()
@@ -84,7 +85,7 @@ def get_text_colour(colours):
         )
     else:
         brightness = sum(brightnesses) / colours_length
-    if brightness < 0.5:
+    if brightness <= 186:
         return "#fff"
 
 
