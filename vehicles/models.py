@@ -69,6 +69,7 @@ def get_brightness(colour):
 
 
 def get_text_colour(colours):
+    """Return "#fff" if the colour is dark, otherwise None"""
     if not colours:
         return
     colours = colours.split()

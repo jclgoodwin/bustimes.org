@@ -24,10 +24,12 @@ from busstops.models import (
     Operator,
     Service,
     ServiceCode,
+    ServiceColour,
     StopPoint,
     StopUsage,
 )
 from transxchange.txc import TransXChange
+from vehicles.models import get_text_colour
 from vosa.models import Registration
 
 from ...models import (
@@ -1172,10 +1174,19 @@ class Command(BaseCommand):
             ):
                 service.description = description
 
-            # London bus red
-            if service_code and service.mode == "bus" and service_code[:4] == "tfl_":
+            if line.colour:
+                background = f"#{line.colour}"
+                foreground = get_text_colour(background) or "#000"
+                service.colour, _ = ServiceColour.objects.get_or_create(
+                    background=background,
+                    foreground=foreground,
+                    use_name_as_brand=False,
+                )
+            elif service_code and service.mode == "bus" and service_code[:4] == "tfl_":
+                # London bus red
                 service.colour_id = 127
             else:
+                # use the operator's colour
                 for operator in operators.values():
                     if operator.colour_id:
                         service.colour_id = operator.colour_id

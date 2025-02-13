@@ -654,11 +654,8 @@ class Line:
 
         self.marketing_name = element.findtext("MarketingName")
 
-        if (
-            element.findtext("LineColour")
-            or element.findtext("LineFontColour")
-            or element.findtext("LineImage")
-        ):
+        self.colour = element.findtext("LineColour")
+        if element.findtext("LineFontColour") or element.findtext("LineImage"):
             logger.info(ET.tostring(element).decode())
 
         self.outbound_description = element.findtext("OutboundDescription/Description")
