@@ -386,8 +386,7 @@ class Command(BaseCommand):
                 current=False
             )
         )
-        for route in old_routes:
-            route.delete()
+        old_routes.update(service=None)
 
         StopPoint.objects.filter(active=False, service__current=True).update(
             active=True

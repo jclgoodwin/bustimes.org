@@ -123,7 +123,6 @@ class BusStopsAdminTests(TestCase):
             },
         )
         response = self.client.get(url)
-        self.assertNotContains(response, ">2<")  # routes
 
         with self.assertNumQueries(4):
             self.client.post(

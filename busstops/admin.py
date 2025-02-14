@@ -533,7 +533,7 @@ class DataSourceAdmin(admin.ModelAdmin):
         queryset = super().get_queryset(request)
         if "changelist" in request.resolver_match.view_name:
             return queryset.annotate(
-                routes=SubqueryCount("route"),
+                routes=SubqueryCount("route", filter=~Q(service=None)),
                 services=SubqueryCount("service", filter=Q(current=True)),
                 journeys=Exists(VehicleJourney.objects.filter(source=OuterRef("id"))),
             ).prefetch_related("operatorcode_set")
@@ -561,7 +561,7 @@ class DataSourceAdmin(admin.ModelAdmin):
         )
 
     def delete_routes(self, request, queryset):
-        result = Route.objects.filter(source__in=queryset).delete()
+        result = Route.objects.filter(source__in=queryset).update(service=None)
         self.message_user(request, result)
 
     def remove_datetimes(self, request, queryset):
