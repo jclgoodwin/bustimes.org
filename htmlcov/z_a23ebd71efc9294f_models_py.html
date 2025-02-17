@@ -55,8 +55,8 @@
         </aside>
         <h2>
             <span class="text">613 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">583<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">30<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">582<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">31<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_b8e363a838fda594_date_range_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2025-02-14 15:33 +0000
+            created at 2025-02-17 12:42 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -1004,19 +1004,19 @@
     <p class="pln"><span class="n"><a id="t922" href="#t922">922</a></span><span class="t">                <span class="nam">self</span><span class="op">.</span><span class="nam">route_set</span><span class="op">,</span> <span class="nam">day</span><span class="op">,</span> <span class="nam">calendar_id</span><span class="op">=</span><span class="nam">calendar_id</span><span class="op">,</span> <span class="nam">detailed</span><span class="op">=</span><span class="nam">detailed</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t923" href="#t923">923</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t924" href="#t924">924</a></span><span class="t">        <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t925" href="#t925">925</a></span><span class="t">            <span class="key">if</span> <span class="nam">also_services</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t926" href="#t926">926</a></span><span class="t">                <span class="nam">routes</span> <span class="op">=</span> <span class="nam">Route</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span><span class="nam">service__in</span><span class="op">=</span><span class="op">[</span><span class="nam">self</span><span class="op">]</span> <span class="op">+</span> <span class="nam">also_services</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t927" href="#t927">927</a></span><span class="t">            <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t928" href="#t928">928</a></span><span class="t">                <span class="nam">routes</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">route_set</span><span class="op">.</span><span class="nam">all</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t929" href="#t929">929</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t930" href="#t930">930</a></span><span class="t">            <span class="key">if</span> <span class="nam">line_names</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t925" href="#t925">925</a></span><span class="t">            <span class="nam">routes</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">route_set</span><span class="op">.</span><span class="nam">all</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t926" href="#t926">926</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t927" href="#t927">927</a></span><span class="t">            <span class="key">if</span> <span class="nam">line_names</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t928" href="#t928">928</a></span><span class="t">                <span class="key">if</span> <span class="nam">also_services</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t929" href="#t929">929</a></span><span class="t">                    <span class="nam">routes</span> <span class="op">=</span> <span class="nam">Route</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span><span class="nam">service__in</span><span class="op">=</span><span class="op">[</span><span class="nam">self</span><span class="op">]</span> <span class="op">+</span> <span class="nam">also_services</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t930" href="#t930">930</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t931" href="#t931">931</a></span><span class="t">                <span class="nam">line_name_query</span> <span class="op">=</span> <span class="nam">Q</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t932" href="#t932">932</a></span><span class="t">                <span class="key">for</span> <span class="nam">line_name</span> <span class="key">in</span> <span class="nam">line_names</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t933" href="#t933">933</a></span><span class="t">                    <span class="key">if</span> <span class="str">":"</span> <span class="key">in</span> <span class="nam">line_name</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t934" href="#t934">934</a></span><span class="t">                        <span class="nam">service_id</span><span class="op">,</span> <span class="nam">line_name</span> <span class="op">=</span> <span class="nam">line_name</span><span class="op">.</span><span class="nam">split</span><span class="op">(</span><span class="str">":"</span><span class="op">,</span> <span class="num">1</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t935" href="#t935">935</a></span><span class="t">                        <span class="nam">line_name_query</span> <span class="op">|=</span> <span class="nam">Q</span><span class="op">(</span><span class="nam">service</span><span class="op">=</span><span class="nam">service_id</span><span class="op">,</span> <span class="nam">line_name</span><span class="op">=</span><span class="nam">line_name</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t936" href="#t936">936</a></span><span class="t">                    <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t937" href="#t937">937</a></span><span class="t">                        <span class="nam">line_name_query</span> <span class="op">|=</span> <span class="nam">Q</span><span class="op">(</span><span class="nam">line_name</span><span class="op">=</span><span class="nam">line_name</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t937" href="#t937">937</a></span><span class="t">                        <span class="nam">line_name_query</span> <span class="op">|=</span> <span class="nam">Q</span><span class="op">(</span><span class="nam">line_name</span><span class="op">=</span><span class="nam">line_name</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t938" href="#t938">938</a></span><span class="t">                <span class="nam">routes</span> <span class="op">=</span> <span class="nam">routes</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span><span class="nam">line_name_query</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t939" href="#t939">939</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t940" href="#t940">940</a></span><span class="t">            <span class="nam">operators</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">operator</span><span class="op">.</span><span class="nam">all</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -1200,7 +1200,7 @@
             <a class="nav" href="z_b8e363a838fda594_date_range_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2025-02-14 15:33 +0000
+            created at 2025-02-17 12:42 +0000
         </p>
     </div>
 </footer>
