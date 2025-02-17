@@ -922,12 +922,12 @@ class Service(models.Model):
                 self.route_set, day, calendar_id=calendar_id, detailed=detailed
             )
         else:
-            if also_services:
-                routes = Route.objects.filter(service__in=[self] + also_services)
-            else:
-                routes = self.route_set.all()
+            routes = self.route_set.all()
 
             if line_names:
+                if also_services:
+                    routes = Route.objects.filter(service__in=[self] + also_services)
+
                 line_name_query = Q()
                 for line_name in line_names:
                     if ":" in line_name:
