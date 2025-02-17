@@ -4,7 +4,7 @@ from django.urls import include, path, re_path
 from django.views.decorators.cache import cache_control
 from django.views.generic.base import RedirectView, TemplateView
 
-from buses.utils import cache_page
+from buses.utils import cdn_cache_control, cache_page
 from bustimes.urls import urlpatterns as bustimes_views
 from disruptions.urls import urlpatterns as disruptions_urls
 from fares import mytrip
@@ -23,13 +23,19 @@ sitemaps = {
 urlpatterns = [
     path(
         "",
-        TemplateView.as_view(template_name="index.html"),
+        cdn_cache_control(1800)(TemplateView.as_view(template_name="index.html")),
         name="index",
     ),
     path("version", views.version),
     path("contact", views.contact, name="contact"),
-    path("cookies", TemplateView.as_view(template_name="cookies.html")),
-    path("privacy", TemplateView.as_view(template_name="cookies.html")),
+    path(
+        "cookies",
+        cdn_cache_control(1800)(TemplateView.as_view(template_name="cookies.html")),
+    ),
+    path(
+        "privacy",
+        cdn_cache_control(1800)(TemplateView.as_view(template_name="cookies.html")),
+    ),
     path("503", TemplateView.as_view(template_name="503.html")),
     path("data", TemplateView.as_view(template_name="data.html")),
     path("status", views.status),
@@ -37,13 +43,17 @@ urlpatterns = [
     path("stats.json", views.stats),
     path(
         "ads.txt",
-        RedirectView.as_view(url="https://cdn.adfirst.media/adstxt/bustimes-ads.txt"),
+        cache_control(max_age=1800)(
+            RedirectView.as_view(
+                url="https://cdn.adfirst.media/adstxt/bustimes-ads.txt"
+            )
+        ),
     ),
     path("robots.txt", views.robots_txt),
     path("stops.json", views.stops_json),
     path(
         "regions/<pk>",
-        cache_page(1800)(views.RegionDetailView.as_view()),
+        cdn_cache_control(1800)(views.RegionDetailView.as_view()),
         name="region_detail",
     ),
     re_path(
@@ -58,11 +68,11 @@ urlpatterns = [
     ),
     re_path(
         r"^localities/(?P<pk>[ENen][Ss]?[0-9]+)",
-        cache_page(1800)(views.LocalityDetailView.as_view()),
+        cdn_cache_control(1800)(views.LocalityDetailView.as_view()),
     ),
     path(
         "localities/<slug>",
-        cache_page(1800)(views.LocalityDetailView.as_view()),
+        cdn_cache_control(1800)(views.LocalityDetailView.as_view()),
         name="locality_detail",
     ),
     path(

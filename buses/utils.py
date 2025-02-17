@@ -36,3 +36,19 @@ def cache_page(max_age):
         return _cache_controlled
 
     return _cache_controller
+
+
+def cdn_cache_control(max_age):
+    def _cache_controller(view_func):
+        @wraps(view_func)
+        def _cache_controlled(request, *args, **kw):
+            # anonymise request
+            request.user = AnonymousUser
+
+            response = view_func(request, *args, **kw)
+            response["CDN-Cache-Control"] = f"max-age={max_age}"
+            return response
+
+        return _cache_controlled
+
+    return _cache_controller
