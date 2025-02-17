@@ -46,7 +46,9 @@ def cdn_cache_control(max_age):
             request.user = AnonymousUser
 
             response = view_func(request, *args, **kw)
-            response["CDN-Cache-Control"] = f"max-age={max_age}"
+            response["CDN-Cache-Control"] = (
+                f"public, max-age={max_age}, stale-if-error={max_age}"
+            )
             return response
 
         return _cache_controlled
