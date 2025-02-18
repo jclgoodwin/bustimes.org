@@ -11,7 +11,8 @@
         {% if user.is_superuser %}
             &centerdot; <a href="{% url 'admin:vehicles_vehiclerevision_change' revision.pk %}">✎</a>
         {% endif %}
-
+        &centerdot;
+            <a href="/contact?message=I%20wish%20to%20report%20this%20content:%0A%0Ahttps://bustimes.org{% url 'admin:vehicles_vehiclerevision_change' revision.pk %}%0A%0A">Report</a>
     <p>
         {% if revision.disapproved %}<del>{% endif %}
         {% include "vehicle_revision_changes.html" %}
