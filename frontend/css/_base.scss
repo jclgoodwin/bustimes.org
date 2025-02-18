@@ -1508,7 +1508,7 @@ body.has-overlay {
 
         &:before {
             color: var(--border-color-darker);
-            content: '  \2022  ';
+            content: '  \00B7  ';
             font-weight: bold;
         }
 

@@ -2,25 +2,33 @@
 <li id="revision-{{ revision.id }}">
     <p>
         {% if not vehicle %}
-            <a href="{{ revision.vehicle.get_absolute_url }}">{{ revision.vehicle }}</a> &bull;
+            <a href="{{ revision.vehicle.get_absolute_url }}">{{ revision.vehicle }}</a> &centerdot;
         {% endif %}
         {{ revision.created_at|naturaltime }}
         {% if revision.user %}
-            &bull; <a href="{{ revision.user.get_absolute_url }}">{{ revision.user }}</a>
+            &centerdot; <a href="{{ revision.user.get_absolute_url }}">{{ revision.user }}</a>
         {% endif %}
         {% if user.is_superuser %}
-            &bull; <a href="{% url 'admin:vehicles_vehiclerevision_change' revision.pk %}">✎</a>
+            &centerdot; <a href="{% url 'admin:vehicles_vehiclerevision_change' revision.pk %}">✎</a>
         {% endif %}
-    <p>
+    </p>
 
     {% if revision.disapproved %}<del>{% endif %}
     {% include "vehicle_revision_changes.html" %}
     {% if revision.disapproved %}</del>{% endif %}
 
     {% if revision.disapproved or revision.approved_by_id %}
-        <p><strong>{% if revision.disapproved %}Disa{% else %}A{% endif %}pproved</strong>
-            {% if revision.approved_by_id %}by {% if user.trusted %}<a href="{% url 'user_detail' revision.approved_by_id %}">user {{ revision.approved_by_id }}</a>{% else %}trusted user{% endif %}{% if revision.disapproved_reason %}:{% endif %}{% endif %}
-            {% if revision.disapproved_reason %}{{ revision.disapproved_reason }}{% endif %}
+        <p>
+            <strong>
+                {% if revision.disapproved %}Disa{% else %}A{% endif %}pproved
+            </strong>
+            {% if revision.approved_by_id and user.trusted %}
+                by <a href="{% url 'user_detail' revision.approved_by_id %}">user {{ revision.approved_by_id }}</a>
+            {% endif %}
+            {% if revision.disapproved_reason %}
+                &centerdot; <i>{{ revision.disapproved_reason }}</i>
+            {% endif %}
+        </p>
     {% endif %}
 
     <p class="actions" hx-target="#revision-{{ revision.id }}">
