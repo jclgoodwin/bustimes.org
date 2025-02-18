@@ -11,11 +11,11 @@
         {% if user.is_superuser %}
             &centerdot; <a href="{% url 'admin:vehicles_vehiclerevision_change' revision.pk %}">✎</a>
         {% endif %}
-    </p>
 
-    {% if revision.disapproved %}<del>{% endif %}
-    {% include "vehicle_revision_changes.html" %}
-    {% if revision.disapproved %}</del>{% endif %}
+    <p>
+        {% if revision.disapproved %}<del>{% endif %}
+        {% include "vehicle_revision_changes.html" %}
+        {% if revision.disapproved %}</del>{% endif %}
 
     {% if revision.disapproved or revision.approved_by_id %}
         <p>
@@ -28,8 +28,7 @@
             {% if revision.disapproved_reason %}
                 &centerdot; <i>{{ revision.disapproved_reason }}</i>
             {% endif %}
-        </p>
-    {% endif %}
+        {% endif %}
 
     <p class="actions" hx-target="#revision-{{ revision.id }}">
         {% if revision.pending %}
