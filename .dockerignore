@@ -6,3 +6,7 @@ config/deploy.yml
 *.sql
 fly.toml
 dist
+busstops/management/tests/fixtures/
+bustimes/management/tests/fixtures/
+fares/data/
+fixtures/vcr/
