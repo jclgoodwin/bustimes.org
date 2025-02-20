@@ -1554,3 +1554,12 @@ class ImportTransXChangeTest(TestCase):
         # all journeys specified in file
         route = Route.objects.get(line_name="10")
         self.assertEqual(route.trip_set.count(), 125)
+
+    @time_machine.travel("2024-01-01")
+    def test_multiple_wait_times(self):
+        # Nottingham City Transport 34/34C
+        self.handle_files("FECS.zip", ["PB0002362-132_NCT_2025-1-12.xml"])
+
+        trip = Trip.objects.filter(start="23:15:00").first()
+        self.assertEqual(str(trip.start), "23:15")
+        self.assertEqual(str(trip.end), "23:44")
