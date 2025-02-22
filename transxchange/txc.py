@@ -359,10 +359,12 @@ class VehicleJourney:
                 deadrun = False  # end of dead run
 
             if not deadrun:
+                if wait_time is None:
+                    wait_time = datetime.timedelta()
                 if journey_timinglink and journey_timinglink.from_wait_time is not None:
-                    wait_time = journey_timinglink.from_wait_time
+                    wait_time += journey_timinglink.from_wait_time
                 elif stopusage.wait_time is not None:
-                    wait_time = stopusage.wait_time
+                    wait_time += stopusage.wait_time
 
                 notes = (
                     journey_timinglink and journey_timinglink.notes or stopusage.notes
@@ -396,9 +398,6 @@ class VehicleJourney:
                     wait_time = journey_timinglink.to_wait_time
                 else:
                     wait_time = stopusage.wait_time
-                if wait_time:
-                    time += wait_time
-                    wait_time = None
 
             if journey_timinglink and journey_timinglink.to_activity:
                 prev_activity = journey_timinglink.to_activity
