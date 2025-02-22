@@ -1008,6 +1008,57 @@ class ServiceDetailView(DetailView):
 
         return service
 
+    def get_fare_tables(self):
+        fare_tables = (
+            FareTable.objects.filter(
+                tariff__services=self.object,
+                tariff__source__published=True,
+            )
+            .select_related("tariff", "user_profile", "sales_offer_package")
+            .order_by("tariff")
+        )
+        if fare_tables:
+            for table in fare_tables:
+                table.tariff.name = (
+                    table.tariff.name.removesuffix(" fares")
+                    .replace(" Conc ", " Concession ")
+                    .replace(" YP ", " Young Person ")
+                    .replace(" Ch ", " Child ")
+                    .replace("_", " ")
+                    .replace(" AD ", " Adult ")
+                )
+
+            if not all(
+                table.user_profile == fare_tables[0].user_profile
+                for table in fare_tables[1:]
+            ):
+                for table in fare_tables:
+                    table.tariff.name = f"{table.tariff.name} - {table.user_profile} {table.tariff.trip_type}"
+            if not all(
+                table.sales_offer_package == fare_tables[0].sales_offer_package
+                for table in fare_tables[1:]
+            ):
+                for table in fare_tables:
+                    table.tariff.name = (
+                        f"{table.tariff.name} - {table.sales_offer_package}"
+                    )
+
+            if not all(
+                table.tariff.name == fare_tables[0].tariff.name
+                for table in fare_tables[1:]
+            ):
+                parts = fare_tables[0].tariff.name.split()
+                while all(
+                    table.tariff.name.startswith(f"{parts[0]} ")
+                    for table in fare_tables
+                ):
+                    for table in fare_tables:
+                        table.tariff.name = table.tariff.name.removeprefix(
+                            f"{parts[0]} "
+                        )
+                    parts = parts[1:]
+            return fare_tables
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -1166,10 +1217,15 @@ class ServiceDetailView(DetailView):
                     )
                 elif (
                     operator.name == "Megabus"
-                    or self.object.service_code == "PH1020951:281"
-                ):  # Falcon
+                    or self.object.service_code == "PH1020951:281"  # Falcon
+                    or operator.name == "Scottish Citylink"
+                    and (
+                        self.object.line_name[:1] == "M"
+                        or self.object.line_name in ("900", "909", "AIR")
+                    )
+                ):
                     context["tickets_link"] = (
-                        "https://www.awin1.com/cread.php?awinmid=2678&awinaffid=242611"
+                        f"https://www.awin1.com/cread.php?awinmid=2678&awinaffid=242611&clickRef={self.object.line_name}"
                     )
                     context["links"].append(
                         {
@@ -1178,56 +1234,7 @@ class ServiceDetailView(DetailView):
                         }
                     )
 
-        fare_tables = (
-            FareTable.objects.filter(
-                tariff__services=self.object,
-                tariff__source__published=True,
-            )
-            .select_related("tariff", "user_profile", "sales_offer_package")
-            .order_by("tariff")
-        )
-        if fare_tables:
-            for table in fare_tables:
-                table.tariff.name = (
-                    table.tariff.name.removesuffix(" fares")
-                    .replace(" Conc ", " Concession ")
-                    .replace(" YP ", " Young Person ")
-                    .replace(" Ch ", " Child ")
-                    .replace("_", " ")
-                    .replace(" AD ", " Adult ")
-                )
-
-            if not all(
-                table.user_profile == fare_tables[0].user_profile
-                for table in fare_tables[1:]
-            ):
-                for table in fare_tables:
-                    table.tariff.name = f"{table.tariff.name} - {table.user_profile} {table.tariff.trip_type}"
-            if not all(
-                table.sales_offer_package == fare_tables[0].sales_offer_package
-                for table in fare_tables[1:]
-            ):
-                for table in fare_tables:
-                    table.tariff.name = (
-                        f"{table.tariff.name} - {table.sales_offer_package}"
-                    )
-
-            if not all(
-                table.tariff.name == fare_tables[0].tariff.name
-                for table in fare_tables[1:]
-            ):
-                parts = fare_tables[0].tariff.name.split()
-                while all(
-                    table.tariff.name.startswith(f"{parts[0]} ")
-                    for table in fare_tables
-                ):
-                    for table in fare_tables:
-                        table.tariff.name = table.tariff.name.removeprefix(
-                            f"{parts[0]} "
-                        )
-                    parts = parts[1:]
-            # if len
-            context["fare_tables"] = fare_tables
+        context["fare_tables"] = self.get_fare_tables()
 
         for url, text in self.object.get_traveline_links(date):
             context["links"].append({"url": url, "text": text})
