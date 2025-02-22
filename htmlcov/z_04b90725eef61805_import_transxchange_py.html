@@ -55,8 +55,8 @@
         </aside>
         <h2>
             <span class="text">780 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">702<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">78<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">705<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">75<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_06bcf2d2e74f1893_test_import_atco_cif_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2025-02-18 16:06 +0000
+            created at 2025-02-22 05:17 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -1112,7 +1112,7 @@
     <p class="run"><span class="n"><a id="t1030" href="#t1030">1030</a></span><span class="t">        <span class="nam">description</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">get_description</span><span class="op">(</span><span class="nam">txc_service</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1031" href="#t1031">1031</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1032" href="#t1032">1032</a></span><span class="t">        <span class="key">if</span> <span class="nam">description</span> <span class="op">==</span> <span class="str">"Origin - Destination"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t1033" href="#t1033">1033</a></span><span class="t">            <span class="nam">description</span> <span class="op">=</span> <span class="str">""</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t1033" href="#t1033">1033</a></span><span class="t">            <span class="nam">description</span> <span class="op">=</span> <span class="str">""</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1034" href="#t1034">1034</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1035" href="#t1035">1035</a></span><span class="t">        <span class="key">if</span> <span class="nam">re</span><span class="op">.</span><span class="nam">match</span><span class="op">(</span><span class="str">r"^P[BCDFGHKM]\d+:\d+.*$"</span><span class="op">,</span> <span class="nam">txc_service</span><span class="op">.</span><span class="nam">service_code</span><span class="op">)</span> <span class="key">or</span> <span class="nam">re</span><span class="op">.</span><span class="nam">match</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1036" href="#t1036">1036</a></span><span class="t">            <span class="str">r"^UZ[a-zA-Z0-9]+:.*$"</span><span class="op">,</span> <span class="nam">txc_service</span><span class="op">.</span><span class="nam">service_code</span>&nbsp;</span><span class="r"></span></p>
@@ -1411,7 +1411,7 @@
     <p class="run"><span class="n"><a id="t1329" href="#t1329">1329</a></span><span class="t">            <span class="key">if</span> <span class="nam">txc_service</span><span class="op">.</span><span class="nam">origin</span> <span class="key">and</span> <span class="nam">txc_service</span><span class="op">.</span><span class="nam">origin</span> <span class="op">!=</span> <span class="str">"Origin"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1330" href="#t1330">1330</a></span><span class="t">                <span class="nam">route_defaults</span><span class="op">[</span><span class="str">"origin"</span><span class="op">]</span> <span class="op">=</span> <span class="nam">txc_service</span><span class="op">.</span><span class="nam">origin</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1331" href="#t1331">1331</a></span><span class="t">            <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t1332" href="#t1332">1332</a></span><span class="t">                <span class="nam">route_defaults</span><span class="op">[</span><span class="str">"origin"</span><span class="op">]</span> <span class="op">=</span> <span class="str">""</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t1332" href="#t1332">1332</a></span><span class="t">                <span class="nam">route_defaults</span><span class="op">[</span><span class="str">"origin"</span><span class="op">]</span> <span class="op">=</span> <span class="str">""</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1333" href="#t1333">1333</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1334" href="#t1334">1334</a></span><span class="t">            <span class="key">if</span> <span class="nam">txc_service</span><span class="op">.</span><span class="nam">destination</span> <span class="key">and</span> <span class="nam">txc_service</span><span class="op">.</span><span class="nam">destination</span> <span class="op">!=</span> <span class="str">"Destination"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1335" href="#t1335">1335</a></span><span class="t">                <span class="key">if</span> <span class="str">" via "</span> <span class="key">in</span> <span class="nam">txc_service</span><span class="op">.</span><span class="nam">destination</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -1422,7 +1422,7 @@
     <p class="pln"><span class="n"><a id="t1340" href="#t1340">1340</a></span><span class="t">                <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1341" href="#t1341">1341</a></span><span class="t">                    <span class="nam">route_defaults</span><span class="op">[</span><span class="str">"destination"</span><span class="op">]</span> <span class="op">=</span> <span class="nam">txc_service</span><span class="op">.</span><span class="nam">destination</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1342" href="#t1342">1342</a></span><span class="t">            <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t1343" href="#t1343">1343</a></span><span class="t">                <span class="nam">route_defaults</span><span class="op">[</span><span class="str">"destination"</span><span class="op">]</span> <span class="op">=</span> <span class="str">""</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t1343" href="#t1343">1343</a></span><span class="t">                <span class="nam">route_defaults</span><span class="op">[</span><span class="str">"destination"</span><span class="op">]</span> <span class="op">=</span> <span class="str">""</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1344" href="#t1344">1344</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1345" href="#t1345">1345</a></span><span class="t">            <span class="key">if</span> <span class="nam">txc_service</span><span class="op">.</span><span class="nam">vias</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1346" href="#t1346">1346</a></span><span class="t">                <span class="nam">route_defaults</span><span class="op">[</span><span class="str">"via"</span><span class="op">]</span> <span class="op">=</span> <span class="str">", "</span><span class="op">.</span><span class="nam">join</span><span class="op">(</span><span class="nam">txc_service</span><span class="op">.</span><span class="nam">vias</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -1589,7 +1589,7 @@
             <a class="nav" href="z_06bcf2d2e74f1893_test_import_atco_cif_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2025-02-18 16:06 +0000
+            created at 2025-02-22 05:17 +0000
         </p>
     </div>
 </footer>
