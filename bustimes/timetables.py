@@ -209,6 +209,33 @@ class Timetable:
                     get_calendars(self.date, calendar_ids).values_list("id", flat=True)
                 )
 
+    def correct_directions(self, trips):
+        # for merged multi-operator routes: reverse the polarity if they disagree which direction is inbound/outbound
+        stops = {}  # stops by operator and direction
+        for trip in trips:
+            if trip.operator_id not in stops:
+                stops[trip.operator_id] = {
+                    True: set(),  # inbound
+                    False: set(),  # outbound
+                }
+            stops[trip.operator_id][trip.inbound].update(
+                stop.stop_id for stop in trip.times
+            )
+
+        if len(stops) == 2:
+            operator_a, operator_b = stops
+
+            if (
+                len(stops[operator_a][True] & stops[operator_b][False])
+                > len(stops[operator_a][True] & stops[operator_b][True])
+            ) and (
+                len(stops[operator_a][False] & stops[operator_b][True])
+                > len(stops[operator_a][False] & stops[operator_b][False])
+            ):
+                for trip in trips:
+                    if trip.operator_id == operator_a:
+                        trip.inbound = not trip.inbound
+
     def render(self):
         trips = Trip.objects.filter(route__in=self.current_routes)
         if not self.calendar:
@@ -242,21 +269,7 @@ class Timetable:
             return
 
         if len(self.current_routes) > 1 and self.has_operators:
-            # merged services: correct mismatched inbound/outbound direction
-            inbound_dests = {
-                trip.destination_id for trip in trips if trip.inbound is True
-            }
-            outbound_dests = {
-                trip.destination_id for trip in trips if trip.inbound is False
-            }
-
-            if not inbound_dests.isdisjoint(outbound_dests):
-                prev_operator = False
-                for trip in trips:
-                    if prev_operator is False:
-                        prev_operator = trip.operator_id
-                    elif trip.operator_id != prev_operator:
-                        trip.inbound = not trip.inbound
+            self.correct_directions(trips)
 
         routes = {route.id: route for route in self.current_routes}
 
@@ -570,7 +583,7 @@ class Grouping:
     def txt(self):
         width = max(len(str(row.stop)) for row in self.rows)
         return "\n".join(
-            f'{str(row.stop):<{width}}  {"  ".join(str(time) or "     " for time in row.times)}'
+            f"{str(row.stop):<{width}}  {'  '.join(str(time) or '     ' for time in row.times)}"
             for row in self.rows
         )
 
