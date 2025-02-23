@@ -3,7 +3,7 @@
 import datetime
 
 from django.conf import settings
-from django.db.models import Prefetch, prefetch_related_objects
+from django.db.models import Prefetch, prefetch_related_objects, Q
 from django.utils import timezone
 
 from busstops.models import Service, SIRISource, StopPoint
@@ -200,14 +200,16 @@ def get_departures(stop, services, when) -> dict:
     ):
         live_rows = None
 
-        operators = set()
+        operator_names: set[str] = set()
         for service in services:
             if service.operators:
-                operators.update(service.operators)
+                operator_names.update(service.operators)
 
         if departures:
             # Edinburgh
-            if stop.naptan_code and not operators.isdisjoint(settings.TFE_OPERATORS):
+            if stop.naptan_code and not operator_names.isdisjoint(
+                settings.TFE_OPERATORS
+            ):
                 live_rows = EdinburghDepartures(stop, services, now).get_departures()
                 if live_rows:
                     update_trip_ids(departures, live_rows)
@@ -221,7 +223,8 @@ def get_departures(stop, services, when) -> dict:
             # Aberdeen, Glasgow, Bristol?
             if stop.admin_area_id:
                 for possible_source in SIRISource.objects.filter(
-                    admin_areas=stop.admin_area_id
+                    Q(admin_areas=stop.admin_area_id)
+                    | Q(operators__service__in=services)
                 ):
                     if not possible_source.is_poorly():
                         source = possible_source
