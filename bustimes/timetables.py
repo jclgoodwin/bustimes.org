@@ -211,29 +211,29 @@ class Timetable:
 
     def correct_directions(self, trips):
         # for merged multi-operator routes: reverse the polarity if they disagree which direction is inbound/outbound
-        stops = {}  # stops by operator and direction
+        stops = {}  # stops by source and direction
         for trip in trips:
-            if trip.operator_id not in stops:
-                stops[trip.operator_id] = {
+            if trip.route.source_id not in stops:
+                stops[trip.route.source_id] = {
                     True: set(),  # inbound
                     False: set(),  # outbound
                 }
-            stops[trip.operator_id][trip.inbound].update(
+            stops[trip.route.source_id][trip.inbound].update(
                 stop.stop_id for stop in trip.times
             )
 
         if len(stops) == 2:
-            operator_a, operator_b = stops
+            source_a, source_b = stops
 
             if (
-                len(stops[operator_a][True] & stops[operator_b][False])
-                > len(stops[operator_a][True] & stops[operator_b][True])
+                len(stops[source_a][True] & stops[source_b][False])
+                > len(stops[source_a][True] & stops[source_b][True])
             ) and (
-                len(stops[operator_a][False] & stops[operator_b][True])
-                > len(stops[operator_a][False] & stops[operator_b][False])
+                len(stops[source_a][False] & stops[source_b][True])
+                > len(stops[source_a][False] & stops[source_b][False])
             ):
                 for trip in trips:
-                    if trip.operator_id == operator_a:
+                    if trip.route.source_id == source_a:
                         trip.inbound = not trip.inbound
 
     def render(self):
@@ -268,14 +268,15 @@ class Timetable:
             self.date = None
             return
 
-        if len(self.current_routes) > 1 and self.has_operators:
-            self.correct_directions(trips)
-
         routes = {route.id: route for route in self.current_routes}
 
         for trip in trips:
             trip.route = routes[trip.route_id]
 
+        if len(self.current_routes) > 1 and self.has_operators:
+            self.correct_directions(trips)
+
+        for trip in trips:
             # split inbound and outbound trips into lists
             if trip.inbound:
                 self.groupings[1].trips.append(trip)
