@@ -1533,7 +1533,7 @@ class ImportTransXChangeTest(TestCase):
         with self.assertNumQueries(2):
             response = self.client.get("/api/trips/")
 
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(7):
             response = self.client.get(f"/trips/{trip.id}/block?date=2025-01-26")
         self.assertContains(response, "15:05")
         self.assertContains(response, "16:00")

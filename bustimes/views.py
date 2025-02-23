@@ -46,7 +46,7 @@ from busstops.models import (
 )
 from departures import avl, gtfsr, live
 from vehicles.forms import DateForm
-from vehicles.models import Vehicle, VehicleCode
+from vehicles.models import Vehicle, VehicleCode, VehicleJourney
 from vehicles.rtpi import add_progress_and_delay
 
 from .download_utils import download
@@ -519,6 +519,13 @@ def trip_block(request, pk: int):
     trips = get_other_trips_in_block(trip, date)
 
     trips = trips.select_related("route", "destination__locality")
+    trips = trips.prefetch_related(
+        Prefetch(
+            "vehiclejourney_set",
+            VehicleJourney.objects.filter(datetime__date=date),
+            to_attr="vehicle_journeys",
+        )
+    )
 
     return render(
         request,

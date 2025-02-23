@@ -35,9 +35,11 @@
             </td>
             <td>{{ trip.ticket_machine_code }}</td>
             <td>{{ trip.destination.locality }}</td>
-            {% if journey.locations %}
-                <td class="link"><a href="#journeys/{{ journey.id }}">Map</a></td>
-            {% endif %}
+            <td class="link">
+                {% for j in trip.vehicle_journeys %}
+                    <a href="{{ j.get_absolute_url }}">{{ j.vehicle }}</a>
+                {% endfor %}
+            </td>
         </tr>
     {% endfor %}
 
