@@ -78,14 +78,10 @@ def get_text_colour(colours) -> str:
     brightnesses = [get_brightness(colour) for colour in colours]
     colours_length = len(colours)
     if colours_length > 2:
-        middle_brightness = sum(brightnesses[1:-1])
-        outer_brightness = brightnesses[0] + brightnesses[-1]
-        brightness = (middle_brightness * 2 + outer_brightness) / (
-            (colours_length - 2) * 2 + 2
-        )
-    else:
-        brightness = sum(brightnesses) / colours_length
-    if brightness <= 186:
+        # ignore the leftmost and rightmost strips
+        brightnesses = brightnesses[1:-1]
+        colours_length -= 2
+    if (sum(brightnesses) / colours_length) <= 186:
         return "#fff"
 
 

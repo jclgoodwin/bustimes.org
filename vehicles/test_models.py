@@ -78,7 +78,7 @@ class VehicleModelTests(TestCase):
             "linear-gradient(270deg,#7d287d 34%,#fdee00 34%)",
             vehicle.get_livery(179).lower(),
         )
-        self.assertEqual("#fff", vehicle.get_text_colour())
+        self.assertIsNone(vehicle.get_text_colour())
 
         vehicle.livery.colours = "#c0c0c0"
         vehicle.livery.save()
