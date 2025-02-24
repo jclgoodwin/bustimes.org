@@ -68,7 +68,7 @@ class Situation(models.Model):
             lower, upper = periods[0]
             if upper and lower and upper.date() == lower.date():
                 return [
-                    f"""{lower.strftime("%H:%M")}–{upper.strftime("%H:%M, %-d %B %Y")}"""
+                    f"""{lower.strftime("%H:%M")}\u2009\u2013\u2009{upper.strftime("%H:%M, %-d %B %Y")}"""
                 ]
             return [date_range(validity_periods[0].period)]
         elif len(validity_periods) > 1:
@@ -88,7 +88,7 @@ class Situation(models.Model):
                 )
             ):
                 return [
-                    f"""{first[0].strftime("%H:%M")}–{first[1].strftime("%H:%M")},
+                    f"""{first[0].strftime("%H:%M")}\u2009\u2013\u2009{first[1].strftime("%H:%M")},
 {date_range(lower=first[0], upper=last[1])}"""
                 ]
         return []
