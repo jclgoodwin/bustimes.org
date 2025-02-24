@@ -482,29 +482,20 @@ class Timetable:
 @dataclass
 class Repetition:
     """Represents a special cell in a timetable, spanning multiple rows and columns,
-    with some text like 'then every 5 minutes until'.
+    with some text like '[then] every 5 minutes [until]'.
     """
 
     colspan: int
     duration: datetime.timedelta
 
     def __str__(self):
-        # cleverly add non-breaking spaces if there aren't many rows
         if self.duration.seconds == 3600:
-            if self.min_height < 3:
-                return "then\u00a0hourly until"
-            return "then hourly until"
+            return "hourly"
         if self.duration.seconds % 3600 == 0:
-            duration = "{} hours".format(int(self.duration.seconds / 3600))
+            duration = "every {}\u00a0hours".format(int(self.duration.seconds / 3600))
         else:
-            duration = "{} minutes".format(int(self.duration.seconds / 60))
-        if self.min_height < 3:
-            return "then\u00a0every {}\u00a0until".format(
-                duration.replace(" ", "\u00a0")
-            )
-        if self.min_height < 4:
-            return "then every\u00a0{} until".format(duration.replace(" ", "\u00a0"))
-        return "then every {} until".format(duration)
+            duration = "every {}\u00a0minutes".format(int(self.duration.seconds / 60))
+        return duration
 
 
 def abbreviate(grouping, i, in_a_row, difference):
