@@ -593,6 +593,11 @@ def tfl_vehicle(request, reg: str):
         atco_codes.append(atco_code)
 
     if service:
+        try:
+            operator = service.operator.get()
+        except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):
+            operator = None
+
         stops = StopPoint.objects.annotate(
             stopusages=FilteredRelation(
                 "stopusage", condition=Q(stopusage__service=service)
