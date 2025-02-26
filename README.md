@@ -45,10 +45,10 @@
 | busstops/test\_admin.py                                         |       53 |        0 |    100% |           |
 | busstops/test\_middleware.py                                    |       10 |        0 |    100% |           |
 | busstops/test\_models.py                                        |      143 |        0 |    100% |           |
-| busstops/test\_views.py                                         |      270 |        0 |    100% |           |
+| busstops/test\_views.py                                         |      273 |        0 |    100% |           |
 | busstops/urls.py                                                |       20 |        2 |     90% |   136-138 |
 | busstops/utils.py                                               |        3 |        0 |    100% |           |
-| busstops/views.py                                               |      628 |       60 |     90% |114, 134-138, 458, 484, 534, 698, 729, 793-796, 798, 912-917, 930, 1007, 1035-1036, 1041-1042, 1050-1059, 1204, 1252-1256, 1282-1312, 1371, 1398-1399, 1403-1406, 1556, 1568-1569, 1574, 1586-1587 |
+| busstops/views.py                                               |      628 |       44 |     93% |114, 137-138, 458, 484, 534, 698, 729, 793-796, 798, 912-917, 930, 1007, 1035-1036, 1041-1042, 1050-1059, 1204, 1252-1256, 1299, 1371, 1398-1399, 1403-1406, 1556, 1568-1569, 1574, 1586-1587 |
 | bustimes/\_\_init\_\_.py                                        |        0 |        0 |    100% |           |
 | bustimes/admin.py                                               |       97 |       12 |     88% |54, 60, 63-64, 67-68, 114-118, 141, 149, 162, 172 |
 | bustimes/download\_utils.py                                     |       40 |        0 |    100% |           |
@@ -72,11 +72,11 @@
 | bustimes/management/tests/test\_import\_gtfs\_ember\_flixbus.py |       75 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_ni.py                   |       21 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_passenger.py            |       23 |        0 |    100% |           |
-| bustimes/management/tests/test\_import\_transxchange.py         |      726 |        2 |     99% | 1076-1079 |
+| bustimes/management/tests/test\_import\_transxchange.py         |      728 |        2 |     99% | 1076-1079 |
 | bustimes/management/tests/test\_tnds.py                         |       22 |        0 |    100% |           |
 | bustimes/models.py                                              |      320 |        7 |     98% |92, 185, 343, 346, 375, 412, 446 |
 | bustimes/tests.py                                               |      130 |        0 |    100% |           |
-| bustimes/timetables.py                                          |      643 |       52 |     92% |62, 102-115, 144, 226-237, 268-269, 341-344, 356, 369-374, 420, 427, 495, 498, 514-517, 544, 653-668, 754-755, 826, 972-974 |
+| bustimes/timetables.py                                          |      643 |       51 |     92% |62, 102-115, 144, 226-237, 268-269, 341-344, 356, 369-374, 420, 495, 498, 514-517, 544, 653-668, 754-755, 826, 972-974 |
 | bustimes/urls.py                                                |        3 |        0 |    100% |           |
 | bustimes/utils.py                                               |      195 |       13 |     93% |171, 220, 246-248, 268-269, 292, 337, 354-355, 367, 403 |
 | bustimes/views.py                                               |      369 |       77 |     79% |159-173, 182-184, 192-201, 203-211, 218, 240, 330, 339, 375, 381, 461, 511, 517, 549, 573-575, 592, 596-624, 652-663, 672-678 |
@@ -161,7 +161,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **15763** | **1080** | **93%** |           |
+|                                                       **TOTAL** | **15768** | **1063** | **93%** |           |
 
 
 ## Setup coverage badge
