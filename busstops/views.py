@@ -510,21 +510,19 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
         ).defer("latlong")
 
         context["stops"] = (
-            self.object.stoppoint_set.annotate(
+            self.object.stoppoint_set.filter(
+                Exists(
+                    StopTime.objects.filter(
+                        trip__route=OuterRef("service__route"),
+                        stop=OuterRef("pk"),
+                    )
+                ),
+                service__current=True,
+            )
+            .annotate(
                 line_names=ArrayAgg(
                     "service__route__line_name", distinct=True, default=None
                 )
-            )
-            .filter(
-                # Exists(
-                #     StopTime.objects.filter(
-                #         trip__route=OuterRef("service__route"),
-                #         stop=OuterRef("pk"),
-                #     )
-                #     .only("id")
-                #     .order_by()
-                # ),
-                service__current=True,
             )
             .order_by("common_name", "indicator")
             .defer("latlong")
@@ -538,21 +536,25 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
         if context["stops"]:
             stops = [stop.pk for stop in context["stops"]]
             context["services"] = sorted(
-                Service.objects.with_line_names()
-                .filter(
-                    # Exists(
-                    #     StopTime.objects.filter(
-                    #         trip__route=OuterRef("route"),
-                    #         stop__in=stops,
-                    #     )
-                    #     .only("id")
-                    #     .order_by()
-                    # ),
+                Service.objects.filter(
+                    Exists(
+                        StopTime.objects.filter(
+                            trip__route=OuterRef("route"),
+                            stop__in=stops,
+                        )
+                        .only("id")
+                        .order_by()
+                    ),
                     stops__in=stops,
                     current=True,
                 )
                 .annotate(
-                    operators=ArrayAgg("operator__name", distinct=True, default=None)
+                    operators=ArrayAgg("operator__name", distinct=True, default=None),
+                    line_names=ArrayAgg(
+                        Coalesce("route__line_name", "line_name"),
+                        distinct=True,
+                        default=None,
+                    ),
                 )
                 .defer("geometry", "search_vector"),
                 key=Service.get_order,

@@ -550,3 +550,6 @@ class ViewsTests(TestCase):
     def test_trailing_slash(self):
         response = self.client.get("/map/")
         self.assertEqual(response.status_code, 200)
+
+        response = self.client.get("/mao/")
+        self.assertEqual(response.status_code, 404)
