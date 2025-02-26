@@ -46,7 +46,7 @@ from busstops.models import (
 )
 from departures import avl, gtfsr, live
 from vehicles.forms import DateForm
-from vehicles.models import Vehicle, VehicleCode, VehicleJourney
+from vehicles.models import Vehicle, VehicleJourney
 from vehicles.rtpi import add_progress_and_delay
 
 from .download_utils import download
@@ -593,18 +593,6 @@ def tfl_vehicle(request, reg: str):
         atco_codes.append(atco_code)
 
     if service:
-        try:
-            operator = service.operator.get()
-        except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):
-            operator = None
-        else:
-            if vehicle is None and not (reg.startswith("TMP") or len(reg) > 10):
-                vehicle = Vehicle.objects.create(code=reg, reg=reg, operator=operator)
-                VehicleCode.objects.create(
-                    vehicle=vehicle, code=f"TFLO:{reg}", scheme="BODS"
-                )
-
-    if service:
         stops = StopPoint.objects.annotate(
             stopusages=FilteredRelation(
                 "stopusage", condition=Q(stopusage__service=service)
@@ -616,7 +604,7 @@ def tfl_vehicle(request, reg: str):
         prev_sequence = prev_trip_sequence = 0
         prev_destination = None
         for item in data:
-            if item["destinationName"] != prev_destination:
+            if item.get("destinationName") != prev_destination:
                 prev_trip_sequence = prev_sequence
 
             atco_code = item["naptanId"]
@@ -626,7 +614,7 @@ def tfl_vehicle(request, reg: str):
             else:
                 item["sequence"] = prev_sequence
 
-            prev_destination = item["destinationName"]
+            prev_destination = item.get("destinationName")
             prev_sequence = item["sequence"]
         data.sort(key=lambda item: item.get("sequence", 0))
     else:
