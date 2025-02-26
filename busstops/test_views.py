@@ -546,3 +546,7 @@ class ViewsTests(TestCase):
     def test_stop_qr_redirect(self):
         response = self.client.get("/STOP/2900ABC1")
         self.assertRedirects(response, "/stops/2900ABC1", 302, target_status_code=404)
+
+    def test_trailing_slash(self):
+        response = self.client.get("/map/")
+        self.assertEqual(response.status_code, 200)

@@ -1563,3 +1563,9 @@ class ImportTransXChangeTest(TestCase):
         trip = Trip.objects.filter(start="23:15:00").first()
         self.assertEqual(str(trip.start), "23:15")
         self.assertEqual(str(trip.end), "23:44")
+
+        response = self.client.get(f"/services/{trip.route.service_id}/timetable.csv")
+        self.assertContains(
+            response,
+            '"UoN Main Campus Beeston La, East Mids Conf Ctr",,,18:45,then every 15 minutes until,23:15',
+        )
