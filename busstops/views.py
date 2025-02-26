@@ -511,19 +511,10 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
 
         context["stops"] = (
             self.object.stoppoint_set.filter(
-                Exists(
-                    StopTime.objects.filter(
-                        trip__route=OuterRef("service__route"),
-                        stop=OuterRef("pk"),
-                    )
-                ),
+                has_stop_times,
                 service__current=True,
             )
-            .annotate(
-                line_names=ArrayAgg(
-                    "service__route__line_name", distinct=True, default=None
-                )
-            )
+            .annotate(line_names=stop_line_names)
             .order_by("common_name", "indicator")
             .defer("latlong")
         )
@@ -609,6 +600,17 @@ def get_departures_context(stop, services, form_data) -> dict:
             }
 
     return context
+
+
+has_stop_times = Exists(
+    StopTime.objects.filter(
+        trip__route=OuterRef("service__route"),
+        stop=OuterRef("pk"),
+    )
+    .only("id")
+    .order_by()
+)
+stop_line_names = ArrayAgg("service__route__line_name", distinct=True, default=None)
 
 
 class StopPointDetailView(DetailView):
@@ -704,21 +706,8 @@ class StopPointDetailView(DetailView):
         if nearby is not None:
             context["nearby"] = (
                 nearby.exclude(pk=self.object.pk)
-                .filter(
-                    Exists(
-                        StopTime.objects.filter(
-                            trip__route=OuterRef("service__route"),
-                            stop=OuterRef("pk"),
-                        )
-                        .only("id")
-                        .order_by()
-                    )
-                )
-                .annotate(
-                    line_names=ArrayAgg(
-                        "service__route__line_name", distinct=True, default=None
-                    )
-                )
+                .filter(has_stop_times, service__current=True)
+                .annotate(line_names=stop_line_names)
                 .defer("latlong")
             )
 
