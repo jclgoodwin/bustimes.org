@@ -38,7 +38,9 @@ class DisruptionsTest(TestCase):
         )
         self.assertEqual(
             self.situation.list_validity_periods(),
-            ["10:00–11:00,\nMonday 10–Tuesday 11 May 2021"],
+            [
+                "10:00\u2009\u2013\u200911:00,\nMonday 10\u2009\u2013\u2009Tuesday 11 May 2021"
+            ],
         )
 
     def test_validity_periods_nightly(self):
@@ -61,5 +63,7 @@ class DisruptionsTest(TestCase):
         )
         self.assertEqual(
             self.situation.list_validity_periods(),
-            ["21:00–07:00,\nMonday 10–Wednesday 12 May 2021"],
+            [
+                "21:00\u2009\u2013\u200907:00,\nMonday 10\u2009\u2013\u2009Wednesday 12 May 2021"
+            ],
         )

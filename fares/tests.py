@@ -69,7 +69,8 @@ class FaresTest(TestCase):
         url = tariff.source.get_absolute_url()
         response = self.client.get(url)
         self.assertContains(
-            response, "Wednesday 30 September 2020–Monday 30 September 2120"
+            response,
+            "Wednesday 30 September 2020\u2009\u2013\u2009Monday 30 September 2120",
         )
         response = self.client.get(
             f"{url}?origin={origin.id}&destination={destination.id}"
