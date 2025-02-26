@@ -58,7 +58,7 @@ urlpatterns = [
     ),
     re_path(
         r"^(admin-)?areas/(?P<pk>\d+)",
-        views.AdminAreaDetailView.as_view(),
+        cdn_cache_control(1800)(views.AdminAreaDetailView.as_view()),
         name="adminarea_detail",
     ),
     path(

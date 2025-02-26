@@ -20,6 +20,13 @@
     {% include 'list.html' with list=localities %}
 {% endif %}
 
+{% if operators %}
+    <h2>Operators in {{ adminarea }}</h2>
+
+    {% include 'list.html' with list=operators %}
+{% endif %}
+
+
 {% if services %}
     <h2>{% include 'modes.html' with modes=modes noun='services' %} in {{ adminarea }}</h2>
 

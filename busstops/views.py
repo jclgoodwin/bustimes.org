@@ -423,6 +423,18 @@ class AdminAreaDetailView(DetailView):
             Exists(stops.filter(locality__district=OuterRef("pk")))
         )
 
+        context["operators"] = Operator.objects.filter(
+            Exists(
+                Service.objects.filter(
+                    current=True,
+                    operator=OuterRef("pk"),
+                    stops__locality__admin_area=self.object,
+                )
+                .only("id")
+                .order_by()
+            )
+        ).only("slug", "name")
+
         # Districtless localities in this administrative area
         context["localities"] = self.object.locality_set.filter(
             Exists(stops.filter(locality=OuterRef("pk")))
