@@ -785,10 +785,15 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         command.source = self.source
         # command.get_operator.cache_clear()
 
+        Operator.objects.create(noc="TFLO", name="Transport for London")
         also = Operator.objects.create(noc="ALSO", name="Arriva London North")
         alno = Operator.objects.create(noc="ALNO", name="Arriva London South")
-        (OperatorCode.objects.create(operator=also, source=self.source, code="TFLO"),)
-        (OperatorCode.objects.create(operator=alno, source=self.source, code="TFLO"),)
+        OperatorCode.objects.bulk_create(
+            [
+                OperatorCode(operator=also, source=self.source, code="TFLO"),
+                OperatorCode(operator=alno, source=self.source, code="TFLO"),
+            ]
+        )
 
         london_source = DataSource.objects.create(name="L")
         service = Service.objects.create(

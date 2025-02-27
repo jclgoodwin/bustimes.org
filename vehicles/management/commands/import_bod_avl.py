@@ -150,6 +150,7 @@ class Command(ImportLiveVehiclesCommand):
 
         if operator_ref == "TFLO":
             defaults["livery_id"] = 262
+            defaults["operator_id"] = operator_ref
             if vehicle_ref.startswith("TMP"):
                 defaults["notes"] = "Spare ticket machine"
                 defaults["locked"] = True
