@@ -182,7 +182,7 @@ class Command(ImportLiveVehiclesCommand):
                     count = len(data["params"]["resource"]["member"])
                     if count >= 50:
                         print(operator, count)
-                        ok = False
+                        #ok = False
                 except (KeyError, ValueError) as e:
                     print(e)
 

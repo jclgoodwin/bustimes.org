@@ -614,6 +614,7 @@ class Command(ImportLiveVehiclesCommand):
         response = self.session.get(url, timeout=61)
 
         if not response.ok:
+            print(response.headers, response.content, response)
             return []
 
         if response.headers["content-type"] == "application/zip":

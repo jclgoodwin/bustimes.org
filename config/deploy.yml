@@ -8,12 +8,11 @@ image: jclgoodwin/bustimes-org
 servers:
   web:
     hosts:
-      - 10.131.29.248  # everglory
-      - 10.131.0.24    # eveready
-      - 10.131.240.95  # evergood
+      - 10.131.0.24
+      - 10.131.29.248
     env:
       clear:
-        WEB_CONCURRENCY: 8
+        WEB_CONCURRENCY: 12
         ALLOWED_HOSTS: "*"
         EMAIL_HOST: email-smtp.eu-west-1.amazonaws.com
         DISABLE_EDITING: ""

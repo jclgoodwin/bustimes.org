@@ -124,7 +124,9 @@ class Command(ImportLiveVehiclesCommand):
         trip = None
 
         if not (trips or service) and "_" in journey.code:
-            route_suffix = item.vehicle.trip.route_id.split("_", 1)[1]
+            route_suffix = item.vehicle.trip.route_id
+            if "_" in route_suffix:
+                route_suffix = route_suffix.split("_", 1)[1]
             try:
                 service = Service.objects.filter(
                     route__source=self.source,
@@ -137,7 +139,7 @@ class Command(ImportLiveVehiclesCommand):
             trips = Trip.objects.filter(
                 route__source=self.source,
                 start=start_time,
-                ticket_machine_code__endswith=f"_{code_suffix}",
+                inbound=item.vehicle.trip.direction_id == 1
             )
             if service:
                 trips = trips.filter(route__service=service)
