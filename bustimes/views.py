@@ -516,15 +516,23 @@ def trip_block(request, pk: int):
     else:
         date = timezone.localdate()
 
-    trips = get_other_trips_in_block(trip, date)
+    trips = get_other_trips_in_block(trip, date, annotate=True)
 
     trips = trips.select_related("route", "destination__locality")
-    trips = trips.prefetch_related(
+    trips = list(trips)
+
+    prefetch_related_objects(
+        trips,
         Prefetch(
             "vehiclejourney_set",
-            VehicleJourney.objects.filter(datetime__date=date),
+            VehicleJourney.objects.filter(
+                datetime__range=(
+                    datetime.fromtimestamp(trips[0].datetime),
+                    datetime.fromtimestamp(trips[-1].datetime),
+                )
+            ).select_related("vehicle"),
             to_attr="vehicle_journeys",
-        )
+        ),
     )
 
     return render(
