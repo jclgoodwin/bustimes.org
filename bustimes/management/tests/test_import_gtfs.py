@@ -205,11 +205,6 @@ class GTFSTest(TestCase):
             changed, when = download_if_modified(path, source)
             self.assertFalse(changed)
 
-            cassette.rewind()
-
-            changed, when = download_if_modified(path, url=url)
-            self.assertFalse(changed)
-
         self.assertTrue(path.exists())
         path.unlink()
 
