@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_f5dba1c56a64fa65_avl_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2025-02-27 12:31 +0000
+            created at 2025-02-27 13:04 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -610,21 +610,21 @@
     <p class="pln"><span class="n"><a id="t528" href="#t528">528</a></span><span class="t">            <span class="nam">output_field</span><span class="op">=</span><span class="nam">DateTimeField</span><span class="op">(</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t529" href="#t529">529</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t530" href="#t530">530</a></span><span class="t">    <span class="op">)</span><span class="op">.</span><span class="nam">select_related</span><span class="op">(</span><span class="str">"route"</span><span class="op">,</span> <span class="str">"destination__locality"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t531" href="#t531">531</a></span><span class="t">    <span class="nam">trips</span> <span class="op">=</span> <span class="nam">list</span><span class="op">(</span><span class="nam">trips</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t532" href="#t532">532</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t533" href="#t533">533</a></span><span class="t">    <span class="nam">prefetch_related_objects</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t534" href="#t534">534</a></span><span class="t">        <span class="nam">trips</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t535" href="#t535">535</a></span><span class="t">        <span class="nam">Prefetch</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t536" href="#t536">536</a></span><span class="t">            <span class="str">"vehiclejourney_set"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t537" href="#t537">537</a></span><span class="t">            <span class="nam">VehicleJourney</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t538" href="#t538">538</a></span><span class="t">                <span class="nam">datetime__range</span><span class="op">=</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t539" href="#t539">539</a></span><span class="t">                    <span class="nam">datetime</span><span class="op">.</span><span class="nam">fromtimestamp</span><span class="op">(</span><span class="nam">trips</span><span class="op">[</span><span class="num">0</span><span class="op">]</span><span class="op">.</span><span class="nam">datetime</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t540" href="#t540">540</a></span><span class="t">                    <span class="nam">datetime</span><span class="op">.</span><span class="nam">fromtimestamp</span><span class="op">(</span><span class="nam">trips</span><span class="op">[</span><span class="op">-</span><span class="num">1</span><span class="op">]</span><span class="op">.</span><span class="nam">datetime</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t541" href="#t541">541</a></span><span class="t">                <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t542" href="#t542">542</a></span><span class="t">            <span class="op">)</span><span class="op">.</span><span class="nam">select_related</span><span class="op">(</span><span class="str">"vehicle"</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t543" href="#t543">543</a></span><span class="t">            <span class="nam">to_attr</span><span class="op">=</span><span class="str">"vehicle_journeys"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t544" href="#t544">544</a></span><span class="t">        <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t545" href="#t545">545</a></span><span class="t">    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t531" href="#t531">531</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t532" href="#t532">532</a></span><span class="t">    <span class="key">if</span> <span class="nam">trips</span> <span class="op">:=</span> <span class="nam">list</span><span class="op">(</span><span class="nam">trips</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t533" href="#t533">533</a></span><span class="t">        <span class="nam">prefetch_related_objects</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t534" href="#t534">534</a></span><span class="t">            <span class="nam">trips</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t535" href="#t535">535</a></span><span class="t">            <span class="nam">Prefetch</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t536" href="#t536">536</a></span><span class="t">                <span class="str">"vehiclejourney_set"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t537" href="#t537">537</a></span><span class="t">                <span class="nam">VehicleJourney</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t538" href="#t538">538</a></span><span class="t">                    <span class="nam">datetime__range</span><span class="op">=</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t539" href="#t539">539</a></span><span class="t">                        <span class="nam">datetime</span><span class="op">.</span><span class="nam">fromtimestamp</span><span class="op">(</span><span class="nam">trips</span><span class="op">[</span><span class="num">0</span><span class="op">]</span><span class="op">.</span><span class="nam">datetime</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t540" href="#t540">540</a></span><span class="t">                        <span class="nam">datetime</span><span class="op">.</span><span class="nam">fromtimestamp</span><span class="op">(</span><span class="nam">trips</span><span class="op">[</span><span class="op">-</span><span class="num">1</span><span class="op">]</span><span class="op">.</span><span class="nam">datetime</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t541" href="#t541">541</a></span><span class="t">                    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t542" href="#t542">542</a></span><span class="t">                <span class="op">)</span><span class="op">.</span><span class="nam">select_related</span><span class="op">(</span><span class="str">"vehicle"</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t543" href="#t543">543</a></span><span class="t">                <span class="nam">to_attr</span><span class="op">=</span><span class="str">"vehicle_journeys"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t544" href="#t544">544</a></span><span class="t">            <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t545" href="#t545">545</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t546" href="#t546">546</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t547" href="#t547">547</a></span><span class="t">    <span class="key">return</span> <span class="nam">render</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t548" href="#t548">548</a></span><span class="t">        <span class="nam">request</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
@@ -826,7 +826,7 @@
             <a class="nav" href="z_f5dba1c56a64fa65_avl_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2025-02-27 12:31 +0000
+            created at 2025-02-27 13:04 +0000
         </p>
     </div>
 </footer>
