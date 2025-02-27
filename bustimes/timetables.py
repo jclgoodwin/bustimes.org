@@ -515,6 +515,8 @@ def abbreviate(grouping, i, in_a_row, difference):
             for row in grouping.rows:
                 row.times[j] = None
         return
+    if not settings.ABBREVIATE_HOURLY:
+        return
     if (
         in_a_row < 4
         and not settings.ABBREVIATE_HOURLY
