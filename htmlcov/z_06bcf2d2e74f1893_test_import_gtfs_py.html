@@ -54,8 +54,8 @@
             </div>
         </aside>
         <h2>
-            <span class="text">106 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">106<span class="text"> run</span></button>
+            <span class="text">103 statements &nbsp;</span>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">103<span class="text"> run</span></button>
             <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">0<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_06bcf2d2e74f1893_test_import_gtfs_ember_flixbus_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2025-02-27 13:04 +0000
+            created at 2025-02-27 14:05 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -287,30 +287,25 @@
     <p class="run"><span class="n"><a id="t205" href="#t205">205</a></span><span class="t">            <span class="nam">changed</span><span class="op">,</span> <span class="nam">when</span> <span class="op">=</span> <span class="nam">download_if_modified</span><span class="op">(</span><span class="nam">path</span><span class="op">,</span> <span class="nam">source</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t206" href="#t206">206</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">assertFalse</span><span class="op">(</span><span class="nam">changed</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t207" href="#t207">207</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t208" href="#t208">208</a></span><span class="t">            <span class="nam">cassette</span><span class="op">.</span><span class="nam">rewind</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t209" href="#t209">209</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t210" href="#t210">210</a></span><span class="t">            <span class="nam">changed</span><span class="op">,</span> <span class="nam">when</span> <span class="op">=</span> <span class="nam">download_if_modified</span><span class="op">(</span><span class="nam">path</span><span class="op">,</span> <span class="nam">url</span><span class="op">=</span><span class="nam">url</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t211" href="#t211">211</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">assertFalse</span><span class="op">(</span><span class="nam">changed</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t212" href="#t212">212</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t213" href="#t213">213</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">assertTrue</span><span class="op">(</span><span class="nam">path</span><span class="op">.</span><span class="nam">exists</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t214" href="#t214">214</a></span><span class="t">        <span class="nam">path</span><span class="op">.</span><span class="nam">unlink</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t215" href="#t215">215</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t216" href="#t216">216</a></span><span class="t">    <span class="key">def</span> <span class="nam">test_handle</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t217" href="#t217">217</a></span><span class="t">        <span class="key">with</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t208" href="#t208">208</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">assertTrue</span><span class="op">(</span><span class="nam">path</span><span class="op">.</span><span class="nam">exists</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t209" href="#t209">209</a></span><span class="t">        <span class="nam">path</span><span class="op">.</span><span class="nam">unlink</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t210" href="#t210">210</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t211" href="#t211">211</a></span><span class="t">    <span class="key">def</span> <span class="nam">test_handle</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t212" href="#t212">212</a></span><span class="t">        <span class="key">with</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t213" href="#t213">213</a></span><span class="t">            <span class="nam">patch</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t214" href="#t214">214</a></span><span class="t">                <span class="str">"bustimes.management.commands.import_gtfs.download_if_modified"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t215" href="#t215">215</a></span><span class="t">                <span class="nam">return_value</span><span class="op">=</span><span class="op">(</span><span class="key">True</span><span class="op">,</span> <span class="key">None</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t216" href="#t216">216</a></span><span class="t">                <span class="nam">raise_exception</span><span class="op">=</span><span class="key">True</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t217" href="#t217">217</a></span><span class="t">            <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t218" href="#t218">218</a></span><span class="t">            <span class="nam">patch</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t219" href="#t219">219</a></span><span class="t">                <span class="str">"bustimes.management.commands.import_gtfs.download_if_modified"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t220" href="#t220">220</a></span><span class="t">                <span class="nam">return_value</span><span class="op">=</span><span class="op">(</span><span class="key">True</span><span class="op">,</span> <span class="key">None</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t221" href="#t221">221</a></span><span class="t">                <span class="nam">raise_exception</span><span class="op">=</span><span class="key">True</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t222" href="#t222">222</a></span><span class="t">            <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t223" href="#t223">223</a></span><span class="t">            <span class="nam">patch</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t224" href="#t224">224</a></span><span class="t">                <span class="str">"bustimes.management.commands.import_gtfs.Command.handle_zipfile"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t225" href="#t225">225</a></span><span class="t">                <span class="nam">side_effect</span><span class="op">=</span><span class="nam">ReadError</span><span class="op">(</span><span class="str">"bad zipfile"</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t226" href="#t226">226</a></span><span class="t">            <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t227" href="#t227">227</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">assertLogs</span><span class="op">(</span><span class="str">"bustimes.management.commands.import_gtfs"</span><span class="op">,</span> <span class="str">"ERROR"</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t228" href="#t228">228</a></span><span class="t">        <span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t229" href="#t229">229</a></span><span class="t">            <span class="nam">call_command</span><span class="op">(</span><span class="str">"import_gtfs"</span><span class="op">,</span> <span class="str">"Wexford Bus"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t230" href="#t230">230</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t231" href="#t231">231</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">assertFalse</span><span class="op">(</span><span class="nam">Route</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">all</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t219" href="#t219">219</a></span><span class="t">                <span class="str">"bustimes.management.commands.import_gtfs.Command.handle_zipfile"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t220" href="#t220">220</a></span><span class="t">                <span class="nam">side_effect</span><span class="op">=</span><span class="nam">ReadError</span><span class="op">(</span><span class="str">"bad zipfile"</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t221" href="#t221">221</a></span><span class="t">            <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t222" href="#t222">222</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">assertLogs</span><span class="op">(</span><span class="str">"bustimes.management.commands.import_gtfs"</span><span class="op">,</span> <span class="str">"ERROR"</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t223" href="#t223">223</a></span><span class="t">        <span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t224" href="#t224">224</a></span><span class="t">            <span class="nam">call_command</span><span class="op">(</span><span class="str">"import_gtfs"</span><span class="op">,</span> <span class="str">"Wexford Bus"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t225" href="#t225">225</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t226" href="#t226">226</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">assertFalse</span><span class="op">(</span><span class="nam">Route</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">all</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
 </main>
 <footer>
     <div class="content">
@@ -320,7 +315,7 @@
             <a class="nav" href="z_06bcf2d2e74f1893_test_import_gtfs_ember_flixbus_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2025-02-27 13:04 +0000
+            created at 2025-02-27 14:05 +0000
         </p>
     </div>
 </footer>
