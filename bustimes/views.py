@@ -528,21 +528,21 @@ def trip_block(request, pk: int):
             output_field=DateTimeField(),
         )
     ).select_related("route", "destination__locality")
-    trips = list(trips)
 
-    prefetch_related_objects(
-        trips,
-        Prefetch(
-            "vehiclejourney_set",
-            VehicleJourney.objects.filter(
-                datetime__range=(
-                    datetime.fromtimestamp(trips[0].datetime),
-                    datetime.fromtimestamp(trips[-1].datetime),
-                )
-            ).select_related("vehicle"),
-            to_attr="vehicle_journeys",
-        ),
-    )
+    if trips := list(trips):
+        prefetch_related_objects(
+            trips,
+            Prefetch(
+                "vehiclejourney_set",
+                VehicleJourney.objects.filter(
+                    datetime__range=(
+                        datetime.fromtimestamp(trips[0].datetime),
+                        datetime.fromtimestamp(trips[-1].datetime),
+                    )
+                ).select_related("vehicle"),
+                to_attr="vehicle_journeys",
+            ),
+        )
 
     return render(
         request,
