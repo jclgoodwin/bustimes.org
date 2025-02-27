@@ -166,24 +166,11 @@ def get_calendars(when: date | datetime, calendar_ids=None):
     )
 
 
-def get_other_trips_in_block(trip, date, annotate=True):
-    if trip.start >= timedelta(days=1):
-        date -= timedelta(days=1)
-
+def get_other_trips_in_block(trip, date):
     trips = Trip.objects.filter(
         block=trip.block,
         route__source=trip.route.source,
     )
-
-    if annotate:
-        # GTFS spec - times are represented as time since noon minus 12 hours (for leap day reasons)
-        midnight = parse_datetime(f"{date}T12:00:00") - timedelta(hours=12)
-        trips = trips.annotate(
-            datetime=ExpressionWrapper(
-                F("start") + int(midnight.timestamp()),
-                output_field=DateTimeField(),
-            )
-        )
 
     routes = Route.objects.filter(trip__in=trips).select_related("source")
 

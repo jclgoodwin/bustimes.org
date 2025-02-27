@@ -130,11 +130,11 @@
                 <td class="link">
                     <a href="{% url 'admin:vehicles_vehiclejourney_change' journey.pk %}">✎</a>
                 </td>
-                {% if journey.trip.block %}
+            {% endif %}
+            {% if journey.trip.block %}
                 <td class="link">
-                    <a href="{{ journey.trip.get_absolute_url }}/block?date={{ date.isoformat }}">{{ journey.trip.block }}</a>
+                    <a href="{{ journey.get_trip_block_url }}">{{ journey.trip.block }}</a>
                 </td>
-                {% endif %}
             {% endif %}
         </tr>
     {% endfor %}

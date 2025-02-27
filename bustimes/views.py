@@ -17,6 +17,8 @@ from django.db.models import (
     F,
     Q,
     FilteredRelation,
+    ExpressionWrapper,
+    DateTimeField,
 )
 from django.http import (
     FileResponse,
@@ -516,9 +518,16 @@ def trip_block(request, pk: int):
     else:
         date = timezone.localdate()
 
-    trips = get_other_trips_in_block(trip, date, annotate=True)
+    trips = get_other_trips_in_block(trip, date)
 
-    trips = trips.select_related("route", "destination__locality")
+    # GTFS spec - times are represented as time since noon minus 12 hours (for leap day reasons)
+    midnight = parse_datetime(f"{date}T12:00:00") - timedelta(hours=12)
+    trips = trips.annotate(
+        datetime=ExpressionWrapper(
+            F("start") + int(midnight.timestamp()),
+            output_field=DateTimeField(),
+        )
+    ).select_related("route", "destination__locality")
     trips = list(trips)
 
     prefetch_related_objects(

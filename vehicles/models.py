@@ -682,6 +682,13 @@ class VehicleJourney(models.Model):
 
     get_trip = get_trip
 
+    def get_trip_block_url(self):
+        url = reverse("block_detail", args=(self.trip_id,))
+        date = self.datetime.date()
+        if self.trip.start >= datetime.timedelta(days=1):
+            date -= datetime.timedelta(days=1)
+        return f"{url}?date={date}"
+
 
 # class VehiclePosition:
 #     journey = models.ForeignKey(VehicleJourney, on_delete)
