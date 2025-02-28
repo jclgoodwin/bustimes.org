@@ -259,7 +259,6 @@ class TripSerializer(serializers.ModelSerializer):
 
 class VehicleJourneySerializer(serializers.ModelSerializer):
     vehicle = serializers.SerializerMethodField()
-    times = serializers.SerializerMethodField()
 
     def get_vehicle(self, obj):
         if obj.vehicle_id:
@@ -270,9 +269,6 @@ class VehicleJourneySerializer(serializers.ModelSerializer):
                 "reg": obj.vehicle.reg,
             }
 
-    def get_times(self, obj):
-        return TripSerializer.get_times(obj.trip)
-
     class Meta:
         model = VehicleJourney
         fields = [
@@ -282,5 +278,4 @@ class VehicleJourneySerializer(serializers.ModelSerializer):
             "route_name",
             "destination",
             "trip_id",
-            "times",
         ]

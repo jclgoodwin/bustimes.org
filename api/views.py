@@ -129,12 +129,13 @@ class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
 
     def retrieve(self, request, *args, pk, **kwargs):
         instance = self.get_object()
-        if instance.trip:
-            instance.trip.stops = TripViewSet.get_stops(instance.trip)
-
         serializer = self.get_serializer(instance)
 
         extra_data = {}
+
+        if instance.trip:
+            instance.trip.stops = TripViewSet.get_stops(instance.trip)
+            extra_data["times"] = serializers.TripSerializer().get_times(instance.trip)
 
         if redis_client:
             locations = redis_client.lrange(instance.get_redis_key(), 0, -1)
