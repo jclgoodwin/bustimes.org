@@ -74,7 +74,7 @@
 | bustimes/management/tests/test\_import\_passenger.py            |       23 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_transxchange.py         |      728 |        2 |     99% | 1076-1079 |
 | bustimes/management/tests/test\_tnds.py                         |       22 |        0 |    100% |           |
-| bustimes/models.py                                              |      320 |        7 |     98% |92, 185, 343, 346, 375, 412, 446 |
+| bustimes/models.py                                              |      320 |        6 |     98% |92, 343, 346, 375, 412, 446 |
 | bustimes/tests.py                                               |      130 |        0 |    100% |           |
 | bustimes/timetables.py                                          |      645 |       52 |     92% |62, 102-115, 144, 226-237, 268-269, 341-344, 356, 369-374, 420, 495, 498, 514-517, 519, 546, 655-670, 756-757, 828, 974-976 |
 | bustimes/urls.py                                                |        3 |        0 |    100% |           |
@@ -145,7 +145,7 @@
 | vehicles/models.py                                              |      509 |       37 |     93% |75, 187, 213, 279, 298, 304, 376, 382, 433, 454, 582-583, 596, 604, 621-623, 631-632, 635-636, 641-642, 665, 686-690, 734, 741-744, 786, 799, 808, 819 |
 | vehicles/rtpi.py                                                |       76 |        1 |     99% |        28 |
 | vehicles/signals.py                                             |       11 |        0 |    100% |           |
-| vehicles/tasks.py                                               |      130 |       24 |     82% |63-73, 80, 85, 95, 102-105, 108, 110, 119, 132, 136-137, 150, 164, 177-178, 232-233, 236 |
+| vehicles/tasks.py                                               |      132 |       24 |     82% |63-73, 80, 85, 95, 102-105, 108, 110, 119, 132, 136-137, 155, 169, 182-183, 237-238, 241 |
 | vehicles/test\_models.py                                        |       65 |        0 |    100% |           |
 | vehicles/test\_schedule\_adherence.py                           |       75 |        0 |    100% |           |
 | vehicles/tests.py                                               |      438 |        0 |    100% |           |
@@ -161,7 +161,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **15756** | **1066** | **93%** |           |
+|                                                       **TOTAL** | **15758** | **1065** | **93%** |           |
 
 
 ## Setup coverage badge
