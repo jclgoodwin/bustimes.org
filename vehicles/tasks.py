@@ -138,8 +138,13 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
 
     time = parse_datetime(time)
 
-    if vehicle.latest_journey and vehicle.latest_journey.datetime == time:
-        return
+    if last_journey := vehicle.latest_journey:
+        last_time = last_journey.datetime
+        if last_time == time or (
+            last_journey.source_id != data_source.id
+            and time - last_time < timedelta(hours=2)
+        ):
+            return
 
     if (
         "FramedVehicleJourneyRef" in data
