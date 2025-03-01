@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_2c17191315bcbf2a_admin_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2025-02-28 14:39 +0000
+            created at 2025-03-01 02:16 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -114,7 +114,7 @@
     <p class="run"><span class="n"><a id="t32" href="#t32">32</a></span><span class="t"><span class="key">from</span> <span class="nam">sql_util</span><span class="op">.</span><span class="nam">utils</span> <span class="key">import</span> <span class="nam">Exists</span><span class="op">,</span> <span class="nam">SubqueryMax</span><span class="op">,</span> <span class="nam">SubqueryMin</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t33" href="#t33">33</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t34" href="#t34">34</a></span><span class="t"><span class="key">from</span> <span class="nam">accounts</span><span class="op">.</span><span class="nam">models</span> <span class="key">import</span> <span class="nam">User</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t35" href="#t35">35</a></span><span class="t"><span class="key">from</span> <span class="nam">buses</span><span class="op">.</span><span class="nam">utils</span> <span class="key">import</span> <span class="nam">cache_page</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t35" href="#t35">35</a></span><span class="t"><span class="key">from</span> <span class="nam">buses</span><span class="op">.</span><span class="nam">utils</span> <span class="key">import</span> <span class="nam">cdn_cache_control</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t36" href="#t36">36</a></span><span class="t"><span class="key">from</span> <span class="nam">busstops</span><span class="op">.</span><span class="nam">models</span> <span class="key">import</span> <span class="nam">SERVICE_ORDER_REGEX</span><span class="op">,</span> <span class="nam">Operator</span><span class="op">,</span> <span class="nam">Service</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t37" href="#t37">37</a></span><span class="t"><span class="key">from</span> <span class="nam">busstops</span><span class="op">.</span><span class="nam">utils</span> <span class="key">import</span> <span class="nam">get_bounding_box</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t38" href="#t38">38</a></span><span class="t"><span class="key">from</span> <span class="nam">bustimes</span><span class="op">.</span><span class="nam">models</span> <span class="key">import</span> <span class="nam">Garage</span><span class="op">,</span> <span class="nam">Route</span><span class="op">,</span> <span class="nam">StopTime</span>&nbsp;</span><span class="r"></span></p>
@@ -354,7 +354,7 @@
     <p class="run"><span class="n"><a id="t272" href="#t272">272</a></span><span class="t">    <span class="key">return</span> <span class="nam">render</span><span class="op">(</span><span class="nam">request</span><span class="op">,</span> <span class="str">"operator_vehicles.html"</span><span class="op">,</span> <span class="nam">context</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t273" href="#t273">273</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t274" href="#t274">274</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t275" href="#t275">275</a></span><span class="t"><span class="op">@</span><span class="nam">cache_page</span><span class="op">(</span><span class="nam">max_age</span><span class="op">=</span><span class="num">300</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t275" href="#t275">275</a></span><span class="t"><span class="op">@</span><span class="nam">cdn_cache_control</span><span class="op">(</span><span class="nam">max_age</span><span class="op">=</span><span class="num">300</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t276" href="#t276">276</a></span><span class="t"><span class="op">@</span><span class="nam">require_safe</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t277" href="#t277">277</a></span><span class="t"><span class="key">def</span> <span class="nam">operator_map</span><span class="op">(</span><span class="nam">request</span><span class="op">,</span> <span class="nam">slug</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t278" href="#t278">278</a></span><span class="t">    <span class="nam">operator</span> <span class="op">=</span> <span class="nam">get_object_or_404</span><span class="op">(</span><span class="nam">Operator</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">select_related</span><span class="op">(</span><span class="str">"region"</span><span class="op">)</span><span class="op">,</span> <span class="nam">slug</span><span class="op">=</span><span class="nam">slug</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -1300,7 +1300,7 @@
             <a class="nav" href="z_2c17191315bcbf2a_admin_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2025-02-28 14:39 +0000
+            created at 2025-03-01 02:16 +0000
         </p>
     </div>
 </footer>
