@@ -4,7 +4,7 @@ from django.urls import include, path, re_path
 from django.views.decorators.cache import cache_control
 from django.views.generic.base import RedirectView, TemplateView
 
-from buses.utils import cdn_cache_control, vary_country
+from buses.utils import cdn_cache_control
 from bustimes.urls import urlpatterns as bustimes_views
 from disruptions.urls import urlpatterns as disruptions_urls
 from fares import mytrip
@@ -23,9 +23,7 @@ sitemaps = {
 urlpatterns = [
     path(
         "",
-        vary_country(
-            cdn_cache_control(1800)(TemplateView.as_view(template_name="index.html")),
-        ),
+        TemplateView.as_view(template_name="index.html"),
         name="index",
     ),
     path("version", views.version),

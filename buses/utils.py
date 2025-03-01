@@ -11,16 +11,6 @@ def minify(template_source):
     return template_source
 
 
-def vary_country(view_func):
-    @wraps(view_func)
-    def _varied(request, *args, **kw):
-        response = view_func(request, *args, **kw)
-        response["Vary"] = "CF-IPCountry"
-        return response
-
-    return _varied
-
-
 def cdn_cache_control(max_age):
     def _cache_controller(view_func):
         @wraps(view_func)
