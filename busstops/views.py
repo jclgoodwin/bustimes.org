@@ -40,7 +40,7 @@ from redis.exceptions import ConnectionError
 from sql_util.utils import Exists, SubqueryMax, SubqueryMin
 from ukpostcodeutils import validation
 
-from buses.utils import cache_page
+from buses.utils import cdn_cache_control
 from bustimes.models import StopTime, Trip
 from departures import live
 from disruptions.models import Consequence, Situation
@@ -292,7 +292,7 @@ def timetable_source_stats(request):
     return JsonResponse(cache.get("timetable-source-stats", []), safe=False)
 
 
-@cache_page(3600)
+@cdn_cache_control(3600)
 def stops_json(request):
     """JSON endpoint accessed by the JavaScript map,
     listing the active StopPoints within a rectangle,
@@ -1315,7 +1315,7 @@ def service_timetable_csv(request, service_id):
     return response
 
 
-@cache_page(max_age=7200)
+@cdn_cache_control(max_age=7200)
 def service_map_data(request, service_id):
     service = get_object_or_404(
         Service.objects.only("geometry", "line_name", "service_code"),
@@ -1448,7 +1448,7 @@ class ServiceSitemap(Sitemap):
         return obj.modified_at
 
 
-@cache_page(300)
+@cdn_cache_control(max_age=300)
 def search(request):
     form = forms.SearchForm(request.GET)
 

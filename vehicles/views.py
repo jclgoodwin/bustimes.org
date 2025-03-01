@@ -32,7 +32,7 @@ from redis.exceptions import ConnectionError
 from sql_util.utils import Exists, SubqueryMax, SubqueryMin
 
 from accounts.models import User
-from buses.utils import cache_page
+from buses.utils import cdn_cache_control
 from busstops.models import SERVICE_ORDER_REGEX, Operator, Service
 from busstops.utils import get_bounding_box
 from bustimes.models import Garage, Route, StopTime
@@ -272,7 +272,7 @@ def operator_vehicles(request, slug=None, parent=None):
     return render(request, "operator_vehicles.html", context)
 
 
-@cache_page(max_age=300)
+@cdn_cache_control(max_age=300)
 @require_safe
 def operator_map(request, slug):
     operator = get_object_or_404(Operator.objects.select_related("region"), slug=slug)

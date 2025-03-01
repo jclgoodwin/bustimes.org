@@ -2,7 +2,6 @@ import re
 from functools import wraps
 
 from django.contrib.auth.models import AnonymousUser
-from django.middleware.cache import FetchFromCacheMiddleware, UpdateCacheMiddleware
 
 
 def minify(template_source):
@@ -12,30 +11,14 @@ def minify(template_source):
     return template_source
 
 
-def cache_page(max_age):
-    def _cache_controller(view_func):
-        fetch_from_cache_middleware = FetchFromCacheMiddleware(view_func)
-        update_cache_middleware = UpdateCacheMiddleware(view_func)
+def vary_country(view_func):
+    @wraps(view_func)
+    def _varied(request, *args, **kw):
+        response = view_func(request, *args, **kw)
+        response["Vary"] = "CF-IPCountry"
+        return response
 
-        @wraps(view_func)
-        def _cache_controlled(request, *args, **kw):
-            # anonymise request
-            request.user = AnonymousUser
-
-            response = fetch_from_cache_middleware.process_request(request)
-            if response:
-                return response
-
-            response = view_func(request, *args, **kw)
-
-            update_cache_middleware.cache_timeout = max_age
-            update_cache_middleware.process_response(request, response)
-
-            return response
-
-        return _cache_controlled
-
-    return _cache_controller
+    return _varied
 
 
 def cdn_cache_control(max_age):
