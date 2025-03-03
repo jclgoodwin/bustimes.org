@@ -156,12 +156,12 @@
 | vosa/\_\_init\_\_.py                                            |        0 |        0 |    100% |           |
 | vosa/admin.py                                                   |       36 |        0 |    100% |           |
 | vosa/management/commands/\_\_init\_\_.py                        |        0 |        0 |    100% |           |
-| vosa/management/commands/import\_vosa.py                        |      159 |        1 |     99% |       203 |
+| vosa/management/commands/import\_vosa.py                        |      162 |        3 |     98% |25-26, 206 |
 | vosa/models.py                                                  |       75 |        0 |    100% |           |
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **15758** | **1066** | **93%** |           |
+|                                                       **TOTAL** | **15761** | **1068** | **93%** |           |
 
 
 ## Setup coverage badge
