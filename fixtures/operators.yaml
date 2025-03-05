@@ -135,6 +135,8 @@ LNUD:
   url: https://www.transdevbus.co.uk/the-blackburn-bus-company/
 BPTR:
   url: https://www.transdevbus.co.uk/the-burnley-bus-company/
+YACT:
+  url: https://www.transdevbus.co.uk/coastliner/
 FECS:
   name: First Eastern Counties
   twitter: |
