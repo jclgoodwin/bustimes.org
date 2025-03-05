@@ -72,19 +72,19 @@ lxml = ["lxml"]
 
 [[package]]
 name = "boto3"
-version = "1.37.4"
+version = "1.37.6"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 markers = "python_version == \"3.11\" or python_version >= \"3.12\""
 files = [
-    {file = "boto3-1.37.4-py3-none-any.whl", hash = "sha256:1bbf8bbacb3932956b7020d9a2c49d72c64e21bae9397ba6d3aadffab5e192eb"},
-    {file = "boto3-1.37.4.tar.gz", hash = "sha256:024c37c2f85f4b907f5fc817d0db6fda7fd6ab3c6148ee4ed35fe7cecdf7db0c"},
+    {file = "boto3-1.37.6-py3-none-any.whl", hash = "sha256:4c661389e68437a3fbc1f63decea24b88f7175e022c68622848d47fdf6e0144f"},
+    {file = "boto3-1.37.6.tar.gz", hash = "sha256:e2f4a1edb7e6dbd541c2962117e1c6fea8d5a42788c441a958700a43a3ca7c47"},
 ]
 
 [package.dependencies]
-botocore = ">=1.37.4,<1.38.0"
+botocore = ">=1.37.6,<1.38.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.11.0,<0.12.0"
 
@@ -93,15 +93,15 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.37.4"
+version = "1.37.6"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 markers = "python_version == \"3.11\" or python_version >= \"3.12\""
 files = [
-    {file = "botocore-1.37.4-py3-none-any.whl", hash = "sha256:89130998c82d53f875a42646b692da507c9871b580fd1aea0f861bf9da36e41a"},
-    {file = "botocore-1.37.4.tar.gz", hash = "sha256:7e15cd487617440e9eac3144044b6a2bd833d7f3e2bed6a2865693cc11489cc3"},
+    {file = "botocore-1.37.6-py3-none-any.whl", hash = "sha256:cd282fe9c8adbb55a08c7290982a98ac6cc4507fa1c493f48bc43fd6c8376a57"},
+    {file = "botocore-1.37.6.tar.gz", hash = "sha256:2cb121a403cbec047d76e2401a402a6b2efd3309169037fbac588e8f7125aec4"},
 ]
 
 [package.dependencies]
@@ -2090,22 +2090,22 @@ files = [
 
 [[package]]
 name = "s3transfer"
-version = "0.11.3"
+version = "0.11.4"
 description = "An Amazon S3 Transfer Manager"
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 markers = "python_version == \"3.11\" or python_version >= \"3.12\""
 files = [
-    {file = "s3transfer-0.11.3-py3-none-any.whl", hash = "sha256:ca855bdeb885174b5ffa95b9913622459d4ad8e331fc98eb01e6d5eb6a30655d"},
-    {file = "s3transfer-0.11.3.tar.gz", hash = "sha256:edae4977e3a122445660c7c114bba949f9d191bae3b34a096f18a1c8c354527a"},
+    {file = "s3transfer-0.11.4-py3-none-any.whl", hash = "sha256:ac265fa68318763a03bf2dc4f39d5cbd6a9e178d81cc9483ad27da33637e320d"},
+    {file = "s3transfer-0.11.4.tar.gz", hash = "sha256:559f161658e1cf0a911f45940552c696735f5c74e64362e515f333ebed87d679"},
 ]
 
 [package.dependencies]
-botocore = ">=1.36.0,<2.0a.0"
+botocore = ">=1.37.4,<2.0a.0"
 
 [package.extras]
-crt = ["botocore[crt] (>=1.36.0,<2.0a.0)"]
+crt = ["botocore[crt] (>=1.37.4,<2.0a.0)"]
 
 [[package]]
 name = "sentry-sdk"
