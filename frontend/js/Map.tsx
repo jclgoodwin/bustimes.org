@@ -212,7 +212,6 @@ export default function BusTimesMap(
         touchPitch={false}
         pitchWithRotate={false}
         dragRotate={false}
-        projection="globe"
         minZoom={2}
         maxZoom={18}
         mapStyle={`https://tiles.stadiamaps.com/styles/${mapStyle}.json`}
