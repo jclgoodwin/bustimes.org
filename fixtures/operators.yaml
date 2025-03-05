@@ -129,12 +129,6 @@ GLCS:
   name: Globe Holidays (Barnsley)
 TPEN:
   url: https://www.transdevbus.co.uk/team-pennine/
-HRGT:
-  url: https://www.transdevbus.co.uk/the-harrogate-bus-company/
-LNUD:
-  url: https://www.transdevbus.co.uk/the-blackburn-bus-company/
-BPTR:
-  url: https://www.transdevbus.co.uk/the-burnley-bus-company/
 FECS:
   name: First Eastern Counties
   twitter: |
