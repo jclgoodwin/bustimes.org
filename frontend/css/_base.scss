@@ -1188,21 +1188,23 @@ input:not(:checked) + label {
         white-space: nowrap;
     }
 
+    th, td {
+        width: 48px;
+        padding: 4px 8px;
+    }
+
     th {
-        width: 4em;
-        font-size: .75em;
-        padding: .25rem .5rem;
+        font-size: 12px;
         border: 0;
         border-bottom: 1px solid var(--border-color);
     }
 
-    th:first-child {
+    .stop-name {
         width: auto;
     }
 
     td {
         border-left: 1px solid var(--border-color);
-        padding: .25rem .5rem;
     }
 
     td:last-child {
@@ -1215,16 +1217,16 @@ input:not(:checked) + label {
 
         a {
             display: block;
-            margin: -.25rem -.5rem;
+            margin: -4px -8px;
             margin-left: 0;
-            padding: .25rem .5rem;
+            padding: 4px 8px;
             padding-left: 0;
             overflow: hidden;
         }
     }
 
     .minor {
-        font-size: .875em;
+        font-size: 14px;
 
         + .minor td {
             border-top: 0;

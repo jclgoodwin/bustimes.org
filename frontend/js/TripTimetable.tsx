@@ -233,7 +233,7 @@ const TripTimetable = React.memo(function TripTimetable({
       <table>
         <thead>
           <tr>
-            <th />
+            <th className="stop-name" />
             {aimedColumn ? <th>Sched&shy;uled</th> : null}
             {actualColumn ? <th>Actual</th> : null}
           </tr>
