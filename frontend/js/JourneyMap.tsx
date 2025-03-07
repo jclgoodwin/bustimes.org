@@ -29,6 +29,7 @@ type VehicleJourneyLocation = {
 };
 
 export type StopTime = {
+  id: number;
   atco_code: string;
   name: string;
   aimed_arrival_time: string;
