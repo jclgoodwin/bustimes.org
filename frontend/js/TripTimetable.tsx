@@ -165,7 +165,7 @@ export const tripFromJourney = (journey: VehicleJourney): Trip | undefined => {
     return {
       times: journey.stops.map((stop, i: number) => {
         return {
-          id: i,
+          id: stop.id,
           stop: {
             atco_code: stop.atco_code,
             name: stop.name,

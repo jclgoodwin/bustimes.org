@@ -1040,6 +1040,7 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
             #         previous_latlong = stop.latlong
             data["stops"].append(
                 {
+                    "id": stoptime.id,
                     "atco_code": stoptime.stop_id,
                     "name": (
                         stop.get_name_for_timetable() if stop else stoptime.stop_code
