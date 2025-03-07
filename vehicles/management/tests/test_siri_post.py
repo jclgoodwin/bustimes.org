@@ -5,7 +5,7 @@ from unittest import mock
 import fakeredis
 import time_machine
 from django.core.management import call_command
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from vcr import use_cassette
 
 from busstops.models import DataSource
@@ -13,12 +13,15 @@ from busstops.models import DataSource
 from ...models import SiriSubscription, Vehicle
 
 
+@override_settings(
+    CACHES={"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
+)
 class SiriPostTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        DataSource.objects.create(name="Transport for Whales")
+        DataSource.objects.create(name="Transport for Wales")
         SiriSubscription.objects.create(
-            name="Transport for Whales", uuid="475d1d1f-5708-4ee1-8f51-c63d948bc0b9"
+            name="Transport for Wales", uuid="475d1d1f-5708-4ee1-8f51-c63d948bc0b9"
         )
 
     @time_machine.travel("2023-12-15T08:24:05Z")
@@ -95,10 +98,13 @@ class SiriPostTest(TestCase):
     </ServiceDelivery>
 </Siri>"""
 
-        with mock.patch(
-            "vehicles.management.import_live_vehicles.redis_client", redis_client
-        ), mock.patch(
-            "vehicles.management.commands.import_bod_avl.redis_client", redis_client
+        with (
+            mock.patch(
+                "vehicles.management.import_live_vehicles.redis_client", redis_client
+            ),
+            mock.patch(
+                "vehicles.management.commands.import_bod_avl.redis_client", redis_client
+            ),
         ):
             response = self.client.post(
                 "/siri/475d1d1f-5708-4ee1-8f51-c63d948bc0b9",
@@ -109,3 +115,6 @@ class SiriPostTest(TestCase):
 
         vehicle = Vehicle.objects.get()
         self.assertEqual(str(vehicle), "MB181")
+
+        response = self.client.get("/siri/475d1d1f-5708-4ee1-8f51-c63d948bc0b9")
+        self.assertEqual(response.headers["Content-Type"], "text/xml")

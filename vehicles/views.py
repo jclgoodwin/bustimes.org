@@ -1155,16 +1155,20 @@ def debug(request):
 
 
 @csrf_exempt
-@require_POST
 def siri_post(request, uuid):
     get_object_or_404(SiriSubscription, uuid=uuid)
+
+    if request.method == "GET":
+        return HttpResponse(
+            cache.get("last_siri_post")["body"], content_type="text/xml"
+        )
 
     body = request.body.decode()
     data = xmltodict.parse(body, dict_constructor=dict, force_list=["VehicleActivity"])
 
     handle_siri_post(uuid, data)
 
-    cache.set("last_siri_post", {"headers": request.headers, body: body})
+    cache.set("last_siri_post", {"headers": request.headers, "body": body})
 
     return HttpResponse("")
 
