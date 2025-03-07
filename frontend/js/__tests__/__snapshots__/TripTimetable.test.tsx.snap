@@ -4,7 +4,9 @@ exports[`shows delay 1`] = `
 <table>
   <thead>
     <tr>
-      <th />
+      <th
+        className="stop-name"
+      />
       <th>
         Sched­uled
       </th>
@@ -131,7 +133,9 @@ exports[`shows delay 2`] = `
   <table>
     <thead>
       <tr>
-        <th />
+        <th
+          className="stop-name"
+        />
         <th>
           Sched­uled
         </th>
@@ -249,7 +253,9 @@ exports[`shows delay 3`] = `
   <table>
     <thead>
       <tr>
-        <th />
+        <th
+          className="stop-name"
+        />
         <th>
           Sched­uled
         </th>
