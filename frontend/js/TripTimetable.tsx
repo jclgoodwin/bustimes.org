@@ -113,7 +113,7 @@ function Row({
       if (vehicle.progress.progress > 0.1) {
         actualRowSpan = (actualRowSpan || 1) + 1;
       }
-    } else {
+    } else if (!vehicle?.progress || vehicle.progress.id > stop.id) {
       actual = stop.actual_departure_time; // vehicle history
     }
     if (actual) {
