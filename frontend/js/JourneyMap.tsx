@@ -256,10 +256,12 @@ function Sidebar({
   journey,
   loading,
   onMouseEnter,
+  vehicle,
 }: {
   journey: VehicleJourney;
   loading: boolean;
   onMouseEnter: (t: TripTime) => void;
+  vehicle?: Vehicle;
 }) {
   let className = "trip-timetable map-sidebar";
   if (loading) {
@@ -321,7 +323,11 @@ function Sidebar({
         {text} {reg}
       </p>
       {trip ? (
-        <TripTimetable onMouseEnter={onMouseEnter} trip={trip} />
+        <TripTimetable
+          onMouseEnter={onMouseEnter}
+          trip={trip}
+          vehicle={vehicle}
+        />
       ) : (
         <p>{journey.code}</p>
       )}
@@ -447,11 +453,13 @@ export default function JourneyMap({
     [],
   );
 
+  const [vehicle, setVehicle] = React.useState<Vehicle>();
+
   const handleVehicleMove = React.useCallback(
     (vehicle: Vehicle) => {
       if (
         !locations.length ||
-        locations[locations.length - 1].datetime !== vehicle.datetime
+        locations[locations.length - 1].datetime > vehicle.datetime
       ) {
         setLocations(
           locations.concat([
@@ -464,6 +472,7 @@ export default function JourneyMap({
             },
           ]),
         );
+        setVehicle(vehicle);
       }
     },
     [locations],
@@ -586,6 +595,7 @@ export default function JourneyMap({
         loading={loading}
         journey={journey}
         onMouseEnter={handleRowHover}
+        vehicle={vehicle}
       />
     </React.Fragment>
   );
