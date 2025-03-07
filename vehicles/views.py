@@ -1164,7 +1164,7 @@ def siri_post(request, uuid):
 
     handle_siri_post(uuid, data)
 
-    cache.set("last_siri_post", request)
+    cache.set("last_siri_post", {"headers": request.headers, body: body})
 
     return HttpResponse("")
 
