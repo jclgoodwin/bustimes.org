@@ -103,16 +103,26 @@ class Command(ImportLiveVehiclesCommand):
     def get_items(self):
         items = []
         vehicle_codes = []
-        for item in super().get_items()["services"]:
+
+        super_items = super().get_items()  # Store the result of super().get_items()
+        print("super().get_items() result:", super_items)  # Print the result for debugging
+
+        if super_items is None or "services" not in super_items:
+            print(f"Error: super().get_items() did not return expected data: {super_items}")
+            return []  # Return an empty list if the data is not valid
+
+        for item in super_items["services"]:
             key = item["fn"]
             value = (item["ut"],)
+
             if self.previous_locations.get(key) != value:
                 items.append(item)
                 vehicle_codes.append(key)
                 self.previous_locations[key] = value
-        self.prefetch_vehicles(vehicle_codes)  # Ensure this works now
-        return items
 
+        self.prefetch_vehicles(vehicle_codes)  # Ensure this works now
+        print("Returning items:", items)  # Print the items before returning
+        return items
 
     def create_vehicle_location(self, item):
         return VehicleLocation(
