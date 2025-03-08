@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for api/views.py: 94%</title>
+    <title>Coverage for api/views.py: 100%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_58284776.png">
     <link rel="stylesheet" href="style_cb_8e611ae1.css" type="text/css">
     <script src="coverage_html_cb_6fb7b396.js" defer></script>
@@ -12,7 +12,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>api/views.py</b>:
-            <span class="pc_cov">94%</span>
+            <span class="pc_cov">100%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -55,8 +55,8 @@
         </aside>
         <h2>
             <span class="text">93 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">87<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">6<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">93<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">0<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_2ecf1080f59d2c60_context_processors_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2025-03-07 16:54 +0000
+            created at 2025-03-08 18:08 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -216,18 +216,18 @@
     <p class="run"><span class="n"><a id="t134" href="#t134">134</a></span><span class="t">        <span class="nam">extra_data</span> <span class="op">=</span> <span class="op">{</span><span class="op">}</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t135" href="#t135">135</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t136" href="#t136">136</a></span><span class="t">        <span class="key">if</span> <span class="nam">instance</span><span class="op">.</span><span class="nam">trip</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t137" href="#t137">137</a></span><span class="t">            <span class="nam">instance</span><span class="op">.</span><span class="nam">trip</span><span class="op">.</span><span class="nam">stops</span> <span class="op">=</span> <span class="nam">TripViewSet</span><span class="op">.</span><span class="nam">get_stops</span><span class="op">(</span><span class="nam">instance</span><span class="op">.</span><span class="nam">trip</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t138" href="#t138">138</a></span><span class="t">            <span class="nam">extra_data</span><span class="op">[</span><span class="str">"times"</span><span class="op">]</span> <span class="op">=</span> <span class="nam">serializers</span><span class="op">.</span><span class="nam">TripSerializer</span><span class="op">(</span><span class="op">)</span><span class="op">.</span><span class="nam">get_times</span><span class="op">(</span><span class="nam">instance</span><span class="op">.</span><span class="nam">trip</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t137" href="#t137">137</a></span><span class="t">            <span class="nam">instance</span><span class="op">.</span><span class="nam">trip</span><span class="op">.</span><span class="nam">stops</span> <span class="op">=</span> <span class="nam">TripViewSet</span><span class="op">.</span><span class="nam">get_stops</span><span class="op">(</span><span class="nam">instance</span><span class="op">.</span><span class="nam">trip</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t138" href="#t138">138</a></span><span class="t">            <span class="nam">extra_data</span><span class="op">[</span><span class="str">"times"</span><span class="op">]</span> <span class="op">=</span> <span class="nam">serializers</span><span class="op">.</span><span class="nam">TripSerializer</span><span class="op">(</span><span class="op">)</span><span class="op">.</span><span class="nam">get_times</span><span class="op">(</span><span class="nam">instance</span><span class="op">.</span><span class="nam">trip</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t139" href="#t139">139</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t140" href="#t140">140</a></span><span class="t">        <span class="key">if</span> <span class="nam">redis_client</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t141" href="#t141">141</a></span><span class="t">            <span class="nam">locations</span> <span class="op">=</span> <span class="nam">redis_client</span><span class="op">.</span><span class="nam">lrange</span><span class="op">(</span><span class="nam">instance</span><span class="op">.</span><span class="nam">get_redis_key</span><span class="op">(</span><span class="op">)</span><span class="op">,</span> <span class="num">0</span><span class="op">,</span> <span class="op">-</span><span class="num">1</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t142" href="#t142">142</a></span><span class="t">            <span class="nam">locations</span> <span class="op">=</span> <span class="op">[</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t141" href="#t141">141</a></span><span class="t">            <span class="nam">locations</span> <span class="op">=</span> <span class="nam">redis_client</span><span class="op">.</span><span class="nam">lrange</span><span class="op">(</span><span class="nam">instance</span><span class="op">.</span><span class="nam">get_redis_key</span><span class="op">(</span><span class="op">)</span><span class="op">,</span> <span class="num">0</span><span class="op">,</span> <span class="op">-</span><span class="num">1</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t142" href="#t142">142</a></span><span class="t">            <span class="nam">locations</span> <span class="op">=</span> <span class="op">[</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t143" href="#t143">143</a></span><span class="t">                <span class="nam">struct</span><span class="op">.</span><span class="nam">unpack</span><span class="op">(</span><span class="str">"I 2f ?h ?h"</span><span class="op">,</span> <span class="nam">location</span><span class="op">)</span> <span class="key">for</span> <span class="nam">location</span> <span class="key">in</span> <span class="nam">locations</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t144" href="#t144">144</a></span><span class="t">            <span class="op">]</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t145" href="#t145">145</a></span><span class="t">            <span class="nam">polyline</span> <span class="op">=</span> <span class="nam">encode_time_aware_polyline</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t145" href="#t145">145</a></span><span class="t">            <span class="nam">polyline</span> <span class="op">=</span> <span class="nam">encode_time_aware_polyline</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t146" href="#t146">146</a></span><span class="t">                <span class="op">[</span><span class="op">[</span><span class="nam">lat</span><span class="op">,</span> <span class="nam">lng</span><span class="op">,</span> <span class="nam">time</span><span class="op">]</span> <span class="key">for</span> <span class="nam">time</span><span class="op">,</span> <span class="nam">lat</span><span class="op">,</span> <span class="nam">lng</span><span class="op">,</span> <span class="nam">_</span><span class="op">,</span> <span class="nam">_</span><span class="op">,</span> <span class="nam">_</span><span class="op">,</span> <span class="nam">_</span> <span class="key">in</span> <span class="nam">locations</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t147" href="#t147">147</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t148" href="#t148">148</a></span><span class="t">            <span class="nam">extra_data</span><span class="op">[</span><span class="str">"time_aware_polyline"</span><span class="op">]</span> <span class="op">=</span> <span class="nam">polyline</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t148" href="#t148">148</a></span><span class="t">            <span class="nam">extra_data</span><span class="op">[</span><span class="str">"time_aware_polyline"</span><span class="op">]</span> <span class="op">=</span> <span class="nam">polyline</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t149" href="#t149">149</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t150" href="#t150">150</a></span><span class="t">        <span class="nam">extra_data</span><span class="op">[</span><span class="str">"service"</span><span class="op">]</span> <span class="op">=</span> <span class="op">{</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t151" href="#t151">151</a></span><span class="t">            <span class="str">"id"</span><span class="op">:</span> <span class="nam">instance</span><span class="op">.</span><span class="nam">service_id</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
@@ -244,7 +244,7 @@
             <a class="nav" href="z_2ecf1080f59d2c60_context_processors_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2025-03-07 16:54 +0000
+            created at 2025-03-08 18:08 +0000
         </p>
     </div>
 </footer>
