@@ -16,7 +16,6 @@ TRACCAR_PASSWORD = "your_password"
 TRACCAR_API_KEY = "your_api_key"  # For authentication if needed, adjust according to Traccar's API
 
 # Sample data mappings (adjust based on the Traccar API response format)
-# Replace these mappings with actual data from Traccar's API.
 # Traccar returns data in JSON format, such as:
 # {
 #     "id": 1,
@@ -30,9 +29,9 @@ TRACCAR_API_KEY = "your_api_key"  # For authentication if needed, adjust accordi
 # }
 
 def parse_timestamp(timestamp):
+    """ Parse timestamp (assuming it is in milliseconds since epoch) """
     if timestamp:
         return datetime.fromtimestamp(int(timestamp) / 1000, timezone.utc)
-
 
 def has_stop(stop):
     return Exists(
@@ -47,13 +46,17 @@ class Command(ImportLiveVehiclesCommand):
 
     def do_source(self):
         self.operators = Operator.objects.filter(
-            Q(parent="Traccar") | Q(noc__in=["TRK"])
+            Q(parent="midland Group") | Q(noc__in=["MDEM"])
         ).in_bulk()
         return super().do_source()
 
     @staticmethod
     def get_datetime(item):
-        return parse_timestamp(item["timestamp"])
+        """ Get datetime from Traccar data item """
+        # Check multiple possible fields for timestamp: 'timestamp', 'deviceTime', 'fixTime'
+        # Default to 'deviceTime' if available
+        timestamp = item.get("timestamp") or item.get("deviceTime") or item.get("fixTime")
+        return parse_timestamp(timestamp)
 
     def prefetch_vehicles(self, vehicle_codes):
         vehicles = self.vehicles.filter(
@@ -71,7 +74,8 @@ class Command(ImportLiveVehiclesCommand):
         # Build list of vehicles that have moved
         for item in traccar_data:
             key = item["deviceId"]
-            value = (item["deviceTime"],)
+            # Get the timestamp for comparison
+            value = (self.get_datetime(item),)
             if self.previous_locations.get(key) != value:
                 items.append(item)
                 vehicle_codes.append(key)
@@ -134,7 +138,7 @@ class Command(ImportLiveVehiclesCommand):
         return vehicle, True
 
     def get_journey(self, item, vehicle):
-        departure_time = parse_timestamp(item["timestamp"])
+        departure_time = self.get_datetime(item)  # Use get_datetime for consistency
 
         journey = VehicleJourney(
             datetime=departure_time,
