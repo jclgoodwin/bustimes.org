@@ -41,6 +41,9 @@ def has_stop(stop):
 
 class Command(ImportLiveVehiclesCommand):
 
+    source_name = "Traccar"
+    previous_locations = {}
+
     def do_source(self):
         self.operators = Operator.objects.filter(
             Q(parent="midland Group") | Q(noc__in=["MDEM"])
@@ -66,20 +69,41 @@ class Command(ImportLiveVehiclesCommand):
         vehicle_codes = []
 
         # Fetch data from Traccar API
-        traccar_data = self.fetch_traccar_data()
+        traccar_positions = self.fetch_traccar_data()  # /positions
+        traccar_devices = self.fetch_traccar_devices()  # /devices
 
-        # Build list of vehicles that have moved
-        for item in traccar_data:
-            key = item["deviceId"]
-            # Get the timestamp for comparison
+        for item in traccar_positions:
+            key = str(item["deviceId"])
             value = (self.get_datetime(item),)
+
             if self.previous_locations.get(key) != value:
+                # Merge position data with device attributes
+                device_data = traccar_devices.get(key, {})
+                item["fleetNumber"] = device_data.get("attributes", {}).get("fleetNumber")
+                item["name"] = device_data.get("name")  # Optional: Store device name
+
                 items.append(item)
                 vehicle_codes.append(key)
                 self.previous_locations[key] = value
 
         self.prefetch_vehicles(vehicle_codes)
         return items
+
+
+    def fetch_traccar_devices(self):
+        """ Fetch additional vehicle details from Traccar API's /devices endpoint """
+        response = requests.get(
+            f"{TRACCAR_API_URL}/devices",
+            auth=(TRACCAR_USER, TRACCAR_PASSWORD),
+            headers={"Authorization": f"Bearer {TRACCAR_API_KEY}"},
+        )
+
+        if response.status_code == 200:
+            devices = response.json()
+            return {str(device["id"]): device for device in devices}  # Map by deviceId
+        else:
+            print(f"Error fetching devices from Traccar: {response.status_code}")
+            return {}
 
     def fetch_traccar_data(self):
         """ Fetch the live vehicle data from Traccar API """
@@ -97,23 +121,18 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_vehicle(self, item) -> tuple[Vehicle, bool]:
         vehicle_code = str(item["deviceId"])
-        operator_id = item.get("operatorId")  # Adjust based on how Traccar returns operator info
+        fleet_number = item.get("fleetNumber")  # Get fleet number from /devices
+        operator_id = item.get("operatorId")
 
         if vehicle_code in self.vehicle_cache:
             vehicle = self.vehicle_cache[vehicle_code]
-            if vehicle.operator_id != operator_id:
-                vehicle = (
-                    self.vehicles.filter(
-                        Q(code__iexact=vehicle_code) | Q(fleet_code__iexact=vehicle_code),
-                        operator__in=self.operators,
-                    )
-                    .exclude(id=vehicle.id)
-                    .first()
-                )
-                if vehicle:
-                    self.vehicle_cache[vehicle_code] = vehicle
-            if vehicle:
-                return vehicle, False
+
+            # Update fleet number if missing
+            if fleet_number and vehicle.fleet_code != fleet_number:
+                vehicle.fleet_code = fleet_number
+                vehicle.save()
+
+            return vehicle, False
 
         if operator_id in self.operators:
             operator = self.operators[operator_id]
@@ -129,10 +148,11 @@ class Command(ImportLiveVehiclesCommand):
             operator=operator,
             source=self.source,
             code=vehicle_code,
-            fleet_code=vehicle_code,
+            fleet_code=fleet_number,  # Assign fleet number
         )
 
         return vehicle, True
+
 
     def get_journey(self, item, vehicle):
         departure_time = self.get_datetime(item)  # Use get_datetime for consistency
