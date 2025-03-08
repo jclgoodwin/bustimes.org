@@ -29,9 +29,9 @@ TRACCAR_API_KEY = "your_api_key"  # For authentication if needed, adjust accordi
 # }
 
 def parse_timestamp(timestamp):
-    """ Parse timestamp (assuming it is in milliseconds since epoch) """
+    """ Parse ISO 8601 timestamp string into a timezone-aware datetime """
     if timestamp:
-        return datetime.fromtimestamp(int(timestamp) / 1000, timezone.utc)
+        return datetime.fromisoformat(timestamp).astimezone(timezone.utc)
 
 def has_stop(stop):
     return Exists(
