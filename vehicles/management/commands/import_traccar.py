@@ -24,11 +24,13 @@ def to_milliseconds(timestamp):
 def fetch_traccar_data():
     response = requests.get(f"{TRACCAR_URL}/api/positions", auth=(TRACCAR_USER, TRACCAR_PASSWORD))
     if response.status_code == 200:
-        return response.json()
+        data = response.json()
+        print("Traccar Data:", data)  # Add this line
+        return data
     return []
 
 def transform_traccar_data(data):
-    return {
+    transformed = {
         "fn": data.get("deviceId", "Unknown"),
         "ut": to_milliseconds(data.get("fixTime", datetime.utcnow().timestamp())),
         "oc": "SDVN",
@@ -66,6 +68,8 @@ def transform_traccar_data(data):
         "jc": "False",
         "rg": "A"
     }
+    print("Transformed Data:", transformed)  # Added print statement
+    return transformed
 
 @app.route('/traccar', methods=['GET'])
 def receive_traccar_data():
