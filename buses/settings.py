@@ -27,8 +27,8 @@ TEST = "test" in sys.argv or "pytest" in sys.argv[0]
 DEBUG = bool(os.environ.get("DEBUG", False))
 DEBUG = False
 
-SERVER_EMAIL = "contact@bustimes.org"
-DEFAULT_FROM_EMAIL = "bustimes.org <contact@bustimes.org>"
+SERVER_EMAIL = "contact@gladetf.mrlift.xyz"
+DEFAULT_FROM_EMAIL = "gladetf.mrlift.xyz <contact@gladetf.mrlift.xyz>"
 
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "")
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
