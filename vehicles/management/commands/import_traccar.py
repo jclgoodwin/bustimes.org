@@ -79,7 +79,7 @@ class Command(ImportLiveVehiclesCommand):
             if self.previous_locations.get(key) != value:
                 # Merge position data with device attributes
                 device_data = traccar_devices.get(key, {})
-                item["fleet_code"] = device_data.get("attributes", {}).get("fleetNumber")  # Changed to fleet_code
+                item["fleet_code"] = device_data.get("attributes", {}).get("fleetNumber", "")  # Provide default fallback
                 item["name"] = device_data.get("name")  # Optional: Store device name
 
                 items.append(item)
@@ -121,7 +121,7 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_vehicle(self, item) -> tuple[Vehicle, bool]:
         vehicle_code = str(item["deviceId"])
-        fleet_code = item.get("fleet_code")  # Changed to fleet_code
+        fleet_code = item.get("fleet_code", "")  # Provide default fallback for fleet_code
         operator_id = item.get("operatorId")
 
         if vehicle_code in self.vehicle_cache:
@@ -148,7 +148,7 @@ class Command(ImportLiveVehiclesCommand):
             operator=operator,
             source=self.source,
             code=vehicle_code,
-            fleet_code=fleet_code,  # Assign fleet_code
+            fleet_code=fleet_code or "",  # Ensure fleet_code is not None
         )
 
         return vehicle, True
