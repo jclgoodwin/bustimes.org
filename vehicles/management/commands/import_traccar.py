@@ -1,6 +1,5 @@
-from datetime import datetime, timezone
-from flask import Flask, request, jsonify
 import requests
+from datetime import datetime, timezone
 
 from django.contrib.gis.geos import GEOSGeometry
 from django.db.models import Exists, OuterRef, Q
@@ -9,117 +8,162 @@ from busstops.models import Operator, Service, StopPoint
 from ...models import Vehicle, VehicleJourney, VehicleLocation
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
-app = Flask(__name__)
-TRACCAR_URL = "https://demo.traccar.org"
+
+# Traccar API login information
+TRACCAR_API_URL = "https://your-traccar-api-url.com/api"
 TRACCAR_USER = "your_username"
 TRACCAR_PASSWORD = "your_password"
+TRACCAR_API_KEY = "your_api_key"  # For authentication if needed, adjust according to Traccar's API
+
+# Sample data mappings (adjust based on the Traccar API response format)
+# Replace these mappings with actual data from Traccar's API.
+# Traccar returns data in JSON format, such as:
+# {
+#     "id": 1,
+#     "deviceId": 12345,
+#     "name": "Vehicle XYZ",
+#     "latitude": 50.7314606,
+#     "longitude": -3.7003877,
+#     "speed": 45.0,
+#     "heading": 66,
+#     "timestamp": 1599550016135
+# }
 
 def parse_timestamp(timestamp):
     if timestamp:
         return datetime.fromtimestamp(int(timestamp) / 1000, timezone.utc)
 
-def to_milliseconds(timestamp):
-    return int(timestamp * 1000)
 
-def fetch_traccar_data():
-    response = requests.get(f"{TRACCAR_URL}/api/positions", auth=(TRACCAR_USER, TRACCAR_PASSWORD))
-    if response.status_code == 200:
-        data = response.json()
-        print("Traccar Data:", data)  # Add this line
-        return data
-    return []
+def has_stop(stop):
+    return Exists(
+        StopPoint.objects.filter(service=OuterRef("pk"), locality__stoppoint=stop)
+    )
 
-def transform_traccar_data(data):
-    transformed = {
-        "fn": data.get("deviceId", "Unknown"),
-        "ut": to_milliseconds(data.get("fixTime", datetime.utcnow().timestamp())),
-        "oc": "SDVN",
-        "sn": "RED",
-        "dn": "INBOUND",
-        "sd": "XDARED0.I",
-        "so": "SCD",
-        "sr": "Honiton Road Park & Ride - Exeter, Paris Street",
-        "cd": "False",
-        "vc": "False",
-        "la": str(data.get("latitude", 0)),
-        "lo": str(data.get("longitude", 0)),
-        "hg": str(data.get("course", "0")),
-        "cg": "",
-        "dd": "City Centre Paris S",
-        "or": "1100DEC10843",
-        "on": "Honiton Road P&R",
-        "nr": "1100DEC10085",
-        "nn": "Sidwell Street",
-        "fr": "1100DEC10468",
-        "fs": "Paris Street",
-        "ao": "",
-        "eo": to_milliseconds(data.get("fixTime", datetime.utcnow().timestamp())),
-        "an": to_milliseconds(data.get("fixTime", datetime.utcnow().timestamp())),
-        "en": to_milliseconds(data.get("fixTime", datetime.utcnow().timestamp())),
-        "ax": to_milliseconds(data.get("fixTime", datetime.utcnow().timestamp())),
-        "ex": to_milliseconds(data.get("fixTime", datetime.utcnow().timestamp())),
-        "af": to_milliseconds(data.get("fixTime", datetime.utcnow().timestamp())),
-        "ef": to_milliseconds(data.get("fixTime", datetime.utcnow().timestamp())),
-        "ku": "",
-        "td": "7127",
-        "pr": "1100DEC10843",
-        "cs": "",
-        "ns": "",
-        "jc": "False",
-        "rg": "A"
-    }
-    print("Transformed Data:", transformed)  # Added print statement
-    return transformed
-
-@app.route('/traccar', methods=['GET'])
-def receive_traccar_data():
-    traccar_data = fetch_traccar_data()
-    transformed_data = [transform_traccar_data(item) for item in traccar_data]
-    for data in transformed_data:
-        process_stagecoach_data(data)
-    return jsonify({"status": "success", "transformed_data": transformed_data}), 200
 
 class Command(ImportLiveVehiclesCommand):
+
     source_name = "Traccar"
     previous_locations = {}
 
     def do_source(self):
         self.operators = Operator.objects.filter(
-            Q(parent="Stagecoach") | Q(noc__in=["SCLK", "MEGA"])
+            Q(parent="Traccar") | Q(noc__in=["TRK"])
         ).in_bulk()
         return super().do_source()
 
     @staticmethod
     def get_datetime(item):
-        return parse_timestamp(item["ut"])
+        return parse_timestamp(item["timestamp"])
 
     def prefetch_vehicles(self, vehicle_codes):
-        """Fetches vehicles matching the given codes and stores them in a cache."""
         vehicles = self.vehicles.filter(
             operator__in=self.operators, code__in=vehicle_codes
         )
         self.vehicle_cache = {vehicle.code: vehicle for vehicle in vehicles}
 
     def get_items(self):
-        print("Entering get_items")  # Add this line
-        super_items = super().get_items()
-        print("super().get_items() result:", super_items)
-        return# Temporarily return an empty list
+        items = []
+        vehicle_codes = []
+
+        # Fetch data from Traccar API
+        traccar_data = self.fetch_traccar_data()
+
+        # Build list of vehicles that have moved
+        for item in traccar_data:
+            key = item["deviceId"]
+            value = (item["timestamp"],)
+            if self.previous_locations.get(key) != value:
+                items.append(item)
+                vehicle_codes.append(key)
+                self.previous_locations[key] = value
+
+        self.prefetch_vehicles(vehicle_codes)
+        return items
+
+    def fetch_traccar_data(self):
+        """ Fetch the live vehicle data from Traccar API """
+        response = requests.get(
+            f"{TRACCAR_API_URL}/positions",
+            auth=(TRACCAR_USER, TRACCAR_PASSWORD),
+            headers={"Authorization": f"Bearer {TRACCAR_API_KEY}"},
+        )
+
+        if response.status_code == 200:
+            return response.json()  # Assuming JSON response
+        else:
+            print(f"Error fetching data from Traccar: {response.status_code}")
+            return []
+
+    def get_vehicle(self, item) -> tuple[Vehicle, bool]:
+        vehicle_code = str(item["deviceId"])
+        operator_id = item.get("operatorId")  # Adjust based on how Traccar returns operator info
+
+        if vehicle_code in self.vehicle_cache:
+            vehicle = self.vehicle_cache[vehicle_code]
+            if vehicle.operator_id != operator_id:
+                vehicle = (
+                    self.vehicles.filter(
+                        Q(code__iexact=vehicle_code) | Q(fleet_code__iexact=vehicle_code),
+                        operator__in=self.operators,
+                    )
+                    .exclude(id=vehicle.id)
+                    .first()
+                )
+                if vehicle:
+                    self.vehicle_cache[vehicle_code] = vehicle
+            if vehicle:
+                return vehicle, False
+
+        if operator_id in self.operators:
+            operator = self.operators[operator_id]
+        else:
+            operator = None
+
+        vehicle = Vehicle.objects.filter(operator=None, code__iexact=vehicle_code).first()
+
+        if vehicle or item.get("heading") == 0:
+            return vehicle, False
+
+        vehicle = Vehicle.objects.create(
+            operator=operator,
+            source=self.source,
+            code=vehicle_code,
+            fleet_code=vehicle_code,
+        )
+
+        return vehicle, True
+
+    def get_journey(self, item, vehicle):
+        departure_time = parse_timestamp(item["timestamp"])
+
+        journey = VehicleJourney(
+            datetime=departure_time,
+            destination=item.get("destination", ""),
+            route_name=item.get("serviceNumber", ""),
+        )
+
+        if code := item.get("tripId", ""):
+            journey.code = code
+
+        if not journey.service_id and journey.route_name:
+            services = Service.objects.filter(current=True, operator__in=self.operators)
+            stop = item.get("originStopReference")
+
+            if stop:
+                services = services.filter(has_stop(stop))
+
+            if item.get("finalStopReference"):
+                services = services.filter(has_stop(item["finalStopReference"]))
+
+            journey.service = services.filter(
+                Q(route__line_name__iexact=journey.route_name)
+                | Q(line_name__iexact=journey.route_name)
+            ).first()
+
+        return journey
 
     def create_vehicle_location(self, item):
         return VehicleLocation(
-            latlong=GEOSGeometry(f"POINT({item['lo']} {item['la']})"),
-            heading=item.get("hg"),
+            latlong=GEOSGeometry(f"POINT({item['longitude']} {item['latitude']})"),
+            heading=item.get("heading"),
         )
-
-def process_stagecoach_data(data):
-    cmd = Command()
-    cmd.do_source()  # Initialize command
-    items = cmd.get_items()
-    
-    for item in items:
-        cmd.create_vehicle_location(item)
-    return True
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5051, debug=True)
