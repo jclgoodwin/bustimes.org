@@ -92,13 +92,18 @@ class Command(ImportLiveVehiclesCommand):
     def get_items(self):
         items = []
         vehicle_codes = []
-        for item in super().get_items()["services"]:
+        
+        traccar_data = fetch_traccar_data()
+        transformed_data = [transform_traccar_data(item) for item in traccar_data]
+
+        for item in transformed_data:
             key = item["fn"]
             value = (item["ut"],)
             if self.previous_locations.get(key) != value:
                 items.append(item)
                 vehicle_codes.append(key)
                 self.previous_locations[key] = value
+
         self.prefetch_vehicles(vehicle_codes)
         return items
 
@@ -110,8 +115,12 @@ class Command(ImportLiveVehiclesCommand):
 
 def process_stagecoach_data(data):
     cmd = Command()
-    cmd.handle()  # Runs the ImportLiveVehiclesCommand
+    cmd.do_source()  # Initialize command
+    items = cmd.get_items()
+    
+    for item in items:
+        cmd.create_vehicle_location(item)
     return True
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8082, debug=True)
+    app.run(host='0.0.0.0', port=5051, debug=True)
