@@ -1,6 +1,6 @@
 {% extends 'page.html' %}
 
-{% block title %}Map – bustimes.org{% endblock %}
+{% block title %}map – gladetf.mrlift.xyz{% endblock %}
 
 {% block head %}
     <meta property="og:title" content="Map – bustimes.org">
@@ -10,7 +10,7 @@
 
 {% block header %}
    <header class="site-header">
-        <a href="/" class="site-name">bustimes.org</a>
+        <a href="/" class="site-name">gladetf.mrlift.xyz</a>
         <ul>
             <li><a href="/map{% if object.latlong %}#16/{{ object.latlong.y|floatformat:4 }}/{{ object.latlong.x|floatformat:4 }}{% endif %}">Map</a></li>
         </ul>
@@ -28,7 +28,7 @@
 
 {% block content %}
     <div id="hugemap">
-        <noscript class="sorry">Sorry, the map requires JavaScript. You can still use most of the rest of the website.</noscript>
+        <noscript class="sorry">oops, the map requires JavaScript. you can still use the majority of the website.</noscript>
     </div>
 {% endblock content %}
 
