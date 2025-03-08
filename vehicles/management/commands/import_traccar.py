@@ -11,7 +11,7 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 # Traccar API login information
 TRACCAR_API_URL = "https://your-traccar-api-url.com/api"
-TRACCAR_USER = "your_username"
+TRACCAR_USER = "your_username" # To avoid conflicts, use your email you signed up with
 TRACCAR_PASSWORD = "your_password"
 TRACCAR_API_KEY = "your_api_key"  # For authentication if needed, adjust according to Traccar's API
 
