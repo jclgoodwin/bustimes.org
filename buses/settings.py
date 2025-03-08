@@ -15,7 +15,7 @@ from sentry_sdk.integrations.redis import RedisIntegration
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ["SECRET_KEY"]
 ALLOWED_HOSTS = os.environ.get(
-    "ALLOWED_HOSTS", "[::1] 127.0.0.1 localhost 16.local gladetf.mrlift.xyz 192.1.168.150"
+    "ALLOWED_HOSTS", "[::1] 127.0.0.1 localhost 16.local gladetf.mrlift.xyz 192.168.1.150"
 ).split()
 
 CSRF_TRUSTED_ORIGINS = os.environ.get(
@@ -25,7 +25,7 @@ CSRF_TRUSTED_ORIGINS = os.environ.get(
 
 TEST = "test" in sys.argv or "pytest" in sys.argv[0]
 DEBUG = bool(os.environ.get("DEBUG", False))
-DEBUG = True
+DEBUG = False
 
 SERVER_EMAIL = "contact@gladetf.mrlift.xyz"
 DEFAULT_FROM_EMAIL = "gladetf.mrlift.xyz <contact@gladetf.mrlift.xyz>"
