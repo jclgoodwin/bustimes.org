@@ -10,6 +10,9 @@ from ...models import Vehicle, VehicleJourney, VehicleLocation
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 app = Flask(__name__)
+TRACCAR_URL = "https://demo.traccar.org"
+TRACCAR_USER = "your_username"
+TRACCAR_PASSWORD = "your_password"
 
 def parse_timestamp(timestamp):
     if timestamp:
@@ -18,10 +21,16 @@ def parse_timestamp(timestamp):
 def to_milliseconds(timestamp):
     return int(timestamp * 1000)
 
+def fetch_traccar_data():
+    response = requests.get(f"{TRACCAR_URL}/api/positions", auth=(TRACCAR_USER, TRACCAR_PASSWORD))
+    if response.status_code == 200:
+        return response.json()
+    return []
+
 def transform_traccar_data(data):
     return {
-        "fn": data.get("device", "Unknown"),
-        "ut": to_milliseconds(data.get("timestamp", datetime.utcnow().timestamp())),
+        "fn": data.get("deviceId", "Unknown"),
+        "ut": to_milliseconds(data.get("fixTime", datetime.utcnow().timestamp())),
         "oc": "SDVN",
         "sn": "RED",
         "dn": "INBOUND",
@@ -30,8 +39,8 @@ def transform_traccar_data(data):
         "sr": "Honiton Road Park & Ride - Exeter, Paris Street",
         "cd": "False",
         "vc": "False",
-        "la": str(data.get("lat", 0)),
-        "lo": str(data.get("lon", 0)),
+        "la": str(data.get("latitude", 0)),
+        "lo": str(data.get("longitude", 0)),
         "hg": str(data.get("course", "0")),
         "cg": "",
         "dd": "City Centre Paris S",
@@ -42,13 +51,13 @@ def transform_traccar_data(data):
         "fr": "1100DEC10468",
         "fs": "Paris Street",
         "ao": "",
-        "eo": to_milliseconds(data.get("timestamp", datetime.utcnow().timestamp())),
-        "an": to_milliseconds(data.get("timestamp", datetime.utcnow().timestamp())),
-        "en": to_milliseconds(data.get("timestamp", datetime.utcnow().timestamp())),
-        "ax": to_milliseconds(data.get("timestamp", datetime.utcnow().timestamp())),
-        "ex": to_milliseconds(data.get("timestamp", datetime.utcnow().timestamp())),
-        "af": to_milliseconds(data.get("timestamp", datetime.utcnow().timestamp())),
-        "ef": to_milliseconds(data.get("timestamp", datetime.utcnow().timestamp())),
+        "eo": to_milliseconds(data.get("fixTime", datetime.utcnow().timestamp())),
+        "an": to_milliseconds(data.get("fixTime", datetime.utcnow().timestamp())),
+        "en": to_milliseconds(data.get("fixTime", datetime.utcnow().timestamp())),
+        "ax": to_milliseconds(data.get("fixTime", datetime.utcnow().timestamp())),
+        "ex": to_milliseconds(data.get("fixTime", datetime.utcnow().timestamp())),
+        "af": to_milliseconds(data.get("fixTime", datetime.utcnow().timestamp())),
+        "ef": to_milliseconds(data.get("fixTime", datetime.utcnow().timestamp())),
         "ku": "",
         "td": "7127",
         "pr": "1100DEC10843",
@@ -58,15 +67,16 @@ def transform_traccar_data(data):
         "rg": "A"
     }
 
-@app.route('/traccar', methods=['POST'])
+@app.route('/traccar', methods=['GET'])
 def receive_traccar_data():
-    data = request.json
-    transformed_data = transform_traccar_data(data)
-    process_stagecoach_data(transformed_data)
+    traccar_data = fetch_traccar_data()
+    transformed_data = [transform_traccar_data(item) for item in traccar_data]
+    for data in transformed_data:
+        process_stagecoach_data(data)
     return jsonify({"status": "success", "transformed_data": transformed_data}), 200
 
 class Command(ImportLiveVehiclesCommand):
-    source_name = "midland"
+    source_name = "Traccar"
     previous_locations = {}
 
     def do_source(self):
@@ -104,4 +114,4 @@ def process_stagecoach_data(data):
     return True
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5055, debug=True)
+    app.run(host='0.0.0.0', port=8082, debug=True)
