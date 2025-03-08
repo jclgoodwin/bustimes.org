@@ -25,7 +25,7 @@ CSRF_TRUSTED_ORIGINS = os.environ.get(
 
 TEST = "test" in sys.argv or "pytest" in sys.argv[0]
 DEBUG = bool(os.environ.get("DEBUG", False))
-DEBUG = "False"
+DEBUG = False
 
 SERVER_EMAIL = "contact@gladetf.mrlift.xyz"
 DEFAULT_FROM_EMAIL = "gladetf.mrlift.xyz <contact@gladetf.mrlift.xyz>"
