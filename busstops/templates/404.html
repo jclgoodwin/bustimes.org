@@ -8,12 +8,12 @@
 
 {% block content %}
 
-    <h1>Page not found</h1>
+    <h1>oops!</h1>
 
     {% if exception.args %}
         <p>{{ exception }}</p>
     {% else %}
-        <p>oops! you took a wrong turn, and this page doesn't exist :P</p>
+        <p>you took a wrong turn, and this page doesn't exist :P</p>
     {% endif %}
 
     <form method="get" action="/search" class="search">
