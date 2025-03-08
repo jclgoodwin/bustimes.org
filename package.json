@@ -67,7 +67,7 @@
   },
   "scripts": {
     "watch": "API_ROOT=/ parcel watch",
-    "build": "API_ROOT=https://gladetf.mrlift.xyz parcel build",
+    "build": "API_ROOT=https://gladetf.mrlift.xyz/ parcel build",
     "lint": "tsc -noEmit",
     "test": "TZ=UTC jest"
   }
