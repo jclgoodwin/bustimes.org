@@ -89,23 +89,26 @@ class Command(ImportLiveVehiclesCommand):
     def get_datetime(item):
         return parse_timestamp(item["ut"])
 
+    def prefetch_vehicles(self, vehicle_codes):
+        """Fetches vehicles matching the given codes and stores them in a cache."""
+        vehicles = self.vehicles.filter(
+            operator__in=self.operators, code__in=vehicle_codes
+        )
+        self.vehicle_cache = {vehicle.code: vehicle for vehicle in vehicles}
+
     def get_items(self):
         items = []
         vehicle_codes = []
-        
-        traccar_data = fetch_traccar_data()
-        transformed_data = [transform_traccar_data(item) for item in traccar_data]
-
-        for item in transformed_data:
+        for item in super().get_items()["services"]:
             key = item["fn"]
             value = (item["ut"],)
             if self.previous_locations.get(key) != value:
                 items.append(item)
                 vehicle_codes.append(key)
                 self.previous_locations[key] = value
-
-        self.prefetch_vehicles(vehicle_codes)
+        self.prefetch_vehicles(vehicle_codes)  # Ensure this works now
         return items
+
 
     def create_vehicle_location(self, item):
         return VehicleLocation(
