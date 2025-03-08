@@ -71,7 +71,7 @@ class Command(ImportLiveVehiclesCommand):
         # Build list of vehicles that have moved
         for item in traccar_data:
             key = item["deviceId"]
-            value = (item["timestamp"],)
+            value = (item["deviceTime"],)
             if self.previous_locations.get(key) != value:
                 items.append(item)
                 vehicle_codes.append(key)
