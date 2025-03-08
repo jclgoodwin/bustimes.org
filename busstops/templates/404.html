@@ -1,6 +1,6 @@
 {% extends 'page.html' %}
 
-{% block title %}Page not found – bustimes.org{% endblock %}
+{% block title %}Page not found – gladetf.mrlift.xyz{% endblock %}
 
 {% block bodyclass %}narrow{% endblock %}
 
@@ -13,7 +13,7 @@
     {% if exception.args %}
         <p>{{ exception }}</p>
     {% else %}
-        <p>Sorry, this page doesn’t exist. Try searching?</p>
+        <p>oops! you took a wrong turn, and this page doesn't exist :P</p>
     {% endif %}
 
     <form method="get" action="/search" class="search">
