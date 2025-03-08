@@ -41,9 +41,6 @@ def has_stop(stop):
 
 class Command(ImportLiveVehiclesCommand):
 
-    source_name = "Traccar"
-    previous_locations = {}
-
     def do_source(self):
         self.operators = Operator.objects.filter(
             Q(parent="midland Group") | Q(noc__in=["MDEM"])
