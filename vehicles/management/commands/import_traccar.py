@@ -81,17 +81,17 @@ class Command(ImportLiveVehiclesCommand):
             value = (self.get_datetime(item),)
 
             if self.previous_locations.get(key) != value:
-                # Merge position data with device attributes
                 device_data = traccar_devices.get(key, {})
                 attributes = device_data.get("attributes", {})
 
+                # Extract necessary fields
                 item["fleet_code"] = attributes.get("fleetNumber")
                 item["operatorId"] = attributes.get("operatorId")
-                item["route_name"] = attributes.get("serviceNumber")  # Extract route name
-                item["destination"] = attributes.get("destination")  # Extract destination
+                item["route_name"] = attributes.get("serviceNumber", "").strip()  # Ensure it's a string
+                item["destination"] = attributes.get("destination", "").strip()  # Ensure it's a string
                 item["name"] = device_data.get("name")
 
-                print(f"Vehicle {key} -> Route: {item['route_name']}, Destination: {item['destination']}")  # Debugging
+                print(f"🚍 Vehicle {key} -> Route: {item['route_name']}, Destination: {item['destination']}")  # Debugging
 
                 items.append(item)
                 vehicle_codes.append(key)
@@ -164,22 +164,33 @@ class Command(ImportLiveVehiclesCommand):
             fleet_code=fleet_code,
         )
 
+        # 🚀 Get the journey for this vehicle
+        journey = self.get_journey(item, vehicle)
+
+        # 🔗 Link the journey to the vehicle and save
+        vehicle.current_journey = journey
+        vehicle.save()
+
+        print(f"🚀 Vehicle {vehicle.code} assigned to Journey {journey.route_name} -> {journey.destination}")
+
         return vehicle, True
 
 
     def get_journey(self, item, vehicle):
-        departure_time = self.get_datetime(item)  # Ensure datetime is parsed
+        departure_time = self.get_datetime(item)
 
+        # Create journey object
         journey = VehicleJourney(
             datetime=departure_time,
-            destination=item.get("destination", ""),  # Set destination
-            route_name=item.get("serviceNumber", ""),  # Set route name
+            destination=item.get("destination", ""),  # Extract destination
+            route_name=item.get("route_name", ""),  # Extract route name
         )
 
+        # Assign a trip ID if available
         if code := item.get("tripId", ""):
-            journey.code = code  # Assign trip ID if available
+            journey.code = code
 
-        # Attempt to match the journey with a known service
+        # Attempt to match with an existing service
         if not journey.service_id and journey.route_name:
             services = Service.objects.filter(current=True, operator__in=self.operators)
             stop = item.get("originStopReference")
@@ -190,13 +201,14 @@ class Command(ImportLiveVehiclesCommand):
             if item.get("finalStopReference"):
                 services = services.filter(has_stop(item["finalStopReference"]))
 
-            # Match the service by route name
             journey.service = services.filter(
-                Q(route__line_name__iexact=journey.route_name)
-                | Q(line_name__iexact=journey.route_name)
+                Q(route__line_name__iexact=journey.route_name) | Q(line_name__iexact=journey.route_name)
             ).first()
 
-        print(f"Journey created: Route {journey.route_name}, Destination {journey.destination}")  # Debugging
+        # 🚀 Ensure we actually save the journey
+        journey.save()
+
+        print(f"✅ Journey saved: Route {journey.route_name}, Destination {journey.destination}")
 
         return journey
 
