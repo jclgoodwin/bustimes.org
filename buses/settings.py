@@ -53,7 +53,6 @@ INSTALLED_APPS = [
     "django.contrib.sitemaps",
     "django.contrib.humanize",
     "bustimes",
-    "busstops",
     "disruptions",
     "fares",
     "vehicles",

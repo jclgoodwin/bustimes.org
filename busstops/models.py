@@ -1,4 +1,4 @@
-# Model definitions
+"Model definitions"
 
 import datetime
 import logging
@@ -20,14 +20,10 @@ from django.urls import reverse
 from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
-from django.apps import apps  # Import for delayed model loading
 
 from bustimes.models import Route, StopTime, TimetableDataSource, Trip
 from bustimes.timetables import Timetable, get_stop_usages
 from bustimes.utils import get_descriptions
-
-# For delayed model import to avoid circular import issues
-Operator = apps.get_model('busstops', 'Operator')  # Dynamically loading the Operator model
 
 TIMING_STATUS_CHOICES = (
     ("PPT", "Principal point"),
@@ -36,6 +32,7 @@ TIMING_STATUS_CHOICES = (
     ("OTH", "Other bus stop"),
 )
 SERVICE_ORDER_REGEX = re.compile(r"(\D*)(\d*)(\D*)")
+
 
 class SearchMixin:
     def update_search_vector(self):
