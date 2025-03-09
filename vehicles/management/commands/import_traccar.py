@@ -196,6 +196,7 @@ class Command(ImportLiveVehiclesCommand):
             datetime=departure_time,
             destination=destination,  # Extracted destination
             route_name=route_name,  # Extracted route name
+            source=self.source  # Ensure source is correctly assigned
         )
 
         # Assign a trip ID if available
