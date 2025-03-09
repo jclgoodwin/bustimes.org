@@ -255,7 +255,6 @@ class Vehicle(models.Model):
     name = models.CharField(max_length=255, blank=True)
     branding = models.CharField(max_length=255, blank=True)
     notes = models.CharField(max_length=255, blank=True)
-    spherical = models.CharField(max_length=255 blank=True)
     latest_journey = models.OneToOneField(
         "VehicleJourney",
         models.SET_NULL,
