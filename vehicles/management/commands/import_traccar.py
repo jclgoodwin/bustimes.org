@@ -184,11 +184,12 @@ class Command(ImportLiveVehiclesCommand):
     def get_journey(self, item, vehicle):
         departure_time = self.get_datetime(item)
 
+        # Fetch route details from item (either service number or route name)
         route_name = item.get("route_name", item.get("serviceNumber", ""))
         destination = item.get("destination", "")
 
         # Debugging: Check the route_name and destination before proceeding
-        print(f"Debugging Journey: Route: {route_name}, Destination: {destination}")  # This is your debug print
+        print(f"Debugging Journey: Route: {route_name}, Destination: {destination}")
 
         # Debugging: Print the operators to understand the structure
         print(f"Operators: {self.operators}")
@@ -200,7 +201,6 @@ class Command(ImportLiveVehiclesCommand):
             print(f"Operator details: {operator}")  # Debug print to check the operator object
             operator_id = operator.id if hasattr(operator, 'id') else None
         else:
-            # If self.operators is not in expected format, handle this case
             print("Error: No valid operators found")
             return None  # Return None or handle the error appropriately
 
@@ -218,10 +218,10 @@ class Command(ImportLiveVehiclesCommand):
         ).first()
 
         if journey:
-            # Journey exists, update only the destination and other mutable fields (not datetime)
+            # Journey exists: Update only the destination (not datetime)
             journey.destination = destination
-            # Update any other fields as needed, but DO NOT update datetime
             print(f"🚍 Journey updated (no datetime change): Route {journey.route_name}, Destination {journey.destination}")
+            journey.save()
         else:
             # Journey does not exist, create a new one with the initial departure_time
             journey = VehicleJourney(
@@ -233,9 +233,7 @@ class Command(ImportLiveVehiclesCommand):
                 code=item.get("tripId", route_name)
             )
             print(f"✅ Journey created: Route {journey.route_name}, Destination {journey.destination}")
-
-        # Save the journey (whether new or updated)
-        journey.save()
+            journey.save()
 
         return journey
 
