@@ -180,52 +180,44 @@ class Command(ImportLiveVehiclesCommand):
 
         return vehicle, True
 
-
     def get_journey(self, item, vehicle):
         departure_time = self.get_datetime(item)
 
-        # Extract route and destination from the item data
         route_name = item.get("route_name", item.get("serviceNumber", ""))
         destination = item.get("destination", "")
 
         # Debugging: Check the route_name and destination before proceeding
         print(f"Debugging Journey: Route: {route_name}, Destination: {destination}")  # This is your debug print
 
-        # Create journey object
-        journey = VehicleJourney(
-            datetime=departure_time,
-            destination=destination,  # Extracted destination
-            route_name=route_name,  # Extracted route name
-            source=self.source  # Ensure source is correctly assigned
-        )
+        # Attempt to get the existing journey by route_name, operator, and code
+        journey = VehicleJourney.objects.filter(
+            route_name=route_name,
+            operator_id=self.operators.first().id,  # Assuming you are using 'MDEM' operator
+            code=item.get("tripId", route_name)  # Or route_name if tripId is not available
+        ).first()
 
-        # Assign a trip ID if available
-        if code := item.get("tripId", ""):
-            journey.code = code
+        # If journey exists, update it; otherwise, create a new one
+        if journey:
+            journey.datetime = departure_time
+            journey.destination = destination
+            # Update other relevant fields as needed
+        else:
+            # Create a new journey if it doesn't exist
+            journey = VehicleJourney(
+                datetime=departure_time,
+                destination=destination,
+                route_name=route_name,
+                source=self.source,  # Ensure source is assigned
+                operator_id=self.operators.first().id,  # Make sure operator is correctly set
+                code=item.get("tripId", route_name)
+            )
 
-        # Attempt to match with an existing service
-        if not journey.service_id and route_name:
-            services = Service.objects.filter(current=True, operator__in=self.operators)
-            stop = item.get("originStopReference")
-
-            if stop:
-                services = services.filter(has_stop(stop))
-
-            if item.get("finalStopReference"):
-                services = services.filter(has_stop(item["finalStopReference"]))
-
-            # Match route with service
-            journey.service = services.filter(
-                Q(route__line_name__iexact=route_name) | Q(line_name__iexact=route_name)
-            ).first()
-
-        # 🚀 Ensure we actually save the journey
+        # Save the journey
         journey.save()
 
         print(f"✅ Journey saved: Route {journey.route_name}, Destination {journey.destination}")
 
         return journey
-
 
     def create_vehicle_location(self, item):
         return VehicleLocation(
