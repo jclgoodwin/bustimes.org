@@ -2,7 +2,9 @@ import requests
 from datetime import datetime, timezone
 
 from django.contrib.gis.geos import GEOSGeometry
+from django.db import models
 from django.db.models import Exists, OuterRef, Q
+from django.utils import timezone
 
 from busstops.models import Operator, Service, StopPoint
 from ...models import Vehicle, VehicleJourney, VehicleLocation
@@ -11,7 +13,7 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 # Traccar API login information
 TRACCAR_API_URL = "https://your-traccar-api-url.com/api"
-TRACCAR_USER = "your_username" # To avoid conflicts, use your email you signed up with
+TRACCAR_USER = "your_username"  # To avoid conflicts, use your email you signed up with
 TRACCAR_PASSWORD = "your_password"
 TRACCAR_API_KEY = "your_api_key"  # For authentication if needed, adjust according to Traccar's API
 
@@ -39,6 +41,30 @@ def has_stop(stop):
     )
 
 
+# Model Definitions (ensure these are in models.py of your app)
+class Operator(models.Model):
+    name = models.CharField(max_length=255)
+    noc = models.CharField(max_length=3, unique=True)
+
+
+class Vehicle(models.Model):
+    code = models.CharField(max_length=255, unique=True)
+    operator = models.ForeignKey(Operator, on_delete=models.SET_NULL, null=True)
+    fleet_code = models.CharField(max_length=255, null=True, blank=True)
+
+
+class VehicleJourney(models.Model):
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
+    operator = models.ForeignKey(Operator, on_delete=models.SET_NULL, null=True)
+    route_name = models.CharField(max_length=255)
+    destination = models.CharField(max_length=255)
+    datetime = models.DateTimeField(default=timezone.now)
+    code = models.CharField(max_length=255, unique=True)  # This can be a trip ID or something else
+
+    def __str__(self):
+        return f"{self.route_name} -> {self.destination} at {self.datetime}"
+
+
 class Command(ImportLiveVehiclesCommand):
     source_name = "Traccar"
     previous_locations = {}
@@ -55,7 +81,6 @@ class Command(ImportLiveVehiclesCommand):
         print(f"Operators loaded: {self.operators.keys()}")  # Debugging print
 
         return super().do_source()
-
 
     @staticmethod
     def get_datetime(item):
@@ -119,7 +144,6 @@ class Command(ImportLiveVehiclesCommand):
         else:
             print(f"Error fetching devices from Traccar: {response.status_code}")
             return {}
-        
 
     def fetch_traccar_data(self):
         """ Fetch the live vehicle data from Traccar API """
@@ -182,7 +206,6 @@ class Command(ImportLiveVehiclesCommand):
 
         return vehicle, True
 
-
     def get_journey(self, item, vehicle):
         # Safely handle 'operatorId' to avoid the AttributeError when it's None
         operator_id = item.get("operatorId", "").strip() if item.get("operatorId") else None
@@ -218,21 +241,15 @@ class Command(ImportLiveVehiclesCommand):
 
             # Create a new journey
             journey = VehicleJourney(
-                datetime=departure_time,  # Keep the same time
-                destination=destination,
+                datetime=departure_time,
                 route_name=route_name,
-                source=self.source,
-                operator=operator,  # Assign operator here
-                code=item.get("tripId", route_name)
+                destination=destination,
+                operator=operator,
+                vehicle=vehicle,
+                code=item.get("tripId", route_name),  # Ensure tripId or route_name
             )
-            print(f"Creating new journey: Route {journey.route_name}, Destination {journey.destination}")
             journey.save()
 
+            print(f"New journey created: {journey.route_name} -> {journey.destination}")
+
         return journey
-
-
-    def create_vehicle_location(self, item):
-        return VehicleLocation(
-            latlong=GEOSGeometry(f"POINT({item['longitude']} {item['latitude']})"),
-            heading=item.get("heading"),
-        )
