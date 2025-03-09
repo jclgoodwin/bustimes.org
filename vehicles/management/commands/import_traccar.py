@@ -231,7 +231,6 @@ class Command(ImportLiveVehiclesCommand):
                     route_name=route_name,
                     source=self.source,
                     vehicle=vehicle,  # Associate the vehicle
-                    operator=operator,  # Assign operator here
                     code=item.get("tripId", route_name)
                 )
                 print(f"Creating new journey: Route {journey.route_name}, Destination {journey.destination}")
@@ -256,7 +255,6 @@ class Command(ImportLiveVehiclesCommand):
                 route_name=route_name,
                 source=self.source,
                 vehicle=vehicle,  # Associate the vehicle which has the operator
-                operator=operator,  # Assign operator here
                 code=item.get("tripId", route_name)
             )
             print(f"Creating new journey: Route {journey.route_name}, Destination {journey.destination}")
