@@ -25,27 +25,45 @@ class Command(ImportLiveVehiclesCommand):
             self.operators = {}
 
     def get_items(self):
-        return super().get_items()["vehicles"]  # Adjusted for /_ajax/vehicles/operator_fleet
+        return super().get_items()["features"]
 
     def get_operator(self, item):
         if len(self.operators) == 1:
             return list(self.operators.values())[0]
-        operator = item.get("operator_id")  # Adjusted to match new structure
-        return self.operators.get(operator, None)
+        operator = item["_embedded"]["transmodel:line"]["href"].split("/")[3]
+        try:
+            operator = self.operators[operator]
+        except KeyError:
+            if len(operator) != 4:
+                return None
+        return operator
 
     def get_vehicle(self, item):
-        code = item["vehicle_id"]  # Adjusted for new format
+        code = item["properties"]["vehicle"]
+
+        if "tenant" in self.source.url and "_" in code:
+            parts = code.split("_", 1)
+            if parts[0].islower():
+                code = parts[1]
+
         operator = self.get_operator(item)
         if not operator:
             return None, None
 
+        if operator == "MCGL" and (len(code) >= 7 or len(code) >= 5 and code.isdigit()):
+            # Borders Buses or First vehicles
+            print(code)
+            return None, None
+
         defaults = {"source": self.source, "operator_id": operator, "code": code}
 
-        if "meta" in item:
-            if "number_plate" in item["meta"]:
-                defaults["reg"] = item["meta"]["number_plate"]
+        if "meta" in item["properties"]:
+            if "number_plate" in item["properties"]["meta"]:
+                defaults["reg"] = item["properties"]["meta"]["number_plate"]
 
-        if code.isdigit():
+        if len(code) > 4 and code[0].isalpha() and code[1] == "_":  # McGill
+            defaults["fleet_code"] = code.replace("_", " ")
+        elif code.isdigit():
             defaults["fleet_code"] = code
 
         condition = Q(operator__in=self.operators.values()) | Q(operator=operator)
@@ -66,9 +84,9 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_journey(self, item, vehicle):
         journey = VehicleJourney(
-            route_name=item["route_name"],
-            direction=item.get("direction", "")[:8],
-            destination=item.get("destination", ""),
+            route_name=item["properties"]["line"],
+            direction=item["properties"]["direction"][:8],
+            destination=item["properties"].get("destination", ""),
         )
 
         operator = self.get_operator(item)
@@ -88,7 +106,7 @@ class Command(ImportLiveVehiclesCommand):
 
             try:
                 journey.service = self.get_service(
-                    services, Point(item["location"]["coordinates"])
+                    services, Point(item["geometry"]["coordinates"])
                 )
             except Service.DoesNotExist:
                 pass
@@ -99,6 +117,9 @@ class Command(ImportLiveVehiclesCommand):
 
     def create_vehicle_location(self, item):
         return VehicleLocation(
-            latlong=Point(item["location"]["coordinates"]),
-            heading=item.get("bearing"),
+            latlong=Point(item["geometry"]["coordinates"]),
+            heading=item["properties"].get("bearing"),
         )
+
+    def get_items(self):
+        return super().get_items()["_ajax"]["vehicles"]
