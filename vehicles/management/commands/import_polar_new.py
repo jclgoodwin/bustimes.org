@@ -23,7 +23,8 @@ class Command(ImportLiveVehiclesCommand):
             self.operators = self.source.settings["operators"]
         else:
             self.operators = {
-                "CT4N Ltd": "NOCT"
+                "CT4N Ltd": "NOCT",
+                "McGill's Bus Service Ltd": "MCGL"
             }
 
     def get_items(self):
