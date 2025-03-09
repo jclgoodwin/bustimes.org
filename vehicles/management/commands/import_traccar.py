@@ -193,6 +193,7 @@ class Command(ImportLiveVehiclesCommand):
             vehicle = Vehicle.objects.get(code=vehicle_code, operator=operator)
             return vehicle, False
 
+
     def get_journey(self, item, vehicle):
         # Safely handle 'operatorId' to avoid the AttributeError when it's None
         operator_id = item.get("operatorId", "").strip() if item.get("operatorId") else None
@@ -216,10 +217,14 @@ class Command(ImportLiveVehiclesCommand):
         ).first()
 
         if journey:
-            # Existing journey found, update destination, but don't change the time
+            # Existing journey found, update destination, but don't change the time or route_name
             print(f"Found existing journey: {journey.route_name} -> {journey.destination}")
-            journey.destination = destination
-            journey.save()
+            
+            # Only update destination if it's changed
+            if journey.destination != destination:
+                journey.destination = destination
+                journey.save()
+
         else:
             # No existing journey, create a new one
             if not operator_id:  # If operator_id is missing, log and return None
