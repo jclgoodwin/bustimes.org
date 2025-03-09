@@ -193,19 +193,21 @@ class Command(ImportLiveVehiclesCommand):
         # Debugging: Print the operators to understand the structure
         print(f"Operators: {self.operators}")
 
-        # Accessing the operator's ID, making sure it's an Operator object
-        if isinstance(self.operators, list) and len(self.operators) > 0:
-            # Access the first operator's id (assuming it's a list of Operator objects)
-            operator_id = self.operators[0].id
-        elif isinstance(self.operators, dict) and len(self.operators) > 0:
-            # Access the first operator's id in the dictionary (assuming it stores Operator objects)
-            operator_id = list(self.operators.values())[0].id
-        elif hasattr(self.operators, 'id'):
-            # If self.operators is a single Operator object, use its id directly
-            operator_id = self.operators.id
+        # Accessing the operator's ID, handling different possible structures
+        if isinstance(self.operators, dict) and len(self.operators) > 0:
+            # Access the first operator's ID (check if the value is a model instance with 'id')
+            operator = list(self.operators.values())[0]
+            print(f"Operator details: {operator}")  # Debug print to check the operator object
+            operator_id = operator.id if hasattr(operator, 'id') else None
         else:
-            print("Error: No operators found")
-            return None  # Handle the case when there are no operators
+            # If self.operators is not in expected format, handle this case
+            print("Error: No valid operators found")
+            return None  # Return None or handle the error appropriately
+
+        # If no operator_id found, raise an exception or handle the error
+        if not operator_id:
+            print("Error: Could not find a valid operator ID")
+            return None  # Handle as appropriate (raise error, skip, etc.)
 
         # Attempt to get the existing journey by route_name, operator, and code
         # You may need to change 'code' or 'route_name' based on your actual field mapping
