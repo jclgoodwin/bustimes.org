@@ -180,6 +180,7 @@ class Command(ImportLiveVehiclesCommand):
 
         return vehicle, True
 
+
     def get_journey(self, item, vehicle):
         departure_time = self.get_datetime(item)
 
@@ -199,6 +200,9 @@ class Command(ImportLiveVehiclesCommand):
         elif isinstance(self.operators, dict) and len(self.operators) > 0:
             # Access the first operator's id in the dictionary (assuming it stores Operator objects)
             operator_id = list(self.operators.values())[0].id
+        elif hasattr(self.operators, 'id'):
+            # If self.operators is a single Operator object, use its id directly
+            operator_id = self.operators.id
         else:
             print("Error: No operators found")
             return None  # Handle the case when there are no operators
@@ -212,15 +216,14 @@ class Command(ImportLiveVehiclesCommand):
         ).first()
 
         if journey:
-            # Journey exists, update it
-            journey.datetime = departure_time
+            # Journey exists, update only the destination and other mutable fields (not datetime)
             journey.destination = destination
-            # Update any other fields as needed
-            print(f"🚍 Journey updated: Route {journey.route_name}, Destination {journey.destination}")
+            # Update any other fields as needed, but DO NOT update datetime
+            print(f"🚍 Journey updated (no datetime change): Route {journey.route_name}, Destination {journey.destination}")
         else:
-            # Journey does not exist, create a new one
+            # Journey does not exist, create a new one with the initial departure_time
             journey = VehicleJourney(
-                datetime=departure_time,
+                datetime=departure_time,  # Set the departure time when the journey is created
                 destination=destination,
                 route_name=route_name,
                 source=self.source,  # Ensure source is assigned
