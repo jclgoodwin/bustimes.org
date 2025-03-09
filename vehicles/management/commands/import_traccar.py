@@ -108,12 +108,12 @@ class Command(ImportLiveVehiclesCommand):
         if response.status_code == 200:
             devices = response.json()
             for device in devices:
-                print(f"Device ID: {device['id']}, Operator ID: {device.get('operatorId')}")  # Debugging print
+                print(f"Device ID: {device['id']}, Raw Attributes: {device.get('attributes')}")
             return {str(device["id"]): device for device in devices}  # Map by deviceId
         else:
             print(f"Error fetching devices from Traccar: {response.status_code}")
             return {}
-
+        
 
     def fetch_traccar_data(self):
         """ Fetch the live vehicle data from Traccar API """
