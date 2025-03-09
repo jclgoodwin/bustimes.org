@@ -22,7 +22,9 @@ class Command(ImportLiveVehiclesCommand):
         if self.source.settings and "operators" in self.source.settings:
             self.operators = self.source.settings["operators"]
         else:
-            self.operators = {}
+            self.operators = {
+                "CT4N Ltd": "NOCT"
+            }
 
     def get_items(self):
         print("Fetching items...")  # Debugging line before API call
