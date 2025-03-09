@@ -48,7 +48,7 @@ class Command(ImportLiveVehiclesCommand):
     def get_vehicle(self, item):
         code = item["properties"]["vehicle"]
 
-        # Handle vehicle code format (e.g., McGill fleet code)
+        # Handle vehicle code format (e.g., fleet code, McGill)
         if "tenant" in self.source.url and "_" in code:
             parts = code.split("_", 1)
             if parts[0].islower():
@@ -58,25 +58,18 @@ class Command(ImportLiveVehiclesCommand):
         if not operator:
             return None, None
 
-        # Handle specific operator (e.g., MCGL for McGill)
-        if operator == "MCGL" and (len(code) >= 7 or len(code) >= 5 and code.isdigit()):
-            print(code)
-            return None, None
-
         defaults = {"source": self.source, "operator_id": operator, "code": code}
 
-        # Check if there's a 'number_plate' field in the meta data
-        if "meta" in item["properties"]:
-            if "number_plate" in item["properties"]["meta"]:
-                defaults["reg"] = item["properties"]["meta"]["number_plate"]
+        # Handling the "number_plate" meta field if present
+        if "meta" in item["properties"] and "number_plate" in item["properties"]["meta"]:
+            defaults["reg"] = item["properties"]["meta"]["number_plate"]
 
         # Handle fleet code logic (if McGill, split the code)
-        if len(code) > 4 and code[0].isalpha() and code[1] == "_":  # McGill
+        if len(code) > 4 and code[0].isalpha() and code[1] == "_":  # McGill fleet code
             defaults["fleet_code"] = code.replace("_", " ")
         elif code.isdigit():
             defaults["fleet_code"] = code
 
-        # Filter vehicles based on operator and code
         condition = Q(operator__in=self.operators.values()) | Q(operator=operator)
         vehicles = self.vehicles.filter(condition)
 
