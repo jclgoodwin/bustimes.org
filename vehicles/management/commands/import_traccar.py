@@ -192,10 +192,16 @@ class Command(ImportLiveVehiclesCommand):
 
         print(f"Attempting to create/update journey with route: {route_name}, operator_id: {operator_id}, departure_time: {departure_time}")
 
-        # Try to find an existing journey
+        # Proceed with the usual journey retrieval or creation
+        if operator_id:  # Only proceed if we have a valid operator_id
+            operator = self.operators.get(operator_id)
+        else:
+            operator = None
+
+        # Update the filtering to use `operator__id`
         journey = VehicleJourney.objects.filter(
             route_name=route_name,
-            operator_id=operator_id,
+            operator__id=operator.id if operator else None,  # Use operator__id instead of operator_id
             code=item.get("tripId", route_name)
         ).first()
 
@@ -210,13 +216,13 @@ class Command(ImportLiveVehiclesCommand):
                 print(f"Error: Operator ID is missing, cannot create a new journey.")
                 return None  # Prevent creation if operator_id is invalid
 
-            # Create a new journey, with the same datetime (don't change the time)
+            # Create a new journey
             journey = VehicleJourney(
                 datetime=departure_time,  # Keep the same time
                 destination=destination,
                 route_name=route_name,
                 source=self.source,
-                operator_id=operator_id,
+                operator=operator,  # Assign operator here
                 code=item.get("tripId", route_name)
             )
             print(f"Creating new journey: Route {journey.route_name}, Destination {journey.destination}")
