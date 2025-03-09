@@ -29,17 +29,11 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_operator(self, item):
         try:
-            operator = item["_embedded"]["transmodel:line"]["href"].split("/_ajax/")[3]
+            operator = item["properties"]["operator"]  # Get operator directly from properties
+            return self.operators.get(operator, None)  # Look up the operator in self.operators
         except KeyError:
-            print(f"Warning: '_embedded' key missing in item: {item}")
-            return None  # Handle missing key gracefully
-
-        try:
-            operator = self.operators[operator]
-        except KeyError:
-            if len(operator) != 4:
-                return None
-        return operator
+            print(f"Warning: 'operator' key missing in item: {item}")
+            return None  # Return None if 'operator' key is missing
 
     def get_vehicle(self, item):
         code = item["properties"]["vehicle"]
