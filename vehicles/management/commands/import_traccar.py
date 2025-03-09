@@ -40,11 +40,14 @@ def has_stop(stop):
 
 
 class Command(ImportLiveVehiclesCommand):
-
     source_name = "Traccar"
     previous_locations = {}
 
     def do_source(self):
+        # Initialize vehicle_cache here
+        self.vehicle_cache = {}
+
+        # Load operators
         self.operators = Operator.objects.filter(
             Q(parent="midland Group") | Q(noc__in=["MDEM"])
         ).in_bulk(field_name="noc")  # Store operators by their "noc" field
