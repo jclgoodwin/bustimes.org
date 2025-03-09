@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from busstops.models import Operator, Service, StopPoint
+from busstops.models import Operator, Service, StopPoint, StopUsage
 from bustimes.models import Garage, Note, Trip
 from vehicles.models import Livery, Vehicle, VehicleJourney, VehicleType
 
@@ -104,6 +104,7 @@ class StopSerializer(serializers.ModelSerializer):
     long_name = serializers.SerializerMethodField()
     location = serializers.SerializerMethodField()
     icon = serializers.SerializerMethodField()
+    services = serializers.SerializerMethodField()
 
     def get_name(self, obj):
         return obj.get_name_for_timetable()
@@ -117,6 +118,18 @@ class StopSerializer(serializers.ModelSerializer):
 
     def get_icon(self, obj):
         return obj.get_icon()
+    
+    def get_services(self, obj):
+        services = StopUsage.objects.filter(stop=obj).values_list("service_id", flat=True)
+        return Service.objects.filter(id__in=services).values(
+            "id",
+            "slug",
+            "line_name",
+            "description",
+            "region_id",
+            "mode",
+            "operator",
+        )
 
     class Meta:
         model = StopPoint
@@ -136,6 +149,7 @@ class StopSerializer(serializers.ModelSerializer):
             "created_at",
             "modified_at",
             "active",
+            "services",
         ]
 
 
