@@ -184,14 +184,14 @@ class Command(ImportLiveVehiclesCommand):
 
 
     def get_journey(self, item, vehicle):
-        # Ensure route_name and operator_id are extracted correctly from item
+        # Safely handle 'operatorId' to avoid the AttributeError when it's None
+        operator_id = item.get("operatorId", "").strip() if item.get("operatorId") else None
         route_name = item.get("route_name", "").strip()  # Clean up the route name
-        operator_id = item.get("operatorId", "").strip()  # Clean up the operator ID
         destination = item.get("destination", "").strip()  # Clean up the destination
         departure_time = self.get_datetime(item)  # Ensure this is the correct time
-        
+
         print(f"Attempting to create/update journey with route: {route_name}, operator_id: {operator_id}, departure_time: {departure_time}")
-        
+
         # Try to find an existing journey
         journey = VehicleJourney.objects.filter(
             route_name=route_name,
