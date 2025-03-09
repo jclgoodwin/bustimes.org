@@ -56,7 +56,6 @@ class Command(ImportLiveVehiclesCommand):
 
         return super().do_source()
 
-
     @staticmethod
     def get_datetime(item):
         """ Get datetime from Traccar data item """
@@ -119,7 +118,6 @@ class Command(ImportLiveVehiclesCommand):
         else:
             print(f"Error fetching devices from Traccar: {response.status_code}")
             return {}
-        
 
     def fetch_traccar_data(self):
         """ Fetch the live vehicle data from Traccar API """
@@ -182,7 +180,6 @@ class Command(ImportLiveVehiclesCommand):
 
         return vehicle, True
 
-
     def get_journey(self, item, vehicle):
         # Safely handle 'operatorId' to avoid the AttributeError when it's None
         operator_id = item.get("operatorId", "").strip() if item.get("operatorId") else None
@@ -229,7 +226,6 @@ class Command(ImportLiveVehiclesCommand):
             journey.save()
 
         return journey
-
 
     def create_vehicle_location(self, item):
         return VehicleLocation(
