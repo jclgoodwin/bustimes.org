@@ -320,10 +320,12 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
         trip = route.trip_set.first()
         trip.copy(datetime.timedelta(hours=1))
 
+        fake_redis = fakeredis.FakeStrictRedis()
         # test journey with trip json
-        with patch(
-            "vehicles.views.redis_client", fakeredis.FakeStrictRedis()
-        ) as fake_redis:
+        with (
+            patch("vehicles.views.redis_client", fake_redis),
+            patch("api.views.redis_client", fake_redis),
+        ):
             response = self.client.get(f"/journeys/{journey.id}.json")
             json = response.json()
             self.assertIn("stops", json)
@@ -352,6 +354,11 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
             self.assertEqual(
                 json["stops"][2]["actual_departure_time"], "2019-05-29T12:03:34Z"
             )
+
+            # newer API
+            response = self.client.get(f"/api/vehiclejourneys/{journey.id}/")
+            json = response.json()
+            self.assertEqual(json["time_aware_polyline"], "o|k@gsy`Ikpyx|{A")
 
     def test_ticketer(self):
         source = TimetableDataSource.objects.create(
