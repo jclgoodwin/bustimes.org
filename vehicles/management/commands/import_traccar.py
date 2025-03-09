@@ -184,11 +184,18 @@ class Command(ImportLiveVehiclesCommand):
     def get_journey(self, item, vehicle):
         departure_time = self.get_datetime(item)
 
+        # Extract route and destination from the item data
+        route_name = item.get("route_name", item.get("serviceNumber", ""))
+        destination = item.get("destination", "")
+
+        # Debugging: Check the route_name and destination before proceeding
+        print(f"Debugging Journey: Route: {route_name}, Destination: {destination}")  # This is your debug print
+
         # Create journey object
         journey = VehicleJourney(
             datetime=departure_time,
-            destination=item.get("destination", ""),  # Extract destination
-            route_name=item.get("route_name", ""),  # Extract route name
+            destination=destination,  # Extracted destination
+            route_name=route_name,  # Extracted route name
         )
 
         # Assign a trip ID if available
@@ -196,7 +203,7 @@ class Command(ImportLiveVehiclesCommand):
             journey.code = code
 
         # Attempt to match with an existing service
-        if not journey.service_id and journey.route_name:
+        if not journey.service_id and route_name:
             services = Service.objects.filter(current=True, operator__in=self.operators)
             stop = item.get("originStopReference")
 
@@ -206,8 +213,9 @@ class Command(ImportLiveVehiclesCommand):
             if item.get("finalStopReference"):
                 services = services.filter(has_stop(item["finalStopReference"]))
 
+            # Match route with service
             journey.service = services.filter(
-                Q(route__line_name__iexact=journey.route_name) | Q(line_name__iexact=journey.route_name)
+                Q(route__line_name__iexact=route_name) | Q(line_name__iexact=route_name)
             ).first()
 
         # 🚀 Ensure we actually save the journey
