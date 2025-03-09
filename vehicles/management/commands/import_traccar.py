@@ -84,11 +84,16 @@ class Command(ImportLiveVehiclesCommand):
                 device_data = traccar_devices.get(key, {})
                 attributes = device_data.get("attributes", {})
 
-                # Extract necessary fields
+                # Debugging output for the attributes
+                print(f"Attributes for device {key}: {attributes}")
+
+                # Extract the fleet_number, operatorId, route_name, and destination
                 item["fleet_code"] = attributes.get("fleetNumber")
                 item["operatorId"] = attributes.get("operatorId")
-                item["route_name"] = attributes.get("serviceNumber", "").strip()  # Ensure it's a string
-                item["destination"] = attributes.get("destination", "").strip()  # Ensure it's a string
+                
+                # Here we extract route_name and destination and add defaults if missing
+                item["route_name"] = attributes.get("serviceNumber", "").strip() or "No Route"
+                item["destination"] = attributes.get("destination", "").strip() or "Unknown Destination"
                 item["name"] = device_data.get("name")
 
                 print(f"🚍 Vehicle {key} -> Route: {item['route_name']}, Destination: {item['destination']}")  # Debugging
@@ -96,7 +101,6 @@ class Command(ImportLiveVehiclesCommand):
                 items.append(item)
                 vehicle_codes.append(key)
                 self.previous_locations[key] = value
-
 
     def fetch_traccar_devices(self):
         """ Fetch additional vehicle details from Traccar API's /devices endpoint """
