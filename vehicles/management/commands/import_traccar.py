@@ -142,6 +142,13 @@ class Command(ImportLiveVehiclesCommand):
 
         print(f"Processing vehicle {vehicle_code}, Operator ID: {operator_id}")  # Debugging print
 
+        # Check if operator exists in cache
+        operator = self.operators.get(operator_id) if operator_id else None
+        if operator is None:
+            print(f"Operator {operator_id} not found in the operators cache!")
+        else:
+            print(f"Operator found: {operator}")
+
         if vehicle_code in self.vehicle_cache:
             vehicle = self.vehicle_cache[vehicle_code]
 
@@ -151,12 +158,7 @@ class Command(ImportLiveVehiclesCommand):
 
             return vehicle, False
 
-        # Ensure `operatorId` is correctly looked up in `self.operators`
-        operator = self.operators.get(operator_id) if operator_id else None
-
-        if not operator:
-            print(f"Operator {operator_id} not found!")  # Debugging print
-
+        # Try to fetch or create vehicle here, even if the operator is missing
         vehicle = Vehicle.objects.filter(operator=None, code__iexact=vehicle_code).first()
 
         if vehicle or item.get("heading") == 0:
@@ -182,57 +184,42 @@ class Command(ImportLiveVehiclesCommand):
 
 
     def get_journey(self, item, vehicle):
-        departure_time = self.get_datetime(item)
-
-        # Fetch route details from item (either service number or route name)
-        route_name = item.get("route_name", item.get("serviceNumber", ""))
-        destination = item.get("destination", "")
-
-        # Debugging: Check the route_name and destination before proceeding
-        print(f"Debugging Journey: Route: {route_name}, Destination: {destination}")
-
-        # Debugging: Print the operators to understand the structure
-        print(f"Operators: {self.operators}")
-
-        # Accessing the operator's ID, handling different possible structures
-        if isinstance(self.operators, dict) and len(self.operators) > 0:
-            # Access the first operator's ID (check if the value is a model instance with 'id')
-            operator = list(self.operators.values())[0]
-            print(f"Operator details: {operator}")  # Debug print to check the operator object
-            operator_id = operator.id if hasattr(operator, 'id') else None
-        else:
-            print("Error: No valid operators found")
-            return None  # Return None or handle the error appropriately
-
-        # If no operator_id found, raise an exception or handle the error
-        if not operator_id:
-            print("Error: Could not find a valid operator ID")
-            return None  # Handle as appropriate (raise error, skip, etc.)
-
-        # Attempt to get the existing journey by route_name, operator, and code
-        # You may need to change 'code' or 'route_name' based on your actual field mapping
+        # Ensure route_name and operator_id are extracted correctly from item
+        route_name = item.get("route_name", "").strip()  # Clean up the route name
+        operator_id = item.get("operatorId", "").strip()  # Clean up the operator ID
+        destination = item.get("destination", "").strip()  # Clean up the destination
+        departure_time = self.get_datetime(item)  # Ensure this is the correct time
+        
+        print(f"Attempting to create/update journey with route: {route_name}, operator_id: {operator_id}, departure_time: {departure_time}")
+        
+        # Try to find an existing journey
         journey = VehicleJourney.objects.filter(
             route_name=route_name,
-            operator_id=operator_id,  # Use the resolved operator_id
-            code=item.get("tripId", route_name)  # Or route_name if tripId is not available
+            operator_id=operator_id,
+            code=item.get("tripId", route_name)
         ).first()
 
         if journey:
-            # Journey exists: Update only the destination (not datetime)
+            # Existing journey found, update destination, but don't change the time
+            print(f"Found existing journey: {journey.route_name} -> {journey.destination}")
             journey.destination = destination
-            print(f"🚍 Journey updated (no datetime change): Route {journey.route_name}, Destination {journey.destination}")
             journey.save()
         else:
-            # Journey does not exist, create a new one with the initial departure_time
+            # No existing journey, create a new one
+            if not operator_id:  # If operator_id is missing, log and return None
+                print(f"Error: Operator ID is missing, cannot create a new journey.")
+                return None  # Prevent creation if operator_id is invalid
+
+            # Create a new journey, with the same datetime (don't change the time)
             journey = VehicleJourney(
-                datetime=departure_time,  # Set the departure time when the journey is created
+                datetime=departure_time,  # Keep the same time
                 destination=destination,
                 route_name=route_name,
-                source=self.source,  # Ensure source is assigned
-                operator_id=operator_id,  # Make sure operator is correctly set
+                source=self.source,
+                operator_id=operator_id,
                 code=item.get("tripId", route_name)
             )
-            print(f"✅ Journey created: Route {journey.route_name}, Destination {journey.destination}")
+            print(f"Creating new journey: Route {journey.route_name}, Destination {journey.destination}")
             journey.save()
 
         return journey
