@@ -195,10 +195,10 @@ class Command(ImportLiveVehiclesCommand):
         else:
             operator = None
 
-        # Update the filtering to use `operator_id`
+        # Update the filtering to use `operator` instead of `operator_id`
         journey = VehicleJourney.objects.filter(
             route_name=route_name,
-            operator_id=operator.id if operator else None,  # Use operator_id here
+            operator=operator,  # Use the operator directly here
             code=item.get("tripId", route_name)
         ).first()
 
@@ -226,6 +226,7 @@ class Command(ImportLiveVehiclesCommand):
             journey.save()
 
         return journey
+
 
     def create_vehicle_location(self, item):
         return VehicleLocation(
