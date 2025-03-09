@@ -20,7 +20,6 @@ from django.urls import reverse
 from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
-from . import Operator
 
 from bustimes.models import Route, StopTime, TimetableDataSource, Trip
 from bustimes.timetables import Timetable, get_stop_usages
