@@ -198,7 +198,7 @@ class Command(ImportLiveVehiclesCommand):
         # Update the filtering to use `operator` instead of `operator_id`
         journey = VehicleJourney.objects.filter(
             route_name=route_name,
-            operator=operator,  # Use the operator directly here
+            vehicle__operator=operator if operator else None,  # Correctly referencing the operator through the Vehicle model
             code=item.get("tripId", route_name)
         ).first()
 
