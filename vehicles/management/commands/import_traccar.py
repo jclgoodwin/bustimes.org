@@ -47,8 +47,12 @@ class Command(ImportLiveVehiclesCommand):
     def do_source(self):
         self.operators = Operator.objects.filter(
             Q(parent="midland Group") | Q(noc__in=["MDEM"])
-        ).in_bulk()
+        ).in_bulk(field_name="noc")  # Store operators by their "noc" field
+
+        print(f"Operators loaded: {self.operators.keys()}")  # Debugging print
+
         return super().do_source()
+
 
     @staticmethod
     def get_datetime(item):
@@ -79,8 +83,11 @@ class Command(ImportLiveVehiclesCommand):
             if self.previous_locations.get(key) != value:
                 # Merge position data with device attributes
                 device_data = traccar_devices.get(key, {})
-                item["fleet_code"] = device_data.get("attributes", {}).get("fleetNumber", "")  # Provide default fallback
-                item["name"] = device_data.get("name")  # Optional: Store device name
+                item["fleet_code"] = device_data.get("attributes", {}).get("fleetNumber")
+                item["name"] = device_data.get("name")
+                item["operatorId"] = device_data.get("operatorId")  # Add operatorId
+
+                print(f"Vehicle {key} has operator ID: {item['operatorId']}")  # Debugging print
 
                 items.append(item)
                 vehicle_codes.append(key)
@@ -124,23 +131,25 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_vehicle(self, item) -> tuple[Vehicle, bool]:
         vehicle_code = str(item["deviceId"])
-        fleet_code = item.get("fleet_code", "")  # Provide default fallback for fleet_code
+        fleet_code = item.get("fleet_code")
         operator_id = item.get("operatorId")
+
+        print(f"Processing vehicle {vehicle_code}, Operator ID: {operator_id}")  # Debugging print
 
         if vehicle_code in self.vehicle_cache:
             vehicle = self.vehicle_cache[vehicle_code]
 
-            # Update fleet_code if missing
             if fleet_code and vehicle.fleet_code != fleet_code:
                 vehicle.fleet_code = fleet_code
                 vehicle.save()
 
             return vehicle, False
 
-        if operator_id in self.operators:
-            operator = self.operators[operator_id]
-        else:
-            operator = None
+        # Ensure `operatorId` is correctly looked up in `self.operators`
+        operator = self.operators.get(operator_id) if operator_id else None
+
+        if not operator:
+            print(f"Operator {operator_id} not found!")  # Debugging print
 
         vehicle = Vehicle.objects.filter(operator=None, code__iexact=vehicle_code).first()
 
@@ -151,11 +160,10 @@ class Command(ImportLiveVehiclesCommand):
             operator=operator,
             source=self.source,
             code=vehicle_code,
-            fleet_code=fleet_code or "",  # Ensure fleet_code is not None
+            fleet_code=fleet_code,
         )
 
-        return vehicle, True
-
+        return vehicle,
 
     def get_journey(self, item, vehicle):
         departure_time = self.get_datetime(item)  # Use get_datetime for consistency
