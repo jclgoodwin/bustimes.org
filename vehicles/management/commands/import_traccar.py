@@ -189,11 +189,14 @@ class Command(ImportLiveVehiclesCommand):
         # Debugging: Check the route_name and destination before proceeding
         print(f"Debugging Journey: Route: {route_name}, Destination: {destination}")  # This is your debug print
 
+        # Assuming self.operators is a dictionary or list of operators
+        operator_id = self.operators[0].id if isinstance(self.operators, list) else list(self.operators.values())[0].id
+
         # Attempt to get the existing journey by route_name, operator, and code
         # You may need to change 'code' or 'route_name' based on your actual field mapping
         journey = VehicleJourney.objects.filter(
             route_name=route_name,
-            operator_id=self.operators.first().id,  # Assuming you're using 'MDEM' operator
+            operator_id=operator_id,  # Use the resolved operator_id
             code=item.get("tripId", route_name)  # Or route_name if tripId is not available
         ).first()
 
@@ -210,7 +213,7 @@ class Command(ImportLiveVehiclesCommand):
                 destination=destination,
                 route_name=route_name,
                 source=self.source,  # Ensure source is assigned
-                operator_id=self.operators.first().id,  # Make sure operator is correctly set
+                operator_id=operator_id,  # Make sure operator is correctly set
                 code=item.get("tripId", route_name)
             )
             print(f"✅ Journey created: Route {journey.route_name}, Destination {journey.destination}")
