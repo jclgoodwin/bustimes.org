@@ -25,11 +25,15 @@ class Command(ImportLiveVehiclesCommand):
             self.operators = {}
 
     def get_items(self):
-        print("Fetching items...")  # Debugging line
+        print("Fetching items...")  # Debugging line before API call
         items = super().get_items()
         
         if not items:
-            print("No data returned from API")  # Debugging line
+            print("No data returned from API")  # Debugging line if no data returned
+        else:
+            print(f"Received data: {items}")  # Debugging line to confirm data was returned
+
+        return items.get("features", [])  # Ensure we're accessing the correct data structure
 
         return items.get("features", [])  # Ensure we're accessing the correct data structure
 
