@@ -30,7 +30,7 @@ class Command(ImportLiveVehiclesCommand):
     def get_operator(self, item):
         if len(self.operators) == 1:
             return list(self.operators.values())[0]
-        operator = item["_embedded"]["transmodel:line"]["href"].split("/")[3]
+        operator = item["_embedded"]["transmodel:line"]["href"].split("/_ajax/")[3]
         try:
             operator = self.operators[operator]
         except KeyError:
@@ -51,7 +51,6 @@ class Command(ImportLiveVehiclesCommand):
             return None, None
 
         if operator == "MCGL" and (len(code) >= 7 or len(code) >= 5 and code.isdigit()):
-            # Borders Buses or First vehicles
             print(code)
             return None, None
 
@@ -120,6 +119,3 @@ class Command(ImportLiveVehiclesCommand):
             latlong=Point(item["geometry"]["coordinates"]),
             heading=item["properties"].get("bearing"),
         )
-
-    def get_items(self):
-        return super().get_items()["_ajax"]["vehicles"]
