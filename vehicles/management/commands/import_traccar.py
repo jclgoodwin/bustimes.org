@@ -83,9 +83,11 @@ class Command(ImportLiveVehiclesCommand):
             if self.previous_locations.get(key) != value:
                 # Merge position data with device attributes
                 device_data = traccar_devices.get(key, {})
-                item["fleet_code"] = device_data.get("attributes", {}).get("fleetNumber")
+                attributes = device_data.get("attributes", {})  # Extract attributes safely
+
+                item["fleet_code"] = attributes.get("fleetNumber")
+                item["operatorId"] = attributes.get("operatorId")  # Correct extraction
                 item["name"] = device_data.get("name")
-                item["operatorId"] = device_data.get("operatorId")  # Add operatorId
 
                 print(f"Vehicle {key} has operator ID: {item['operatorId']}")  # Debugging print
 
@@ -163,7 +165,8 @@ class Command(ImportLiveVehiclesCommand):
             fleet_code=fleet_code,
         )
 
-        return vehicle,
+        return vehicle, True
+
 
     def get_journey(self, item, vehicle):
         departure_time = self.get_datetime(item)  # Use get_datetime for consistency
