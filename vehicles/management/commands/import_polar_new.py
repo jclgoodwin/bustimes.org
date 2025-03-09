@@ -40,10 +40,12 @@ class Command(ImportLiveVehiclesCommand):
     def get_operator(self, item):
         try:
             operator = item["properties"]["operator"]  # Get operator directly from properties
+            print(f"Found operator: {operator}")  # Debugging line
             return self.operators.get(operator, None)  # Look up the operator in self.operators
         except KeyError:
             print(f"Warning: 'operator' key missing in item: {item}")
             return None  # Return None if 'operator' key is missing
+
 
     def get_vehicle(self, item):
         print(f"Getting vehicle for item: {item['properties']['vehicle']}")  # Debugging print
@@ -74,9 +76,9 @@ class Command(ImportLiveVehiclesCommand):
 
         condition = Q(operator__in=self.operators.values()) | Q(operator=operator)
         vehicles = self.vehicles.filter(condition)
+        print(f"Filtered vehicles: {vehicles}")  # Debugging line to see filtered vehicles
 
         vehicle = vehicles.filter(code__iexact=code).first()
-
         if not vehicle and "reg" in defaults:
             vehicle = vehicles.filter(reg__iexact=defaults["reg"]).first()
             if vehicle:
@@ -84,13 +86,14 @@ class Command(ImportLiveVehiclesCommand):
                 vehicle.save(update_fields=["code"])
 
         if vehicle:
-            print(f"Vehicle found: {vehicle}")  # Debugging line
+            print(f"Vehicle found or updated: {vehicle}")  # Debugging line
             return vehicle, False
 
         print("Vehicle not found, creating new vehicle...")  # Debugging line
         return vehicles.get_or_create(defaults, code=code)
 
     def get_journey(self, item, vehicle):
+        print(f"Getting journey for vehicle: {vehicle.code}")  # Debugging line
         journey = VehicleJourney(
             route_name=item["properties"]["line"],
             direction=item["properties"]["direction"][:8],
