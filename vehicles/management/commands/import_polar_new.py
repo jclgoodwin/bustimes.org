@@ -24,7 +24,8 @@ class Command(ImportLiveVehiclesCommand):
         else:
             self.operators = {
                 "CT4N Ltd": "NOCT",
-                "McGill's Bus Service Ltd": "MCGL"
+                "McGill's Bus Service Ltd": "MCGL",
+                "CARDIFF BUS": "CBUS"
             }
 
     def get_items(self):
