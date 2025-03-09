@@ -25,7 +25,14 @@ class Command(ImportLiveVehiclesCommand):
             self.operators = {}
 
     def get_items(self):
-        return super().get_items()["features"]
+        print("Fetching items...")  # Debugging line
+        items = super().get_items()
+        
+        if not items:
+            print("No data returned from API")  # Debugging line
+
+        return items.get("features", [])  # Ensure we're accessing the correct data structure
+
 
     def get_operator(self, item):
         try:
