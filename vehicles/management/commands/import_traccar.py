@@ -195,21 +195,18 @@ class Command(ImportLiveVehiclesCommand):
 
 
     def get_journey(self, item, vehicle):
-        # Safely handle 'operatorId' to avoid the AttributeError when it's None
+        # Extract necessary information from the item
         operator_id = item.get("operatorId", "").strip() if item.get("operatorId") else None
-        route_name = item.get("route_name", "").strip()  # Clean up the route name
-        destination = item.get("destination", "").strip()  # Clean up the destination
-        departure_time = self.get_datetime(item)  # Ensure this is the correct time
+        route_name = item.get("route_name", "").strip()  # Ensure clean route_name
+        destination = item.get("destination", "").strip()  # Ensure clean destination
+        departure_time = self.get_datetime(item)  # Get the correct departure time
 
-        print(f"Attempting to create/update journey with route: {route_name}, operator_id: {operator_id}, departure_time: {departure_time}")
+        # Fetch the operator if it's provided
+        operator = self.operators.get(operator_id) if operator_id else None
 
-        # Proceed with the usual journey retrieval or creation
-        if operator_id:  # Only proceed if we have a valid operator_id
-            operator = self.operators.get(operator_id)
-        else:
-            operator = None
+        print(f"Attempting to create/update journey for Route: {route_name}, Operator: {operator_id}, Departure Time: {departure_time}")
 
-        # Retrieve journey for the same vehicle and route within the same day and hour
+        # Check for an existing journey (trip) for this vehicle on the given route and time
         journey = VehicleJourney.objects.filter(
             route_name=route_name,
             vehicle=vehicle,
@@ -217,50 +214,44 @@ class Command(ImportLiveVehiclesCommand):
             datetime__hour=departure_time.hour
         ).first()
 
-        # If a journey is found
         if journey:
-            # Check if the destination is different
+            # Journey found, check if destination has changed
             if journey.destination != destination:
-                # If the destination is different, create a new journey for this vehicle
                 print(f"Destination changed for {journey.route_name} -> {journey.destination} -> Creating a new journey.")
                 
-                # Create a new journey with the updated destination
+                # Create a new journey if destination has changed
                 journey = VehicleJourney(
                     datetime=departure_time,  # Keep the same time
                     destination=destination,  # Updated destination
                     route_name=route_name,
                     source=self.source,
-                    vehicle=vehicle,  # Associate the vehicle
+                    vehicle=vehicle,  # Link the vehicle
                     code=item.get("tripId", route_name)
                 )
-                print(f"Creating new journey: Route {journey.route_name}, Destination {journey.destination}")
-                journey.save()
-
+                journey.save()  # Save the new journey
+                print(f"Created new journey: Route {journey.route_name}, Destination {journey.destination}")
             else:
-                # If the destination is the same, just update the existing journey
-                print(f"Found existing journey: {journey.route_name} -> {journey.destination} -> Updating journey.")
+                # No destination change, just update the existing journey
+                print(f"Found existing journey: {journey.route_name} -> {journey.destination}. No change needed.")
                 journey.destination = destination
-                journey.save()
+                journey.save()  # Update the journey
 
         else:
-            # No existing journey, create a new one
-            if not operator_id:  # If operator_id is missing, log and return None
-                print(f"Error: Operator ID is missing, cannot create a new journey.")
-                return None  # Prevent creation if operator_id is invalid
-
-            # Create a new journey
+            # No journey found, create a new one
+            print(f"No existing journey found for {route_name}. Creating a new journey.")
             journey = VehicleJourney(
                 datetime=departure_time,  # Keep the same time
                 destination=destination,
                 route_name=route_name,
                 source=self.source,
-                vehicle=vehicle,  # Associate the vehicle which has the operator
+                vehicle=vehicle,  # Link the vehicle
                 code=item.get("tripId", route_name)
             )
-            print(f"Creating new journey: Route {journey.route_name}, Destination {journey.destination}")
-            journey.save()
+            journey.save()  # Save the new journey
+            print(f"Created new journey: Route {journey.route_name}, Destination {journey.destination}")
 
         return journey
+
 
 
     def create_vehicle_location(self, item):
