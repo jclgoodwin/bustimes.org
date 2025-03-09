@@ -190,19 +190,21 @@ class Command(ImportLiveVehiclesCommand):
         print(f"Debugging Journey: Route: {route_name}, Destination: {destination}")  # This is your debug print
 
         # Attempt to get the existing journey by route_name, operator, and code
+        # You may need to change 'code' or 'route_name' based on your actual field mapping
         journey = VehicleJourney.objects.filter(
             route_name=route_name,
-            operator_id=self.operators.first().id,  # Assuming you are using 'MDEM' operator
+            operator_id=self.operators.first().id,  # Assuming you're using 'MDEM' operator
             code=item.get("tripId", route_name)  # Or route_name if tripId is not available
         ).first()
 
-        # If journey exists, update it; otherwise, create a new one
         if journey:
+            # Journey exists, update it
             journey.datetime = departure_time
             journey.destination = destination
-            # Update other relevant fields as needed
+            # Update any other fields as needed
+            print(f"🚍 Journey updated: Route {journey.route_name}, Destination {journey.destination}")
         else:
-            # Create a new journey if it doesn't exist
+            # Journey does not exist, create a new one
             journey = VehicleJourney(
                 datetime=departure_time,
                 destination=destination,
@@ -211,11 +213,10 @@ class Command(ImportLiveVehiclesCommand):
                 operator_id=self.operators.first().id,  # Make sure operator is correctly set
                 code=item.get("tripId", route_name)
             )
+            print(f"✅ Journey created: Route {journey.route_name}, Destination {journey.destination}")
 
-        # Save the journey
+        # Save the journey (whether new or updated)
         journey.save()
-
-        print(f"✅ Journey saved: Route {journey.route_name}, Destination {journey.destination}")
 
         return journey
 
