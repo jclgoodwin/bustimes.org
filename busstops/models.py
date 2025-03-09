@@ -33,21 +33,6 @@ TIMING_STATUS_CHOICES = (
 )
 SERVICE_ORDER_REGEX = re.compile(r"(\D*)(\d*)(\D*)")
 
-class VehicleJourney(models.Model):
-    route_name = models.CharField(max_length=255)  # Store the route name
-    destination = models.CharField(max_length=255)  # Store the destination
-    datetime = models.DateTimeField(default=timezone.now)  # Store the departure time
-    source = models.CharField(max_length=255)  # Store the source information (could be a string)
-    operator = models.ForeignKey('Operator', on_delete=models.CASCADE, related_name='journeys', null=True, blank=True)
-    code = models.CharField(max_length=255, unique=True)  # Unique identifier for the journey (trip ID or service number)
-
-    def __str__(self):
-        return f"{self.route_name} to {self.destination} at {self.datetime}"
-
-    class Meta:
-        verbose_name = "Vehicle Journey"
-        verbose_name_plural = "Vehicle Journeys"
-
 class SearchMixin:
     def update_search_vector(self):
         instance = self._meta.default_manager.with_documents().get(pk=self.pk)
