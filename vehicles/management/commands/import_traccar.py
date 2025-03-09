@@ -189,8 +189,19 @@ class Command(ImportLiveVehiclesCommand):
         # Debugging: Check the route_name and destination before proceeding
         print(f"Debugging Journey: Route: {route_name}, Destination: {destination}")  # This is your debug print
 
-        # Assuming self.operators is a dictionary or list of operators
-        operator_id = self.operators[0].id if isinstance(self.operators, list) else list(self.operators.values())[0].id
+        # Debugging: Print the operators to understand the structure
+        print(f"Operators: {self.operators}")
+
+        # Accessing the operator's ID, making sure it's an Operator object
+        if isinstance(self.operators, list) and len(self.operators) > 0:
+            # Access the first operator's id (assuming it's a list of Operator objects)
+            operator_id = self.operators[0].id
+        elif isinstance(self.operators, dict) and len(self.operators) > 0:
+            # Access the first operator's id in the dictionary (assuming it stores Operator objects)
+            operator_id = list(self.operators.values())[0].id
+        else:
+            print("Error: No operators found")
+            return None  # Handle the case when there are no operators
 
         # Attempt to get the existing journey by route_name, operator, and code
         # You may need to change 'code' or 'route_name' based on your actual field mapping
@@ -222,6 +233,7 @@ class Command(ImportLiveVehiclesCommand):
         journey.save()
 
         return journey
+
 
     def create_vehicle_location(self, item):
         return VehicleLocation(
