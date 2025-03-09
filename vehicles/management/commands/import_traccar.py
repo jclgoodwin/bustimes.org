@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 
 from django.contrib.gis.geos import GEOSGeometry
 from django.db.models import Exists, OuterRef, Q
+from django.db import IntegrityError
 
 from busstops.models import Operator, Service, StopPoint
 from ...models import Vehicle, VehicleJourney, VehicleLocation
@@ -147,6 +148,7 @@ class Command(ImportLiveVehiclesCommand):
         else:
             print(f"Operator found: {operator}")
 
+        # Check if vehicle exists in cache
         if vehicle_code in self.vehicle_cache:
             vehicle = self.vehicle_cache[vehicle_code]
 
@@ -156,29 +158,40 @@ class Command(ImportLiveVehiclesCommand):
 
             return vehicle, False
 
-        # Try to fetch or create vehicle here, even if the operator is missing
-        vehicle = Vehicle.objects.filter(operator=None, code__iexact=vehicle_code).first()
+        # Try to fetch or create vehicle here, checking the combination of operator and code
+        vehicle = Vehicle.objects.filter(operator=operator, code__iexact=vehicle_code).first()
 
-        if vehicle or item.get("heading") == 0:
+        if vehicle:
             return vehicle, False
 
-        vehicle = Vehicle.objects.create(
-            operator=operator,
-            source=self.source,
-            code=vehicle_code,
-            fleet_code=fleet_code,
-        )
+        if item.get("heading") == 0:
+            return None, False
 
-        # 🚀 Get the journey for this vehicle
-        journey = self.get_journey(item, vehicle)
+        # If vehicle doesn't exist, create a new one
+        try:
+            vehicle = Vehicle.objects.create(
+                operator=operator,
+                source=self.source,
+                code=vehicle_code,
+                fleet_code=fleet_code,
+            )
 
-        # 🔗 Link the journey to the vehicle and save
-        vehicle.current_journey = journey
-        vehicle.save()
+            # 🚀 Get the journey for this vehicle
+            journey = self.get_journey(item, vehicle)
 
-        print(f"🚀 Vehicle {vehicle.code} assigned to Journey {journey.route_name} -> {journey.destination}")
+            # 🔗 Link the journey to the vehicle and save
+            vehicle.current_journey = journey
+            vehicle.save()
 
-        return vehicle, True
+            print(f"🚀 Vehicle {vehicle.code} assigned to Journey {journey.route_name} -> {journey.destination}")
+
+            return vehicle, True
+
+        except IntegrityError:
+            # Handle the case where a duplicate vehicle exists with the same code and operator
+            print(f"Duplicate vehicle {vehicle_code} for operator {operator_id} detected. Fetching existing vehicle.")
+            vehicle = Vehicle.objects.get(code=vehicle_code, operator=operator)
+            return vehicle, False
 
     def get_journey(self, item, vehicle):
         # Safely handle 'operatorId' to avoid the AttributeError when it's None
