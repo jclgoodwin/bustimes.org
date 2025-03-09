@@ -46,6 +46,7 @@ class Command(ImportLiveVehiclesCommand):
             return None  # Return None if 'operator' key is missing
 
     def get_vehicle(self, item):
+        print(f"Getting vehicle for item: {item['properties']['vehicle']}")  # Debugging print
         code = item["properties"]["vehicle"]
 
         # Handle vehicle code format (e.g., fleet code, McGill)
@@ -56,6 +57,7 @@ class Command(ImportLiveVehiclesCommand):
 
         operator = self.get_operator(item)
         if not operator:
+            print("Operator not found!")  # Debugging line
             return None, None
 
         defaults = {"source": self.source, "operator_id": operator, "code": code}
@@ -82,8 +84,10 @@ class Command(ImportLiveVehiclesCommand):
                 vehicle.save(update_fields=["code"])
 
         if vehicle:
+            print(f"Vehicle found: {vehicle}")  # Debugging line
             return vehicle, False
 
+        print("Vehicle not found, creating new vehicle...")  # Debugging line
         return vehicles.get_or_create(defaults, code=code)
 
     def get_journey(self, item, vehicle):
