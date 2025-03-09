@@ -232,7 +232,7 @@ class Command(ImportLiveVehiclesCommand):
                 destination=destination,
                 route_name=route_name,
                 source=self.source,
-                operator=operator,  # Assign operator here
+                vehicle=vehicle,  # Associate the vehicle which has the operator
                 code=item.get("tripId", route_name)
             )
             print(f"Creating new journey: Route {journey.route_name}, Destination {journey.destination}")
