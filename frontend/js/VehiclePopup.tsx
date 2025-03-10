@@ -59,7 +59,15 @@ export default function VehiclePopup({
     line_name += item.destination;
   }
 
-  if (item.journey_id) {
+  if (item.trip_id) {
+    if (!activeLink) {
+      if (snazzyTripLink) {
+        line_name = <Link href={`/trips/${item.trip_id}`}>{line_name}</Link>;
+      } else {
+        line_name = <a href={`/trips/${item.trip_id}`}>{line_name}</a>;
+      }
+    }
+  } else if (item.journey_id) {
     if (!activeLink) {
       if (snazzyTripLink) {
         line_name = (
@@ -74,14 +82,6 @@ export default function VehiclePopup({
     //   line_name = <Link href={`/vehicles/tfl/${item.tfl_code}`}>{line_name}</Link>;
     // }
     line_name = <a href={`/vehicles/tfl/${item.tfl_code}`}>{line_name}</a>;
-  } else if (item.trip_id) {
-    if (!activeLink) {
-      if (snazzyTripLink) {
-        line_name = <Link href={`/trips/${item.trip_id}`}>{line_name}</Link>;
-      } else {
-        line_name = <a href={`/trips/${item.trip_id}`}>{line_name}</a>;
-      }
-    }
   } else if (item.service?.url) {
     if (item.service.url !== window.location.pathname) {
       line_name = <a href={item.service.url}>{line_name}</a>;
