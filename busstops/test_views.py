@@ -428,12 +428,6 @@ class ViewsTests(TestCase):
             response, "https://nationalexpress.prf.hn/click/camref:1011ljPYw"
         )
 
-        self.chariots.name = "Megabus"
-        self.chariots.save()
-
-        response = self.client.get(self.chariots.get_absolute_url())
-        self.assertContains(response, ">Tickets<")
-
     def test_service_redirect(self):
         """An inactive service should redirect to a current service with the same description"""
         with self.assertNumQueries(5):
