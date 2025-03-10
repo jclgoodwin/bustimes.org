@@ -25,7 +25,8 @@ class Command(ImportLiveVehiclesCommand):
             self.operators = {
                 "CT4N Ltd": "NOCT",
                 "McGill's Bus Service Ltd": "MCGL",
-                "CARDIFF BUS": "CBUS"
+                "CARDIFF BUS": "CBUS",
+                "Nottingham City Transport": "NCTR"
             }
 
     def get_items(self):
