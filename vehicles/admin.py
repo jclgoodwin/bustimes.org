@@ -321,8 +321,6 @@ class VehicleJourneyAdmin(admin.ModelAdmin):
 
 
 class LiveryAdminForm(forms.ModelForm):
-    save_as = True
-
     class Meta:
         widgets = {
             "colours": forms.Textarea,
@@ -359,6 +357,7 @@ class LiveryAdmin(SimpleHistoryAdmin):
     form = LiveryAdminForm
     search_fields = ["name"]
     actions = ["merge"]
+    save_as = True
     list_display = [
         "id",
         "name",
@@ -374,8 +373,30 @@ class LiveryAdmin(SimpleHistoryAdmin):
         "updated_at",
         ("vehicle__operator", admin.RelatedOnlyFieldListFilter),
     ]
-    readonly_fields = ["left", "right", "blob", "updated_at"]
     ordering = ["-id"]
+
+    readonly_fields = ["left", "right", "blob", "updated_at"]
+    # specify order:
+    fields = [
+        "name",
+        "colour",
+        "blob",
+        "colours",
+        "angle",
+        "horizontal",
+        "text_colour",
+        "white_text",
+        "stroke_colour",
+        "left_css",
+        "right_css",
+        "left",
+        "right",
+        "published",
+        "updated_at",
+    ]
+
+    class Media:
+        js = ["js/livery-admin.js"]
 
     def merge(self, request, queryset):
         queryset = queryset.order_by("id")

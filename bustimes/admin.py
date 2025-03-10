@@ -106,6 +106,7 @@ class CalendarAdmin(admin.ModelAdmin):
     inlines = [CalendarDateInline, CalendarBankHolidayInline]
     list_filter = [("trip", admin.EmptyFieldListFilter)]
     readonly_fields = ["routes"]
+    save_as = True
 
     def routes(self, obj):
         routes = Route.objects.filter(
