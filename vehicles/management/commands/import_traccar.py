@@ -144,17 +144,25 @@ class Command(ImportLiveVehiclesCommand):
         # Check if operator exists in cache
         operator = self.operators.get(operator_id) if operator_id else None
         if operator is None:
-            print(f"Operator {operator_id} not found in the operators cache!")
+            print(f"Operator {operator_id} not found in the operators cache! Trying to fetch from database.")
+            
+            # Optionally, try to fetch the operator from the database if it's not in the cache
+            operator = Operator.objects.filter(id=operator_id).first()
+            if operator is None:
+                print(f"Operator with ID {operator_id} not found in the database. Skipping vehicle {vehicle_code}.")
+                return None, False
+            else:
+                print(f"Operator {operator_id} fetched from database: {operator}")
+
         else:
             print(f"Operator found: {operator}")
 
         # Check if vehicle exists in cache
         if vehicle_code in self.vehicle_cache:
             vehicle = self.vehicle_cache[vehicle_code]
-
             return vehicle, False
 
-        # Try to fetch or create vehicle here, checking the combination of operator and code
+        # Try to fetch vehicle using operator and code
         print(f"Querying for vehicle: operator={operator}, vehicle_code={vehicle_code}")
         vehicle = Vehicle.objects.filter(operator=operator, code__iexact=vehicle_code).first()
 
