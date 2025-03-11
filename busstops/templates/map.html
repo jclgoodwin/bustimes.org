@@ -3,14 +3,14 @@
 {% block title %}map – gladetf.mrlift.xyz{% endblock %}
 
 {% block head %}
-    <meta property="og:title" content="Map – bustimes.org">
+    <meta property="og:title" content="map – gladetimes">
 {% endblock head %}
 
 {% block bodyclass %}no-scroll{% endblock %}
 
 {% block header %}
    <header class="site-header">
-        <a href="/" class="site-name">gladetf.mrlift.xyz</a>
+        <a href="/" class="site-name">gladetimes</a>
         <ul>
             <li><a href="/map{% if object.latlong %}#16/{{ object.latlong.y|floatformat:4 }}/{{ object.latlong.x|floatformat:4 }}{% endif %}">Map</a></li>
         </ul>
