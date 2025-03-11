@@ -146,10 +146,10 @@ class Command(ImportLiveVehiclesCommand):
         if operator is None:
             print(f"Operator {operator_id} not found in the operators cache! Trying to fetch from database.")
             
-            # Optionally, try to fetch the operator from the database if it's not in the cache
-            operator = Operator.objects.filter(id=operator_id).first()
+            # Fetch operator using the noc field instead of operatorcode
+            operator = Operator.objects.filter(noc=operator_id).first()
             if operator is None:
-                print(f"Operator with ID {operator_id} not found in the database. Skipping vehicle {vehicle_code}.")
+                print(f"Operator with noc {operator_id} not found in the database. Skipping vehicle {vehicle_code}.")
                 return None, False
             else:
                 print(f"Operator {operator_id} fetched from database: {operator}")
@@ -195,8 +195,8 @@ class Command(ImportLiveVehiclesCommand):
 
             return vehicle, True
 
-        except IntegrityError as e:
-            print(f"Error during vehicle creation: {str(e)}")
+        except IntegrityError:
+            # Handle the case where a duplicate vehicle exists with the same code and operator
             print(f"Duplicate vehicle {vehicle_code} for operator {operator_id} detected. Fetching existing vehicle.")
             vehicle = Vehicle.objects.get(code=vehicle_code, operator=operator)
             return vehicle, False
