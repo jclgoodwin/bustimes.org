@@ -89,7 +89,6 @@ class Command(ImportLiveVehiclesCommand):
 
                 # Extract necessary fields
                 item["ticket_machine_code"] = attributes.get("etmID")  # Use custom attribute for ticket machine code
-                item["fleet_code"] = attributes.get("fleetNo")
                 item["operatorId"] = attributes.get("NOC")
                 item["route_name"] = attributes.get("srvNo", "").strip()  # Ensure it's a string
                 item["destination"] = attributes.get("dest", "").strip()  # Ensure it's a string
