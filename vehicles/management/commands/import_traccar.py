@@ -137,7 +137,6 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_vehicle(self, item) -> tuple[Vehicle, bool]:
         vehicle_code = str(item["ticket_machine_code"])
-        fleet_code = item.get("fleet_code")
         operator_id = item.get("operatorId")
 
         print(f"Processing vehicle {vehicle_code}, Operator ID: {operator_id}")  # Debugging print
@@ -152,10 +151,6 @@ class Command(ImportLiveVehiclesCommand):
         # Check if vehicle exists in cache
         if vehicle_code in self.vehicle_cache:
             vehicle = self.vehicle_cache[vehicle_code]
-
-            if fleet_code and vehicle.fleet_code != fleet_code:
-                vehicle.fleet_code = fleet_code
-                vehicle.save()
 
             return vehicle, False
 
@@ -173,14 +168,12 @@ class Command(ImportLiveVehiclesCommand):
 
         # If vehicle doesn't exist, create a new one
         try:
-            # Ensure fleet_code is not None
-            fleet_code = fleet_code if fleet_code else 'default_fleet_code'  # Provide a default value
             print(f"Creating vehicle with code {vehicle_code} and operator {operator}")
             vehicle = Vehicle.objects.create(
                 operator=operator,
                 source=self.source,
                 code=vehicle_code,
-                fleet_code=fleet_code,
+                # Fleet code is not passed here anymore
             )
 
             # 🚀 Get the journey for this vehicle
