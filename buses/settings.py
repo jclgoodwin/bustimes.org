@@ -328,5 +328,5 @@ TURNSTILE_SITEKEY = os.environ.get("TURNSTILE_SITEKEY", "0x4AAAAAAAFWiyCqdh2c-5s
 TURNSTILE_SECRET = os.environ.get("TURNSTILE_SECRET")
 
 ABBREVIATE_HOURLY = False  # we override this in some tests, that's all
-DISABLE_REGISTRATION = os.environ.get("DISABLE_REGISTRATION", False)
+DISABLE_REGISTRATION = os.environ.get("DISABLE_REGISTRATION", True)
 DISABLE_EDITING = os.environ.get("DISABLE_EDITING", False)
