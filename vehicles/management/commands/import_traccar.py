@@ -88,14 +88,14 @@ class Command(ImportLiveVehiclesCommand):
                 attributes = device_data.get("attributes", {})
 
                 # Extract necessary fields
-                item["fleet_code"] = attributes.get("fleetNumber")
+                item["ticket_machine_code"] = attributes.get("ticketMachineCode")  # Use custom attribute for ticket machine code
                 item["operatorId"] = attributes.get("operatorId")
                 item["route_name"] = attributes.get("serviceNumber", "").strip()  # Ensure it's a string
                 item["destination"] = attributes.get("destination", "").strip()  # Ensure it's a string
                 item["name"] = device_data.get("name")
 
                 # Debugging print to confirm data
-                print(f"Device ID: {key}, Service Number: {item['route_name']}, Destination: {item['destination']}")
+                print(f"Device ID: {key}, Ticket Machine Code: {item['ticket_machine_code']}, Route Name: {item['route_name']}, Destination: {item['destination']}")
 
                 items.append(item)
                 vehicle_codes.append(key)
@@ -135,7 +135,7 @@ class Command(ImportLiveVehiclesCommand):
             return []
 
     def get_vehicle(self, item) -> tuple[Vehicle, bool]:
-        vehicle_code = str(item["deviceId"])
+        vehicle_code = str(item["ticket_machine_code"])
         fleet_code = item.get("fleet_code")
         operator_id = item.get("operatorId")
 
