@@ -135,77 +135,74 @@ class Command(ImportLiveVehiclesCommand):
             print(f"Error fetching data from Traccar: {response.status_code}")
             return []
 
-    def get_vehicle(self, item) -> tuple[Vehicle, bool]:
-        vehicle_code = str(item["ticket_machine_code"])
-        operator_id = item.get("operatorId")
+def get_vehicle(self, item) -> tuple[Vehicle, bool]:
+    vehicle_code = str(item["ticket_machine_code"])
+    operator_id = item.get("operatorId")
 
-        print(f"Processing vehicle {vehicle_code}, Operator ID: {operator_id}")  # Debugging print
+    print(f"Processing vehicle {vehicle_code}, Operator ID: {operator_id}")  # Debugging print
 
-        # Check if operator exists in cache
-        operator = self.operators.get(operator_id) if operator_id else None
+    # Check if operator exists in cache
+    operator = self.operators.get(operator_id) if operator_id else None
+    if operator is None:
+        print(f"Operator {operator_id} not found in the operators cache! Trying to fetch from database.")
+        
+        # Fetch operator using the noc field instead of operatorcode
+        operator = Operator.objects.filter(noc=operator_id).first()
         if operator is None:
-            print(f"Operator {operator_id} not found in the operators cache! Trying to fetch from database.")
-            
-            # Fetch operator using the noc field instead of operatorcode
-            operator = Operator.objects.filter(noc=operator_id).first()
-            if operator is None:
-                print(f"Operator with noc {operator_id} not found in the database. Skipping vehicle {vehicle_code}.")
-                return None, False
-            else:
-                print(f"Operator {operator_id} fetched from database: {operator}")
-
-        else:
-            print(f"Operator found: {operator}")
-
-        # Normalize vehicle code: Only add the operator_id if it's not already part of the vehicle code
-        if not vehicle_code.lower().startswith(f"{operator_id.lower()}-"):
-            normalized_vehicle_code = f"{operator_id.lower()}-{vehicle_code}"
-        else:
-            normalized_vehicle_code = vehicle_code
-
-        # Check if vehicle exists in cache
-        if vehicle_code in self.vehicle_cache:
-            vehicle = self.vehicle_cache[vehicle_code]
-            return vehicle, False
-
-        # Try to fetch the vehicle by matching both operator and vehicle code
-        print(f"Querying for vehicle: operator={operator}, vehicle_code={normalized_vehicle_code}")
-        vehicle = Vehicle.objects.filter(operator=operator, code__iexact=normalized_vehicle_code).first()
-
-        if vehicle:
-            print(f"Found vehicle {vehicle_code} for operator {operator}")
-            return vehicle, False
-
-        if item.get("heading") == 0:
-            print(f"Heading is 0, skipping vehicle {vehicle_code}")
+            print(f"Operator with noc {operator_id} not found in the database. Skipping vehicle {vehicle_code}.")
             return None, False
+        else:
+            print(f"Operator {operator_id} fetched from database: {operator}")
 
-        # If vehicle doesn't exist, create a new one
-        try:
-            print(f"Creating vehicle with code {normalized_vehicle_code} and operator {operator}")
-            vehicle = Vehicle.objects.create(
-                operator=operator,
-                source=self.source,
-                code=normalized_vehicle_code,
-                # Fleet code is not passed here anymore
-            )
+    else:
+        print(f"Operator found: {operator}")
 
-            # 🚀 Get the journey for this vehicle
-            journey = self.get_journey(item, vehicle)
+    # Normalize vehicle code: Assuming vehicle code prefix is 'nctr-' or something like it
+    normalized_vehicle_code = f"{operator_id.lower()}-{vehicle_code.split('-')[-1]}"
 
-            # 🔗 Link the journey to the vehicle and save
-            vehicle.current_journey = journey
-            vehicle.save()
+    # Check if vehicle exists in cache
+    if vehicle_code in self.vehicle_cache:
+        vehicle = self.vehicle_cache[vehicle_code]
+        return vehicle, False
 
-            print(f"🚀 Vehicle {vehicle.code} assigned to Journey {journey.route_name} -> {journey.destination}")
+    # Try to fetch the vehicle by matching both operator and vehicle code
+    print(f"Querying for vehicle: operator={operator}, vehicle_code={normalized_vehicle_code}")
+    vehicle = Vehicle.objects.filter(operator=operator, code__iexact=normalized_vehicle_code).first()
 
-            return vehicle, True
+    if vehicle:
+        print(f"Found vehicle {vehicle_code} for operator {operator}")
+        return vehicle, False
 
-        except IntegrityError:
-            # Handle the case where a duplicate vehicle exists with the same code and operator
-            print(f"Duplicate vehicle {vehicle_code} for operator {operator_id} detected. Fetching existing vehicle.")
-            vehicle = Vehicle.objects.get(code=normalized_vehicle_code, operator=operator)
-            return vehicle, False
+    if item.get("heading") == 0:
+        print(f"Heading is 0, skipping vehicle {vehicle_code}")
+        return None, False
+
+    # If vehicle doesn't exist, create a new one
+    try:
+        print(f"Creating vehicle with code {normalized_vehicle_code} and operator {operator}")
+        vehicle = Vehicle.objects.create(
+            operator=operator,
+            source=self.source,
+            code=normalized_vehicle_code,
+            # Fleet code is not passed here anymore
+        )
+
+        # 🚀 Get the journey for this vehicle
+        journey = self.get_journey(item, vehicle)
+
+        # 🔗 Link the journey to the vehicle and save
+        vehicle.current_journey = journey
+        vehicle.save()
+
+        print(f"🚀 Vehicle {vehicle.code} assigned to Journey {journey.route_name} -> {journey.destination}")
+
+        return vehicle, True
+
+    except IntegrityError:
+        # Handle the case where a duplicate vehicle exists with the same code and operator
+        print(f"Duplicate vehicle {vehicle_code} for operator {operator_id} detected. Fetching existing vehicle.")
+        vehicle = Vehicle.objects.get(code=normalized_vehicle_code, operator=operator)
+        return vehicle, False
 
     def get_journey(self, item, vehicle):
         # Extract necessary information from the item
