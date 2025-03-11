@@ -157,8 +157,11 @@ class Command(ImportLiveVehiclesCommand):
         else:
             print(f"Operator found: {operator}")
 
-        # Normalize vehicle code: Assuming vehicle code prefix is 'nctr-' or something like it
-        normalized_vehicle_code = f"{operator_id.lower()}-{vehicle_code.split('-')[-1]}"
+        # Normalize vehicle code: Only add the operator_id if it's not already part of the vehicle code
+        if not vehicle_code.lower().startswith(f"{operator_id.lower()}-"):
+            normalized_vehicle_code = f"{operator_id.lower()}-{vehicle_code}"
+        else:
+            normalized_vehicle_code = vehicle_code
 
         # Check if vehicle exists in cache
         if vehicle_code in self.vehicle_cache:
