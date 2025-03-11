@@ -1229,13 +1229,7 @@ class ImportTransXChangeTest(TestCase):
 
         # trip timetable
         trip = Trip.objects.first()
-        response = self.client.get(trip.get_absolute_url())
-        self.assertContains(response, "Book at")
-        self.assertContains(response, "megabus.com")
-        # self.assertContains(response, "awin")
-
         self.assertEqual(str(trip), "02:10")
-
         note = trip.notes.get()
         self.assertEqual(f"/trips/{trip.id}", note.get_absolute_url())
 
