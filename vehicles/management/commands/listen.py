@@ -31,7 +31,7 @@ class Command(BaseCommand):
                     settings.NEW_VEHICLE_WEBHOOK_URL,
                     json={
                         "username": "bot",
-                        "content": f"https://bustimes.org/vehicles/{notify.payload}",
+                        "content": f"https://gladetf.mrlift.xyz/vehicles/{notify.payload}",
                     },
                     timeout=10,
                 )
