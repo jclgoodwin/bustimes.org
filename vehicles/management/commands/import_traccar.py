@@ -88,10 +88,11 @@ class Command(ImportLiveVehiclesCommand):
                 attributes = device_data.get("attributes", {})
 
                 # Extract necessary fields
-                item["ticket_machine_code"] = attributes.get("ticketMachineCode")  # Use custom attribute for ticket machine code
-                item["operatorId"] = attributes.get("operatorId")
-                item["route_name"] = attributes.get("serviceNumber", "").strip()  # Ensure it's a string
-                item["destination"] = attributes.get("destination", "").strip()  # Ensure it's a string
+                item["ticket_machine_code"] = attributes.get("etmID")  # Use custom attribute for ticket machine code
+                item["fleet_code"] = attributes.get("fleetNo")
+                item["operatorId"] = attributes.get("NOC")
+                item["route_name"] = attributes.get("srvNo", "").strip()  # Ensure it's a string
+                item["destination"] = attributes.get("dest", "").strip()  # Ensure it's a string
                 item["name"] = device_data.get("name")
 
                 # Debugging print to confirm data
@@ -159,16 +160,20 @@ class Command(ImportLiveVehiclesCommand):
             return vehicle, False
 
         # Try to fetch or create vehicle here, checking the combination of operator and code
+        print(f"Querying for vehicle: operator={operator}, vehicle_code={vehicle_code}")
         vehicle = Vehicle.objects.filter(operator=operator, code__iexact=vehicle_code).first()
 
         if vehicle:
+            print(f"Found vehicle {vehicle_code} for operator {operator}")
             return vehicle, False
 
         if item.get("heading") == 0:
+            print(f"Heading is 0, skipping vehicle {vehicle_code}")
             return None, False
 
         # If vehicle doesn't exist, create a new one
         try:
+            print(f"Creating vehicle with code {vehicle_code} and operator {operator}")
             vehicle = Vehicle.objects.create(
                 operator=operator,
                 source=self.source,
@@ -187,12 +192,11 @@ class Command(ImportLiveVehiclesCommand):
 
             return vehicle, True
 
-        except IntegrityError:
-            # Handle the case where a duplicate vehicle exists with the same code and operator
+        except IntegrityError as e:
+            print(f"Error during vehicle creation: {str(e)}")
             print(f"Duplicate vehicle {vehicle_code} for operator {operator_id} detected. Fetching existing vehicle.")
             vehicle = Vehicle.objects.get(code=vehicle_code, operator=operator)
             return vehicle, False
-
 
     def get_journey(self, item, vehicle):
         # Extract necessary information from the item
