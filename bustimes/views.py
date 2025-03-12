@@ -3,7 +3,6 @@ import xml.etree.ElementTree as ET
 import zipfile
 from datetime import datetime, timedelta
 from pathlib import Path
-from zoneinfo import ZoneInfo
 
 import requests
 from ciso8601 import parse_datetime
@@ -531,15 +530,15 @@ def trip_block(request, pk: int):
     ).select_related("route", "destination__locality")
 
     if trips := list(trips):
-        timezone = ZoneInfo("Europe/Dublin")
+        tz = timezone.get_current_timezone()
         prefetch_related_objects(
             trips,
             Prefetch(
                 "vehiclejourney_set",
                 VehicleJourney.objects.filter(
                     datetime__range=(
-                        datetime.fromtimestamp(trips[0].datetime, tz=timezone),
-                        datetime.fromtimestamp(trips[-1].datetime, tz=timezone),
+                        datetime.fromtimestamp(trips[0].datetime, tz=tz),
+                        datetime.fromtimestamp(trips[-1].datetime, tz=tz),
                     )
                 ).select_related("vehicle"),
                 to_attr="vehicle_journeys",
