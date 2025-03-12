@@ -26,12 +26,12 @@
     </ul>
 {% endif %}
 
-<p>This is <strong>not intended to be a complete fleet list</strong>. It’s really a list of
+<p>This is <strong>intended to be a complete, <i>community attributed</i> fleet list</strong>. It’s really a list of<strong>
 {% firstof parent object %}
 {% if parent and operators and operators|length < 10 %}
     ({% for operator in operators %}{% if not forloop.first and not forloop.last %}, {% elif forloop.last and not forloop.first %} and {% endif %}{{ operator }}{% endfor %})
 {% endif %}
-ticket machines, a byproduct of the live bus tracking.</p>
+</strong>ticket machines, a byproduct of the live bus tracking.</p>
 
 <p>Remember:</p>
 
