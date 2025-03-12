@@ -30,8 +30,7 @@
 {% firstof parent object %}
 {% if parent and operators and operators|length < 10 %}
     ({% for operator in operators %}{% if not forloop.first and not forloop.last %}, {% elif forloop.last and not forloop.first %} and {% endif %}{{ operator }}{% endfor %})
-{% endif %}
-</strong>'s ticket machines, with the added benefit of <strong>live vehicle tracking</strong>.</p>
+{% endif %}</strong>'s ticket machines, with the added benefit of <strong>live vehicle tracking</strong>.</p>
 
 <p>Remember:</p>
 
