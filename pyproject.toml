@@ -44,12 +44,12 @@ lightningcss = "^0.2.0"
 jinja2 = "^3.1.6"
 requests = "^2.32.3"
 numpy = "^1.26"
+tenacity = "^9.0.0"
 
 [tool.poetry.group.test]
 optional = true
 
 [tool.poetry.group.test.dependencies]
-tenacity = "^9.0.0"
 lxml = "^5.0.0"
 asgiref = "^3.4.1"
 gtfs-kit = "^10.0.0"

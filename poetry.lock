@@ -2275,7 +2275,7 @@ version = "9.0.0"
 description = "Retry code until it succeeds"
 optional = false
 python-versions = ">=3.8"
-groups = ["test"]
+groups = ["main"]
 files = [
     {file = "tenacity-9.0.0-py3-none-any.whl", hash = "sha256:93de0c98785b27fcf659856aa9f54bfbd399e29969b0621bc7f762bd441b4539"},
     {file = "tenacity-9.0.0.tar.gz", hash = "sha256:807f37ca97d62aa361264d497b0e31e92b8027044942bfa756160d908320d73b"},
@@ -2826,4 +2826,4 @@ propcache = ">=0.2.0"
 [metadata]
 lock-version = "2.1"
 python-versions = "<3.14,>=3.11"
-content-hash = "2c7163bde10c05ad8e3d9be1a9ab1a3e457bfa7e41d30bf48c060dac6c36d0fd"
+content-hash = "7b7d9980eda77bfe3a8473a399abab2e64c75ca232d2b24bfa72600154dd65f3"
