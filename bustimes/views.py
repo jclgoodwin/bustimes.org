@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 import zipfile
 from datetime import datetime, timedelta
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import requests
 from ciso8601 import parse_datetime
@@ -18,7 +19,7 @@ from django.db.models import (
     Q,
     FilteredRelation,
     ExpressionWrapper,
-    DateTimeField,
+    IntegerField,
 )
 from django.http import (
     FileResponse,
@@ -525,19 +526,20 @@ def trip_block(request, pk: int):
     trips = trips.annotate(
         datetime=ExpressionWrapper(
             F("start") + int(midnight.timestamp()),
-            output_field=DateTimeField(),
+            output_field=IntegerField(),
         )
     ).select_related("route", "destination__locality")
 
     if trips := list(trips):
+        timezone = ZoneInfo("Europe/Dublin")
         prefetch_related_objects(
             trips,
             Prefetch(
                 "vehiclejourney_set",
                 VehicleJourney.objects.filter(
                     datetime__range=(
-                        datetime.fromtimestamp(trips[0].datetime),
-                        datetime.fromtimestamp(trips[-1].datetime),
+                        datetime.fromtimestamp(trips[0].datetime, tz=timezone),
+                        datetime.fromtimestamp(trips[-1].datetime, tz=timezone),
                     )
                 ).select_related("vehicle"),
                 to_attr="vehicle_journeys",
