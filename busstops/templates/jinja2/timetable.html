@@ -48,7 +48,7 @@
             {% endif %}
             <div class="timetable-wrapper{% if grouping.width() > 3 %} timetable-wrapper--wide{% endif %}">
                 <table class="timetable">
-                    {% if grouping.routes or timetable.detailed or timetable.has_operators %}
+                    {% if grouping.routes or timetable.detailed or timetable.has_multiple_operators %}
                         <thead>
                             {% if grouping.routes %}<tr class="link">
                                 <th></th>
@@ -63,7 +63,7 @@
                                 {% endfor %}
                             </tr>
                             {% endif %}
-                            {% if timetable.has_operators %}
+                            {% if timetable.has_multiple_operators %}
                                 <tr>
                                     <th scope="row">Operator</th>
                                     {% for head in grouping.get_operators() %}
@@ -74,7 +74,7 @@
                                 </tr>
                             {% endif %}
                             {% if timetable.detailed %}
-                                {% if timetable.has_blocks %}
+                                {% if timetable.any_trip_has("block") %}
                                     <tr class="link">
                                         <th scope="col">Block</th>
                                         {% for trip in grouping.trips %}
@@ -82,7 +82,7 @@
                                         {% endfor %}
                                     </tr>
                                 {% endif %}
-                                {% if timetable.has_vehicle_types %}
+                                {% if timetable.any_trip_has("vehicle_type_id") %}
                                     <tr>
                                         <th scope="col">Vehicle type</th>
                                         {% for head in grouping.get_vehicle_types() %}
@@ -90,7 +90,7 @@
                                         {% endfor %}
                                     </tr>
                                 {% endif %}
-                                {% if timetable.has_garages %}
+                                {% if timetable.any_trip_has("garage_id") %}
                                     <tr>
                                         <th scope="col">Garage</th>
                                         {% for head in grouping.get_garages() %}
@@ -98,7 +98,7 @@
                                         {% endfor %}
                                     </tr>
                                 {% endif %}
-                                {% if timetable.has_ticket_machine_codes %}
+                                {% if timetable.any_trip_has("ticket_machine_code") %}
                                     <tr class="link">
                                         <th scope="col">Ticket machine code</th>
                                         {% for trip in grouping.trips %}
@@ -106,7 +106,7 @@
                                         {% endfor %}
                                     </tr>
                                 {% endif %}
-                                {% if timetable.has_vehicle_journey_codes %}
+                                {% if timetable.any_trip_has("vehicle_journey_code") %}
                                     <tr>
                                         <th scope="col">Vehicle journey code</th>
                                         {% for trip in grouping.trips %}
@@ -131,7 +131,7 @@
                                 <th{% if row.has_waittimes %} rowspan="2"{% endif %} class="stop-name" scope="row">
                                     {% if row.stop.pk %}<a href="{{ row.stop.get_absolute_url() }}">{% if row.stop.situation %}⚠️&#xfe0f; {% endif %}{{ row.stop.get_qualified_name() }}</a>{% else %}{{ row.stop }}{% endif %}
                                 </th>
-                            {% for cell in row.times %}{% if cell.colspan %}<td{% if grouping.routes or grouping.column_feet or timetable.has_operators %} colspan="{{ cell.colspan }}"{% endif %} rowspan="{{ cell.rowspan }}" class="then-every">{{ cell }}</td>{% else %}<td{% if row.has_waittimes and not cell.wait_time and not cell.first and not cell.last %} rowspan="2"{% endif %}>{% if cell %}{% if not row.has_waittimes or cell.wait_time or not cell.first %}{{ cell }}{% if cell.set_down_only() %}<abbr title="set down only">s</abbr>{% elif cell.pick_up_only() %}<abbr title="pick up only">p</abbr>{% endif %}{% endif %}{% if cell.stoptime.note %}<strong>{{ cell.stoptime.note.code }}</strong>{% endif %}{% endif %}</td>{% endif %}{% endfor %}
+                            {% for cell in row.times %}{% if cell.colspan %}<td{% if grouping.routes or grouping.column_feet or timetable.has_multiple_operators %} colspan="{{ cell.colspan }}"{% endif %} rowspan="{{ cell.rowspan }}" class="then-every">{{ cell }}</td>{% else %}<td{% if row.has_waittimes and not cell.wait_time and not cell.first and not cell.last %} rowspan="2"{% endif %}>{% if cell %}{% if not row.has_waittimes or cell.wait_time or not cell.first %}{{ cell }}{% if cell.set_down_only() %}<abbr title="set down only">s</abbr>{% elif cell.pick_up_only() %}<abbr title="pick up only">p</abbr>{% endif %}{% endif %}{% if cell.stoptime.note %}<strong>{{ cell.stoptime.note.code }}</strong>{% endif %}{% endif %}</td>{% endif %}{% endfor %}
                             </tr>
                             {% if row.has_waittimes %}
                                 <tr class="{% if row.is_minor() %}minor {% if row.od %}od {% endif %}{% endif %}dep">

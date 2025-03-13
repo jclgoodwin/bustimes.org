@@ -273,7 +273,7 @@ class Timetable:
         for trip in trips:
             trip.route = routes[trip.route_id]
 
-        if len(self.current_routes) > 1 and self.has_operators:
+        if len(self.current_routes) > 1 and self.has_multiple_operators:
             self.correct_directions(trips)
 
         for trip in trips:
@@ -377,29 +377,15 @@ class Timetable:
             grouping.apply_stops(stops)
 
     @cached_property
-    def has_blocks(self) -> bool:
-        return self.any_trip_has("block")
-
-    @cached_property
-    def has_garages(self) -> bool:
-        return self.any_trip_has("garage_id")
-
-    @cached_property
-    def has_vehicle_types(self) -> bool:
-        return self.any_trip_has("vehicle_type_id")
-
-    @cached_property
-    def has_operators(self) -> bool:
-        if self.operators:
-            return len(self.operators) > 1
-
-    @cached_property
-    def has_ticket_machine_codes(self) -> bool:
-        return self.any_trip_has("ticket_machine_code")
-
-    @cached_property
-    def has_vehicle_journey_codes(self) -> bool:
-        return self.any_trip_has("vehicle_journey_code")
+    def has_multiple_operators(self) -> bool:
+        if len(self.operators) > 1:
+            return True
+        prev_op = None
+        for trip in self.trips:
+            if trip.operator_id:
+                if prev_op and prev_op != trip.operator_id:
+                    return True
+                prev_op = trip.operator_id
 
     def get_calendar_options(self, calendar_id):
         all_days = set()
