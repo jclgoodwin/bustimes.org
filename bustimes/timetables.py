@@ -273,7 +273,7 @@ class Timetable:
         for trip in trips:
             trip.route = routes[trip.route_id]
 
-        if len(self.current_routes) > 1 and self.has_multiple_operators:
+        if len(self.current_routes) > 1 and self.operators and len(self.operators) > 1:
             self.correct_directions(trips)
 
         for trip in trips:
@@ -614,7 +614,7 @@ class Grouping:
         operators = {o.noc: o for o in self.parent.operators}
 
         for head in self.get_column_heads("operator_id"):
-            head.content = operators.get(head.content, "")
+            head.content = operators.get(head.content, head.content)
             yield head
 
     def get_column_heads(self, key):
