@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_3baf1eb7e8e062db_urls_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2025-03-13 21:28 +0000
+            created at 2025-03-13 22:39 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -355,7 +355,7 @@
     <p class="run"><span class="n"><a id="t273" href="#t273">273</a></span><span class="t">        <span class="key">for</span> <span class="nam">trip</span> <span class="key">in</span> <span class="nam">trips</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t274" href="#t274">274</a></span><span class="t">            <span class="nam">trip</span><span class="op">.</span><span class="nam">route</span> <span class="op">=</span> <span class="nam">routes</span><span class="op">[</span><span class="nam">trip</span><span class="op">.</span><span class="nam">route_id</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t275" href="#t275">275</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t276" href="#t276">276</a></span><span class="t">        <span class="key">if</span> <span class="nam">len</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">current_routes</span><span class="op">)</span> <span class="op">></span> <span class="num">1</span> <span class="key">and</span> <span class="nam">self</span><span class="op">.</span><span class="nam">has_multiple_operators</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t276" href="#t276">276</a></span><span class="t">        <span class="key">if</span> <span class="nam">len</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">current_routes</span><span class="op">)</span> <span class="op">></span> <span class="num">1</span> <span class="key">and</span> <span class="nam">self</span><span class="op">.</span><span class="nam">operators</span> <span class="key">and</span> <span class="nam">len</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">operators</span><span class="op">)</span> <span class="op">></span> <span class="num">1</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t277" href="#t277">277</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">correct_directions</span><span class="op">(</span><span class="nam">trips</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t278" href="#t278">278</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t279" href="#t279">279</a></span><span class="t">        <span class="key">for</span> <span class="nam">trip</span> <span class="key">in</span> <span class="nam">trips</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -696,7 +696,7 @@
     <p class="run"><span class="n"><a id="t614" href="#t614">614</a></span><span class="t">        <span class="nam">operators</span> <span class="op">=</span> <span class="op">{</span><span class="nam">o</span><span class="op">.</span><span class="nam">noc</span><span class="op">:</span> <span class="nam">o</span> <span class="key">for</span> <span class="nam">o</span> <span class="key">in</span> <span class="nam">self</span><span class="op">.</span><span class="nam">parent</span><span class="op">.</span><span class="nam">operators</span><span class="op">}</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t615" href="#t615">615</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t616" href="#t616">616</a></span><span class="t">        <span class="key">for</span> <span class="nam">head</span> <span class="key">in</span> <span class="nam">self</span><span class="op">.</span><span class="nam">get_column_heads</span><span class="op">(</span><span class="str">"operator_id"</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t617" href="#t617">617</a></span><span class="t">            <span class="nam">head</span><span class="op">.</span><span class="nam">content</span> <span class="op">=</span> <span class="nam">operators</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="nam">head</span><span class="op">.</span><span class="nam">content</span><span class="op">,</span> <span class="str">""</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t617" href="#t617">617</a></span><span class="t">            <span class="nam">head</span><span class="op">.</span><span class="nam">content</span> <span class="op">=</span> <span class="nam">operators</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="nam">head</span><span class="op">.</span><span class="nam">content</span><span class="op">,</span> <span class="nam">head</span><span class="op">.</span><span class="nam">content</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t618" href="#t618">618</a></span><span class="t">            <span class="key">yield</span> <span class="nam">head</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t619" href="#t619">619</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t620" href="#t620">620</a></span><span class="t">    <span class="key">def</span> <span class="nam">get_column_heads</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">key</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -1134,7 +1134,7 @@
             <a class="nav" href="z_3baf1eb7e8e062db_urls_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2025-03-13 21:28 +0000
+            created at 2025-03-13 22:39 +0000
         </p>
     </div>
 </footer>
