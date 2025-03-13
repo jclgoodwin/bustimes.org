@@ -1,4 +1,4 @@
-from django import forms
+from django.forms import ModelForm, Textarea
 from django.contrib import admin
 from django.contrib.gis.admin import GISModelAdmin
 from django.contrib.postgres.aggregates import StringAgg
@@ -83,11 +83,11 @@ class OperatorCodeInline(admin.TabularInline):
     model = models.OperatorCode
 
 
-class OperatorAdminForm(forms.ModelForm):
+class OperatorAdminForm(ModelForm):
     class Meta:
         widgets = {
-            "address": forms.Textarea,
-            "twitter": forms.Textarea,
+            "address": Textarea,
+            "twitter": Textarea,
         }
 
 

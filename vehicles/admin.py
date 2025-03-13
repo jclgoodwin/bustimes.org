@@ -1,4 +1,4 @@
-from django import forms
+from django.forms import ModelForm, Textarea, TextInput
 from django.contrib import admin, messages
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
@@ -44,15 +44,15 @@ class VehicleTypeAdmin(admin.ModelAdmin):
         )
 
 
-class VehicleAdminForm(forms.ModelForm):
+class VehicleAdminForm(ModelForm):
     class Meta:
         widgets = {
-            "fleet_number": forms.TextInput(attrs={"style": "width: 4em"}),
-            "fleet_code": forms.TextInput(attrs={"style": "width: 4em"}),
-            "reg": forms.TextInput(attrs={"style": "width: 8em"}),
-            "operator": forms.TextInput(attrs={"style": "width: 4em"}),
-            "branding": forms.TextInput(attrs={"style": "width: 8em"}),
-            "name": forms.TextInput(attrs={"style": "width: 8em"}),
+            "fleet_number": TextInput(attrs={"style": "width: 4em"}),
+            "fleet_code": TextInput(attrs={"style": "width: 4em"}),
+            "reg": TextInput(attrs={"style": "width: 8em"}),
+            "operator": TextInput(attrs={"style": "width: 4em"}),
+            "branding": TextInput(attrs={"style": "width: 8em"}),
+            "name": TextInput(attrs={"style": "width: 8em"}),
         }
 
 
@@ -320,13 +320,13 @@ class VehicleJourneyAdmin(admin.ModelAdmin):
         return queryset
 
 
-class LiveryAdminForm(forms.ModelForm):
+class LiveryAdminForm(ModelForm):
     class Meta:
         widgets = {
-            "colours": forms.Textarea,
-            "css": forms.Textarea,
-            "left_css": forms.Textarea,
-            "right_css": forms.Textarea,
+            "colours": Textarea,
+            "css": Textarea,
+            "left_css": Textarea,
+            "right_css": Textarea,
         }
 
 
