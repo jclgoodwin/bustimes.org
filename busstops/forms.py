@@ -49,7 +49,10 @@ class TimetableForm(forms.Form):
                     for line_name in s.get_line_names()
                 ]
         if len(self.fields["service"].choices) > 1:
-            self.fields["service"].choices = sorted(self.fields["service"].choices)
+            self.fields["service"].choices = sorted(
+                self.fields["service"].choices,
+                key=lambda choice: service.get_line_name_order(choice[1]),
+            )
         else:
             del self.fields["service"]
 
