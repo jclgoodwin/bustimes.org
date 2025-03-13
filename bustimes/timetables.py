@@ -378,14 +378,15 @@ class Timetable:
 
     @cached_property
     def has_multiple_operators(self) -> bool:
-        if len(self.operators) > 1:
+        if self.operators and len(self.operators) > 1:
             return True
         prev_op = None
-        for trip in self.trips:
-            if trip.operator_id:
-                if prev_op and prev_op != trip.operator_id:
-                    return True
-                prev_op = trip.operator_id
+        for grouping in self.groupings:
+            for trip in grouping.trips:
+                if trip.operator_id:
+                    if prev_op and prev_op != trip.operator_id:
+                        return True
+                    prev_op = trip.operator_id
 
     def get_calendar_options(self, calendar_id):
         all_days = set()
