@@ -1,24 +1,23 @@
 from django.db.models import Q, F
 from django.contrib.postgres.search import SearchQuery, SearchRank
+from django.forms.widgets import NumberInput, TextInput
 from django_filters.rest_framework import (
+    ModelChoiceFilter,
     CharFilter,
     DateTimeFilter,
     FilterSet,
-    NumberFilter,
     OrderingFilter,
 )
 
 from busstops.models import Operator, Service, StopPoint
 from bustimes.models import Trip
-from vehicles.models import Livery, Vehicle, VehicleType
+from vehicles.models import Livery, Vehicle, VehicleType, VehicleJourney
 
 
 class VehicleFilter(FilterSet):
     search = CharFilter(method="search_filter", label="Search")
     fleet_code = CharFilter(lookup_expr="iexact")
     reg = CharFilter(lookup_expr="iexact")
-    slug = CharFilter()
-    operator = CharFilter()
     code = CharFilter("vehiclecode__code", label="Code")
 
     ordering = OrderingFilter(fields=(("id", "id"),))
@@ -28,18 +27,22 @@ class VehicleFilter(FilterSet):
 
     class Meta:
         model = Vehicle
-        fields = ["id", "vehicle_type", "livery", "withdrawn"]
+        fields = ["id", "slug", "operator", "vehicle_type", "livery", "withdrawn"]
 
 
 class VehicleJourneyFilter(FilterSet):
-    vehicle = NumberFilter()
-    service = NumberFilter()
-    trip = NumberFilter()
-    source = NumberFilter()
+    vehicle = ModelChoiceFilter(queryset=Vehicle.objects, widget=NumberInput)
+    service = ModelChoiceFilter(queryset=Service.objects, widget=NumberInput)
+    trip = ModelChoiceFilter(queryset=Trip.objects, widget=NumberInput)
+    source = ModelChoiceFilter(
+        queryset=VehicleJourney.source.field.model.objects, widget=NumberInput
+    )
     datetime = DateTimeFilter()
 
 
 class StopFilter(FilterSet):
+    service = ModelChoiceFilter(queryset=Service.objects, widget=NumberInput)
+
     class Meta:
         model = StopPoint
         fields = ["atco_code", "naptan_code", "stop_type"]
@@ -48,6 +51,7 @@ class StopFilter(FilterSet):
 class ServiceFilter(FilterSet):
     operator = CharFilter()
     search = CharFilter(method="search_filter", label="Search")
+    stops = ModelChoiceFilter(queryset=StopPoint.objects, widget=TextInput)
 
     def search_filter(self, queryset, name, value):
         query = SearchQuery(value, search_type="websearch", config="english")
@@ -73,8 +77,8 @@ class OperatorFilter(FilterSet):
 
 
 class TripFilter(FilterSet):
-    route = NumberFilter()
-    operator = CharFilter()
+    route = ModelChoiceFilter(queryset=Trip.objects, widget=NumberInput)
+    operator = ModelChoiceFilter(queryset=Operator.objects, widget=TextInput)
 
     class Meta:
         model = Trip
