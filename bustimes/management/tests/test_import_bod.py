@@ -2,7 +2,7 @@ import datetime
 import zipfile
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from unittest.mock import patch
+from unittest.mock import patch, ANY
 
 import fakeredis
 import time_machine
@@ -477,7 +477,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
                 with self.assertNumQueries(110):
                     call_command("import_bod_timetables", "stagecoach")
                 download_if_modified.assert_called_with(
-                    path, DataSource.objects.get(name="Stagecoach East")
+                    path, DataSource.objects.get(name="Stagecoach East"), ANY
                 )
 
                 route_links = RouteLink.objects.order_by("id")
