@@ -20,14 +20,13 @@ ALLOWED_HOSTS = os.environ.get(
 
 CSRF_TRUSTED_ORIGINS = os.environ.get(
     "CSRF_TRUSTED_ORIGINS",
-    "https://bustimes.org https://staging.bustimes.org https://bustimes-org.fly.dev",
+    "https://bustimes.org",
 ).split()
 
 TEST = "test" in sys.argv or "pytest" in sys.argv[0]
 DEBUG = bool(os.environ.get("DEBUG", False))
 
-SERVER_EMAIL = "contact@bustimes.org"
-DEFAULT_FROM_EMAIL = "bustimes.org <contact@bustimes.org>"
+DEFAULT_FROM_EMAIL = '"bustimes.org" <bustimes.org@bustimes.org>'
 
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "")
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
