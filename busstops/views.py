@@ -1513,7 +1513,7 @@ def search(request):
 
             vehicles = Vehicle.objects.select_related("operator")
             query_text = query_text.replace(" ", "")
-            if len(query_text) >= 5:
+            if len(query_text) >= 4:
                 if query_text.isdigit():
                     context["vehicles"] = vehicles.filter(fleet_code__iexact=query_text)
                 elif not query_text.isalpha():
