@@ -23,7 +23,6 @@ from ...utils import log_time_taken
 from .import_transxchange import Command as TransXChangeCommand
 
 logger = logging.getLogger(__name__)
-session = requests.Session()
 
 
 def clean_up(timetable_data_source, sources, incomplete=False):
@@ -150,6 +149,8 @@ def bus_open_data(api_key, specific_operator):
 
     command = get_command()
 
+    session = requests.Session()
+
     url_prefix = "https://data.bus-data.dft.gov.uk"
     path_prefix = settings.DATA_DIR / "bod"
     if not path_prefix.exists():
@@ -241,7 +242,7 @@ def bus_open_data(api_key, specific_operator):
                 command.source.datetime = dataset["modified"]
 
                 with log_time_taken(logger):
-                    download(path, command.source.url)
+                    download(path, url=command.source.url, session=session)
 
                     handle_file(command, path)
 
@@ -292,6 +293,8 @@ https://bustimes.org/admin/busstops/service/?operator__noc__in={",".join(operato
 def ticketer(specific_operator=None):
     command = get_command()
 
+    session = requests.Session()
+
     base_dir = settings.DATA_DIR / "ticketer"
 
     if not base_dir.exists():
@@ -326,7 +329,7 @@ def ticketer(specific_operator=None):
             sleep(2)
             need_to_sleep = False
 
-        modified, last_modified = download_if_modified(path, command.source)
+        modified, last_modified = download_if_modified(path, command.source, session)
 
         if (
             specific_operator
@@ -397,6 +400,8 @@ def do_stagecoach_source(command, last_modified, filename, nocs):
 def stagecoach(specific_operator=None):
     command = get_command()
 
+    session = requests.Session()
+
     timetable_data_sources = TimetableDataSource.objects.filter(
         url__startswith="https://opendata.stagecoachbus.com", active=True
     )
@@ -424,7 +429,7 @@ def stagecoach(specific_operator=None):
             {"name": source.name}, url=source.url
         )
 
-        modified, last_modified = download_if_modified(path, command.source)
+        modified, last_modified = download_if_modified(path, command.source, session)
         sha1 = get_sha1(path)
 
         if command.source.datetime != last_modified:

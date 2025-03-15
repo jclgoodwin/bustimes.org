@@ -1,4 +1,4 @@
-from django import forms
+from django.forms import ModelForm, Textarea, TextInput
 from django.contrib import admin, messages
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
@@ -44,15 +44,15 @@ class VehicleTypeAdmin(admin.ModelAdmin):
         )
 
 
-class VehicleAdminForm(forms.ModelForm):
+class VehicleAdminForm(ModelForm):
     class Meta:
         widgets = {
-            "fleet_number": forms.TextInput(attrs={"style": "width: 4em"}),
-            "fleet_code": forms.TextInput(attrs={"style": "width: 4em"}),
-            "reg": forms.TextInput(attrs={"style": "width: 8em"}),
-            "operator": forms.TextInput(attrs={"style": "width: 4em"}),
-            "branding": forms.TextInput(attrs={"style": "width: 8em"}),
-            "name": forms.TextInput(attrs={"style": "width: 8em"}),
+            "fleet_number": TextInput(attrs={"style": "width: 4em"}),
+            "fleet_code": TextInput(attrs={"style": "width: 4em"}),
+            "reg": TextInput(attrs={"style": "width: 8em"}),
+            "operator": TextInput(attrs={"style": "width: 4em"}),
+            "branding": TextInput(attrs={"style": "width: 8em"}),
+            "name": TextInput(attrs={"style": "width: 8em"}),
         }
 
 
@@ -320,15 +320,13 @@ class VehicleJourneyAdmin(admin.ModelAdmin):
         return queryset
 
 
-class LiveryAdminForm(forms.ModelForm):
-    save_as = True
-
+class LiveryAdminForm(ModelForm):
     class Meta:
         widgets = {
-            "colours": forms.Textarea,
-            "css": forms.Textarea,
-            "left_css": forms.Textarea,
-            "right_css": forms.Textarea,
+            "colours": Textarea,
+            "css": Textarea,
+            "left_css": Textarea,
+            "right_css": Textarea,
         }
 
 
@@ -359,6 +357,7 @@ class LiveryAdmin(SimpleHistoryAdmin):
     form = LiveryAdminForm
     search_fields = ["name"]
     actions = ["merge"]
+    save_as = True
     list_display = [
         "id",
         "name",
@@ -374,8 +373,30 @@ class LiveryAdmin(SimpleHistoryAdmin):
         "updated_at",
         ("vehicle__operator", admin.RelatedOnlyFieldListFilter),
     ]
-    readonly_fields = ["left", "right", "blob", "updated_at"]
     ordering = ["-id"]
+
+    readonly_fields = ["left", "right", "blob", "updated_at"]
+    # specify order:
+    fields = [
+        "name",
+        "colour",
+        "blob",
+        "colours",
+        "angle",
+        "horizontal",
+        "text_colour",
+        "white_text",
+        "stroke_colour",
+        "left_css",
+        "right_css",
+        "left",
+        "right",
+        "published",
+        "updated_at",
+    ]
+
+    class Media:
+        js = ["js/livery-admin.js"]
 
     def merge(self, request, queryset):
         queryset = queryset.order_by("id")

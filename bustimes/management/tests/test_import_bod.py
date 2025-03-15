@@ -2,7 +2,7 @@ import datetime
 import zipfile
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from unittest.mock import patch
+from unittest.mock import patch, ANY
 
 import fakeredis
 import time_machine
@@ -182,6 +182,9 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
 
         trip = route.trip_set.first()
 
+        response = self.client.get(f"{trip.get_absolute_url()}/block")
+        self.assertEqual(response.status_code, 404)  # no block
+
         response = self.client.get(f"/api/trips/{trip.id}.json")
         json = response.json()
         self.assertEqual(27, len(json["times"]))
@@ -320,10 +323,12 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
         trip = route.trip_set.first()
         trip.copy(datetime.timedelta(hours=1))
 
+        fake_redis = fakeredis.FakeStrictRedis()
         # test journey with trip json
-        with patch(
-            "vehicles.views.redis_client", fakeredis.FakeStrictRedis()
-        ) as fake_redis:
+        with (
+            patch("vehicles.views.redis_client", fake_redis),
+            patch("api.views.redis_client", fake_redis),
+        ):
             response = self.client.get(f"/journeys/{journey.id}.json")
             json = response.json()
             self.assertIn("stops", json)
@@ -352,6 +357,11 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
             self.assertEqual(
                 json["stops"][2]["actual_departure_time"], "2019-05-29T12:03:34Z"
             )
+
+            # newer API
+            response = self.client.get(f"/api/vehiclejourneys/{journey.id}/")
+            json = response.json()
+            self.assertEqual(json["time_aware_polyline"], "o|k@gsy`Ikpyx|{A")
 
     def test_ticketer(self):
         source = TimetableDataSource.objects.create(
@@ -467,7 +477,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
                 with self.assertNumQueries(110):
                     call_command("import_bod_timetables", "stagecoach")
                 download_if_modified.assert_called_with(
-                    path, DataSource.objects.get(name="Stagecoach East")
+                    path, DataSource.objects.get(name="Stagecoach East"), ANY
                 )
 
                 route_links = RouteLink.objects.order_by("id")

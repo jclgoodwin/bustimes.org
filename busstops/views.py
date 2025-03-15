@@ -889,10 +889,6 @@ class OperatorDetailView(DetailView):
             context["tickets_link"] = reverse(
                 "operator_tickets", kwargs={"slug": self.object.slug}
             )
-        elif self.object.name == "Megabus":
-            context["tickets_link"] = (
-                "https://www.awin1.com/cread.php?awinmid=2678&awinaffid=242611"
-            )
         elif self.object.name == "National Express":
             context["tickets_link"] = (
                 "https://nationalexpress.prf.hn/click/camref:1011ljPYw"
@@ -1218,24 +1214,7 @@ class ServiceDetailView(DetailView):
                             "text": "Buy tickets at National Express",
                         }
                     )
-                elif (
-                    operator.name == "Megabus"
-                    or self.object.service_code == "PH1020951:281"  # Falcon
-                    or operator.name == "Scottish Citylink"
-                    and (
-                        self.object.line_name[:1] == "M"
-                        or self.object.line_name in ("900", "909", "AIR")
-                    )
-                ):
-                    context["tickets_link"] = (
-                        f"https://www.awin1.com/cread.php?awinmid=2678&awinaffid=242611&clickRef={self.object.line_name}"
-                    )
-                    context["links"].append(
-                        {
-                            "url": context["tickets_link"],
-                            "text": "Buy tickets at megabus.com",
-                        }
-                    )
+                    break
 
         context["fare_tables"] = self.get_fare_tables()
 
@@ -1534,7 +1513,7 @@ def search(request):
 
             vehicles = Vehicle.objects.select_related("operator")
             query_text = query_text.replace(" ", "")
-            if len(query_text) >= 5:
+            if len(query_text) >= 4:
                 if query_text.isdigit():
                     context["vehicles"] = vehicles.filter(fleet_code__iexact=query_text)
                 elif not query_text.isalpha():

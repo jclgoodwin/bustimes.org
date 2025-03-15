@@ -18,7 +18,7 @@ from django.db.models import (
     Q,
     FilteredRelation,
     ExpressionWrapper,
-    DateTimeField,
+    IntegerField,
 )
 from django.http import (
     FileResponse,
@@ -525,19 +525,20 @@ def trip_block(request, pk: int):
     trips = trips.annotate(
         datetime=ExpressionWrapper(
             F("start") + int(midnight.timestamp()),
-            output_field=DateTimeField(),
+            output_field=IntegerField(),
         )
     ).select_related("route", "destination__locality")
 
     if trips := list(trips):
+        tz = timezone.get_current_timezone()
         prefetch_related_objects(
             trips,
             Prefetch(
                 "vehiclejourney_set",
                 VehicleJourney.objects.filter(
                     datetime__range=(
-                        datetime.fromtimestamp(trips[0].datetime),
-                        datetime.fromtimestamp(trips[-1].datetime),
+                        datetime.fromtimestamp(trips[0].datetime, tz=tz),
+                        datetime.fromtimestamp(trips[-1].datetime, tz=tz),
                     )
                 ).select_related("vehicle"),
                 to_attr="vehicle_journeys",

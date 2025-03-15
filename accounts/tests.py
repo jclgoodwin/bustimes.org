@@ -32,7 +32,7 @@ class RegistrationTest(TransactionTestCase):
         self.assertContains(response, "Email address")
 
         # IP address banned:
-        naughty_user = User.objects.create(trusted=False, ip_address="6.6.6.6")
+        User.objects.create(trusted=False, ip_address="6.6.6.6")
         with self.assertNumQueries(1):
             # create new account
             response = self.client.post(
