@@ -357,3 +357,6 @@ FHUD:
 FLON:
   name: First Bus London
   url: https://www.firstbus.co.uk/london
+HOWT:
+  name: Omega Busways
+  url: https://www.omegabusways.uk/
