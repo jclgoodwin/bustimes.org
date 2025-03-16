@@ -927,10 +927,9 @@ def vehicle_edits(request):
         request.GET or {"status": "approved"}, queryset=revisions
     )
     if request.user.is_anonymous or not (
-        request.user.trusted or request.user.is_superuser
-    ):
+        request.user.trusted or request.user.is_superuser or request.GET.get('user') == request.user.id
+    ) :
         f.filters["status"].field.choices = [("approved", "approved")]
-        # TODO: only show users' own disapproved edits
 
     if f.is_valid():
         paginator = Paginator(f.qs, 100)
