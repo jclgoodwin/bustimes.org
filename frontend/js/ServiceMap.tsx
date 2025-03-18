@@ -14,6 +14,10 @@ let hasCss = false;
 declare global {
   interface Window {
     LIVERIES_CSS_URL: string;
+    SERVICES?: {
+      id: number;
+      line_names: string[];
+    }[];
   }
 }
 
@@ -70,6 +74,23 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
     };
   });
 
+  const [selectedServices, setSelectedServices] = React.useState(
+    new Set<number>([serviceId]),
+  );
+
+  const handleSelectService = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const serviceId = Number.parseInt(event.target.value, 10);
+      if (event.target.checked) {
+        selectedServices.add(serviceId);
+      } else {
+        selectedServices.delete(serviceId);
+      }
+      setSelectedServices(new Set(selectedServices));
+    },
+    [selectedServices],
+  );
+
   const first = React.useRef(true);
 
   React.useEffect(() => {
@@ -103,11 +124,11 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
     }
 
     const loadVehicles = () => {
-      if (document.hidden && !first.current) {
+      if ((document.hidden && !first.current) || !selectedServices.size) {
         return;
       }
 
-      const url = `${apiRoot}vehicles.json?service=${window.SERVICE_ID}`;
+      const url = `${apiRoot}vehicles.json?service=${Array.from(selectedServices).join(",")}`;
       fetch(url).then(
         (response) => {
           if (response.ok) {
@@ -147,7 +168,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
       window.removeEventListener("visibilitychange", handleVisibilityChange);
       clearTimeout(timeout);
     };
-  }, [isOpen, serviceId]);
+  }, [isOpen, serviceId, selectedServices]);
 
   const count = vehicles?.length;
   let countString: string | undefined;
@@ -183,6 +204,21 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
       {createPortal(
         <div className="service-map">
           {closeButton}
+          {window.SERVICES ? (
+            <div className="map-select-services">
+              {window.SERVICES.map((service) => (
+                <label key={service.id}>
+                  <input
+                    type="checkbox"
+                    value={service.id}
+                    checked={selectedServices.has(service.id)}
+                    onChange={handleSelectService}
+                  />{" "}
+                  {service.line_names.join(", ")}
+                </label>
+              ))}
+            </div>
+          ) : null}
           <Suspense fallback={<LoadingSorry />}>
             <ServiceMapMap
               vehicles={vehicles}

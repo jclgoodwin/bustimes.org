@@ -35,7 +35,6 @@
     <div id="AFM_inContentTop_ad"></div>
 </div>
 
-
 {% if object.geometry %}
     <div id="map"><div class="service-map"><a href="#" class="map-button">Close map</a></div></div>
 
@@ -51,6 +50,14 @@
         SERVICE_ID = {{ object.id }};
         EXTENT = [{{ object.geometry.extent|join(",") }}];
         LIVERIES_CSS_URL  = "/liveries.{{ liveries_css_version() }}.css";
+{% if related %}
+        SERVICES = [
+            {"id": {{ object.id }}, "line_names": {{ object.line_names|tojson }}},
+        {% for service in related %}
+            {"id": {{ service.id }}, "line_names": {{ service.line_names|tojson }}},
+        {% endfor %}
+        ];
+{% endif %}
     </script>
     <script async src="{{ static('dist/js/app.js') }}"></script>
 {% else %}
