@@ -932,7 +932,7 @@ def vehicle_edits(request):
     if request.user.is_anonymous or not (
         request.user.trusted
         or request.user.is_superuser
-        or request.GET.get("user") == request.user.id
+        or request.GET.get("user") == str(request.user.id)
     ):
         f.filters["status"].field.choices = [("approved", "approved")]
 
