@@ -129,8 +129,8 @@ GLCS:
   name: Globe Holidays (Barnsley)
 TPEN:
   url: https://www.transdevbus.co.uk/team-pennine/
-YACT:
-  url: https://www.transdevbus.co.uk/coastliner/
+YCST:
+  name: York and Country
 FECS:
   name: First Eastern Counties
   twitter: |
