@@ -57,9 +57,14 @@ class Command(BaseCommand):
 
         feed = gtfs_kit.read_feed(path, dist_units="km")
 
-        feed = feed.restrict_to_routes(
-            feed.routes[feed.routes.route_id.str.startswith("UK")].route_id
-        )
+
+        mask = (
+            feed.routes.route_id.str.startswith("UK") |
+            feed.routes.route_long_name.str.startswith("London") |
+            feed.routes.route_long_name.str.endswith("London")
+            )
+        feed = feed.restrict_to_routes(feed.routes[mask].route_id)
+        
 
         stops_data = {row.stop_id: row for row in feed.stops.itertuples()}
         stop_codes = {
