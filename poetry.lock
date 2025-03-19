@@ -945,96 +945,27 @@ files = [
 ]
 
 [[package]]
-name = "lightningcss"
-version = "0.2.0"
-description = "Python bindings for lightningcss."
+name = "lightningcss-cli"
+version = "1.29.2"
+description = "A CSS parser, transformer, and minifier"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "lightningcss-0.2.0-cp310-cp310-macosx_10_12_x86_64.whl", hash = "sha256:ec3a7012d8c8d3935e40b8927f61be6b17d13c79579b07d2ff08fcde25b49f79"},
-    {file = "lightningcss-0.2.0-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:b03b720361eb079d07427fb825ef57b78196cd572f33b2f6ebd49a0e1d37265d"},
-    {file = "lightningcss-0.2.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:cd5ffbe0c9889a1f6d688d80616df7f29cae8e5c2bb2bb9ec7ea4d7b19bf9491"},
-    {file = "lightningcss-0.2.0-cp310-cp310-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:6310e93f65a27f4288388fff5b56c89aad3fc9be3044bf2a11fff12959132ab0"},
-    {file = "lightningcss-0.2.0-cp310-cp310-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:d10df276c95459c933fcd93674aae1ffc8a905b16e010e99fc474da7892be1b1"},
-    {file = "lightningcss-0.2.0-cp310-cp310-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:ec489c915cfe2d71d7a86b0d3e5caa2170e351a251ff480c273628b43aad42e2"},
-    {file = "lightningcss-0.2.0-cp310-cp310-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:e553bd059111eb5fc5b64449c6f2e8fa4f5999e265b219ba788bbe03eb2759c0"},
-    {file = "lightningcss-0.2.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0ddce73b1b258bdf5d94639b92f49eb8323e93a810376f5ae2b7cf0ad732e80f"},
-    {file = "lightningcss-0.2.0-cp310-none-win32.whl", hash = "sha256:9cd056266c5a4576e9c53f3e7d9eca7fb5dacb23f44e55df833ad448a5355602"},
-    {file = "lightningcss-0.2.0-cp310-none-win_amd64.whl", hash = "sha256:438c785b66ce6681968df01ac0ce3ba12c3953cfe92f75ec1e11be2e9b43a751"},
-    {file = "lightningcss-0.2.0-cp311-cp311-macosx_10_12_x86_64.whl", hash = "sha256:3b69de22189f93917e442ef88938b237dbd77ba7742edb0b55b75cdfd1253267"},
-    {file = "lightningcss-0.2.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:eee3386e82edceeadf1bed97623bba95372284cfb744308c83f47ec524c1870d"},
-    {file = "lightningcss-0.2.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:30032b435188de555ec469ee212ef8eb08c9044729bed88c3c50719584675b2f"},
-    {file = "lightningcss-0.2.0-cp311-cp311-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:1c50d83d0f03ee25023e27b6325119a79496098492a386e5babf2de31da5d8a1"},
-    {file = "lightningcss-0.2.0-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:966513f047eeacbfd19c3b1645d4a2e0da5dc7a4dcfd52cd6314f1f5cd08fd5a"},
-    {file = "lightningcss-0.2.0-cp311-cp311-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:6eafc3e203737d61fea3330e992cf8ecbef542005038cca9a2e17c791793823c"},
-    {file = "lightningcss-0.2.0-cp311-cp311-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:d08657de85438ee797bc2118332a6e6772c3e8807e74ca769ac48610614c9954"},
-    {file = "lightningcss-0.2.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ad16a415b6f2487ed4eebdc74afa51647b61313775c62a204341965317e663e3"},
-    {file = "lightningcss-0.2.0-cp311-none-win32.whl", hash = "sha256:9e4ab3eb992f89f04dbd9545815be14777bea059466aecc869109fb663e3a170"},
-    {file = "lightningcss-0.2.0-cp311-none-win_amd64.whl", hash = "sha256:aee9f1aac88f3f16eb03e7cbca97a227d921e346da7351ff88f0e7c35b7915d7"},
-    {file = "lightningcss-0.2.0-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:78dd199e756ff194304d6eebea430128eacba77dcce3f7315a1833d5bba54d07"},
-    {file = "lightningcss-0.2.0-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:4bf3ffe5bcb9baad993477612f8f4dc44cf4abc94055dd41583020697429e9e3"},
-    {file = "lightningcss-0.2.0-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d6e28eece84388050a0c6dfcd5e9304f7f26a498e6cb4bcc86dd969573833d51"},
-    {file = "lightningcss-0.2.0-cp312-cp312-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:e8f26a2ac20a465efe2bc6fa496bbdac7cfa6f3502aa354884aecda6a7e73b86"},
-    {file = "lightningcss-0.2.0-cp312-cp312-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:2ec286e7bb929e9a86fbb8b30ca6e6ef27d5a006dc680cb4666016beaa2e5a8b"},
-    {file = "lightningcss-0.2.0-cp312-cp312-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:e67acfd22d341907c8970a130f26c1a505b4cf139f34cc20ba40609596ef3c8c"},
-    {file = "lightningcss-0.2.0-cp312-cp312-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:52f7328aa40f144b8987b9b4e33cde2282cdd432f530d3a6bebff8fd2004470b"},
-    {file = "lightningcss-0.2.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:45dab461e2a2eac76c8affdfd1c62e003b2a6d523a73057c3c24c83c7944bad5"},
-    {file = "lightningcss-0.2.0-cp312-none-win32.whl", hash = "sha256:e2377e7d1f85d639ffb2e1e28aa84f1241f8cbc7b593eb3fd74bc60a078920d5"},
-    {file = "lightningcss-0.2.0-cp312-none-win_amd64.whl", hash = "sha256:d029b3cbeb07658bcb1e202dae267f838c62e8a24cd966b43cfabc3b361baff3"},
-    {file = "lightningcss-0.2.0-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:bc93ddc8bc3867234a656ae4a56e540f085933435bdeba4c5161214a301a6d46"},
-    {file = "lightningcss-0.2.0-cp313-cp313-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:a730db0890eb2ed6d569c201cc0135dc1c456aa07ddcf7f9cd579fb0eb7d99b1"},
-    {file = "lightningcss-0.2.0-cp313-cp313-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:3106a68ead4462a4084713b1920963d2bdce199ce9874c816bd189873f05b9bf"},
-    {file = "lightningcss-0.2.0-cp313-cp313-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:12c1e1c59ada5dc09a54736d28e65ecd223b37959e4039c9b37105cb7191a96e"},
-    {file = "lightningcss-0.2.0-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:38270fd99c42bcbae5ecef89be9f311865dbe3d07e694519b893817cca28a402"},
-    {file = "lightningcss-0.2.0-cp37-cp37m-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:6705db9f7fc4dfff3c2aad41fa8bcf32420be64fb5620760f294293fef57a4fe"},
-    {file = "lightningcss-0.2.0-cp37-cp37m-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:d7da19b3f22dd69bf8cf653677d7c2903292a2f43314342861a706d49df5194f"},
-    {file = "lightningcss-0.2.0-cp37-cp37m-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:4a4bd23ca36d0666942bcfad908bf914098c61385c500afbb220d471dd96e769"},
-    {file = "lightningcss-0.2.0-cp37-cp37m-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:ce53e4f609f900e1e61091ddb9dda7e0e767730b45d72398c27057b0df4336ae"},
-    {file = "lightningcss-0.2.0-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1ba9ab117d3e1d62d84a4efc71061a7ec06a8b679731ac8ee7200a973540cf4c"},
-    {file = "lightningcss-0.2.0-cp37-none-win32.whl", hash = "sha256:cfec5205c1c0234f804b4ccaaa98661ff19bf49bb0a8ecf8785173310b73ae11"},
-    {file = "lightningcss-0.2.0-cp37-none-win_amd64.whl", hash = "sha256:48828b5e2687179dcb5620cc163a918e046a67e132caf11db72725cd924f6827"},
-    {file = "lightningcss-0.2.0-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:fb6586f6fd600ad81f64d3a3e91d6b08b1ce70d0740736575a895e2d205fea49"},
-    {file = "lightningcss-0.2.0-cp38-cp38-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:6c3f78226972c35cf921bc7ebcef6dfd1d57ea12193476b204ac76df415feb8a"},
-    {file = "lightningcss-0.2.0-cp38-cp38-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:8df701006f773e8904aae138897b52f68f9785a3ce839db2e04b7b30b553f034"},
-    {file = "lightningcss-0.2.0-cp38-cp38-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:a48bc951c56cd42b69d37b4d51cfb3a17a57b4398bd5dadccdc3baf5b6c6e360"},
-    {file = "lightningcss-0.2.0-cp38-cp38-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:8cec1bdabf0a8ac3b68a0d9af1c3db06d7b095e80603d608a6132a720b13100d"},
-    {file = "lightningcss-0.2.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:5002fdc3e6e4f69566b57f142e78108eb67f2e02995019723b2c7e42df13e13d"},
-    {file = "lightningcss-0.2.0-cp38-none-win32.whl", hash = "sha256:0327ae7cae2aaee3dd7015c60fe1fabae3ee6431e621e3cd21b4eeb0ef7b7a18"},
-    {file = "lightningcss-0.2.0-cp38-none-win_amd64.whl", hash = "sha256:84df4d67a7ff4a25d771185f4b7c02b3e070b14af25e97293eeb6b579555ccef"},
-    {file = "lightningcss-0.2.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ab05fb3714d9bdec9ddf6305d45dc44aecb6b9f373acca053e526d6664d9b41d"},
-    {file = "lightningcss-0.2.0-cp39-cp39-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:6bb2a62138041a3ae58aafcda46b7e96d424914d92d3d5c6387dd7f0ae42f92f"},
-    {file = "lightningcss-0.2.0-cp39-cp39-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:1816bf53c87fb3f3f562694682769a6c0d6cdf4734b6a00462770157078189b2"},
-    {file = "lightningcss-0.2.0-cp39-cp39-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:b91030ebbe63549ec4860eab55f6a37dcd925c6dc6ced8462acbf16ed699ab67"},
-    {file = "lightningcss-0.2.0-cp39-cp39-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:5909bf58cc066cdbc2adfb176ab9309613d04ae5382cd8584bd34e0680bf2528"},
-    {file = "lightningcss-0.2.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:713867a5cbf2d27f3e17a62342511a1d44fc92ccb95d76d1f8cc145fbebddcc2"},
-    {file = "lightningcss-0.2.0-cp39-none-win32.whl", hash = "sha256:ee974e2624baefb54fbadfce6f555e7e3f3884ba6b10ac9decc2d87f00e467eb"},
-    {file = "lightningcss-0.2.0-cp39-none-win_amd64.whl", hash = "sha256:9ed8cefcb9b7ef070d50f8e9993e7c81c57e815c3faf729ae444ed68bf328206"},
-    {file = "lightningcss-0.2.0-pp310-pypy310_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d869987843ce146f81b48a048fad70ccc0b81151ffd19ab808596498256f3170"},
-    {file = "lightningcss-0.2.0-pp310-pypy310_pp73-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:8e506528d4f56d17fdd277acf035ccbe42262e831c914dcc7620d290fe89ab93"},
-    {file = "lightningcss-0.2.0-pp310-pypy310_pp73-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:7a288f73acd0d71f046e099e5360523556194605c405c98954d625674224d068"},
-    {file = "lightningcss-0.2.0-pp310-pypy310_pp73-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:f4401e10d3d0f62805af398ad3b64d058d62433b351a0aa620443ad760bfd2dd"},
-    {file = "lightningcss-0.2.0-pp310-pypy310_pp73-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:2507e35c12e15a1ac59fc670f723e8f48941b3e1eef5bccc71fb3a6db2271afa"},
-    {file = "lightningcss-0.2.0-pp310-pypy310_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3c89337bda918ed4abf74aaaa7025036c90ef5dac6c141a81ffa0d0322777bc6"},
-    {file = "lightningcss-0.2.0-pp37-pypy37_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:30df92e1a74d06c8427399f373cee21bbb00909f077d1a91c692c1711f160f7b"},
-    {file = "lightningcss-0.2.0-pp37-pypy37_pp73-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:993d7ed6f47a04d048dd8cfa88e6a16f701a0d3341f707b156a9d15db7341d4f"},
-    {file = "lightningcss-0.2.0-pp37-pypy37_pp73-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:43ec4604c4b4f32ba16a04aa4a3782ea3cc19503105c70efcac4a26ccef86510"},
-    {file = "lightningcss-0.2.0-pp37-pypy37_pp73-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:99ebd7e5f8780cc1bec2c572c58de8d55439b43e915a68092431dc48dc6c0389"},
-    {file = "lightningcss-0.2.0-pp37-pypy37_pp73-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:c900a3641831c7a5bf26b63decde11f9ff44363cf8e6a4885e35c30a15d66ead"},
-    {file = "lightningcss-0.2.0-pp37-pypy37_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2d5a827f3f57fb1ab3da2f55c593fc65dc10b0351e1a1c100c40c945272a67c3"},
-    {file = "lightningcss-0.2.0-pp38-pypy38_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:53cc3bbcac64fa3c31f34f4e944361036bfd0536a13864513c197623b596ed97"},
-    {file = "lightningcss-0.2.0-pp38-pypy38_pp73-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:d625d9d030346cd0b534e6abd93846988bc0d341e2b046237d7bc23010060e2e"},
-    {file = "lightningcss-0.2.0-pp38-pypy38_pp73-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:af8d4125ecdfc741b41631eccfc3850b818502a04ae3da16aa47cacfc3d30c8c"},
-    {file = "lightningcss-0.2.0-pp38-pypy38_pp73-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:567102339165cd684d43d757ec8c46846795902241d708924e5dd83ed4c157b2"},
-    {file = "lightningcss-0.2.0-pp38-pypy38_pp73-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:267e8eeaf466a28b0633f6ed65119cef58254ba302bc59a0fdc9c46592007a28"},
-    {file = "lightningcss-0.2.0-pp38-pypy38_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8479e3df84057e847a582aae53518ebb26b7c0fb559bb56985ad2c3aff8d81df"},
-    {file = "lightningcss-0.2.0-pp39-pypy39_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:9e268873e4cda117ef9489220ca57dc9c21dfd38f82a1f9963c8420d3b14b571"},
-    {file = "lightningcss-0.2.0-pp39-pypy39_pp73-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:eded2c19c5bd3e2d47b851a734b26003d07095b37617a134231c6af2c4f63083"},
-    {file = "lightningcss-0.2.0-pp39-pypy39_pp73-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:69c3db9fef3eb28746771a0153748fe0b5d9160f801108a3a20518364d50e249"},
-    {file = "lightningcss-0.2.0-pp39-pypy39_pp73-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:8302ec7d86ed64978cad2cd212fc95547edbac1656d8124c000bce37bd05e038"},
-    {file = "lightningcss-0.2.0-pp39-pypy39_pp73-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:e540480e04db203520730ca2e4b105eedb19ac431bcddafb41813508af08f373"},
-    {file = "lightningcss-0.2.0-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:51213ce989011f0e1c70e16dcfe2177615d9faefff7d7ef7a34bab7c0e6eb7cb"},
-    {file = "lightningcss-0.2.0.tar.gz", hash = "sha256:52ffdf0daaf73e2150419da1bef6871b48ebad807000d081b7ccee17a3b8de24"},
+    {file = "lightningcss_cli-1.29.2-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:a0a628c53157d6995283512b9206fc7c4ba49ce8ff08fbb0e273bcae4de9635e"},
+    {file = "lightningcss_cli-1.29.2-py3-none-macosx_11_0_arm64.whl", hash = "sha256:724fc1c0a54daeab20878379844586972c69ace346526e4933bf2ded89335e4a"},
+    {file = "lightningcss_cli-1.29.2-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:4ba4f3e090010333742e632e65b92e3b9fe647e19f16653ebc5a8cd04a5408cb"},
+    {file = "lightningcss_cli-1.29.2-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:4e7c2a3b5357ccfdae6c3fada71e52e0cf0adc05e827c2ab06a28266c52f869f"},
+    {file = "lightningcss_cli-1.29.2-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:311dd4004cd06f2d8377d050547070f177aa0e8b44b11dcc0524376d9b4a6a29"},
+    {file = "lightningcss_cli-1.29.2-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:9ca148a9504bf18a9e31e9cbdc3655c9e9ef42007a8bc4d4a335b060dd727e91"},
+    {file = "lightningcss_cli-1.29.2-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:dabc3fa892606df96ac104dfb6339b84ac0508558c2007e278476fe24d38aaed"},
+    {file = "lightningcss_cli-1.29.2-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2cb1e91d2dd28f242df4a5247ef0a97b44620aef280b9dc6fb50e1ba153a3769"},
+    {file = "lightningcss_cli-1.29.2-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:a5e64a27c2345be343178d3b257392af77c0f58eaa74142b9aaec7f894a30598"},
+    {file = "lightningcss_cli-1.29.2-py3-none-musllinux_1_2_i686.whl", hash = "sha256:5ce0df8c6a4fabe3f10b9edef7c2fb0a9cc4348ce893d947a37c670dbf9c1ddc"},
+    {file = "lightningcss_cli-1.29.2-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:d0855fbd7a23ce9c267d810357e63179d14abd0745b393bcf5c6c608c804db2e"},
+    {file = "lightningcss_cli-1.29.2-py3-none-win32.whl", hash = "sha256:051824ab15e8d13e2fb91db5b654dfd7c34f796285d13ef00b7a93e8dc8acca2"},
+    {file = "lightningcss_cli-1.29.2-py3-none-win_amd64.whl", hash = "sha256:9a5d7fb7ebbdfe04dc5d36e9c486ae0e934902bd43b16e2f024fdc578de32d9e"},
+    {file = "lightningcss_cli-1.29.2.tar.gz", hash = "sha256:ebc0440ae9e60197179372bc9a2d3c812315b36382ce23c0bfcb5fc3b038c68f"},
 ]
 
 [[package]]
@@ -2826,4 +2757,4 @@ propcache = ">=0.2.0"
 [metadata]
 lock-version = "2.1"
 python-versions = "<3.14,>=3.11"
-content-hash = "7b7d9980eda77bfe3a8473a399abab2e64c75ca232d2b24bfa72600154dd65f3"
+content-hash = "4f617a1e1d43a72836058763498f81e763e38ccf6b890a6acc095c8aff3358ec"
