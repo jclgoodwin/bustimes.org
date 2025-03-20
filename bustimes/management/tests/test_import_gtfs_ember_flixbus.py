@@ -69,10 +69,13 @@ class FlixbusTest(TestCase):
         )
 
     def test_not_modified(self):
-        with patch(
-            "bustimes.management.commands.import_gtfs_flixbus.download_if_modified",
-            return_value=(False, None),
-        ), self.assertNumQueries(2):
+        with (
+            patch(
+                "bustimes.management.commands.import_gtfs_flixbus.download_if_modified",
+                return_value=(False, None),
+            ),
+            self.assertNumQueries(2),
+        ):
             call_command("import_gtfs_flixbus")
 
     @time_machine.travel("2023-01-01")
@@ -93,7 +96,7 @@ class FlixbusTest(TestCase):
         self.assertContains(response, "London - Northampton - Nottingham")
         self.assertContains(response, "London - Cambridge")
 
-        service = Service.objects.get(line_name="004")
+        service = Service.objects.get(line_name="UK004")
 
         response = self.client.get(service.get_absolute_url())
         self.assertContains(
@@ -149,10 +152,13 @@ class FlixbusTest(TestCase):
         command = import_gtfsr_ember.Command()
         command.do_source()
 
-        with patch(
-            "vehicles.management.import_live_vehicles.redis_client",
-            fakeredis.FakeStrictRedis(),
-        ), vcr.use_cassette(str(FIXTURES_DIR / "ember_gtfsr.yml")):
+        with (
+            patch(
+                "vehicles.management.import_live_vehicles.redis_client",
+                fakeredis.FakeStrictRedis(),
+            ),
+            vcr.use_cassette(str(FIXTURES_DIR / "ember_gtfsr.yml")),
+        ):
             with self.assertNumQueries(58):
                 command.update()
             with self.assertNumQueries(41):
