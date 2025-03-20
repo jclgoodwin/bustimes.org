@@ -428,7 +428,7 @@ class AdminAreaDetailView(DetailView):
                 Service.objects.filter(
                     current=True,
                     operator=OuterRef("pk"),
-                    stops__locality__admin_area=self.object,
+                    stops__admin_area=self.object,
                 )
                 .only("id")
                 .order_by()
