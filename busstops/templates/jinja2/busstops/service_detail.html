@@ -45,25 +45,6 @@
             <li><a href="{{ tickets_link }}">Tickets</a></li>
         {% endif %}
     </ul>
-
-    <script>
-        SERVICE_ID = {{ object.id }};
-        EXTENT = [{{ object.geometry.extent|join(",") }}];
-        LIVERIES_CSS_URL  = "/liveries.{{ liveries_css_version() }}.css";
-{% if related %}
-        SERVICES = [
-            {"id": {{ object.id }}, "line_names": {{ object.line_names|tojson }}},
-        {% for service in related %}
-            {"id": {{ service.id }}, "line_names": {{ service.line_names|tojson }}},
-        {% endfor %}
-        ];
-{% endif %}
-    </script>
-    <script async src="{{ static('dist/js/app.js') }}"></script>
-{% else %}
-    <script>
-        SERVICE_ID = {{ object.id }};
-    </script>
 {% endif %}
 
 <div id="timetable">
@@ -131,6 +112,27 @@
 {% endblock content %}
 
 {% block foot %}
+    {% if object.geometry %}
+    <script>
+        SERVICE_ID = {{ object.id }};
+        EXTENT = [{{ object.geometry.extent|join(",") }}];
+        LIVERIES_CSS_URL  = "/liveries.{{ liveries_css_version() }}.css";
+    {% if related %}
+        SERVICES = [
+            {"id": {{ object.id }}, "line_names": {{ object.line_names|tojson }}},
+        {% for service in related %}
+            {"id": {{ service.id }}, "line_names": {{ service.line_names|tojson }}},
+        {% endfor %}
+        ];
+    {% endif %}
+    </script>
+    <script async src="{{ static('dist/js/app.js') }}"></script>
+    {% else %}
+    <script>
+        SERVICE_ID = {{ object.id }};
+    </script>
+    {% endif %}
+
     <script src="{{ static('js/reqwest.min.js') }}"></script>
     <script async src="{{ static('js/timetable.js') }}"></script>
     {% if fare_tables %}
