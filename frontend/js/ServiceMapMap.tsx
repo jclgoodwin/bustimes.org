@@ -151,7 +151,7 @@ export default function ServiceMapMap({
 
   const stops = React.useMemo(() => {
     return {
-      type: "FeatureCollection",
+      type: "FeatureCollection" as const,
       features: Array.from(serviceIds).flatMap((serviceId) => {
         return stopsAndGeometry[serviceId]?.stops?.features || [];
       }),
