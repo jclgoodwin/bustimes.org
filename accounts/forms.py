@@ -67,7 +67,10 @@ class LoginForm(AuthenticationForm):
 
 class UserForm(Form):
     name = CharField(
-        required=False, label="Username", validators=[UnicodeUsernameValidator()]
+        required=False,
+        label="Username",
+        validators=[UnicodeUsernameValidator()],
+        max_length=50,
     )
 
     def __init__(self, data, *args, user, **kwargs):
