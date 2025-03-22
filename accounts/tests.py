@@ -151,6 +151,16 @@ class RegistrationTest(TransactionTestCase):
         other_user.refresh_from_db()
         self.assertEqual(other_user.username, "kenton_schweppes")
 
+        # try setting a looong username:
+        response = self.client.post(
+            other_user.get_absolute_url(),
+            {"name": "Hubert Blaine Wolfeschlegelsteinhausenbergerdorff Sr."},
+        )
+        self.assertContains(
+            response, ">Ensure this value has at most 50 characters (it has 53).</"
+        )
+
+        # try copying someone else's username
         response = self.client.post(other_user.get_absolute_url(), {"name": "josh"})
         self.assertContains(
             response, '<ul class="errorlist"><li>Username taken</li></ul>'
