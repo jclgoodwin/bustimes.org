@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 
 import loadjs from "loadjs";
 import LoadingSorry from "./LoadingSorry";
+import type { ServiceMapMapProps } from "./ServiceMapMap";
 import type { Vehicle } from "./VehicleMarker";
 
 const ServiceMapMap = lazy(() => import("./ServiceMapMap"));
@@ -44,9 +45,13 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
 
   const [vehicles, setVehicles] = React.useState<Vehicle[]>();
 
-  const [stops, setStops] = React.useState();
+  const [stopsAndGeometry, setStopsAndGeometry] = React.useState<
+    ServiceMapMapProps["stopsAndGeometry"]
+  >({});
 
-  const [geometry, setGeometry] = React.useState();
+  const [selectedServices, setSelectedServices] = React.useState(
+    new Set<number>([serviceId]),
+  );
 
   React.useEffect(() => {
     const handleHashChange = () => {
@@ -74,10 +79,6 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
     };
   });
 
-  const [selectedServices, setSelectedServices] = React.useState(
-    new Set<number>([serviceId]),
-  );
-
   const handleSelectService = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const serviceId = Number.parseInt(event.target.value, 10);
@@ -96,6 +97,24 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
   React.useEffect(() => {
     let timeout: number;
 
+    const loadStops = (serviceId: number) => {
+      fetch(`/services/${serviceId}.json`).then(
+        (response) => {
+          if (response.ok) {
+            response.json().then((data) => {
+              setStopsAndGeometry({
+                ...stopsAndGeometry,
+                [serviceId]: data,
+              });
+            });
+          }
+        },
+        () => {
+          // never mind
+        },
+      );
+    };
+
     if (isOpen) {
       document.body.classList.add("has-overlay");
       if (!hasCss) {
@@ -104,21 +123,11 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
         });
       }
 
-      // service map data
-      // TODO: linked services
-      fetch(`/services/${serviceId}.json`).then(
-        (response) => {
-          if (response.ok) {
-            response.json().then((data) => {
-              setGeometry(data.geometry);
-              setStops(data.stops);
-            });
-          }
-        },
-        () => {
-          // never mind
-        },
-      );
+      for (const serviceId of Array.from(selectedServices)) {
+        if (!stopsAndGeometry[serviceId]) {
+          loadStops(serviceId);
+        }
+      }
     } else {
       document.body.classList.remove("has-overlay");
     }
@@ -131,15 +140,13 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
       const url = `${apiRoot}vehicles.json?service=${Array.from(selectedServices).join(",")}`;
       fetch(url).then(
         (response) => {
-          if (response.ok) {
-            response.json().then((items) => {
-              setVehicles(items);
-              clearTimeout(timeout);
-              if (isOpen && items.length && !document.hidden) {
-                timeout = window.setTimeout(loadVehicles, 10000); // 10 seconds
-              }
-            });
-          }
+          response.json().then((items) => {
+            setVehicles(items);
+            clearTimeout(timeout);
+            if (isOpen && items.length && !document.hidden) {
+              timeout = window.setTimeout(loadVehicles, 10000); // 10 seconds
+            }
+          });
         },
         () => {
           // never mind
@@ -168,7 +175,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
       window.removeEventListener("visibilitychange", handleVisibilityChange);
       clearTimeout(timeout);
     };
-  }, [isOpen, serviceId, selectedServices]);
+  }, [isOpen, selectedServices, stopsAndGeometry]);
 
   const count = vehicles?.length;
   let countString: string | undefined;
@@ -211,6 +218,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
                   <input
                     type="checkbox"
                     value={service.id}
+                    disabled={service.id === serviceId}
                     checked={selectedServices.has(service.id)}
                     onChange={handleSelectService}
                   />{" "}
@@ -222,8 +230,8 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
           <Suspense fallback={<LoadingSorry />}>
             <ServiceMapMap
               vehicles={vehicles}
-              geometry={geometry}
-              stops={stops}
+              stopsAndGeometry={stopsAndGeometry}
+              serviceIds={selectedServices}
             />
           </Suspense>
         </div>,

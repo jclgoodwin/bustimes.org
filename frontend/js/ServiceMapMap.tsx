@@ -22,10 +22,18 @@ declare global {
   }
 }
 
-type ServiceMapMapProps = {
+export type ServiceMapMapProps = {
   vehicles?: Vehicle[];
-  geometry?: MapGeoJSONFeature;
-  stops?: { type: "FeatureCollection"; features: MapGeoJSONFeature[] };
+  serviceIds: Set<number>;
+  stopsAndGeometry: {
+    [serviceId: number]: {
+      stops?: {
+        type: "FeatureCollection";
+        features: MapGeoJSONFeature[];
+      };
+      geometry?: MapGeoJSONFeature;
+    };
+  };
 };
 
 function Geometry({ geometry }: { geometry: MapGeoJSONFeature }) {
@@ -48,7 +56,11 @@ function Geometry({ geometry }: { geometry: MapGeoJSONFeature }) {
   );
 }
 
-function Stops({ stops }: { stops?: ServiceMapMapProps["stops"] }) {
+function Stops({
+  stops,
+}: {
+  stops: { type: "FeatureCollection"; features: MapGeoJSONFeature[] };
+}) {
   const theme = React.useContext(ThemeContext);
   const darkMode =
     theme === "alidade_smooth_dark" || theme === "alidade_satellite";
@@ -80,8 +92,8 @@ function Stops({ stops }: { stops?: ServiceMapMapProps["stops"] }) {
 
 export default function ServiceMapMap({
   vehicles,
-  geometry,
-  stops,
+  stopsAndGeometry,
+  serviceIds,
 }: ServiceMapMapProps) {
   const [cursor, setCursor] = React.useState<string>();
 
@@ -137,6 +149,15 @@ export default function ServiceMapMap({
   const clickedVehicle =
     clickedVehicleMarkerId && vehiclesById[clickedVehicleMarkerId];
 
+  const stops = React.useMemo(() => {
+    return {
+      type: "FeatureCollection",
+      features: Array.from(serviceIds).flatMap((serviceId) => {
+        return stopsAndGeometry[serviceId]?.stops?.features || [];
+      }),
+    };
+  }, [stopsAndGeometry, serviceIds]);
+
   return (
     <BusTimesMap
       initialViewState={{
@@ -180,9 +201,18 @@ export default function ServiceMapMap({
         />
       ) : null}
 
-      {geometry && <Geometry geometry={geometry} />}
+      {Array.from(serviceIds).map((serviceId) => {
+        if (stopsAndGeometry[serviceId]?.geometry) {
+          return (
+            <Geometry
+              key={serviceId}
+              geometry={stopsAndGeometry[serviceId].geometry}
+            />
+          );
+        }
+      })}
 
-      <Stops stops={stops} />
+      {stops ? <Stops stops={stops} /> : null}
     </BusTimesMap>
   );
 }
