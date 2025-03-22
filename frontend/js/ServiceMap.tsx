@@ -95,8 +95,6 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
   const first = React.useRef(true);
 
   React.useEffect(() => {
-    let timeout: number;
-
     const loadStops = (serviceId: number) => {
       fetch(`/services/${serviceId}.json`).then(
         (response) => {
@@ -116,21 +114,29 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
     };
 
     if (isOpen) {
+      for (const serviceId of Array.from(selectedServices)) {
+        if (!stopsAndGeometry[serviceId]) {
+          loadStops(serviceId);
+        }
+      }
+    }
+  }, [isOpen, selectedServices, stopsAndGeometry]);
+
+  React.useEffect(() => {
+    if (isOpen) {
       document.body.classList.add("has-overlay");
       if (!hasCss) {
         loadjs(window.LIVERIES_CSS_URL, () => {
           hasCss = true;
         });
       }
-
-      for (const serviceId of Array.from(selectedServices)) {
-        if (!stopsAndGeometry[serviceId]) {
-          loadStops(serviceId);
-        }
-      }
     } else {
       document.body.classList.remove("has-overlay");
     }
+  }, [isOpen]);
+
+  React.useEffect(() => {
+    let timeout: number;
 
     const loadVehicles = () => {
       if ((document.hidden && !first.current) || !selectedServices.size) {
@@ -175,7 +181,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
       window.removeEventListener("visibilitychange", handleVisibilityChange);
       clearTimeout(timeout);
     };
-  }, [isOpen, selectedServices, stopsAndGeometry]);
+  }, [isOpen, selectedServices]);
 
   const count = vehicles?.length;
   let countString: string | undefined;
