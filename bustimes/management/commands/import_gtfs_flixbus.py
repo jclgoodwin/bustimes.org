@@ -4,8 +4,9 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import pandas as pd
-from shapely.errors import EmptyPartError
+import geopandas as gpd
 import gtfs_kit
+import shapely.ops as so
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
@@ -19,6 +20,39 @@ from ...models import Route, StopTime, Trip
 from .import_gtfs_ember import get_calendars
 
 logger = logging.getLogger(__name__)
+
+
+def routes_as_gdf(feed):
+    """
+    Copied from gtfs_kit.routes.get_routes(as_gdf=True),
+    but fixed so it copes with *some* routes having no geometry
+    """
+    trips = feed.get_trips(as_gdf=True)
+    f = feed.routes[lambda x: x["route_id"].isin(trips["route_id"])]
+
+    groupby_cols = ["route_id"]
+    final_cols = f.columns.tolist() + ["geometry"]
+
+    def merge_lines(group):
+        d = {}
+        geometries = [geom for geom in group["geometry"].tolist() if geom is not None]
+        if geometries:
+            d["geometry"] = so.linemerge(geometries)
+        else:
+            d["geometry"] = None
+        return pd.Series(d)
+
+    return (
+        trips.drop_duplicates(subset="shape_id")
+        .filter(groupby_cols + ["geometry"])
+        .groupby(groupby_cols)
+        .apply(merge_lines, include_groups=False)
+        .reset_index()
+        .merge(f, how="right")
+        .pipe(gpd.GeoDataFrame)
+        .set_crs(trips.crs)
+        .filter(final_cols)
+    )
 
 
 def get_stoppoint(stop, source):
@@ -57,9 +91,10 @@ class Command(BaseCommand):
 
         feed = gtfs_kit.read_feed(path, dist_units="km")
 
-        feed = feed.restrict_to_routes(
-            feed.routes[feed.routes.route_id.str.startswith("UK")].route_id
-        )
+        mask = feed.routes.route_id.str.startswith(
+            "UK"
+        ) | feed.routes.route_long_name.str.contains("London")
+        feed = feed.restrict_to_routes(feed.routes[mask].route_id)
 
         stops_data = {row.stop_id: row for row in feed.stops.itertuples()}
         stop_codes = {
@@ -88,21 +123,23 @@ class Command(BaseCommand):
         }
 
         geometries = {}
-        try:
-            for row in gtfs_kit.routes.get_routes(feed, as_gdf=True).itertuples():
-                if row.geometry:
-                    print(row.geometry, row.geometry.wkt)
-                    geometries[row.route_id] = row.geometry.wkt
-        except EmptyPartError:
-            pass
+        for row in routes_as_gdf(feed).itertuples():
+            # print(row)
+            if row.geometry:
+                # print(row.geometry, row.geometry.wkt)
+                geometries[row.route_id] = row.geometry.wkt
+            else:
+                print(row)
 
         for row in feed.routes.itertuples():
-            line_name = row.route_id.removeprefix("UK")
+            line_name = row.route_id
 
             if line_name in existing_services:
                 service = existing_services[line_name]
+            elif line_name.removeprefix("UK") in existing_services:
+                service = existing_services[line_name.removeprefix("UK")]
             else:
-                service = Service(line_name=line_name, source=source)
+                service = Service()
 
             if row.route_id in existing_routes:
                 route = existing_routes[row.route_id]
@@ -110,6 +147,7 @@ class Command(BaseCommand):
                 route = Route(code=row.route_id, source=source)
             route.service = service
             route.line_name = line_name
+            service.line_name = line_name
             service.description = route.description = row.route_long_name
             service.current = True
             service.colour_id = operator.colour_id

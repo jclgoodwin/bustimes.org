@@ -1,5 +1,5 @@
 import datetime
-import lightningcss
+import subprocess
 import re
 import struct
 import uuid
@@ -166,7 +166,11 @@ class Livery(models.Model):
     def minify(css):
         prefix = ".livery{background:"
         suffix = "}"
-        css = lightningcss.process_stylesheet(prefix + css + suffix)
+        css = prefix + css + suffix
+        completed_process = subprocess.run(
+            ["lightningcss", "--minify"], input=css.encode(), capture_output=True
+        )
+        css = completed_process.stdout.decode().strip()
         assert css.startswith(prefix)
         assert css.endswith(suffix)
         return css[19:-1]

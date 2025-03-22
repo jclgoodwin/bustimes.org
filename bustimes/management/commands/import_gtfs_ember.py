@@ -91,7 +91,7 @@ class Command(BaseCommand):
 
         calendars = get_calendars(feed, source)
 
-        for row in gtfs_kit.routes.get_routes(feed, as_gdf=True).itertuples():
+        for row in feed.get_routes(as_gdf=True).itertuples():
             if row.route_id in existing_services:
                 service = existing_services[row.route_id]
             else:

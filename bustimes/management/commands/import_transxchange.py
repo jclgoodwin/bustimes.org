@@ -1043,8 +1043,6 @@ class Command(BaseCommand):
 
         for i, line in enumerate(txc_service.lines):
             line.line_name = line.line_name.replace("_", " ")
-            if "FLIX" in filename:
-                line.line_name = line.line_name.removeprefix("UK")
 
             # prefer a BODS-type source over TNDS
             if self.is_tnds() and self.should_defer_to_other_source(

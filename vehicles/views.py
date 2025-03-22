@@ -5,7 +5,7 @@ import logging
 from itertools import pairwise
 from urllib.parse import unquote
 
-import lightningcss
+import subprocess
 import xmltodict
 from django.conf import settings
 from django.contrib.auth.models import Permission
@@ -117,7 +117,10 @@ def liveries_css(request, version=0):
     for livery in liveries:
         styles += livery.get_styles()
     styles = "".join(styles)
-    styles = lightningcss.process_stylesheet(styles)
+    completed_process = subprocess.run(
+        ["lightningcss", "--minify"], input=styles.encode(), capture_output=True
+    )
+    styles = completed_process.stdout
     return HttpResponse(styles, content_type="text/css")
 
 
@@ -927,10 +930,11 @@ def vehicle_edits(request):
         request.GET or {"status": "approved"}, queryset=revisions
     )
     if request.user.is_anonymous or not (
-        request.user.trusted or request.user.is_superuser
+        request.user.trusted
+        or request.user.is_superuser
+        or request.GET.get("user") == str(request.user.id)
     ):
         f.filters["status"].field.choices = [("approved", "approved")]
-        # TODO: only show users' own disapproved edits
 
     if f.is_valid():
         paginator = Paginator(f.qs, 100)
