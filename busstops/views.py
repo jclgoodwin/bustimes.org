@@ -41,7 +41,7 @@ from sql_util.utils import Exists, SubqueryMax, SubqueryMin
 from ukpostcodeutils import validation
 
 from buses.utils import cdn_cache_control
-from bustimes.models import StopTime, Trip
+from bustimes.models import Route, StopTime, Trip
 from departures import live
 from disruptions.models import Consequence, Situation
 from fares.models import FareTable
@@ -614,7 +614,14 @@ def get_departures_context(stop, services, form_data) -> dict:
     return context
 
 
-has_stop_times = Exists(
+has_stop_times = ~Exists(
+    Route.objects.filter(
+        ~Q(line_name__iexact=OuterRef("service__line_name")),
+        service=OuterRef("service"),
+    )
+    .only("id")
+    .order_by()
+) | Exists(
     StopTime.objects.filter(
         trip__route=OuterRef("service__route"),
         stop=OuterRef("pk"),
