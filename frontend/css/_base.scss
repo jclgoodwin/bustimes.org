@@ -689,6 +689,7 @@ table {
     white-space: nowrap;
 
     &.is-short {
+        height: 36px;
         line-height: 36px;
         font-size: 30px;
         padding: 6px 8px;
@@ -719,8 +720,17 @@ table {
 .service-header {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
     row-gap: 8px;
+
+    .is-short {
+        font-weight: 500;
+    }
+
+    .description {
+        flex-basis: 70%;
+        flex-grow: 1;
+        align-self: center;
+    }
 }
 
 .has-smalls .name {
