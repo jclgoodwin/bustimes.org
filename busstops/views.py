@@ -949,7 +949,7 @@ class ServiceDetailView(DetailView):
     model = Service
     queryset = (
         model.objects.with_line_names()
-        .select_related("region", "source")
+        .select_related("region", "source", "colour")
         .prefetch_related("operator")
         .defer("search_vector")
     )
@@ -1079,7 +1079,13 @@ class ServiceDetailView(DetailView):
 
         context["related"] = self.object.get_similar_services()
         if context["related"]:
-            context["colours"] = get_colours(context["related"])
+            context["colours"] = get_colours(
+                [
+                    service
+                    for service in context["related"]
+                    if service.colour_id != self.object.colour_id
+                ]
+            )
 
         # timetable
 

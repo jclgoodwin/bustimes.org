@@ -292,10 +292,9 @@ h1 {
 
 h1 .reg {
     border: 1px solid var(--border-color);
-    padding: .25em;
-    padding-bottom: .1em;
-    border-radius: .1em;
-    font-size: .825em;
+    padding: 8px 6px 2px;
+    border-radius: 2px;
+    font-size: 24px;
 }
 
 h2 {
@@ -681,27 +680,47 @@ table {
     border: 1px solid var(--border-color);
     color: var(--text-color);
     float: left;
-    margin-right: 1em;
-    padding: .125em .5em;
+    font-size: 16px;
+    line-height: 18px;
+    margin-right: 16px;
+    padding: 6px;
     text-align: center;
     font-weight: normal;
+    white-space: nowrap;
 
     &.is-short {
-        font-size: 2em;
-        line-height: 1em;
-        margin-right: .5em;
-        padding: .3125em .25em;
-        white-space: nowrap;
+        line-height: 36px;
+        font-size: 30px;
+        padding: 6px 8px;
+    }
+
+    &.is-short + .name {
+        white-space: normal;
+        height: 36px;
+        align-content: center;
+    }
+
+    &:first-child {
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+    }
+
+    &:last-of-type {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
     }
 
     + .name {
         border-left: 0;
-        margin-left: -1em;
+        margin-left: -16px;
     }
+}
 
-    + .name.is-short {
-        margin-left: -.5em;
-    }
+.service-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    row-gap: 8px;
 }
 
 .has-smalls .name {

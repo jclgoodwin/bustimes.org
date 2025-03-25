@@ -6,13 +6,37 @@
     <meta property="og:title" content="{{ object }}">
     <meta property="og:description" content="{{ operators.0 }}">
     <link rel="stylesheet" href="{{ static('dist/js/app.css') }}">
+
+    {% if object.colour %}
+    <style>
+        .colour-{{ object.colour_id }} {
+            background: {{ object.colour.background }};
+            border-color: {{ object.colour.foreground }};
+            color: {{ object.colour.foreground }};
+        }
+    </style>
+    {% endif %}
 {% endblock head %}
 
 {% block bodyclass %}{% endblock %}
 
 {% block content %}
 
-<h1>{{ object }}</h1>
+<h1 class="service-header">
+    {% for line_name in object.get_line_names() %}
+        {% if line_name and line_name not in object.line_brand %}
+            {% if ' ' not in line_name or line_name not in object.description %}
+                <strong class="name is-short{% if object.colour_id %} colour colour-{{ object.colour_id }}{% endif %}">
+                    {{ line_name }}
+                </strong>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+    {% if object.line_brand %}
+        <strong class="name{% if object.colour_id %} colour colour-{{ object.colour_id }}{% endif %}">{{ object.line_brand }}</strong>
+    {% endif %}
+    <span class="description">{{ object.description }}</span>
+</h1>
 
 <p>
     {% if operators %}

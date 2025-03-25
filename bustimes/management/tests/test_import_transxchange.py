@@ -1209,8 +1209,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(list(service.get_traveline_links()), [])
 
         self.assertEqual(res.context_data["breadcrumb"], [self.gb, self.megabus])
-        # self.assertTemplateUsed(res, "busstops/service_detail.html")
-        self.assertContains(res, "<h1>M11A - Belgravia - Liverpool</h1>")
+        self.assertContains(res, "M11A - Belgravia - Liverpool")
         self.assertContains(
             res, '<option selected value="2017-01-22">Sunday 22 January 2017</option>'
         )
