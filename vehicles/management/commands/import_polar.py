@@ -50,10 +50,10 @@ class Command(ImportLiveVehiclesCommand):
         if not operator:
             return None, None
 
-        if operator == "MCGL" and (len(code) >= 7 or len(code) >= 5 and code.isdigit()):
-            # Borders Buses or First vehicles
-            print(code)
-            return None, None
+        # if operator == "MCGL" and (len(code) >= 7 or len(code) >= 5 and code.isdigit()):
+        #     # Borders Buses or First vehicles
+        #     print(code)
+        #     return None, None
 
         defaults = {"source": self.source, "operator_id": operator, "code": code}
 
@@ -66,7 +66,11 @@ class Command(ImportLiveVehiclesCommand):
         elif code.isdigit():
             defaults["fleet_code"] = code
 
-        condition = Q(operator__in=self.operators.values()) | Q(operator=operator)
+        condition = (
+            Q(operator__in=self.operators.values())
+            | Q(operator=operator)
+            | Q(source=self.source)
+        )
         vehicles = self.vehicles.filter(condition)
 
         vehicle = vehicles.filter(code__iexact=code).first()
