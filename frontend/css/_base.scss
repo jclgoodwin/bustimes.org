@@ -1438,8 +1438,7 @@ input:not(:checked) + label {
 .contact-details {
     display: flex;
     flex-wrap: wrap;
-    column-gap: 2em;
-    row-gap: 1em;
+    gap: 1em;
     overflow-wrap: anywhere;
 
     dd {
