@@ -2,6 +2,12 @@
 
 {% block title %}Edit details – {{ vehicle }} – bustimes.org{% endblock %}
 
+{% block head %}
+    {% if form and livery %}
+        <style>{% for css in livery.get_styles %}{{ css|safe }}{% endfor %}</style>
+    {% endif %}
+{% endblock head %}
+
 {% block bodyclass %}narrow{% endblock %}
 
 {% block content %}
@@ -46,11 +52,6 @@
     </form>
 
     {{ form.media }}
-
-    {% if livery %}
-        <style>{% for css in livery.get_styles %}{{ css|safe }}{% endfor %}</style>
-    {% endif %}
-
 {% endif %}
 
 {% if previous %}
