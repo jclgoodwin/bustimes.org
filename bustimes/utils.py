@@ -171,6 +171,8 @@ def get_other_trips_in_block(trip, date):
         block=trip.block,
         route__source=trip.route.source,
     )
+    if trip.route.service_id:
+        trips = trips.filter(route__service__isnull=False)
 
     routes = Route.objects.filter(trip__in=trips).select_related("source")
 
