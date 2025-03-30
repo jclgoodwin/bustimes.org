@@ -649,6 +649,9 @@ table {
 }
 
 .services {
+    column-width: 24em;
+    column-gap: 1em;
+
     a {
         align-items: center;
         display: flex;
