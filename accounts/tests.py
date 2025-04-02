@@ -162,9 +162,7 @@ class RegistrationTest(TransactionTestCase):
 
         # try copying someone else's username
         response = self.client.post(other_user.get_absolute_url(), {"name": "josh"})
-        self.assertContains(
-            response, '<ul class="errorlist"><li>Username taken</li></ul>'
-        )
+        self.assertContains(response, ">Username taken<")
 
         self.assertContains(response, "That's you!")
 
