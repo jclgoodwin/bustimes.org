@@ -124,7 +124,7 @@
 | vehicles/forms.py                                               |       94 |        3 |     97% |130, 168, 206 |
 | vehicles/management/\_\_init\_\_.py                             |        0 |        0 |    100% |           |
 | vehicles/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
-| vehicles/management/commands/import\_bod\_avl.py                |      470 |       56 |     88% |51, 129, 145, 155-156, 199-202, 205-208, 251, 267, 282-283, 305-323, 377, 383, 436, 439, 443, 449, 464-465, 512-525, 554, 563-564, 583, 612, 646, 764, 839, 843 |
+| vehicles/management/commands/import\_bod\_avl.py                |      470 |       55 |     88% |52, 130, 146, 156-157, 200-203, 206-209, 252, 268, 283-284, 306-324, 378, 384, 437, 440, 454, 469-470, 517-530, 559, 568-569, 588, 617, 651, 769, 844, 848 |
 | vehicles/management/commands/import\_bushub.py                  |       76 |       14 |     82% |22-23, 27-28, 31-32, 43, 46, 62-63, 72, 82, 101, 109 |
 | vehicles/management/commands/import\_edinburgh.py               |       72 |        4 |     94% |83, 87-90, 97 |
 | vehicles/management/commands/import\_gtfsr\_ember.py            |       86 |        7 |     92% |78-79, 102-104, 120, 141 |
@@ -162,7 +162,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **15782** | **1038** | **93%** |           |
+|                                                       **TOTAL** | **15782** | **1037** | **93%** |           |
 
 
 ## Setup coverage badge
