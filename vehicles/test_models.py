@@ -92,31 +92,22 @@ class VehicleModelTests(TestCase):
         livery.text_colour = "#c0c0c0"
         livery.stroke_colour = "#ff00a9"
         livery.right_css = "{"
-        with self.assertRaises(ValidationError) as cm:
+        with self.assertRaisesMessage(
+            ValidationError, "{'right_css': ['Must not contain { or }']}"
+        ):
             livery.clean_fields()
-        self.assertEqual(
-            cm.exception.message_dict, {"right_css": ["Must not contain { or }"]}
-        )
 
         livery.right_css = ""
         livery.left_css = "url(("
-        with self.assertRaises(ValidationError) as cm:
+        with self.assertRaisesMessage(
+            ValidationError, "{'left_css': ['Must contain equal numbers of ( and )']}"
+        ):
             livery.clean_fields()
-        self.assertEqual(
-            cm.exception.message_dict,
-            {"left_css": ["Must contain equal numbers of ( and )"]},
-        )
 
         livery.left_css = ""
         livery.stroke_colour = "transparent"
-        with self.assertRaises(ValidationError) as cm:
+        with self.assertRaisesMessage(
+            ValidationError,
+            "{'stroke_colour': ['An HTML5 simple color must be a Unicode string seven characters long.', 'Ensure this value has at most 7 characters (it has 11).']}",
+        ):
             livery.full_clean()
-        self.assertEqual(
-            cm.exception.message_dict,
-            {
-                "stroke_colour": [
-                    "An HTML5 simple color must be a Unicode string seven characters long.",
-                    "Ensure this value has at most 7 characters (it has 11).",
-                ]
-            },
-        )
