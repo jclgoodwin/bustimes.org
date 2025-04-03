@@ -4,6 +4,7 @@ import io
 import json
 import zipfile
 from datetime import date, timedelta
+from zoneinfo import ZoneInfo
 
 import xmltodict
 from ciso8601 import parse_datetime
@@ -439,8 +440,12 @@ class Command(ImportLiveVehiclesCommand):
                     logger.warning(
                         "TFL vehicle with non-UTC time, so bug may have been fixed"
                     )
-                if abs(difference) > timedelta(hours=1):
-                    origin_aimed_departure_time = None
+                else:
+                    # correct/adjust departure time to British Supper Time
+                    origin_aimed_departure_time = origin_aimed_departure_time.replace(
+                        tzinfo=ZoneInfo("Europe/London")
+                    )
+                    # (when the TfL/BODS bug is eventually fixed, depending on how they fix it, this may need removing immediately)
 
         latest_journey = vehicle.latest_journey
         if latest_journey:
