@@ -631,11 +631,7 @@ class Command(ImportLiveVehiclesCommand):
         else:
             data = response.content
 
-        data = xmltodict.parse(
-            data,
-            dict_constructor=dict,  # override OrderedDict, cos dict is ordered in modern versions of Python
-            force_list=["VehicleActivity"],
-        )
+        data = xmltodict.parse(data, force_list=["VehicleActivity"])
 
         previous_time = self.source.datetime
 

@@ -1168,7 +1168,7 @@ def siri_post(request, uuid):
         )
 
     body = request.body.decode()
-    data = xmltodict.parse(body, dict_constructor=dict, force_list=["VehicleActivity"])
+    data = xmltodict.parse(body, force_list=["VehicleActivity"])
 
     handle_siri_post(uuid, data)
 
