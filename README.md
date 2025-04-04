@@ -25,7 +25,7 @@
 | buses/urls.py                                                   |        6 |        0 |    100% |           |
 | buses/utils.py                                                  |       17 |        0 |    100% |           |
 | busstops/\_\_init\_\_.py                                        |        0 |        0 |    100% |           |
-| busstops/admin.py                                               |      323 |       16 |     95% |103-109, 184, 243-251, 333-334, 380, 455, 459, 508, 540, 584, 588, 612, 616 |
+| busstops/admin.py                                               |      318 |       16 |     95% |102-108, 183, 242-250, 332-333, 379, 454, 458, 507, 540, 584, 588, 612, 616 |
 | busstops/forms.py                                               |       46 |        0 |    100% |           |
 | busstops/management/\_\_init\_\_.py                             |        0 |        0 |    100% |           |
 | busstops/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
@@ -42,7 +42,7 @@
 | busstops/templatetags/\_\_init\_\_.py                           |        0 |        0 |    100% |           |
 | busstops/templatetags/date\_range.py                            |       25 |        3 |     88% | 9, 22, 28 |
 | busstops/templatetags/urlise.py                                 |       14 |        0 |    100% |           |
-| busstops/test\_admin.py                                         |       53 |        0 |    100% |           |
+| busstops/test\_admin.py                                         |       52 |        0 |    100% |           |
 | busstops/test\_middleware.py                                    |       10 |        0 |    100% |           |
 | busstops/test\_models.py                                        |      143 |        0 |    100% |           |
 | busstops/test\_views.py                                         |      271 |        0 |    100% |           |
@@ -50,7 +50,7 @@
 | busstops/utils.py                                               |        3 |        0 |    100% |           |
 | busstops/views.py                                               |      627 |       42 |     93% |114, 470, 496, 535, 721, 739, 803-806, 808, 918-923, 936, 1013, 1041-1042, 1047-1048, 1056-1065, 1216, 1247-1251, 1294, 1366, 1393-1394, 1398-1401, 1551, 1563-1564, 1569, 1581-1582 |
 | bustimes/\_\_init\_\_.py                                        |        0 |        0 |    100% |           |
-| bustimes/admin.py                                               |       98 |       12 |     88% |54, 60, 63-64, 67-68, 115-119, 142, 150, 163, 173 |
+| bustimes/admin.py                                               |      102 |       14 |     86% |55, 58-59, 65, 68-69, 72-73, 120-124, 147, 155, 168, 178 |
 | bustimes/download\_utils.py                                     |       32 |        0 |    100% |           |
 | bustimes/fields.py                                              |       31 |        1 |     97% |        12 |
 | bustimes/formatting.py                                          |       19 |        0 |    100% |           |
@@ -162,7 +162,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **15786** | **1035** | **93%** |           |
+|                                                       **TOTAL** | **15784** | **1037** | **93%** |           |
 
 
 ## Setup coverage badge
