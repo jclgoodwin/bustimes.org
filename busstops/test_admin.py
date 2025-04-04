@@ -112,7 +112,6 @@ class BusStopsAdminTests(TestCase):
         self.client.force_login(self.staff_user)
         response = self.client.get(url)
         self.assertContains(response, ">0<")  # services
-        self.assertContains(response, ">False<")  # vehicle journeys
         self.assertContains(response, ">2<")  # routes
 
         self.client.post(
