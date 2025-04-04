@@ -6,6 +6,7 @@ from django.db.models import Exists, OuterRef
 from django.db.models.functions import Cast
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from django.utils.html import format_html
 
 from .models import (
     BankHoliday,
@@ -45,13 +46,17 @@ class StopTimeInline(admin.TabularInline):
 @admin.register(TimetableDataSource)
 class TimetableDataSourceAdmin(admin.ModelAdmin):
     autocomplete_fields = ["operators"]
-    list_display = ["id", "name", "url", "nocs", "active", "complete"]
+    list_display = ["id", "name", "url", "nocs", "active", "complete", "sources"]
     list_filter = ["active", "complete"]
     search_fields = ["url", "name", "search"]
     actions = ["activate", "deactivate"]
 
     def nocs(self, obj):
         return obj.nocs
+
+    def sources(self, obj):
+        url = reverse("admin:busstops_datasource_changelist")
+        return format_html('<a href="{}?source__id__exact={}">Sources</a>', url, obj.id)
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)

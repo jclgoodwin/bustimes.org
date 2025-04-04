@@ -11,7 +11,6 @@ from django.utils.html import format_html
 from sql_util.utils import SubqueryCount
 
 from bustimes.models import Route, RouteLink
-from vehicles.models import VehicleJourney
 
 from . import models
 
@@ -519,7 +518,8 @@ class DataSourceAdmin(admin.ModelAdmin):
         "settings",
         "routes",
         "services",
-        "journeys",
+        "source",
+        # "journeys",
     )
     list_filter = (
         ("route", admin.EmptyFieldListFilter),
@@ -535,7 +535,7 @@ class DataSourceAdmin(admin.ModelAdmin):
             return queryset.annotate(
                 routes=SubqueryCount("route", filter=~Q(service=None)),
                 services=SubqueryCount("service", filter=Q(current=True)),
-                journeys=Exists(VehicleJourney.objects.filter(source=OuterRef("id"))),
+                # journeys=Exists(VehicleJourney.objects.filter(source=OuterRef("id"))),
             ).prefetch_related("operatorcode_set")
         return queryset
 
@@ -553,12 +553,12 @@ class DataSourceAdmin(admin.ModelAdmin):
             '<a href="{}?source__id__exact={}">{}</a>', url, obj.id, obj.services
         )
 
-    @admin.display(ordering="journeys")
-    def journeys(self, obj):
-        url = reverse("admin:vehicles_vehiclejourney_changelist")
-        return format_html(
-            '<a href="{}?source__id__exact={}">{}</a>', url, obj.id, obj.journeys
-        )
+    # @admin.display(ordering="journeys")
+    # def journeys(self, obj):
+    #     url = reverse("admin:vehicles_vehiclejourney_changelist")
+    #     return format_html(
+    #         '<a href="{}?source__id__exact={}">{}</a>', url, obj.id, obj.journeys
+    #     )
 
     def delete_routes(self, request, queryset):
         result = Route.objects.filter(source__in=queryset).update(service=None)
