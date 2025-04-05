@@ -462,11 +462,12 @@ class VehiclesTests(TestCase):
     def test_liveries_css(self):
         response = self.client.get("/liveries.44.css")
 
-    #         self.assertEqual(
-    #             response.content.decode(),
-    #             f""".livery-{self.livery.id}{{color:#fff;fill:#fff;background:linear-gradient(90deg,red 50%,#00f 50%)}}\
-    # .livery-{self.livery.id}.right{{background:linear-gradient(270deg,red 50%,#00f 50%)}}""",
-    #         )
+        self.assertEqual(
+            response.text,
+            f""".livery-{self.livery.id}{{color:#fff;fill:#fff;background:linear-gradient(90deg,red 50%,#00f 50%)}}\
+.livery-{self.livery.id}.right{{background:linear-gradient(270deg,red 50%,#00f 50%)}}
+""",
+        )
 
     def test_vehicle_edit_1(self):
         response = self.client.get("/vehicles/edits?status=pending")
