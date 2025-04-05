@@ -505,7 +505,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
             response = self.client.get(f"/sources/{source.id}/routes/")
 
             self.assertEqual(
-                response.content.decode(),
+                response.text,
                 "904_FE_PF_904_20210102.xml\n904_VI_PF_904_20200830.xml",
             )
 
