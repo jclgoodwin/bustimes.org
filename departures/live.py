@@ -224,7 +224,7 @@ def get_departures(stop, services, when) -> dict:
             if stop.admin_area_id:
                 for possible_source in SIRISource.objects.filter(
                     Q(admin_areas=stop.admin_area_id)
-                    | Q(operators__service__in=services)
+                    | Q(operators__service__in=list(services))
                 ):
                     if not possible_source.is_poorly():
                         source = possible_source
