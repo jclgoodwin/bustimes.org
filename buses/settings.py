@@ -261,10 +261,10 @@ def traces_sampler(context):
     ):
         return 0
     if url.startswith("/stops/") or url.startswith("/services/"):
-        return 0.004
-    if url.startswith("/vehicles"):
         return 0.0005
-    return 0.001
+    if url.startswith("/vehicles"):
+        return 0.0001
+    return 0.0003
 
 
 if not TEST:  # pragma: nocover
