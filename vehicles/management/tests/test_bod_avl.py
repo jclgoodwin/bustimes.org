@@ -833,24 +833,8 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             command.handle_item(item)
             command.save()
 
-            # test with corrected British Supper Time timezone
-            item["RecordedAtTime"] = "2022-05-23T12:30:47+00:00"
-            item["MonitoredVehicleJourney"]["OriginAimedDepartureTime"] = (
-                "2022-05-23T12:08:00+01:00"
-            )
-            with self.assertLogs(
-                "vehicles.management.import_live_vehicles", "WARNING"
-            ) as log:
-                command.handle_item(item)
-                command.save()
-
-            self.assertIn(
-                "WARNING:vehicles.management.import_live_vehicles:TFL vehicle with non-UTC time, so bug may have been fixed",
-                log.output,
-            )
-
         journey = VehicleJourney.objects.get()
-        self.assertEqual(str(journey.datetime), "2022-05-23 11:08:00+00:00")
+        self.assertEqual(str(journey.datetime), "2022-05-23 12:08:00+00:00")
 
         self.assertEqual(journey.service, service)
 
