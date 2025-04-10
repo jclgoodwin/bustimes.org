@@ -494,7 +494,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
                 with self.assertNumQueries(1):
                     call_command("import_bod_timetables", "stagecoach", "SCOX")
 
-                with self.assertNumQueries(118):
+                with self.assertNumQueries(116):
                     call_command("import_bod_timetables", "stagecoach", "SCCM")
 
                 route_link.refresh_from_db()
@@ -525,6 +525,8 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
 
         self.assertEqual(2, Service.objects.count())
         self.assertEqual(2, Route.objects.count())
+
+        self.assertEqual(RouteLink.objects.count(), 4)
 
         trip = route.trip_set.last()
         response = self.client.get(f"/api/trips/{trip.id}/")
