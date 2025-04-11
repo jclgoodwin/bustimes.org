@@ -154,7 +154,7 @@ class Command(ImportLiveVehiclesCommand):
             if vehicle_ref.startswith("TMP"):
                 defaults["notes"] = "Spare ticket machine"
                 defaults["locked"] = True
-                defaults["withdrawn"] True
+                defaults["withdrawn"] = True
             vehicles = self.vehicles.filter(
                 Q(operator__in=operators) | Q(operator=None)
             )
