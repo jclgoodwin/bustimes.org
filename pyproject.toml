@@ -66,10 +66,6 @@ dev = [
 
 [tool.uv]
 package = false
-default-groups = [
-    "test",
-    "dev",
-]
 
 [build-system]
 requires = ["hatchling"]

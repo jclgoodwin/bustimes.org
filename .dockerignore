@@ -1,8 +1,10 @@
+.git/
+.parcel-cache/
+.ruff-cache/
+config/deploy.yml
+data/
 node_modules/
 staticfiles/
-data/
-config/deploy.yml
-.git/
 .venv/
 *.sql
 fly.toml

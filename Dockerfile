@@ -12,7 +12,7 @@ RUN npm run lint && npm run build
 
 FROM python:3.13
 
-ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PIP_NO_CACHE_DIR=off PIP_DISABLE_PIP_VERSION_CHECK=on
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
 
 # install GDAL (https://docs.djangoproject.com/en/5.1/ref/contrib/gis/install/geolibs/)
 RUN apt-get update && \
@@ -25,7 +25,7 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 WORKDIR /app/
 
 COPY uv.lock pyproject.toml /app/
-RUN uv sync --frozen
+RUN uv sync --group test --frozen
 
 ENV PATH="/app/.venv/bin:$PATH"
 
@@ -35,7 +35,7 @@ COPY --from=0 /app/busstops/static /app/busstops/static
 COPY . /app/
 
 ENV PORT=8000 STATIC_ROOT=/staticfiles
-RUN SECRET_KEY= ./manage.py collectstatic --noinput
+RUN ./manage.py collectstatic --noinput
 
 EXPOSE 8000
 CMD ["gunicorn", "buses.wsgi"]

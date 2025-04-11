@@ -13,7 +13,7 @@ from sentry_sdk.integrations.logging import ignore_logger
 from sentry_sdk.integrations.redis import RedisIntegration
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = os.environ["SECRET_KEY"]
+SECRET_KEY = os.environ.get("SECRET_KEY", "")
 ALLOWED_HOSTS = os.environ.get(
     "ALLOWED_HOSTS", "[::1] 127.0.0.1 localhost 16.local"
 ).split()

@@ -82,7 +82,6 @@ jobs:
 
     - name: run tests
       env:
-        SECRET_KEY: gdffesgfxc1as9rsxgv4
         DATABASE_URL: postgis://postgres:postgres@localhost/postgres
       run: |
         uv run ./manage.py collectstatic --noinput && \
