@@ -1,81 +1,79 @@
 [project]
 name = "bustimes.org"
-
-[tool.poetry]
-name = "bustimes.org"
 version = "0.1.0"
 description = ""
-authors = ["Josh Goodwin <j@joshuagoodw.in>"]
-package-mode = false
+authors = [{ name = "Josh Goodwin", email = "j@joshuagoodw.in" }]
+requires-python = "<3.14,>=3.13"
+dependencies = [
+    "beautifulsoup4>=4.12.1,<5",
+    "boto3>=1.18.42,<2",
+    "ciso8601>=2.2.0,<3",
+    "dj-database-url>=2.0.0,<3",
+    "Django<5.2,>=5.1",
+    "django-autoslug>=1.9.8,<2",
+    "django-email-obfuscator>=0.1.5,<0.2",
+    "django-filter~=25.1",
+    "djangorestframework<3.16,>=3.15",
+    "django-simple-history>=3.0.0,<4",
+    "django-sql-utils>=0.7.0,<0.8",
+    "django-template-minifier>=1.1.0,<2",
+    "gtfs-realtime-bindings>=1.0.0,<2",
+    "gunicorn>=23.0.0,<24",
+    "haversine>=2.5.1,<3",
+    "huey>=2.4.3,<3",
+    "psycopg>=3.1.8,<4",
+    "PyYAML>=6.0.0,<7",
+    "redis>=5.0.0,<6",
+    "sentry-sdk[django]>=2.4.0,<3",
+    "Shapely>=2.0.1,<3",
+    "titlecase~=2.3",
+    "uk-postcode-utils~=1.1",
+    "webcolors>=24.6.0,<25",
+    "whitenoise>=6.2.0,<7",
+    "xmltodict>=0.14.1,<0.15",
+    "django-cors-headers>=4.2.0,<5",
+    "pygments>=2.15.1,<3",
+    "django-turnstile>=0.1.0,<0.2",
+    "jinja2>=3.1.6,<4",
+    "requests>=2.32.3,<3",
+    "numpy~=1.26",
+    "tenacity>=9.0.0,<10",
+    "lightningcss-cli>=1.29.2,<2",
+]
 
-[tool.poetry.dependencies]
-python = "<3.14,>=3.11"
-beautifulsoup4 = "^4.12.1"
-boto3 = "^1.18.42"
-ciso8601 = "^2.2.0"
-dj-database-url = "^2.0.0"
-Django = "<5.2,>=5.1"
-django-autoslug = "^1.9.8"
-django-email-obfuscator = "^0.1.5"
-django-filter = "^25.1"
-# django-multidb-router = "^0.10"
-djangorestframework = "<3.16,>=3.15"
-django-simple-history = "^3.0.0"
-django-sql-utils = "^0.7.0"
-django-template-minifier = "^1.1.0"
-gtfs-realtime-bindings = "^1.0.0"
-gunicorn = "^23.0.0"
-haversine = "^2.5.1"
-huey = "^2.4.3"
-psycopg = "^3.1.8"
-PyYAML = "^6.0.0"
-redis = "^5.0.0"
-sentry-sdk = {extras = ["django"], version = "^2.4.0"}
-Shapely = "^2.0.1"
-titlecase = "^2.3"
-uk-postcode-utils = "^1.1"
-webcolors = "^24.6.0"
-whitenoise = "^6.2.0"
-xmltodict = "^0.14.1"
-django-cors-headers = "^4.2.0"
-pygments = "^2.15.1"
-django-turnstile = "^0.1.0"
-jinja2 = "^3.1.6"
-requests = "^2.32.3"
-numpy = "^1.26"
-tenacity = "^9.0.0"
-lightningcss-cli = "^1.29.2"
+[dependency-groups]
+test = [
+    "lxml>=5.0.0,<6",
+    "asgiref>=3.4.1,<4",
+    "gtfs-kit>=10.0.0,<11",
+    "websockets~=14.0",
+    "requests-toolbelt>=1.0.0,<2",
+    "time-machine>=2.4.0,<3",
+    "vcrpy>=7.0.0,<8",
+    "django-slowtests>=1.1.1,<2",
+    "fakeredis>=2.12.1,<3",
+    "tblib>=3.0.0,<4",
+    "coverage>=7.6.1,<8",
+]
+dev = [
+    "django-debug-toolbar>=5.0.0,<6",
+    "django-debug-toolbar-force>=0.2,<0.3",
+    "django-debug-toolbar-template-profiler>=2.1.0,<3",
+    "ipdb>=0.13.9,<0.14",
+    "ipython>=9.0.2,<10",
+    "uritemplate>=4.1.1,<5",
+]
 
-[tool.poetry.group.test]
-optional = true
-
-[tool.poetry.group.test.dependencies]
-lxml = "^5.0.0"
-asgiref = "^3.4.1"
-gtfs-kit = "^10.0.0"
-websockets = "^14.0"
-requests-toolbelt = "^1.0.0"
-time-machine = "^2.4.0"
-vcrpy = "^7.0.0"
-django-slowtests = "^1.1.1"
-fakeredis = "^2.12.1"
-tblib = "^3.0.0"
-coverage = "^7.6.1"
-
-[tool.poetry.group.dev]
-optional = true
-
-[tool.poetry.group.dev.dependencies]
-django-debug-toolbar = "^5.0.0"
-django-debug-toolbar-force = "^0.2"
-django-debug-toolbar-template-profiler = "^2.1.0"
-ipdb = "^0.13.9"
-ipython = "^9.0.2"
-uritemplate = "^4.1.1"
+[tool.uv]
+package = false
+default-groups = [
+    "test",
+    "dev",
+]
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.coverage.run]
 relative_files = true

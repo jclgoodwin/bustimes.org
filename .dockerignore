@@ -3,6 +3,7 @@ staticfiles/
 data/
 config/deploy.yml
 .git/
+.venv/
 *.sql
 fly.toml
 dist

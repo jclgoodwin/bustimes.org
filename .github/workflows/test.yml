@@ -65,15 +65,13 @@ jobs:
       run: |
         sudo apt-get update && sudo apt-get install binutils libproj-dev gdal-bin
 
-    - name: Install poetry
-      run: pipx install poetry
+    - uses: astral-sh/setup-uv@v5
 
     - uses: actions/setup-python@v5
       with:
         python-version: '3.13'
-        cache: 'poetry'
 
-    - run: poetry install --with test
+    - run: uv sync
 
     - run: rm -r busstops/static
 
@@ -87,11 +85,11 @@ jobs:
         SECRET_KEY: gdffesgfxc1as9rsxgv4
         DATABASE_URL: postgis://postgres:postgres@localhost/postgres
       run: |
-        poetry run ./manage.py collectstatic --noinput && \
-        poetry run coverage run --concurrency=multiprocessing ./manage.py test --parallel 2 --keepdb
+        uv run ./manage.py collectstatic --noinput && \
+        uv run coverage run --concurrency=multiprocessing ./manage.py test --parallel 2 --keepdb
 
     - name: generate coverage report
-      run: poetry run coverage combine && poetry run coverage html
+      run: uv run coverage combine && uv run coverage html
 
     - name: Coverage comment
       uses: py-cov-action/python-coverage-comment-action@v3
