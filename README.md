@@ -52,7 +52,7 @@ Useful commands:
 npm install  # install JavaScript dependencies
 npm run build  # build the front-end CSS and JavaScript
 npm run watch  # build the front-end CSS and JavaScript in development mode, and "watch" and rebuild when the source changes
-uv sync --with dev --with test  # install Python dependencies including special ones for development and testing
+uv sync --group dev --group test  # install Python dependencies including special ones for development and testing
 uv run ./manage.py collectstatic
 uv run ./manage.py migrate  # create database tables
 uv run ./manage.py runserver 0.0.0.0:8000  # run the Django development server (not suitable for production, use gunicorn for that!)

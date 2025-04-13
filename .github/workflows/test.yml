@@ -71,7 +71,7 @@ jobs:
       with:
         python-version: '3.13'
 
-    - run: uv sync
+    - run: uv sync --group test
 
     - run: rm -r busstops/static
 
