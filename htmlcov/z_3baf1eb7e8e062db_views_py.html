@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_f5dba1c56a64fa65_avl_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2025-04-11 03:50 +0000
+            created at 2025-04-13 08:52 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -235,7 +235,7 @@
     <p class="run"><span class="n"><a id="t153" href="#t153">153</a></span><span class="t"><span class="key">def</span> <span class="nam">route_xml</span><span class="op">(</span><span class="nam">request</span><span class="op">,</span> <span class="nam">source</span><span class="op">,</span> <span class="nam">code</span><span class="op">=</span><span class="str">""</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t154" href="#t154">154</a></span><span class="t">    <span class="nam">source</span> <span class="op">=</span> <span class="nam">get_object_or_404</span><span class="op">(</span><span class="nam">DataSource</span><span class="op">,</span> <span class="nam">id</span><span class="op">=</span><span class="nam">source</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t155" href="#t155">155</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t156" href="#t156">156</a></span><span class="t">    <span class="key">if</span> <span class="str">"ftp.tnds.basemap"</span> <span class="key">in</span> <span class="nam">source</span><span class="op">.</span><span class="nam">url</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t156" href="#t156">156</a></span><span class="t">    <span class="key">if</span> <span class="nam">source</span><span class="op">.</span><span class="nam">is_tnds</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t157" href="#t157">157</a></span><span class="t">        <span class="nam">filename</span> <span class="op">=</span> <span class="nam">Path</span><span class="op">(</span><span class="nam">source</span><span class="op">.</span><span class="nam">url</span><span class="op">)</span><span class="op">.</span><span class="nam">name</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t158" href="#t158">158</a></span><span class="t">        <span class="nam">path</span> <span class="op">=</span> <span class="nam">settings</span><span class="op">.</span><span class="nam">DATA_DIR</span> <span class="op">/</span> <span class="str">"TNDS"</span> <span class="op">/</span> <span class="nam">filename</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t159" href="#t159">159</a></span><span class="t">        <span class="nam">maybe_download_file</span><span class="op">(</span><span class="nam">path</span><span class="op">,</span> <span class="fst">f"</span><span class="fst">TNDS/</span><span class="op">{</span><span class="nam">filename</span><span class="op">}</span><span class="fst">"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -827,7 +827,7 @@
             <a class="nav" href="z_f5dba1c56a64fa65_avl_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2025-04-11 03:50 +0000
+            created at 2025-04-13 08:52 +0000
         </p>
     </div>
 </footer>
