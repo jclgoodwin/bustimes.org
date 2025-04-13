@@ -153,7 +153,7 @@ class SourceDetailView(DetailView):
 def route_xml(request, source, code=""):
     source = get_object_or_404(DataSource, id=source)
 
-    if "ftp.tnds.basemap" in source.url:
+    if source.is_tnds():
         filename = Path(source.url).name
         path = settings.DATA_DIR / "TNDS" / filename
         maybe_download_file(path, f"TNDS/{filename}")

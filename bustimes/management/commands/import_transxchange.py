@@ -232,8 +232,10 @@ class Command(BaseCommand):
         if self.region_id:
             url = f"ftp://ftp.tnds.basemap.co.uk/{archive_name}"
             self.source, _ = DataSource.objects.get_or_create(
-                {"name": self.region_id}, url=url
+                {"url": url},
+                name=self.region_id,
             )
+            assert self.source.is_tnds()
         else:
             self.source, _ = DataSource.objects.get_or_create(name=archive_name)
 
@@ -243,7 +245,7 @@ class Command(BaseCommand):
         """
 
         operator_code = operator_element.findtext("NationalOperatorCode")
-        if not self.is_tnds() and not operator_code:
+        if not self.source.is_tnds() and not operator_code:
             operator_code = operator_element.findtext("OperatorCode")
 
         if operator_code:
@@ -929,9 +931,6 @@ class Command(BaseCommand):
                     description = " - ".join([origin] + vias + [destination])
         return description
 
-    def is_tnds(self):
-        return self.source.url.startswith("ftp://ftp.tnds.basemap.co.uk/")
-
     def should_defer_to_other_source(self, operators: dict, line_name: str):
         if self.source.name == "L" or not operators:
             return False
@@ -1014,7 +1013,7 @@ class Command(BaseCommand):
         if "NATX-National_Express_Ireland" in filename:
             return
 
-        if self.is_tnds():
+        if self.source.is_tnds():
             if self.source.name != "L":
                 if operators and all(
                     operator.noc in self.open_data_operators
@@ -1045,7 +1044,7 @@ class Command(BaseCommand):
             line.line_name = line.line_name.replace("_", " ")
 
             # prefer a BODS-type source over TNDS
-            if self.is_tnds() and self.should_defer_to_other_source(
+            if self.source.is_tnds() and self.should_defer_to_other_source(
                 operators, line.line_name
             ):
                 continue
@@ -1107,7 +1106,7 @@ class Command(BaseCommand):
 
             service_code = None
 
-            if self.is_tnds():
+            if self.source.is_tnds():
                 service_code = get_service_code(filename)
                 if service_code is None:
                     service_code = txc_service.service_code

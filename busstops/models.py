@@ -232,6 +232,26 @@ class DataSource(models.Model):
         if "stagecoach" in self.url:
             return "https://www.stagecoachbus.com/open-data"
 
+    def is_tnds(self):
+        match self.name:
+            case (
+                "L"
+                | "GB"
+                | "Y"
+                | "SW"
+                | "SE"
+                | "EM"
+                | "EA"
+                | "WM"
+                | "S"
+                | "NE"
+                | "NW"
+                | "W"
+                | "IM"
+            ):
+                return True
+        return False
+
     def credit(self, route=None):
         url = self.get_nice_url()
         text = None
