@@ -2,7 +2,7 @@ services:
 
   web:
     build: .
-    entrypoint: sh -c "poetry install --with dev --with test; DEBUG=1 exec ./manage.py runserver 0.0.0.0:8000"
+    entrypoint: sh -c "uv sync --with dev --with test; DEBUG=1 exec ./manage.py runserver 0.0.0.0:8000"
     container_name: django_web
     environment:
       - SECRET_KEY=${SECRET_KEY-}

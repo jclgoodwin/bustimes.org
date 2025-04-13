@@ -30,46 +30,41 @@ I will try to document some things for my own reference.
 
 ## Installing
 
-### Using Docker Compose
+### Using Docker
 
-```
-docker compose up
-```
-
-Then head to http://localhost:8000
-
-```
-npm run watch
-```
+...
 
 ### Using local install
 
 These need to be available:
 
-- Python 3.12
-- [Poetry](https://python-poetry.org/) to install necessary Python packages (Django, etc)
+- Python 3.12+
+- `uv` to install necessary Python packages (Django, etc)
 - PostgreSQL with PostGIS
     - On my Macintosh computer I use [Postgres.app](https://postgresapp.com/)
 - `npm` to install some front end JavaScript things
 - Redis 6.2+
 - [GDAL](https://gdal.org/)
 
+Useful commands:
+
+```bash
+npm install  # install JavaScript dependencies
+npm run build  # build the front-end CSS and JavaScript
+npm run watch  # build the front-end CSS and JavaScript in development mode, and "watch" and rebuild when the source changes
+uv sync --with dev --with test  # install Python dependencies including special ones for development and testing
+uv run ./manage.py collectstatic
+uv run ./manage.py migrate  # create database tables
+uv run ./manage.py runserver 0.0.0.0:8000  # run the Django development server (not suitable for production, use gunicorn for that!)
+```
+
 Some environment variables need to be set.
 Many of them control settings in [buses/settings.py](buses/settings.py).
 
 ```bash
 DEBUG=1
-SECRET_KEY=blablabla
+SECRET_KEY=something
 DATABASE_URL=postgis://user:password@host/database-name
-```
-
-Then run these commands:
-
-```bash
-npm install
-poetry install --with dev --with test  # install Python dependencies including special ones for development and testing
-poetry run ./manage.py migrate  # create database tables
-poetry run ./manage.py runserver 0.0.0.0:8000  # run the Django development server (not suitable for production, use gunicorn for that!)
 ```
 
 [.github/workflows/test.yml](.github/workflows/test.yml) sort of documents the process of installing dependencies and running tests.
@@ -78,10 +73,7 @@ poetry run ./manage.py runserver 0.0.0.0:8000  # run the Django development serv
 
 ### Static data (stops, timetables, etc)
 
-```bash
-poetry run ./import.sh
-```
-will download *some* data from various [sources](https://bustimes.org/data) and run the necessary Django [management commands](busstops/management/commands) to import it,
+[import.sh](import.sh) will download *some* data from various [sources](https://bustimes.org/data) and run the necessary Django [management commands](busstops/management/commands) to import it,
 in a sensible order (place names, then stops, then timetables).
 When run repeatedly, it will only download and import the stuff that's changed.
 It needs a username and password for the Traveline National Dataset step.
