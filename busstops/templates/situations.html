@@ -6,7 +6,7 @@
     {% if situation.summary != 'Does not stop here' %}
 
         {% if situation.summary %}
-            {% if not situation.summary.startswith("[hide]") %}
+            {% if not situation.summary.startswith("hide:") %}
                 <details class="situation"{% if forloop.first and forloop.last and situation.text|length < 100 %} open{% endif %}>
                 <summary>
                     {{ situation.summary }}
