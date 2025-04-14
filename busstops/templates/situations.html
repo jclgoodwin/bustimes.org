@@ -8,12 +8,11 @@
         {% if situation.summary and not situation.summary.startswith("hide:") %}
             <details class="situation"{% if forloop.first and forloop.last and situation.text|length < 100 %} open{% endif %}>
             <summary>
-                  {{ situation.summary }}
-                  {% for validity_period in situation.list_validity_periods %}
-                      <div class="dates">{{ validity_period }}</div>
-                  {% endfor %}
-             </summary>
-        {% endif %}
+                {{ situation.summary }}
+                {% for validity_period in situation.list_validity_periods %}
+                    <div class="dates">{{ validity_period }}</div>
+                {% endfor %}
+            </summary>
         {% else %}<div class="situation">{% endif %}
 
         {% if situation.text %}
