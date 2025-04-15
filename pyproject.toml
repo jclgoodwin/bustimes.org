@@ -3,7 +3,7 @@ name = "bustimes.org"
 version = "0.1.0"
 description = ""
 authors = [{ name = "Josh Goodwin", email = "j@joshuagoodw.in" }]
-requires-python = "<3.14,>=3.13"
+requires-python = ">=3.13"
 dependencies = [
     "beautifulsoup4>=4.12.1,<5",
     "boto3>=1.18.42,<2",
