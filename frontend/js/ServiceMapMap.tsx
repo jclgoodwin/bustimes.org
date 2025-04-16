@@ -202,7 +202,7 @@ export default function ServiceMapMap({
       ) : null}
 
       {Array.from(serviceIds).map((serviceId) => {
-        if (stopsAndGeometry[serviceId]?.geometry) {
+        if (stops && stopsAndGeometry[serviceId]?.geometry) {
           return (
             <Geometry
               key={serviceId}
