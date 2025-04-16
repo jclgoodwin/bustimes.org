@@ -540,6 +540,10 @@ class Command(BaseCommand):
             for date_range in operating_profile.nonoperation_days
         ]
         for date_range in operating_profile.operation_days:
+            if not date_range.start:
+                # this should never happen
+                continue
+
             calendar_date = get_calendar_date(
                 date_range=date_range, operation=True, special=True
             )
