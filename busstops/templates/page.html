@@ -72,7 +72,7 @@
                     {% csrf_token %}
                     <button type="submit" class="button">Log out</button>
                 </li>
-                {% if user.Trusted %}
+                {% if user.trusted %}
                     <li><a href="/vehicles/edits?status=pending">Pending Edits</a></li>
                 {% endif %}
                 <li><a href="/rules">Rules & FAQ</a></li>
