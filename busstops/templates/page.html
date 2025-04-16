@@ -69,7 +69,7 @@
     {% if user.is_authenticated %}
         <form action="{% url 'logout' %}" method="POST">
             <ul class="user">
-                <li><a href="/accounts/users/{{ user.id }}">user {{ user.id }}</a></li>
+                <li><a href="{% url 'user_detail' user.id %}">user {{ user.id }}</a></li>
                 <li>
                     {% csrf_token %}
                     <button type="submit" class="button">Log out</button>

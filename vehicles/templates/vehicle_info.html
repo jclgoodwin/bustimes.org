@@ -4,7 +4,13 @@
 
 <dl class="contact-details">
     {% if vehicle.colours or vehicle.livery %}
+        {% if vehicle.livery and perms.vehicles.change_livery %}
+            <a href="{% url 'admin:vehicles_livery_change' object.livery_id %}">
+        {% endif %}
         <div class="livery" style="background:{{ vehicle.get_livery }}"{% if vehicle.livery.name %} title="{{ vehicle.livery.name }}"{% endif %}></div>
+        {% if vehicle.livery and perms.vehicles.change_livery %}
+            </a>
+        {% endif %}
     {% endif %}
 
     {% if vehicle.vehicle_type %}
@@ -54,7 +60,7 @@
             <li>{{ flickr_link }}</li>
         {% endif %}
 
-        {% if request.user.is_superuser %}
+        {% if perms.vehicles.change_vehicle %}
             <li><a href="{% url 'admin:vehicles_vehicle_change' vehicle.pk %}">✎</a></li>
         {% endif %}
     </ul>

@@ -14,7 +14,7 @@
         {% if object.trusted is False %}</del>{% endif %}
     </h1>
 
-    {% if request.user.is_superuser %}
+    {% if perms.accounts.change_user %}
         <p><a href="{% url 'admin:accounts_user_change' object.id %}">✎</a></p>
     {% endif %}
 
@@ -23,10 +23,10 @@
     {% endif %}
 
     <ul class="horizontal">
-        <li><a href="/vehicles/edits?user={{ object.id }}">{{ object.total_count }} edit{{ object.total_count|pluralize }}</a></li>
-        <li><a href="/vehicles/edits?user={{ object.id }}&amp;status=pending">{{ object.pending_count }} pending</a></li>
-        <li><a href="/vehicles/edits?user={{ object.id }}&amp;status=approved">{{ object.approved_count }} approved</a></li>
-        <li><a href="/vehicles/edits?user={{ object.id }}&amp;status=disapproved">{{ object.disapproved_count }} disapproved</a></li>
+        <li><a href="/vehicles/edits{% querystring user=object.id ">{{ object.total_count }} edit{{ object.total_count|pluralize }}</a></li>
+        <li><a href="/vehicles/edits{% querystring user=object.id status='pending' %}">{{ object.pending_count }} pending</a></li>
+        <li><a href="/vehicles/edits{% querystring user=object.id status='approved' %}">{{ object.approved_count }} approved</a></li>
+        <li><a href="/vehicles/edits{% querystring user=object.id status='disapproved' %}">{{ object.disapproved_count }} disapproved</a></li>
     </ul>
 
     {% if form %}
