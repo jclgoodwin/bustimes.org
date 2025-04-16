@@ -45,8 +45,12 @@
 
 {% include 'operator-contact-details.html' with licences=operator.licences.all %}
 
-{% if request.user.is_superuser %}
-    <p><a href="{% url 'admin:busstops_operator_change' object.noc %}">✎</a></p>
+{% if request.user.is_staff %}
+    <ul class="horizontal">
+        <li><a href="{% url 'admin:busstops_operator_change' object.noc %}">✎ operator</a></li>
+        <li><a href="{% url 'admin:busstops_service_changelist' %}{% querystring operator__noc__exact=object.noc current__exact=1 %}">✎ services</a></li>
+        <li><a href="{% url 'admin:vehicles_vehicle_changelist' %}{% querystring operator__noc__exact=object.noc %}">✎ vehicles</a></li>
+    </ul>
 {% endif %}
 
 {% endblock content %}
