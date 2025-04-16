@@ -73,7 +73,7 @@ function getBoundsQueryString(bounds: LngLatBounds): string {
 }
 
 function containsBounds(
-  a: LngLatBounds | undefined,
+  a: LngLatBounds | null,
   b: LngLatBounds,
 ): boolean | undefined {
   // console.log(a, b);
@@ -465,7 +465,7 @@ export default function BigMap(
       }
   ),
 ) {
-  const mapRef = React.useRef<MapGL>();
+  const mapRef = React.useRef<MapGL>(null);
 
   const [trip, setTrip] = React.useState<Trip | undefined>(props.trip);
 
@@ -517,12 +517,12 @@ export default function BigMap(
   }, [bounds]);
 
   // slippy map stuff
-  const boundsRef = React.useRef<LngLatBounds>();
-  const stopsHighWaterMark = React.useRef<LngLatBounds>();
-  const stopsTimeout = React.useRef<number>();
-  const vehiclesHighWaterMark = React.useRef<LngLatBounds>();
-  const vehiclesTimeout = React.useRef<number>();
-  const vehiclesAbortController = React.useRef<AbortController>();
+  const boundsRef = React.useRef<LngLatBounds>(null);
+  const stopsHighWaterMark = React.useRef<LngLatBounds>(null);
+  const stopsTimeout = React.useRef<number>(null);
+  const vehiclesHighWaterMark = React.useRef<LngLatBounds>(null);
+  const vehiclesTimeout = React.useRef<number>(undefined);
+  const vehiclesAbortController = React.useRef<AbortController>(null);
   const vehiclesLength = React.useRef<number>(0);
 
   const loadStops = React.useCallback(() => {
@@ -547,10 +547,10 @@ export default function BigMap(
 
       if (vehiclesAbortController.current) {
         vehiclesAbortController.current.abort();
-        vehiclesAbortController.current = undefined;
+        vehiclesAbortController.current = null;
       }
 
-      let _bounds: LngLatBounds | undefined;
+      let _bounds: LngLatBounds;
       let url: string | undefined;
       switch (props.mode) {
         case MapMode.Slippy:
@@ -824,7 +824,7 @@ export default function BigMap(
 
   const [cursor, setCursor] = React.useState<string>();
 
-  const hoveredLocation = React.useRef<number>();
+  const hoveredLocation = React.useRef<number>(null);
 
   const onMouseEnter = React.useCallback((e: MapLayerMouseEvent) => {
     const vehicleId = getClickedVehicleMarkerId(e);
@@ -837,7 +837,7 @@ export default function BigMap(
       // journey map
       for (const feature of e.features) {
         if (feature.layer.id === "locations") {
-          if (hoveredLocation.current !== undefined) {
+          if (hoveredLocation.current) {
             e.target.setFeatureState(
               { source: "locations", id: hoveredLocation.current },
               { hover: false },
