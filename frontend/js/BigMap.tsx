@@ -465,7 +465,7 @@ export default function BigMap(
       }
   ),
 ) {
-  const mapRef = React.useRef<MapGL>(null);
+  const mapRef = React.useRef<MapGL | null>(null);
 
   const [trip, setTrip] = React.useState<Trip | undefined>(props.trip);
 
@@ -517,12 +517,12 @@ export default function BigMap(
   }, [bounds]);
 
   // slippy map stuff
-  const boundsRef = React.useRef<LngLatBounds>(null);
-  const stopsHighWaterMark = React.useRef<LngLatBounds>(null);
-  const stopsTimeout = React.useRef<number>(null);
-  const vehiclesHighWaterMark = React.useRef<LngLatBounds>(null);
-  const vehiclesTimeout = React.useRef<number>(undefined);
-  const vehiclesAbortController = React.useRef<AbortController>(null);
+  const boundsRef = React.useRef<LngLatBounds | null>(null);
+  const stopsHighWaterMark = React.useRef<LngLatBounds | null>(null);
+  const stopsTimeout = React.useRef<number | null>(null);
+  const vehiclesHighWaterMark = React.useRef<LngLatBounds | null>(null);
+  const vehiclesTimeout = React.useRef<number | null>(null);
+  const vehiclesAbortController = React.useRef<AbortController | null>(null);
   const vehiclesLength = React.useRef<number>(0);
 
   const loadStops = React.useCallback(() => {
@@ -543,7 +543,9 @@ export default function BigMap(
       if (!first && document.hidden) {
         return;
       }
-      clearTimeout(vehiclesTimeout.current);
+      if (vehiclesTimeout.current) {
+        clearTimeout(vehiclesTimeout.current);
+      }
 
       if (vehiclesAbortController.current) {
         vehiclesAbortController.current.abort();
@@ -824,7 +826,7 @@ export default function BigMap(
 
   const [cursor, setCursor] = React.useState<string>();
 
-  const hoveredLocation = React.useRef<number>(null);
+  const hoveredLocation = React.useRef<number | null>(null);
 
   const onMouseEnter = React.useCallback((e: MapLayerMouseEvent) => {
     const vehicleId = getClickedVehicleMarkerId(e);

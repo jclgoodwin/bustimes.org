@@ -409,7 +409,7 @@ export default function JourneyMap({
 }) {
   const [cursor, setCursor] = React.useState<string>();
 
-  const hoveredLocation = React.useRef<number>(null);
+  const hoveredLocation = React.useRef<number | null>(null);
 
   const onMouseEnter = React.useCallback((e: MapLayerMouseEvent) => {
     const vehicleId = getClickedVehicleMarkerId(e);
@@ -506,7 +506,7 @@ export default function JourneyMap({
     }
   }, []);
 
-  const mapRef = React.useRef<MapGL>(null);
+  const mapRef = React.useRef<MapGL | null>(null);
 
   const bounds = React.useMemo(() => {
     if (journey) {
