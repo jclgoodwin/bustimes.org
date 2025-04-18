@@ -407,6 +407,7 @@ class Command(ImportLiveVehiclesCommand):
                     HOUR = timedelta(hours=1)
                     if (origin_aimed_departure_time - HOUR).hour == hours:
                         origin_aimed_departure_time -= HOUR
+                        logger.warning("adjusted timezone", exc_info=True)
 
         journey = None
 
