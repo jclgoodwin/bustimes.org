@@ -147,7 +147,7 @@ class Livery(models.Model):
     horizontal = models.BooleanField(
         default=False, help_text="Equivalent to setting the angle to 90"
     )
-    updated_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(null=True, blank=True, auto_now=True)
     published = models.BooleanField(
         default=False,
         help_text="Tick to include in the CSS and be able to apply this livery to vehicles",
@@ -201,7 +201,6 @@ class Livery(models.Model):
             return format_html(div + ' title="{}"></div>', self.name)
 
     def save(self, *args, update_fields=None, **kwargs):
-        self.updated_at = timezone.now()
         if update_fields is None:
             if self.colours:
                 self.set_css()

@@ -13,9 +13,16 @@ from .formatting import format_timedelta, time_datetime
 
 class TimetableDataSource(models.Model):
     name = models.CharField(max_length=255)
-    search = models.CharField(max_length=255, blank=True)
-    url = models.URLField(blank=True)
-    modified_at = models.DateTimeField(null=True, blank=True)
+    search = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="for BODS sources, usually one of the operator's NOCs",
+    )
+    url = models.URLField(
+        blank=True,
+        help_text="for non-BODS sources, i.e. Stagecoach, Passenger, or Ticketer",
+    )
+    modified_at = models.DateTimeField(null=True, blank=True, auto_now=True)
     operators = models.ManyToManyField("busstops.Operator", blank=True)
     settings = models.JSONField(null=True, blank=True)
     complete = models.BooleanField(default=True)
@@ -32,6 +39,8 @@ class Route(models.Model):
     source = models.ForeignKey("busstops.DataSource", models.CASCADE)
     code = models.CharField(max_length=255, blank=True)  # qualified filename
     service_code = models.CharField(max_length=255, blank=True)
+    revision_number_context = models.CharField(max_length=48, blank=True)
+    line_id = models.CharField(max_length=255, blank=True)
     registration = models.ForeignKey(
         "vosa.Registration", models.SET_NULL, null=True, blank=True
     )
