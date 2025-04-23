@@ -54,6 +54,7 @@ def get_routes(routes, when=None, from_date=None):
                         | ~Q(end_date=OuterRef("end_date")),  # for bad data
                         source=OuterRef("source"),
                         service_code=OuterRef("service_code"),
+                        revision_number_context=OuterRef("revision_number_context"),
                         start_date__lte=when,
                         revision_number__gt=OuterRef("revision_number"),
                     )

@@ -1256,22 +1256,7 @@ class Command(BaseCommand):
                 if outbound_description or inbound_description:
                     service.description = outbound_description or inbound_description
 
-            # does is the service already exist in the database?
-
-            if service.id:
-                service_created = False
-            else:
-                service_created = True
             service.save()
-
-            # if not service_created:
-            #     if (
-            #         "_" in service.slug
-            #         or "-" not in service.slug
-            #         or not existing_current_service
-            #     ):
-            #         service.slug = ""
-            #         service.save(update_fields=["slug"])
 
             if operators:
                 if existing and not existing_current_service:
@@ -1311,6 +1296,7 @@ class Command(BaseCommand):
             # timetable data:
 
             route_defaults = {
+                "line_id": line.id,
                 "line_name": line.line_name,
                 "line_brand": line_brand or "",
                 "outbound_description": line.outbound_description or "",
@@ -1319,6 +1305,7 @@ class Command(BaseCommand):
                 "end_date": txc_service.operating_period.end,
                 "service": service,
                 "revision_number": transxchange.attributes["RevisionNumber"],
+                "revision_number_context": "",
                 "created_at": get_datetime(transxchange.attributes["CreationDateTime"]),
                 "modified_at": get_datetime(
                     transxchange.attributes["ModificationDateTime"]
@@ -1392,6 +1379,20 @@ class Command(BaseCommand):
                 route_code += f"#{txc_service.service_code}"
             if len(txc_service.lines) > 1:
                 route_code += f"#{line.id}"
+
+            # diabolical trick - detect Ticketer data and set revision_number_context
+            if "tkt_oid" in operators:
+                parts = route_code.split("_")
+                if (
+                    7 >= len(parts) >= 6
+                    and parts[3].isdigit()
+                    and (parts[4].isdigit() or parts[4] == "-")
+                ):
+                    route_defaults["revision_number_context"] = parts[1]
+                else:
+                    logger.warning(
+                        "{filename} looks has {operators} but unexpected filename format"
+                    )
 
             route, route_created = Route.objects.update_or_create(
                 route_defaults, source=self.source, code=route_code
