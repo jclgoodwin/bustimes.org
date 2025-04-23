@@ -28,6 +28,7 @@ from busstops.models import (
     StopPoint,
     StopUsage,
 )
+from busstops.utils import get_datetime
 from transxchange.txc import TransXChange
 from vehicles.models import get_text_colour
 from vosa.models import Registration
@@ -1318,6 +1319,10 @@ class Command(BaseCommand):
                 "end_date": txc_service.operating_period.end,
                 "service": service,
                 "revision_number": transxchange.attributes["RevisionNumber"],
+                "created_at": get_datetime(transxchange.attributes["CreationDateTime"]),
+                "modified_at": get_datetime(
+                    transxchange.attributes["ModificationDateTime"]
+                ),
                 "service_code": txc_service.service_code,
                 "public_use": service.public_use,
             }

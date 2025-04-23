@@ -221,6 +221,7 @@ def bus_open_data(api_key, specific_operator):
                     name=dataset["name"], url=dataset["url"]
                 )
             command.source.name = dataset["name"]
+            command.source.description = dataset["description"]
             command.source.url = dataset["url"]
             if command.source.source_id != source.id:
                 command.source.source = source
