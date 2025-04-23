@@ -1391,7 +1391,7 @@ class Command(BaseCommand):
                     route_defaults["revision_number_context"] = parts[1]
                 else:
                     logger.warning(
-                        "{filename} looks has {operators} but unexpected filename format"
+                        "{filename} has {operators} but unexpected filename format"
                     )
 
             route, route_created = Route.objects.update_or_create(
