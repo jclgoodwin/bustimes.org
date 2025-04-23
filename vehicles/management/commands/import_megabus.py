@@ -131,7 +131,7 @@ class Command(NatExpCommand):
                 item["active_vehicle"]["current_wgs84_latitude_degrees"],
             ),
             heading=item["active_vehicle"]["current_forward_azimuth_degrees"],
-            early=-timedelta(seconds=delay) if delay is not None else None,
+            delay=timedelta(seconds=delay) if delay is not None else None,
         )
         location.datetime = updated_at
         location.journey = journey

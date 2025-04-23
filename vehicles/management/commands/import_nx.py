@@ -162,7 +162,7 @@ class Command(ImportLiveVehiclesCommand):
     def create_vehicle_location(self, item):
         heading = item["live"]["bearing"]
 
-        early = None
+        delay = None
         for timetable in item["timetables"]:
             if (
                 timetable
@@ -173,11 +173,11 @@ class Command(ImportLiveVehiclesCommand):
                 expected_arrival = parse_datetime(
                     timetable["eta"]["etaArrive"]["dateTime"]
                 )
-                early = aimed_arrival - expected_arrival
+                delay = expected_arrival - aimed_arrival
                 break
 
         return VehicleLocation(
             latlong=Point(item["live"]["lon"], item["live"]["lat"]),
             heading=heading,
-            early=early,
+            delay=delay,
         )
