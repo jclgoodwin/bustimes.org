@@ -17,6 +17,10 @@
         width: 100px;
     }
 
+    .shortish {
+        width: 130px;
+    }
+
     td {
         overflow: hidden;
     }
@@ -26,16 +30,18 @@
 
 <p>{{ object.url }}</p>
 
+<p>{{ object.description }}</p>
+
 <p>{{ object.datetime }}</p>
 
 <table>
     <thead>
-        <th scope="col">service code</th>
+        <th scope="col" class="shortish">service code</th>
         <th scope="col" class="short">line name</th>
         <th scope="col" class="short">revision №</th>
-        <th scope="col">start</th>
-        <th scope="col">end</th>
-        <th scope="col" class="short">xml</th>
+        <th scope="col" class="short">start</th>
+        <th scope="col" class="short">end</th>
+        <th scope="col">file</th>
         <th scope="col" class="short">timetable</th>
         <th scope="col" class="short">trips</th>
     </thead>
@@ -47,9 +53,11 @@
             <td>{{ route.revision_number }}</td>
             <td>{{ route.start_date }}</td>
             <td>{{ route.end_date }}</td>
-            <td class="link"><a href="{{ route.get_absolute_url }}">xml</a></td>
-            <td class="link"><a href="{{ route.service.get_absolute_url }}">{{ route.line_name }}</a></td>
-            <td class="link"><a href="{{ route.service.get_absolute_url }}/debug">{{ route.trips }}</a></td>
+            <td class="link"><a href="{{ route.get_absolute_url }}">{{ route.code }}</a></td>
+            {% if route.service %}
+                <td class="link"><a href="{{ route.service.get_absolute_url }}">{{ route.line_name }}</a></td>
+                <td class="link"><a href="{{ route.service.get_absolute_url }}/debug">{{ route.trips }}</a></td>
+            {% endif %}
         </tr>
     {% endfor %}
     </tbody>
