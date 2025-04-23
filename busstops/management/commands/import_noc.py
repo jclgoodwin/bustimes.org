@@ -221,7 +221,6 @@ class Command(BaseCommand):
                 if (
                     name != operator.name
                     or url != operator.url
-                    or twitter != operator.twitter
                     or vehicle_mode != operator.vehicle_mode
                 ):
                     operator.name = name
