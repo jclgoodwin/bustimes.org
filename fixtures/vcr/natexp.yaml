@@ -1,0 +1,86 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.28.1
+    method: GET
+    uri: https://nx.origin-dev.utrack.com/api/public-origin-departures-by-route-v1/491
+  response:
+    body:
+      string: "{\n    \"code\": 0,\n    \"message\": \"OK\",\n    \"routes\": [\n
+        \       {\n            \"metadata\": {\n                \"route_id\": \"727\",\n
+        \               \"short_name\": \"727\",\n                \"departure_location_name\":
+        \"Heathrow Airport (T5)\",\n                \"arrival_location_name\": \"Great
+        Yarmouth\"\n            },\n            \"chronological_departures\": [\n
+        \               {\n                    \"trip\": {\n                        \"id\":
+        \"13818243X\",\n                        \"operator_code\": \"AM1\",\n                        \"operator_name\":
+        \"Ambassador\",\n                        \"source_operator_code\": null,\n
+        \                       \"source_operator_name\": null,\n                        \"class_code\":
+        \"A\",\n                        \"class_name\": \"Airport\",\n                        \"route_id\":
+        \"727\",\n                        \"short_name\": \"727\",\n                        \"direction\":
+        \"O\",\n                        \"pattern_code\": \"01\",\n                        \"duplicate_service\":
+        false,\n                        \"duplicate_of_trip_id\": null,\n                        \"departure_time_unix\":
+        1665716100,\n                        \"arrival_time_unix\": 1665735300,\n
+        \                       \"departure_location_name\": \"Great Yarmouth\",\n
+        \                       \"arrival_location_name\": \"Heathrow Airport (T5)\",\n
+        \                       \"departure_locale\": \"Europe\\/London\",\n                        \"arrival_locale\":
+        \"Europe\\/London\",\n                        \"duration_seconds\": 19200,\n
+        \                       \"departure_time_formatted_local\": \"2022-10-14 03:55:00\",\n
+        \                       \"arrival_time_formatted_local\": \"2022-10-14 09:15:00\"\n
+        \                   },\n                    \"active_vehicle\": {\n                        \"current_wgs84_latitude_degrees\":
+        52.589977,\n                        \"current_wgs84_longitude_degrees\": 1.706274,\n
+        \                       \"current_forward_azimuth_degrees\": 2,\n                        \"current_speed_mph\":
+        0,\n                        \"last_update_time_unix\": 1665703602,\n                        \"engine_is_currently_on\":
+        false,\n                        \"engine_is_currently_idling\": false,\n                        \"last_update_time_formatted_local\":
+        \"2022-10-14 00:26:42\"\n                    },\n                    \"stop\":
+        {\n                        \"sequence\": 0,\n                        \"original_source_sequence\":
+        0,\n                        \"scheduled_arrival_time_unix\": 1665716100,\n
+        \                       \"scheduled_departure_time_unix\": 1665716100,\n                        \"live_arrival_time_unix\":
+        null,\n                        \"live_departure_time_unix\": null,\n                        \"estimated_arrival_time_unix\":
+        null,\n                        \"estimated_departure_time_unix\": null,\n
+        \                       \"scheduled_arrival_time_formatted_local\": \"2022-10-14
+        03:55:00\",\n                        \"scheduled_departure_time_formatted_local\":
+        \"2022-10-14 03:55:00\",\n                        \"live_arrival_time_formatted_local\":
+        null,\n                        \"live_departure_time_formatted_local\": null,\n
+        \                       \"estimated_arrival_time_formatted_local\": null,\n
+        \                       \"estimated_departure_time_formatted_local\": null\n
+        \                   },\n                    \"tracking\": {\n                        \"current_delay_seconds\":
+        null,\n                        \"total_distance_km\": 0,\n                        \"is_future_trip\":
+        false,\n                        \"is_cancelled\": false,\n                        \"is_completed\":
+        false,\n                        \"has_no_tracking\": false,\n                        \"has_no_vehicle\":
+        false,\n                        \"has_no_gps\": false,\n                        \"is_stationary\":
+        false,\n                        \"is_arrived\": false,\n                        \"is_arrived_at_current_stop\":
+        false,\n                        \"is_moving\": false,\n                        \"is_moving_to_current_stop\":
+        false,\n                        \"has_departed_current_stop\": false,\n                        \"has_moved_past_current_stop\":
+        false,\n                        \"has_bypassed_current_stop\": false\n                    },\n
+        \                   \"coachtracker\": {\n                        \"is_earlier_departure\":
+        false,\n                        \"is_later_departure\": false\n                    }\n
+        \               }\n            ]\n        }\n    ]\n}"
+    headers:
+      Content-Security-Policy:
+      - frame-ancestors 'self' *.utrackapps.com *.utrack.com;
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 14 Oct 2022 00:10:16 GMT
+      Server:
+      - lighttpd
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Vary:
+      - Accept-Encoding
+      X-Content-Type-Options:
+      - nosniff
+      content-length:
+      - '4290'
+    status:
+      code: 200
+      message: OK
+version: 1
