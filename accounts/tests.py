@@ -110,6 +110,9 @@ class RegistrationTest(TransactionTestCase):
 
         response = self.client.get(other_user.get_absolute_url())
 
+        self.assertContains(response, f'"/vehicles/edits?user={other_user.id}"')
+        self.assertContains(response, f'"/vehicles/edits?user={other_user.id}&amp;')
+
         self.assertContains(response, "/change/")
 
         # set permissions
