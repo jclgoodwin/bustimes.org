@@ -8,7 +8,7 @@
 | accounts/admin.py                                               |       41 |        0 |    100% |           |
 | accounts/forms.py                                               |       50 |        0 |    100% |           |
 | accounts/models.py                                              |       25 |        0 |    100% |           |
-| accounts/tests.py                                               |      101 |        0 |    100% |           |
+| accounts/tests.py                                               |      103 |        0 |    100% |           |
 | accounts/urls.py                                                |        4 |        0 |    100% |           |
 | accounts/views.py                                               |       62 |        1 |     98% |       110 |
 | api/\_\_init\_\_.py                                             |        0 |        0 |    100% |           |
@@ -167,7 +167,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16083** | **1083** | **93%** |           |
+|                                                       **TOTAL** | **16085** | **1083** | **93%** |           |
 
 
 ## Setup coverage badge
