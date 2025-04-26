@@ -1383,15 +1383,11 @@ class Command(BaseCommand):
             # diabolical trick - detect Ticketer data and set revision_number_context
             if "tkt_oid" in operators:
                 parts = route_code.split("_")
-                if (
-                    7 >= len(parts) >= 6
-                    and parts[3].isdigit()
-                    and (parts[4].isdigit() or parts[4] == "-")
-                ):
+                if len(parts) > 5:
                     route_defaults["revision_number_context"] = parts[1]
                 else:
                     logger.warning(
-                        "{filename} has {operators} but unexpected filename format"
+                        f"{filename} has {operators} but unexpected filename format"
                     )
 
             route, route_created = Route.objects.update_or_create(
