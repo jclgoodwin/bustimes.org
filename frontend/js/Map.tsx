@@ -209,6 +209,7 @@ export default function BusTimesMap(
       <MapGL
         {...props}
         reuseMaps
+        crossSourceCollisions={false}
         touchPitch={false}
         pitchWithRotate={false}
         dragRotate={false}
