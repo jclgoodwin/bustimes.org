@@ -18,7 +18,7 @@
         {% include "vehicle_revision_changes.html" %}
         {% if revision.disapproved %}</del>{% endif %}
 
-    {% if revision.disapproved or revision.approved_by_id %}
+    {% if revision.disapproved or revision.approved_at or revision.approved_by_id %}
         <p>
             <strong>
                 {% if revision.disapproved %}Disa{% else %}A{% endif %}pproved
@@ -29,7 +29,7 @@
             {% if revision.disapproved_reason %}
                 &centerdot; <i>{{ revision.disapproved_reason }}</i>
             {% endif %}
-        {% endif %}
+    {% endif %}
 
     <p class="actions" hx-target="#revision-{{ revision.id }}">
         {% if revision.pending %}
@@ -41,9 +41,7 @@
             {% else %}
                 Pending
             {% endif %}
-        {% else %}
-            {% if user.trusted and revision.disapproved and revision.approved_by_id == user.id %}
-                <button type="button" class="button" hx-post="{% url 'vehicle_revision_action' revision.id 'apply' %}" hx-prompt="Reason for approving">👍 Apply changes</button>
-            {% endif %}
-    {% endif %}
+        {% elif user.trusted and revision.disapproved and revision.approved_by_id == user.id or user.is_superuser %}
+            <button type="button" class="button" hx-post="{% url 'vehicle_revision_action' revision.id 'apply' %}" hx-prompt="Reason for approving">👍 Apply changes</button>
+        {% endif %}
 </li>
