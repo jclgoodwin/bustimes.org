@@ -21,8 +21,10 @@
         <table>
             <thead>
                 <tr>
-                    <th scope="col" colspan="3"></th>
+                    <th scope="col"">Rte</th>
+                    <th scope="col" colspan="2"></th>
                     <th scope="col">To</th>
+                    <th scope="col">Vehicle</th>
                 </tr>
             </thead>
             <tbody>
@@ -37,7 +39,12 @@
             <td>{{ trip.destination.locality }}</td>
             <td class="link">
                 {% for j in trip.vehicle_journeys %}
-                    <a href="{{ j.get_absolute_url }}">{{ j.vehicle }}</a>
+                    <a href="{{ j.vehicle }}">{{ j.vehicle }}</a>
+                {% endfor %}
+            </td>
+            <td class="link">
+                {% for j in trip.vehicle_journeys %}
+                    <a href="{{ j.get_absolute_url }}">Map</a>
                 {% endfor %}
             </td>
         </tr>
