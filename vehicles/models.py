@@ -460,17 +460,6 @@ class VehicleCode(models.Model):
         indexes = [models.Index(fields=("code", "scheme"))]
 
 
-class VehicleEditVote(models.Model):
-    by_user = models.ForeignKey(settings.AUTH_USER_MODEL, models.CASCADE)
-    for_revision = models.ForeignKey(
-        "VehicleRevision", models.CASCADE, null=True, blank=True
-    )
-    positive = models.BooleanField()
-
-    class Meta:
-        unique_together = (("by_user", "for_revision"),)
-
-
 class VehicleRevisionFeature(models.Model):
     feature = models.ForeignKey(VehicleFeature, models.CASCADE)
     revision = models.ForeignKey("VehicleRevision", models.CASCADE)
@@ -533,8 +522,6 @@ class VehicleRevision(models.Model):
     pending = models.BooleanField(default=False)
     disapproved = models.BooleanField(default=False)
     disapproved_reason = models.TextField(null=True, blank=True)
-
-    score = models.SmallIntegerField(default=0)
 
     class Meta:
         constraints = [
