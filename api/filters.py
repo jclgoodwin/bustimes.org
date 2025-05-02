@@ -69,7 +69,7 @@ class OperatorFilter(FilterSet):
     class Meta:
         model = Operator
         fields = {
-            "name": ["icontains"],
+            "name": ["icontains", "exact"],
             "slug": ["exact"],
             "vehicle_mode": ["exact"],
             "region": ["exact"],
