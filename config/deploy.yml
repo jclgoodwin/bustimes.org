@@ -8,8 +8,9 @@ image: jclgoodwin/bustimes-org
 servers:
   web:
     hosts:
-      - 10.131.0.24
-      - 10.131.29.248
+      - 10.131.240.99
+      - 10.131.240.98
+      - 10.131.240.109
     env:
       clear:
         WEB_CONCURRENCY: 12
@@ -35,7 +36,6 @@ builder:
   arch: amd64
   cache:
     type: registry
-    options: mode=max
 
 # Credentials for your image host.
 registry:
