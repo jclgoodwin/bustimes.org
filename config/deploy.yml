@@ -14,7 +14,6 @@ servers:
     env:
       clear:
         WEB_CONCURRENCY: 12
-        ALLOWED_HOSTS: "bustimes.org"
         EMAIL_HOST: email-smtp.eu-west-1.amazonaws.com
         DISABLE_EDITING: ""
         DISABLE_REGISTRATION: yes
