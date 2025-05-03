@@ -62,7 +62,11 @@ class ServiceFilter(FilterSet):
 
     class Meta:
         model = Service
-        fields = ["public_use", "mode", "slug"]
+        fields = {
+            "public_use": ["exact"],
+            "mode": ["exact", "in"],
+            "slug": ["exact", "in"],
+        }
 
 
 class OperatorFilter(FilterSet):
