@@ -62,10 +62,7 @@ jobs:
     - name: Install Geospatial libraries
       # required by GeoDjango
       # see https://docs.djangoproject.com/en/dev/ref/contrib/gis/install/geolibs/
-      uses: awalsh128/cache-apt-pkgs-action@v1.5.0
-      with:
-          packages: binutils libproj-dev gdal-bin
-          execute_install_scripts: true
+      run: sudo apt-get update && sudo apt-get install -y --no-install-recommends gdal-bin
 
     - uses: astral-sh/setup-uv@v5
 
