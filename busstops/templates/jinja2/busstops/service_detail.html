@@ -26,7 +26,7 @@
     {% for line_name in object.get_line_names() %}
         {% if line_name and line_name not in object.line_brand %}
             {% if ' ' not in line_name or line_name not in object.description %}
-                <strong class="name is-short{% if object.colour_id %} colour colour-{{ object.colour_id }}{% endif %}">
+                <strong class="name{% if ' ' not in line_name %} is-short{% endif %}{% if object.colour_id %} colour colour-{{ object.colour_id }}{% endif %}">
                     {{ line_name }}
                 </strong>
             {% endif %}
