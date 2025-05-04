@@ -666,6 +666,7 @@ class ServiceManager(models.Manager):
         vector = SearchVector(
             StringAgg("route__line_name", delimiter=" ", distinct=True, default=""),
             weight="A",
+            config="english",
         )
         vector += SearchVector("line_brand", weight="A", config="english")
         vector += SearchVector("description", weight="B", config="english")
