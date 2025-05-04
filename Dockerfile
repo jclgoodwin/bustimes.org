@@ -1,5 +1,7 @@
 FROM node:20-slim
 
+ARG API_ROOT=/
+
 WORKDIR /app/
 
 COPY package.json package-lock.json /app/
