@@ -175,6 +175,7 @@ class Command(BaseCommand):
                 calendar=calendars[row.service_id],
                 inbound=getattr(row, "direction_id", 0) == 1,
                 vehicle_journey_code=row.trip_id,
+                headsign=row.trip_headsign if pd.notna(row.trip_headsign) else "",
                 operator=operator,
             )
             if trip.vehicle_journey_code in existing_trips:
@@ -252,8 +253,8 @@ class Command(BaseCommand):
                     "start",
                     "end",
                     "destination",
-                    "block",
                     "vehicle_journey_code",
+                    "headsign",
                 ],
             )
 

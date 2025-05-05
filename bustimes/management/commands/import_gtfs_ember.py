@@ -130,6 +130,7 @@ class Command(BaseCommand):
                 inbound=row.direction_id == 1,
                 vehicle_journey_code=row.trip_id,
                 operator=operator,
+                headsign=row.trip_headsign,
             )
             if trip.vehicle_journey_code in existing_trips:
                 # reuse existing trip id
@@ -173,6 +174,7 @@ class Command(BaseCommand):
                     "block",
                     "vehicle_journey_code",
                     "inbound",
+                    "headsign",
                 ],
             )
 

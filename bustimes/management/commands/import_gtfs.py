@@ -205,7 +205,7 @@ class Command(BaseCommand):
                 route=route,
                 calendar=calendars[line.service_id],
                 inbound=line.direction_id == 1,
-                headsign=getattr(line, "headsign", ""),
+                headsign=line.trip_headsign,
                 ticket_machine_code=line.trip_id,
                 block=getattr(line, "block_id", ""),
                 vehicle_journey_code=getattr(line, "trip_short_name", ""),
