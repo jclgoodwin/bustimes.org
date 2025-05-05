@@ -14,14 +14,19 @@ export const Route = React.memo(function Route({ times }: RouteProps) {
   const darkMode =
     theme === "alidade_smooth_dark" || theme === "alidade_satellite";
 
+  let font = ["Stadia Regular"];
+  if (theme === "liberty") {
+    font = ["Noto Sans Regular"];
+  }
+
   const stopsStyle: LayerProps = {
     id: "stops",
     type: "symbol",
     layout: {
       "symbol-sort-key": ["get", "priority"],
       "text-field": ["get", "time"],
-      "text-size": 11,
-      "text-font": ["Stadia Regular"],
+      "text-size": 12,
+      "text-font": font,
     },
     paint: {
       "text-color": darkMode ? "#fff" : "#333",

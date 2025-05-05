@@ -82,13 +82,18 @@ export const Locations = React.memo(function Locations({
     },
   };
 
+  let font = ["Stadia Regular"];
+  if (theme === "liberty") {
+    font = ["Noto Sans Regular"];
+  }
+
   const locationsStyle: LayerProps = {
     id: "locations",
     type: "symbol",
     layout: {
       "text-field": ["get", "time"],
       "text-size": 12,
-      "text-font": ["Stadia Regular"],
+      "text-font": font,
 
       "icon-rotate": ["+", 45, ["get", "heading"]],
       "icon-image": "arrow",

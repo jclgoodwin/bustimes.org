@@ -204,6 +204,11 @@ export default function BusTimesMap(
     document.body.classList.toggle("dark-mode", mapStyle.endsWith("_dark"));
   }, [mapStyle]);
 
+  let mapStyleURL = `https://tiles.stadiamaps.com/styles/${mapStyle}.json`;
+  if (mapStyle === "liberty") {
+    mapStyleURL = "https://tiles.openfreemap.org/styles/liberty";
+  }
+
   return (
     <ThemeContext.Provider value={mapStyle}>
       <MapGL
@@ -215,7 +220,7 @@ export default function BusTimesMap(
         dragRotate={false}
         minZoom={2}
         maxZoom={18}
-        mapStyle={`https://tiles.stadiamaps.com/styles/${mapStyle}.json`}
+        mapStyle={mapStyleURL}
         RTLTextPlugin={""}
         attributionControl={false}
         // onError={(e) => captureException(e.error)}
