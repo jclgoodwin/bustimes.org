@@ -673,6 +673,7 @@ class ServiceManager(models.Manager):
         vector += SearchVector(
             StringAgg("operator__noc", delimiter=" ", default=""),
             weight="B",
+            config="english",
         )
         vector += SearchVector(
             StringAgg("operator__name", delimiter=" ", default=""),
