@@ -70,7 +70,9 @@ def get_stoppoint(stop, source):
             stoppoint.common_name, stoppoint.indicator = stoppoint.common_name.split(
                 " (", 1
             )
-        stoppoint.indicator = stoppoint.indicator[:-1]
+            stoppoint.indicator = stoppoint.indicator[:-1]
+        else:
+            stoppoint.common_name = stoppoint.common_name[:48]
 
     return stoppoint
 
@@ -171,7 +173,7 @@ class Command(BaseCommand):
             trip = Trip(
                 route=existing_routes[row.route_id],
                 calendar=calendars[row.service_id],
-                inbound=row.direction_id == 1,
+                inbound=getattr(row, "direction_id", 0) == 1,
                 vehicle_journey_code=row.trip_id,
                 operator=operator,
             )
