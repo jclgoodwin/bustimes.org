@@ -137,8 +137,7 @@ class Command(BaseCommand):
             journey.service = trip.route.service
 
             journey.route_name = journey.service.line_name
-            if trip.destination_id:
-                journey.destination = str(trip.destination.locality)
+            journey.destination = trip.headsign
 
         vehicle.latest_journey_data = json_format.MessageToDict(item)
 
