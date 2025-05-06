@@ -896,6 +896,10 @@ class OperatorDetailView(DetailView):
             context["tickets_link"] = reverse(
                 "operator_tickets", kwargs={"slug": self.object.slug}
             )
+        elif self.object.name == "FlixBus":
+            context["tickets_link"] = (
+                "https://www.awin1.com/cread.php?awinmid=110896&awinaffid=242611&clickref=ot"
+            )
         elif self.object.name == "National Express":
             context["tickets_link"] = (
                 "https://nationalexpress.prf.hn/click/camref:1011ljPYw"
@@ -1228,7 +1232,17 @@ class ServiceDetailView(DetailView):
                         }
                     )
                     break
-
+                elif operator.name == "FlixBus":
+                    context["tickets_link"] = (
+                        "https://www.awin1.com/cread.php?awinmid=110896&awinaffid=242611&clickref=st"
+                    )
+                    context["links"].append(
+                        {
+                            "url": context["tickets_link"],
+                            "text": "Buy tickets at FlixBus",
+                        }
+                    )
+                    break
         context["fare_tables"] = self.get_fare_tables()
 
         for url, text in self.object.get_traveline_links(date):
