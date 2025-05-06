@@ -413,7 +413,7 @@ class ViewsTests(TestCase):
         self.assertContains(response, ">Tickets<")
 
         response = self.client.get(self.service.get_absolute_url())
-        self.assertNotContains(response, "Show all stops")
+        self.assertNotContains(response, "Timing points")
         self.assertContains(response, "Melton Constable, opp Bus Shelter")
         self.assertEqual(
             response.context_data["links"][0],
