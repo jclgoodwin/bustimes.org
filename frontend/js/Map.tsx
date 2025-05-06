@@ -204,8 +204,12 @@ export default function BusTimesMap(
   };
 
   useEffect(() => {
-    document.body.classList.toggle("dark-mode", mapStyle.endsWith("_dark"));
-  }, [mapStyle]);
+    document.body.classList.toggle(
+      "dark-mode",
+      mapStyle.endsWith("_dark") ||
+        (mapStyle === "alidade_satellite" && darkModeQuery.matches),
+    );
+  }, [mapStyle, darkModeQuery.matches]);
 
   let mapStyleURL = `https://tiles.stadiamaps.com/styles/${mapStyle}.json`;
   if (mapStyle.indexOf("_") === -1) {

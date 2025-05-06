@@ -36,7 +36,13 @@
 </head>
 <body class="{% block bodyclass %}wide{% endblock %}{% if ad is False %} no-ads{% endif %}">
 <script>
-!function(){var a=localStorage&&localStorage["map-style"];!a&&window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches&&(a="_dark"),a&&-1!==a.indexOf("_dark")&&document.body.classList.add("dark-mode")}();
+(function () {
+    var a = localStorage && localStorage["map-style"];
+    var m = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if ((!a || a === "alidade_satellite") && m || a.indexOf("_dark")) {
+        document.body.classList.add("dark-mode")
+    }
+})();
 </script>
 
 <a href="#content" class="skip">Skip to main content</a>
