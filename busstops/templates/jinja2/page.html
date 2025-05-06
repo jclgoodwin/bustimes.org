@@ -36,7 +36,7 @@
 (function () {
     var a = localStorage && localStorage["map-style"];
     var m = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-    if ((!a || a === "alidade_satellite") && m || a && a.indexOf("_dark")) {
+    if ((!a || a === "alidade_satellite") && m || a && a.indexOf("_dark") !== -1) {
         document.body.classList.add("dark-mode")
     }
 })();
