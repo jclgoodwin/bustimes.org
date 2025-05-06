@@ -1211,7 +1211,6 @@ def overland(request, uuid):
                         "ResponseTimestamp": when,
                         "VehicleMonitoringDelivery": {
                             "VehicleActivity": [activity],
-                            "SubscriptionRef": "",
                         },
                     }
                 }

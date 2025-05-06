@@ -56,7 +56,7 @@ def handle_siri_post(uuid, data):
         command.handle_items(changed_items, changed_item_identities)
         command.handle_items(changed_journey_items, changed_journey_identities)
 
-        subscription_ref = data["VehicleMonitoringDelivery"]["SubscriptionRef"]
+        subscription_ref = data["VehicleMonitoringDelivery"].get("SubscriptionRef")
 
     # stats for last 50 updates:
     if subscription.name == "Transport for Wales":
