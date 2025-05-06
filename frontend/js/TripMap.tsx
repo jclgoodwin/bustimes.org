@@ -15,7 +15,7 @@ export const Route = React.memo(function Route({ times }: RouteProps) {
     theme === "alidade_smooth_dark" || theme === "alidade_satellite";
 
   let font = ["Stadia Regular"];
-  if (theme === "liberty") {
+  if (theme === "osm_bright") {
     font = ["Noto Sans Regular"];
   }
 

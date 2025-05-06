@@ -26,7 +26,7 @@ import VehicleMarker, {
 
 import { JourneyStops, Locations, type VehicleJourney } from "./JourneyMap";
 import LoadingSorry from "./LoadingSorry";
-import BusTimesMap from "./Map";
+import BusTimesMap, { ThemeContext } from "./Map";
 import StopPopup, { type Stop } from "./StopPopup";
 import { Route } from "./TripMap";
 import TripTimetable, { type Trip, tripFromJourney } from "./TripTimetable";
@@ -180,6 +180,13 @@ function Stops({
 
   const clickedStop = stopsById && clickedStopUrl && stopsById[clickedStopUrl];
 
+  const theme = React.useContext(ThemeContext);
+
+  let font = ["Stadia Regular"];
+  if (theme === "osm_bright") {
+    font = ["Noto Sans Regular"];
+  }
+
   return (
     <React.Fragment>
       {stops ? (
@@ -191,7 +198,7 @@ function Stops({
               minzoom: 14,
               layout: {
                 "text-field": ["get", "icon"],
-                "text-font": ["Stadia Regular"],
+                "text-font": font,
                 "text-allow-overlap": true,
                 "text-size": 10,
                 "icon-rotate": ["+", 45, ["get", "bearing"]],

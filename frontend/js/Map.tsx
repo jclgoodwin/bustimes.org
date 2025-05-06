@@ -205,7 +205,7 @@ export default function BusTimesMap(
   }, [mapStyle]);
 
   let mapStyleURL = `https://tiles.stadiamaps.com/styles/${mapStyle}.json`;
-  if (mapStyle === "liberty") {
+  if (mapStyle === "osm_bright") {
     mapStyleURL = "https://tiles.openfreemap.org/styles/liberty";
   }
 

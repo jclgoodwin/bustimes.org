@@ -83,7 +83,7 @@ export const Locations = React.memo(function Locations({
   };
 
   let font = ["Stadia Regular"];
-  if (theme === "liberty") {
+  if (theme === "osm_bright") {
     font = ["Noto Sans Regular"];
   }
 
