@@ -42,9 +42,9 @@ const mapStyles: { [key: string]: string } = {
   alidade_smooth_dark: "Dark",
   alidade_satellite: "Satellite",
   osm_bright: "Bright",
-  bright: "Bright",
+  // bright: "Bright",
   // liberty: "Liberty",
-  positron: "Positron",
+  // positron: "Positron",
 };
 
 type StyleSwitcherProps = {
