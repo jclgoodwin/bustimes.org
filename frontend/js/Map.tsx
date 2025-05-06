@@ -38,10 +38,13 @@ const imagesByName: { [imageName: string]: string } = {
 };
 
 const mapStyles: { [key: string]: string } = {
-  alidade_smooth: "Light",
+  alidade_smooth: "Smooth",
   alidade_smooth_dark: "Dark",
   alidade_satellite: "Satellite",
   osm_bright: "Bright",
+  bright: "Bright",
+  // liberty: "Liberty",
+  positron: "Positron",
 };
 
 type StyleSwitcherProps = {
@@ -205,8 +208,8 @@ export default function BusTimesMap(
   }, [mapStyle]);
 
   let mapStyleURL = `https://tiles.stadiamaps.com/styles/${mapStyle}.json`;
-  if (mapStyle === "osm_bright") {
-    mapStyleURL = "https://tiles.openfreemap.org/styles/liberty";
+  if (mapStyle.indexOf("_") === -1) {
+    mapStyleURL = `https://tiles.openfreemap.org/styles/${mapStyle}`;
   }
 
   return (

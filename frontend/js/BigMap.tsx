@@ -183,7 +183,7 @@ function Stops({
   const theme = React.useContext(ThemeContext);
 
   let font = ["Stadia Regular"];
-  if (theme === "osm_bright") {
+  if (theme.indexOf("_") === -1) {
     font = ["Noto Sans Regular"];
   }
 
