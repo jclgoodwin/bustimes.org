@@ -41,6 +41,7 @@
         <th scope="col" class="short">revision №</th>
         <th scope="col" class="short">start</th>
         <th scope="col" class="short">end</th>
+        <th scope="col" class="short">modification time/date</th>
         <th scope="col">file</th>
         <th scope="col" class="short">timetable</th>
         <th scope="col" class="short">trips</th>
@@ -53,6 +54,7 @@
             <td>{{ route.revision_number }}</td>
             <td>{{ route.start_date }}</td>
             <td>{{ route.end_date }}</td>
+            <td>{{ route.modified_at }}</td>
             <td class="link"><a href="{{ route.get_absolute_url }}">{{ route.code }}</a></td>
             {% if route.service %}
                 <td class="link"><a href="{{ route.service.get_absolute_url }}">{{ route.line_name }}</a></td>
