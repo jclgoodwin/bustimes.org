@@ -11,12 +11,11 @@ class Command(BaseCommand):
     @staticmethod
     def add_arguments(parser):
         parser.add_argument("operator_code", type=str)
+        parser.add_argument("yesterday", type=str)
+        parser.add_argument("before_yesterday", type=str)
 
-    def handle(self, operator_code, **options):
+    def handle(self, operator_code, yesterday, before_yesterday, **options):
         vehicles = Vehicle.objects.filter(operator=operator_code)
-
-        before_yesterday = "2024-02-15"
-        yesterday = "2024-02-16"
 
         block_number = 1
 
