@@ -419,7 +419,7 @@ class ViewsTests(TestCase):
             response.context_data["links"][0],
             {
                 "text": "Buy tickets at National Express",
-                "url": "https://nationalexpress.prf.hn/click/camref:1011ljPYw",
+                "url": "https://nationalexpress.prf.hn/click/camref:1011ljPYw/pubref:45C",
             },
         )
 
