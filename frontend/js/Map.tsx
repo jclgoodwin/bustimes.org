@@ -34,17 +34,17 @@ const imagesByName: { [imageName: string]: string } = {
   "route-stop-marker-circle": routeStopMarkerCircle,
   "route-stop-marker-dark": routeStopMarkerDark,
   "route-stop-marker-dark-circle": routeStopMarkerDarkCircle,
-  arrow: arrow,
+  "history-arrow": arrow,
 };
 
 const mapStyles: { [key: string]: string } = {
-  alidade_smooth: "Smooth",
+  positron: "Light",
+  // alidade_smooth: "Smooth",
   alidade_smooth_dark: "Dark",
   alidade_satellite: "Satellite",
   osm_bright: "Bright",
   // bright: "Bright",
   // liberty: "Liberty",
-  // positron: "Positron",
 };
 
 type StyleSwitcherProps = {
@@ -156,7 +156,7 @@ export default function BusTimesMap(
       // ignore
     }
 
-    return darkModeQuery.matches ? "alidade_smooth_dark" : "alidade_smooth";
+    return darkModeQuery.matches ? "alidade_smooth_dark" : "positron";
   });
 
   useEffect(() => {
@@ -178,7 +178,7 @@ export default function BusTimesMap(
       const style = e.target.value;
       const defaultStyle = darkModeQuery.matches
         ? "alidade_smooth_dark"
-        : "alidade_smooth";
+        : "positron";
       setMapStyle(style);
       try {
         if (style === defaultStyle) {

@@ -96,7 +96,7 @@ export const Locations = React.memo(function Locations({
       "text-font": font,
 
       "icon-rotate": ["+", 45, ["get", "heading"]],
-      "icon-image": "arrow",
+      "icon-image": "history-arrow",
       "icon-allow-overlap": true,
       "icon-ignore-placement": true,
       "icon-anchor": "top-left",
