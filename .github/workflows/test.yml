@@ -62,7 +62,7 @@ jobs:
     - name: Install Geospatial libraries
       # required by GeoDjango
       # see https://docs.djangoproject.com/en/dev/ref/contrib/gis/install/geolibs/
-      run: sudo apt-get update && sudo apt-get install -y --no-install-recommends gdal-bin
+      run: sudo apt-get update && sudo apt-get install -y --no-install-recommends gdal-bin libproj-dev
 
     - uses: astral-sh/setup-uv@v5
 
