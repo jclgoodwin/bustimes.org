@@ -1,9 +1,10 @@
+import logging
 from django.core.management.base import BaseCommand
-
 from govuk_bank_holidays.bank_holidays import BankHolidays
-
 from bustimes.models import BankHoliday, BankHolidayDate
-# from .import_transxchange import get_open_data_operators
+
+
+logger = logging.getLogger(__name__)
 
 
 def get_bank_holiday_name(bank_holiday):
@@ -21,7 +22,7 @@ class Command(BaseCommand):
 
         # Northern Ireland
 
-        ni_bank_holidays = [
+        bank_holiday_dates = [
             BankHolidayDate(
                 bank_holiday=bhs["Northern Ireland bank holidays"],
                 date=bank_holiday["date"],
@@ -30,14 +31,16 @@ class Command(BaseCommand):
                 division=bank_holidays.NORTHERN_IRELAND
             )
         ]
-        BankHolidayDate.objects.bulk_create(ni_bank_holidays, ignore_conflicts=True)
+        BankHolidayDate.objects.bulk_create(bank_holiday_dates, ignore_conflicts=True)
+
+        # England, Wales and Scotland
+
+        bank_holiday_dates = []
 
         scotland = bank_holidays.get_holidays(division=bank_holidays.SCOTLAND)
         england_and_wales = bank_holidays.get_holidays(
             division=bank_holidays.ENGLAND_AND_WALES
         )
-
-        bank_holiday_dates = []
 
         for bank_holiday in england_and_wales:
             title = get_bank_holiday_name(bank_holiday)
@@ -69,7 +72,7 @@ class Command(BaseCommand):
                     )
                 )
             else:
-                print(title)
+                logger.warn(title)
 
         for bank_holiday in scotland:
             if bank_holiday in england_and_wales:
@@ -96,6 +99,6 @@ class Command(BaseCommand):
                     )
                 )
             else:
-                print(title)
+                logger.warn(title)
 
         BankHolidayDate.objects.bulk_create(bank_holiday_dates, ignore_conflicts=True)
