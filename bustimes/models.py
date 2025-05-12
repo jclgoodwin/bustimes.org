@@ -118,6 +118,13 @@ class BankHolidayDate(models.Model):
         null=True, help_text="Yes = Scotland only, No = not Scotland, Unknown = both"
     )
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["bank_holiday", "date"], name="unique_bank_holiday_date"
+            )
+        ]
+
 
 class CalendarBankHoliday(models.Model):
     operation = models.BooleanField()

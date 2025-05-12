@@ -8,6 +8,8 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.html import format_html
 
+from sql_util.utils import SubqueryCount
+
 from .models import (
     BankHoliday,
     BankHolidayDate,
@@ -162,10 +164,13 @@ class BankHolidayDateInline(admin.StackedInline):
 @admin.register(BankHoliday)
 class BankHolidayAdmin(admin.ModelAdmin):
     inlines = [BankHolidayDateInline]
-    list_display = ["name", "dates"]
+    list_display = ["name", "dates", "calendars"]
 
     def dates(self, obj):
         return obj.dates
+
+    def calendars(self, obj):
+        return obj.calendars
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
@@ -173,6 +178,7 @@ class BankHolidayAdmin(admin.ModelAdmin):
             return queryset.annotate(
                 dates=StringAgg(
                     Cast("bankholidaydate__date", output_field=CharField()), ", "
-                )
+                ),
+                calendars=SubqueryCount("calendarbankholiday"),
             )
         return queryset
