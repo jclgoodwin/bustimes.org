@@ -1072,11 +1072,19 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual(str(service), "N17 - Navy Blue Line - Aberdeen - Dyce")
         self.assertEqual(service.operator.first(), self.fabd)
-        for url, text in service.get_traveline_links():
-            self.assertEqual(
-                url, "https://www.travelinescotland.com/timetables?serviceId=ABBN017"
-            )
-            self.assertEqual(text, "Timetable on the Traveline Scotland website")
+
+        self.assertEqual([], list(service.get_traveline_links()))
+
+        service.service_code = "LOTH_N3"
+        self.assertEqual(
+            list(service.get_traveline_links()),
+            [
+                (
+                    "https://www.travelinescotland.com/timetables?serviceId=LOTH+N3",
+                    "Timetable on the Traveline Scotland website",
+                )
+            ],
+        )
 
         self.assertEqual(
             service.geometry.coords,
