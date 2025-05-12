@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for busstops/models.py: 95%</title>
+    <title>Coverage for busstops/models.py: 96%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_58284776.png">
     <link rel="stylesheet" href="style_cb_8e611ae1.css" type="text/css">
     <script src="coverage_html_cb_6fb7b396.js" defer></script>
@@ -12,7 +12,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>busstops/models.py</b>:
-            <span class="pc_cov">95%</span>
+            <span class="pc_cov">96%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -55,8 +55,8 @@
         </aside>
         <h2>
             <span class="text">619 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">588<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">31<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">594<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">25<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_b8e363a838fda594_date_range_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.8.0">coverage.py v7.8.0</a>,
-            created at 2025-05-12 15:37 +0000
+            created at 2025-05-12 16:04 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -893,10 +893,10 @@
     <p class="mis show_mis"><span class="n"><a id="t811" href="#t811">811</a></span><span class="t">        <span class="key">return</span> <span class="fst">f"</span><span class="fst">https://tfl.gov.uk/bus/timetable/</span><span class="op">{</span><span class="nam">self</span><span class="op">.</span><span class="nam">line_name</span><span class="op">}</span><span class="fst">/</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t812" href="#t812">812</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t813" href="#t813">813</a></span><span class="t">    <span class="key">def</span> <span class="nam">get_trapeze_link</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t814" href="#t814">814</a></span><span class="t">        <span class="nam">domain</span> <span class="op">=</span> <span class="str">"travelinescotland.com"</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t815" href="#t815">815</a></span><span class="t">        <span class="nam">name</span> <span class="op">=</span> <span class="str">"Timetable on the Traveline Scotland website"</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t816" href="#t816">816</a></span><span class="t">        <span class="nam">query</span> <span class="op">=</span> <span class="op">(</span><span class="op">(</span><span class="str">"serviceId"</span><span class="op">,</span> <span class="nam">self</span><span class="op">.</span><span class="nam">service_code</span><span class="op">.</span><span class="nam">replace</span><span class="op">(</span><span class="str">"_"</span><span class="op">,</span> <span class="str">" "</span><span class="op">)</span><span class="op">)</span><span class="op">,</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t817" href="#t817">817</a></span><span class="t">        <span class="key">return</span> <span class="fst">f"</span><span class="fst">https://www.</span><span class="op">{</span><span class="nam">domain</span><span class="op">}</span><span class="fst">/timetables?</span><span class="op">{</span><span class="nam">urlencode</span><span class="op">(</span><span class="nam">query</span><span class="op">)</span><span class="op">}</span><span class="fst">"</span><span class="op">,</span> <span class="nam">name</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t814" href="#t814">814</a></span><span class="t">        <span class="nam">domain</span> <span class="op">=</span> <span class="str">"travelinescotland.com"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t815" href="#t815">815</a></span><span class="t">        <span class="nam">name</span> <span class="op">=</span> <span class="str">"Timetable on the Traveline Scotland website"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t816" href="#t816">816</a></span><span class="t">        <span class="nam">query</span> <span class="op">=</span> <span class="op">(</span><span class="op">(</span><span class="str">"serviceId"</span><span class="op">,</span> <span class="nam">self</span><span class="op">.</span><span class="nam">service_code</span><span class="op">.</span><span class="nam">replace</span><span class="op">(</span><span class="str">"_"</span><span class="op">,</span> <span class="str">" "</span><span class="op">)</span><span class="op">)</span><span class="op">,</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t817" href="#t817">817</a></span><span class="t">        <span class="key">return</span> <span class="fst">f"</span><span class="fst">https://www.</span><span class="op">{</span><span class="nam">domain</span><span class="op">}</span><span class="fst">/timetables?</span><span class="op">{</span><span class="nam">urlencode</span><span class="op">(</span><span class="nam">query</span><span class="op">)</span><span class="op">}</span><span class="fst">"</span><span class="op">,</span> <span class="nam">name</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t818" href="#t818">818</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t819" href="#t819">819</a></span><span class="t">    <span class="key">def</span> <span class="nam">get_traveline_links</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">date</span><span class="op">=</span><span class="key">None</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t820" href="#t820">820</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">self</span><span class="op">.</span><span class="nam">source_id</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -907,8 +907,8 @@
     <p class="pln"><span class="n"><a id="t825" href="#t825">825</a></span><span class="t">            <span class="key">and</span> <span class="str">"_"</span> <span class="key">in</span> <span class="nam">self</span><span class="op">.</span><span class="nam">service_code</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t826" href="#t826">826</a></span><span class="t">            <span class="key">and</span> <span class="key">not</span> <span class="nam">self</span><span class="op">.</span><span class="nam">service_code</span><span class="op">.</span><span class="nam">startswith</span><span class="op">(</span><span class="str">"S_"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t827" href="#t827">827</a></span><span class="t">        <span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t828" href="#t828">828</a></span><span class="t">            <span class="key">yield</span> <span class="nam">self</span><span class="op">.</span><span class="nam">get_trapeze_link</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t829" href="#t829">829</a></span><span class="t">            <span class="key">return</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t828" href="#t828">828</a></span><span class="t">            <span class="key">yield</span> <span class="nam">self</span><span class="op">.</span><span class="nam">get_trapeze_link</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t829" href="#t829">829</a></span><span class="t">            <span class="key">return</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t830" href="#t830">830</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t831" href="#t831">831</a></span><span class="t">        <span class="key">if</span> <span class="nam">self</span><span class="op">.</span><span class="nam">source</span><span class="op">.</span><span class="nam">name</span> <span class="op">==</span> <span class="str">"W"</span> <span class="key">or</span> <span class="nam">self</span><span class="op">.</span><span class="nam">region_id</span> <span class="op">==</span> <span class="str">"W"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t832" href="#t832">832</a></span><span class="t">            <span class="key">for</span> <span class="nam">service_code</span> <span class="key">in</span> <span class="nam">self</span><span class="op">.</span><span class="nam">servicecode_set</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span><span class="nam">scheme</span><span class="op">=</span><span class="str">"Traveline Cymru"</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -1224,7 +1224,7 @@
             <a class="nav" href="z_b8e363a838fda594_date_range_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.8.0">coverage.py v7.8.0</a>,
-            created at 2025-05-12 15:37 +0000
+            created at 2025-05-12 16:04 +0000
         </p>
     </div>
 </footer>
