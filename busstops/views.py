@@ -1384,12 +1384,10 @@ def service_map_data(request, service_id):
             "MultiLineString",
         )
     ):
-        data["geometry"] = (
-            {
-                "type": service.geometry.geom_type,
-                "coordinates": service.geometry.coords,
-            },
-        )
+        data["geometry"] = {
+            "type": service.geometry.geom_type,
+            "coordinates": service.geometry.coords,
+        }
     else:
         # build pairs of consecutive stops
 
