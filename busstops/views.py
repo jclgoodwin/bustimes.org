@@ -1358,7 +1358,6 @@ def service_map_data(request, service_id):
                 for stop in stops.values()
             ],
         },
-        "geometry": {"type": "MultiLineString", "coordinates": []},
     }
 
     trips = (
@@ -1376,12 +1375,21 @@ def service_map_data(request, service_id):
         for route_link in service.routelink_set.all()
     }
 
-    if not route_links and service.geometry.geom_type in (
-        "LineString",
-        "MultiLineString",
+    if (
+        not route_links
+        and service.geometry
+        and service.geometry.geom_type
+        in (
+            "LineString",
+            "MultiLineString",
+        )
     ):
-        data["geometry"]["type"] = service.geometry.geom_type
-        multi_line_string = service.geometry.coords
+        data["geometry"] = (
+            {
+                "type": service.geometry.geom_type,
+                "coordinates": service.geometry.coords,
+            },
+        )
     else:
         # build pairs of consecutive stops
 
@@ -1423,7 +1431,7 @@ def service_map_data(request, service_id):
 
             previous_pair = pair
 
-    data["geometry"]["coordinates"] = multi_line_string
+        data["geometry"] = {"type": "MultiLineString", "coordinates": multi_line_string}
 
     return JsonResponse(data)
 
