@@ -11,7 +11,7 @@ import requests
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.gis.db.models.functions import Distance
-from django.contrib.gis.geos import MultiLineString, Point
+from django.contrib.gis.geos import Point
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.expressions import ArraySubquery
 from django.contrib.postgres.search import SearchHeadline, SearchQuery, SearchRank
@@ -1376,7 +1376,11 @@ def service_map_data(request, service_id):
         for route_link in service.routelink_set.all()
     }
 
-    if not route_links and type(service.geometry) is MultiLineString:
+    if not route_links and service.geometry.geom_type in (
+        "LineString",
+        "MultiLineString",
+    ):
+        data["geometry"]["type"] = service.geometry.geom_type
         multi_line_string = service.geometry.coords
     else:
         # build pairs of consecutive stops
