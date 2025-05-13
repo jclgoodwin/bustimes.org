@@ -70,8 +70,7 @@ export const Locations = React.memo(function Locations({
   locations: VehicleJourneyLocation[];
 }) {
   const theme = React.useContext(ThemeContext);
-  const darkMode =
-    theme === "alidade_smooth_dark" || theme === "alidade_satellite";
+  const darkMode = theme.endsWith("_dark") || theme === "alidade_satellite";
 
   const routeStyle: LayerProps = {
     type: "line",
@@ -83,7 +82,9 @@ export const Locations = React.memo(function Locations({
   };
 
   let font = ["Stadia Regular"];
-  if (theme.indexOf("_") === -1) {
+  if (theme.indexOf("os_") === 0) {
+    font = ["Source Sans Pro Regular", "Arial Unicode MS Regular"];
+  } else if (theme.indexOf("_") === -1) {
     font = ["Noto Sans Regular"];
   }
 
@@ -167,8 +168,7 @@ export const JourneyStops = React.memo(function Stops({
   setClickedStop: (s: string | undefined) => void;
 }) {
   const theme = React.useContext(ThemeContext);
-  const darkMode =
-    theme === "alidade_smooth_dark" || theme === "alidade_satellite";
+  const darkMode = theme.endsWith("_dark") || theme === "alidade_satellite";
 
   const features = React.useMemo(() => {
     return stops
