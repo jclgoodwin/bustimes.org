@@ -8,10 +8,9 @@ image: jclgoodwin/bustimes-org
 servers:
   web:
     hosts:
-      - 10.131.240.99: web
-      - 10.131.240.98: web
-      - 10.131.240.109: web
-      - 138.68.161.218: tileserver
+      - 10.131.240.99
+      - 10.131.240.98
+      - 10.131.240.109
     env:
       clear:
         WEB_CONCURRENCY: 12
@@ -31,11 +30,14 @@ servers:
         - NTA_API_KEY
         - AWS_ACCESS_KEY_ID
         - AWS_SECRET_ACCESS_KEY
+  tileserver:
+    hosts:
+      - 138.68.161.218
 
 accessories:
   tileserver:
     image: maptiler/tileserver-gl-light
-    host: 138.68.161.218
+    role: tileserver
     port: 80:8080
     volumes:
       - /root/data:/data
