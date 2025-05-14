@@ -18,7 +18,7 @@ import VehicleMarker, {
   getClickedVehicleMarkerId,
 } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
-import { getBounds } from "./utils";
+import { getBounds, getFont } from "./utils";
 
 type VehicleJourneyLocation = {
   id: number;
@@ -81,12 +81,7 @@ export const Locations = React.memo(function Locations({
     },
   };
 
-  let font = ["Stadia Regular"];
-  if (theme.indexOf("os_") === 0) {
-    font = ["Source Sans Pro Regular", "Arial Unicode MS Regular"];
-  } else if (theme.indexOf("_") === -1) {
-    font = ["Noto Sans Regular"];
-  }
+  const font = getFont(theme);
 
   const locationsStyle: LayerProps = {
     id: "locations",

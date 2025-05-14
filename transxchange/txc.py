@@ -156,7 +156,7 @@ class JourneyPatternStopUsage:
         if self.wait_time is not None:
             self.wait_time = parse_duration(self.wait_time.text)
             if self.wait_time.total_seconds() > 10000:
-                # bad data detected
+                # bad data detected - we won't do anything about it, just logging FYI
                 logger.warning(
                     "long wait time %s at stop %s", self.wait_time, self.stop
                 )

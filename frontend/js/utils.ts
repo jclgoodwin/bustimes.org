@@ -35,6 +35,16 @@ export const useDarkMode = () => {
   return false;
 };
 
+export function getFont(theme: string) {
+  if (theme.indexOf("os_") === 0) {
+    return ["Source Sans Pro Regular", "Arial Unicode MS Regular"];
+  }
+  if (theme.indexOf("_") === -1) {
+    return ["Noto Sans Regular"];
+  }
+  return ["Stadia Regular"];
+}
+
 export function getBounds<T>(
   list: Array<T> | undefined,
   key: (arg0: T) => [number, number] | null | undefined,
