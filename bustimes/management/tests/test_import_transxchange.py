@@ -830,6 +830,9 @@ class ImportTransXChangeTest(TestCase):
 
         call_command("import_transxchange", FIXTURES_DIR / "22A 22B 22C 08032021.xml")
 
+        # re-import to test handling of already-existing ServiceCode
+        call_command("import_transxchange", FIXTURES_DIR / "22A 22B 22C 08032021.xml")
+
         self.assertEqual(str(Trip.objects.get(ticket_machine_code="1935")), "19:35")
 
         trips = Trip.objects.filter(ticket_machine_code="2045")

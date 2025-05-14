@@ -283,11 +283,11 @@ class Command(BaseCommand):
             if operator_code.startswith("Rail"):
                 operator_code = operator_code.removeprefix("Rail")
 
-            if self.region_id:
-                operator = get_operator_by(self.region_id, operator_code)
-            if not operator:
-                operator = get_operator_by("National Operator Codes", operator_code)
-            if operator:
+            if self.region_id and (
+                operator := get_operator_by(self.region_id, operator_code)
+            ):
+                return operator
+            if operator := get_operator_by("National Operator Codes", operator_code):
                 return operator
 
         missing_operator = {
