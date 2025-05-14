@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_06bcf2d2e74f1893_test_import_gtfs_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.8.0">coverage.py v7.8.0</a>,
-            created at 2025-05-13 08:16 +0000
+            created at 2025-05-14 03:46 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -556,7 +556,7 @@
     <p class="pln"><span class="n"><a id="t474" href="#t474">474</a></span><span class="t">                <span class="str">"bustimes.management.commands.import_bod_timetables.download_if_modified"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t475" href="#t475">475</a></span><span class="t">                <span class="nam">return_value</span><span class="op">=</span><span class="op">(</span><span class="key">True</span><span class="op">,</span> <span class="nam">parse_datetime</span><span class="op">(</span><span class="str">"2020-06-10T12:00:00+01:00"</span><span class="op">)</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t476" href="#t476">476</a></span><span class="t">            <span class="op">)</span> <span class="key">as</span> <span class="nam">download_if_modified</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t477" href="#t477">477</a></span><span class="t">                <span class="key">with</span> <span class="nam">self</span><span class="op">.</span><span class="nam">assertNumQueries</span><span class="op">(</span><span class="num">112</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t477" href="#t477">477</a></span><span class="t">                <span class="key">with</span> <span class="nam">self</span><span class="op">.</span><span class="nam">assertNumQueries</span><span class="op">(</span><span class="num">110</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t478" href="#t478">478</a></span><span class="t">                    <span class="nam">call_command</span><span class="op">(</span><span class="str">"import_bod_timetables"</span><span class="op">,</span> <span class="str">"stagecoach"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t479" href="#t479">479</a></span><span class="t">                <span class="nam">download_if_modified</span><span class="op">.</span><span class="nam">assert_called_with</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t480" href="#t480">480</a></span><span class="t">                    <span class="nam">path</span><span class="op">,</span> <span class="nam">DataSource</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="nam">name</span><span class="op">=</span><span class="str">"Stagecoach East"</span><span class="op">)</span><span class="op">,</span> <span class="nam">ANY</span>&nbsp;</span><span class="r"></span></p>
@@ -570,13 +570,13 @@
     <p class="pln"><span class="n"><a id="t488" href="#t488">488</a></span><span class="t">                <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t489" href="#t489">489</a></span><span class="t">                <span class="nam">route_link</span><span class="op">.</span><span class="nam">save</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t490" href="#t490">490</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t491" href="#t491">491</a></span><span class="t">                <span class="key">with</span> <span class="nam">self</span><span class="op">.</span><span class="nam">assertNumQueries</span><span class="op">(</span><span class="num">7</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t491" href="#t491">491</a></span><span class="t">                <span class="key">with</span> <span class="nam">self</span><span class="op">.</span><span class="nam">assertNumQueries</span><span class="op">(</span><span class="num">5</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t492" href="#t492">492</a></span><span class="t">                    <span class="nam">call_command</span><span class="op">(</span><span class="str">"import_bod_timetables"</span><span class="op">,</span> <span class="str">"stagecoach"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t493" href="#t493">493</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t494" href="#t494">494</a></span><span class="t">                <span class="key">with</span> <span class="nam">self</span><span class="op">.</span><span class="nam">assertNumQueries</span><span class="op">(</span><span class="num">1</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t495" href="#t495">495</a></span><span class="t">                    <span class="nam">call_command</span><span class="op">(</span><span class="str">"import_bod_timetables"</span><span class="op">,</span> <span class="str">"stagecoach"</span><span class="op">,</span> <span class="str">"SCOX"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t496" href="#t496">496</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t497" href="#t497">497</a></span><span class="t">                <span class="key">with</span> <span class="nam">self</span><span class="op">.</span><span class="nam">assertNumQueries</span><span class="op">(</span><span class="num">118</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t497" href="#t497">497</a></span><span class="t">                <span class="key">with</span> <span class="nam">self</span><span class="op">.</span><span class="nam">assertNumQueries</span><span class="op">(</span><span class="num">116</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t498" href="#t498">498</a></span><span class="t">                    <span class="nam">call_command</span><span class="op">(</span><span class="str">"import_bod_timetables"</span><span class="op">,</span> <span class="str">"stagecoach"</span><span class="op">,</span> <span class="str">"SCCM"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t499" href="#t499">499</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t500" href="#t500">500</a></span><span class="t">                <span class="nam">route_link</span><span class="op">.</span><span class="nam">refresh_from_db</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -646,7 +646,7 @@
             <a class="nav" href="z_06bcf2d2e74f1893_test_import_gtfs_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.8.0">coverage.py v7.8.0</a>,
-            created at 2025-05-13 08:16 +0000
+            created at 2025-05-14 03:46 +0000
         </p>
     </div>
 </footer>
