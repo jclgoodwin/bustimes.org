@@ -25,7 +25,7 @@ def get_operator(code, source):
     if code:
         try:
             return Operator.objects.get(noc=code)
-        except Operator.DoesNotExist:
+        except Operator.DoesNotExist as e:
             pass
         try:
             return Operator.objects.get(

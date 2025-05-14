@@ -11,7 +11,7 @@ import requests
 from ciso8601 import parse_datetime
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.db import DataError, transaction
+from django.db import DataError
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
 
@@ -242,9 +242,9 @@ def bus_open_data(api_key, specific_operator):
 
                 command.source.datetime = dataset["modified"]
 
-                download(path, url=command.source.url, session=session)
+                with log_time_taken(logger):
+                    download(path, url=command.source.url, session=session)
 
-                with log_time_taken(logger), transaction.atomic():
                     handle_file(command, path)
 
                     command.mark_old_services_as_not_current()
@@ -342,30 +342,29 @@ def ticketer(specific_operator=None):
             sha1 = get_sha1(path)
 
             existing = DataSource.objects.filter(url__contains=".gov.uk", sha1=sha1)
-            with transaction.atomic():
-                if existing:
-                    # hash matches that hash of some BODS data
-                    logger.info(f"  skipping, {sha1=} matches {existing=}")
-                else:
-                    command.region_id = source.region_id
-                    command.service_ids = set()
-                    command.route_ids = set()
+            if existing:
+                # hash matches that hash of some BODS data
+                logger.info(f"  skipping, {sha1=} matches {existing=}")
+            else:
+                command.region_id = source.region_id
+                command.service_ids = set()
+                command.route_ids = set()
 
-                    # for "end date is in the past" warnings
-                    command.source.datetime = timezone.now()
+                # for "end date is in the past" warnings
+                command.source.datetime = timezone.now()
 
-                    with log_time_taken(logger):
-                        handle_file(command, path)
+                with log_time_taken(logger):
+                    handle_file(command, path)
 
-                        command.mark_old_services_as_not_current()
+                    command.mark_old_services_as_not_current()
 
-                        clean_up(source, [command.source])
+                    clean_up(source, [command.source])
 
-                        command.finish_services()
+                    command.finish_services()
 
-                command.source.sha1 = sha1
-                command.source.datetime = last_modified
-                command.source.save()
+            command.source.sha1 = sha1
+            command.source.datetime = last_modified
+            command.source.save()
 
             logger.info(
                 f"  {command.source.route_set.order_by('end_date').distinct('end_date').values('end_date')}"
@@ -437,23 +436,22 @@ def stagecoach(specific_operator=None):
         if command.source.datetime != last_modified:
             modified = True
 
-        with transaction.atomic():
-            if modified:
-                # use sha1 checksum to check if file has really changed -
-                # last_modified seems to change every night
-                # even when contents stay the same
-                if sha1 == command.source.sha1 or not command.source.older_than(
-                    last_modified
-                ):
-                    modified = False
+        if modified:
+            # use sha1 checksum to check if file has really changed -
+            # last_modified seems to change every night
+            # even when contents stay the same
+            if sha1 == command.source.sha1 or not command.source.older_than(
+                last_modified
+            ):
+                modified = False
 
-                command.source.sha1 = sha1
+            command.source.sha1 = sha1
 
-                if modified or specific_operator:
-                    do_stagecoach_source(command, last_modified, filename, nocs)
+            if modified or specific_operator:
+                do_stagecoach_source(command, last_modified, filename, nocs)
 
-            clean_up(source, [command.source])
-            command.finish_services()
+        clean_up(source, [command.source])
+        command.finish_services()
 
 
 class Command(BaseCommand):
