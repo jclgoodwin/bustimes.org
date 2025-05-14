@@ -13957,6 +13957,8 @@
           <TimingStatus>otherPoint</TimingStatus>
         </From>
         <To SequenceNumber="55">
+          <!-- this is correct according to the PTI profile - same WaitTime in this To and the next From - but never seen in real life -->
+          <WaitTime>PT8M</WaitTime>
           <StopPointRef>1000DSBSB818</StopPointRef>
           <TimingStatus>principalTimingPoint</TimingStatus>
         </To>
@@ -13970,7 +13972,6 @@
           <TimingStatus>principalTimingPoint</TimingStatus>
         </From>
         <To SequenceNumber="56">
-          <WaitTime>PT8M</WaitTime>
           <StopPointRef>1000DSDR4783</StopPointRef>
           <TimingStatus>otherPoint</TimingStatus>
         </To>

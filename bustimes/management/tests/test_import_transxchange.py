@@ -1598,4 +1598,8 @@ class ImportTransXChangeTest(TestCase):
 
         trip = route.trip_set.get(vehicle_journey_code="vj_28")
         self.assertEqual(str(trip.start), "18:47")
-        self.assertEqual(str(trip.start), "20:23")
+        self.assertEqual(str(trip.end), "20:23")
+
+        trip = route.trip_set.get(vehicle_journey_code="vj_1")
+        self.assertEqual(str(trip.start), "06:20")
+        self.assertEqual(str(trip.end), "08:08")

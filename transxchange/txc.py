@@ -157,7 +157,9 @@ class JourneyPatternStopUsage:
             self.wait_time = parse_duration(self.wait_time.text)
             if self.wait_time.total_seconds() > 10000:
                 # bad data detected
-                logger.warning(f"long wait time {self.wait_time} at stop {self.stop}")
+                logger.warning(
+                    "long wait time %s at stop %s", self.wait_time, self.stop
+                )
 
         self.notes = [
             (note_element.find("NoteCode").text, note_element.find("NoteText").text)
@@ -362,9 +364,23 @@ class VehicleJourney:
                 if wait_time is None:
                     wait_time = datetime.timedelta()
                 if journey_timinglink and journey_timinglink.from_wait_time is not None:
-                    wait_time += journey_timinglink.from_wait_time
+                    if journey_timinglink.from_wait_time != wait_time:
+                        wait_time += journey_timinglink.from_wait_time
+                    else:
+                        logger.warning(
+                            "ignored second wait time %s at %s",
+                            wait_time,
+                            stopusage.stop,
+                        )
                 elif stopusage.wait_time is not None:
-                    wait_time += stopusage.wait_time
+                    if stopusage.wait_time != wait_time:
+                        wait_time += stopusage.wait_time
+                    else:
+                        logger.warning(
+                            "ignored second wait time %s at %s",
+                            wait_time,
+                            stopusage.stop,
+                        )
 
                 notes = (
                     journey_timinglink and journey_timinglink.notes or stopusage.notes
@@ -398,6 +414,15 @@ class VehicleJourney:
                     wait_time = journey_timinglink.to_wait_time
                 else:
                     wait_time = stopusage.wait_time
+
+                    if wait_time and wait_time == timinglink.origin.wait_time:
+                        logger.warning(
+                            "ignored second wait time %s from %s to %s",
+                            wait_time,
+                            timinglink.origin.stop,
+                            stopusage.stop,
+                        )
+                        wait_time = None
 
             if journey_timinglink and journey_timinglink.to_activity:
                 prev_activity = journey_timinglink.to_activity
