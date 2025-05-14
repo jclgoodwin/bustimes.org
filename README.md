@@ -38,7 +38,7 @@
 | busstops/management/tests/test\_import\_nptg.py                 |       31 |        0 |    100% |           |
 | busstops/management/tests/test\_import\_operators.py            |       64 |        0 |    100% |           |
 | busstops/middleware.py                                          |       20 |        0 |    100% |           |
-| busstops/models.py                                              |      619 |       25 |     96% |263, 309, 411, 448, 498, 524, 614, 653, 747, 811, 853-857, 862, 873, 892-893, 961, 973-977, 1035, 1077, 1092, 1129 |
+| busstops/models.py                                              |      627 |       25 |     96% |275, 321, 423, 460, 510, 536, 626, 665, 759, 823, 865-869, 874, 885, 904-905, 973, 985-989, 1047, 1089, 1104, 1141 |
 | busstops/templatetags/\_\_init\_\_.py                           |        0 |        0 |    100% |           |
 | busstops/templatetags/date\_range.py                            |       25 |        3 |     88% | 9, 22, 28 |
 | busstops/templatetags/urlise.py                                 |       17 |        2 |     88% |     28-29 |
@@ -169,7 +169,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16163** | **1080** | **93%** |           |
+|                                                       **TOTAL** | **16171** | **1080** | **93%** |           |
 
 
 ## Setup coverage badge
