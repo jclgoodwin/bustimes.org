@@ -45,6 +45,8 @@ const mapStyles: { [key: string]: string } = {
   osm_bright: "Bright",
   // bright: "Bright",
   // liberty: "Liberty",
+  os_light: "Ordnance Survey light",
+  os_dark: "Ordnance Survey night",
 };
 
 type StyleSwitcherProps = {
@@ -212,7 +214,11 @@ export default function BusTimesMap(
   }, [mapStyle, darkModeQuery.matches]);
 
   let mapStyleURL = `https://tiles.stadiamaps.com/styles/${mapStyle}.json`;
-  if (mapStyle.indexOf("_") === -1) {
+  if (mapStyle === "os_light") {
+    mapStyleURL = "https://tiles.bustimes.org.uk/styles/light/style.json";
+  } else if (mapStyle === "os_dark") {
+    mapStyleURL = "https://tiles.bustimes.org.uk/styles/night/style.json";
+  } else if (mapStyle.indexOf("_") === -1) {
     mapStyleURL = `https://tiles.openfreemap.org/styles/${mapStyle}`;
   }
 

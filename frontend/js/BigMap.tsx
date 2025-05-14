@@ -183,7 +183,9 @@ function Stops({
   const theme = React.useContext(ThemeContext);
 
   let font = ["Stadia Regular"];
-  if (theme.indexOf("_") === -1) {
+  if (theme.indexOf("os_") === 0) {
+    font = ["Source Sans Pro Regular", "Arial Unicode MS Regular"];
+  } else if (theme.indexOf("_") === -1) {
     font = ["Noto Sans Regular"];
   }
 

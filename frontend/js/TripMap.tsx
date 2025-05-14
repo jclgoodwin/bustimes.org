@@ -11,11 +11,12 @@ type RouteProps = {
 
 export const Route = React.memo(function Route({ times }: RouteProps) {
   const theme = React.useContext(ThemeContext);
-  const darkMode =
-    theme === "alidade_smooth_dark" || theme === "alidade_satellite";
+  const darkMode = theme.endsWith("_dark") || theme === "alidade_satellite";
 
   let font = ["Stadia Regular"];
-  if (theme.indexOf("_") === -1) {
+  if (theme.indexOf("os_") === 0) {
+    font = ["Source Sans Pro Regular", "Arial Unicode MS Regular"];
+  } else if (theme.endsWith("_dark")) {
     font = ["Noto Sans Regular"];
   }
 
