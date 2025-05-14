@@ -65,7 +65,7 @@
 | bustimes/management/commands/import\_ni.py                      |       31 |        0 |    100% |           |
 | bustimes/management/commands/import\_passenger.py               |      118 |       35 |     70% |51-54, 56-58, 102, 112-118, 146-179 |
 | bustimes/management/commands/import\_tnds.py                    |       61 |        5 |     92% |46-48, 63-71 |
-| bustimes/management/commands/import\_transxchange.py            |      773 |       76 |     90% |83, 95, 141-142, 368, 371-385, 414, 546, 588-589, 626-627, 629-630, 653-654, 664, 672-673, 731, 742, 778, 804, 808-810, 864-868, 929, 933, 935, 948-953, 990-991, 1002, 1019, 1027, 1029-1032, 1055, 1082, 1121, 1152-1153, 1180-1182, 1189, 1194-1195, 1206, 1211, 1224, 1249, 1283-1284, 1319-1320, 1387 |
+| bustimes/management/commands/import\_transxchange.py            |      771 |       77 |     90% |83, 95, 141-142, 289, 368, 371-385, 414, 546, 588-589, 626-627, 629-630, 653-654, 664, 672-673, 731, 742, 778, 804, 808-810, 864-868, 929, 933, 935, 948-953, 990-991, 1002, 1019, 1027, 1029-1032, 1055, 1082, 1121, 1152-1153, 1180-1182, 1189, 1194-1195, 1206, 1211, 1224, 1249, 1283-1284, 1319-1320, 1387 |
 | bustimes/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | bustimes/management/tests/test\_bank\_holidays.py               |       20 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_atco\_cif.py            |       70 |        0 |    100% |           |
@@ -74,9 +74,9 @@
 | bustimes/management/tests/test\_import\_gtfs\_ember\_flixbus.py |       75 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_ni.py                   |       21 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_passenger.py            |       23 |        0 |    100% |           |
-| bustimes/management/tests/test\_import\_transxchange.py         |      729 |        0 |    100% |           |
+| bustimes/management/tests/test\_import\_transxchange.py         |      730 |        0 |    100% |           |
 | bustimes/management/tests/test\_tnds.py                         |       22 |        0 |    100% |           |
-| bustimes/models.py                                              |      326 |        6 |     98% |103, 361, 364, 393, 430, 464 |
+| bustimes/models.py                                              |      326 |        7 |     98% |103, 203, 361, 364, 393, 430, 464 |
 | bustimes/tests.py                                               |      130 |        0 |    100% |           |
 | bustimes/timetables.py                                          |      637 |       53 |     92% |62, 102-115, 144, 226-237, 268-269, 341-344, 356, 369-374, 388, 407, 482, 485, 501-504, 506, 533, 642-657, 743-744, 815, 961-963 |
 | bustimes/urls.py                                                |        3 |        0 |    100% |           |
@@ -169,7 +169,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16164** | **1078** | **93%** |           |
+|                                                       **TOTAL** | **16163** | **1080** | **93%** |           |
 
 
 ## Setup coverage badge

@@ -54,9 +54,9 @@
             </div>
         </aside>
         <h2>
-            <span class="text">773 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">697<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">76<span class="text"> missing</span></button>
+            <span class="text">771 statements &nbsp;</span>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">694<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">77<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_06bcf2d2e74f1893_test_bank_holidays_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.8.0">coverage.py v7.8.0</a>,
-            created at 2025-05-14 03:46 +0000
+            created at 2025-05-14 15:13 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -365,11 +365,11 @@
     <p class="run"><span class="n"><a id="t283" href="#t283">283</a></span><span class="t">            <span class="key">if</span> <span class="nam">operator_code</span><span class="op">.</span><span class="nam">startswith</span><span class="op">(</span><span class="str">"Rail"</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t284" href="#t284">284</a></span><span class="t">                <span class="nam">operator_code</span> <span class="op">=</span> <span class="nam">operator_code</span><span class="op">.</span><span class="nam">removeprefix</span><span class="op">(</span><span class="str">"Rail"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t285" href="#t285">285</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t286" href="#t286">286</a></span><span class="t">            <span class="key">if</span> <span class="nam">self</span><span class="op">.</span><span class="nam">region_id</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t287" href="#t287">287</a></span><span class="t">                <span class="nam">operator</span> <span class="op">=</span> <span class="nam">get_operator_by</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">region_id</span><span class="op">,</span> <span class="nam">operator_code</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t288" href="#t288">288</a></span><span class="t">            <span class="key">if</span> <span class="key">not</span> <span class="nam">operator</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t289" href="#t289">289</a></span><span class="t">                <span class="nam">operator</span> <span class="op">=</span> <span class="nam">get_operator_by</span><span class="op">(</span><span class="str">"National Operator Codes"</span><span class="op">,</span> <span class="nam">operator_code</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t290" href="#t290">290</a></span><span class="t">            <span class="key">if</span> <span class="nam">operator</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t286" href="#t286">286</a></span><span class="t">            <span class="key">if</span> <span class="nam">self</span><span class="op">.</span><span class="nam">region_id</span> <span class="key">and</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t287" href="#t287">287</a></span><span class="t">                <span class="nam">operator</span> <span class="op">:=</span> <span class="nam">get_operator_by</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">region_id</span><span class="op">,</span> <span class="nam">operator_code</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t288" href="#t288">288</a></span><span class="t">            <span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t289" href="#t289">289</a></span><span class="t">                <span class="key">return</span> <span class="nam">operator</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t290" href="#t290">290</a></span><span class="t">            <span class="key">if</span> <span class="nam">operator</span> <span class="op">:=</span> <span class="nam">get_operator_by</span><span class="op">(</span><span class="str">"National Operator Codes"</span><span class="op">,</span> <span class="nam">operator_code</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t291" href="#t291">291</a></span><span class="t">                <span class="key">return</span> <span class="nam">operator</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t292" href="#t292">292</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t293" href="#t293">293</a></span><span class="t">        <span class="nam">missing_operator</span> <span class="op">=</span> <span class="op">{</span>&nbsp;</span><span class="r"></span></p>
@@ -1577,7 +1577,7 @@
             <a class="nav" href="z_06bcf2d2e74f1893_test_bank_holidays_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.8.0">coverage.py v7.8.0</a>,
-            created at 2025-05-14 03:46 +0000
+            created at 2025-05-14 15:13 +0000
         </p>
     </div>
 </footer>
