@@ -2,6 +2,7 @@ import calendar
 import datetime
 import logging
 import xml.etree.cElementTree as ET
+from functools import cache
 
 from django.contrib.gis.geos import GEOSGeometry, LineString
 from django.utils.dateparse import parse_duration
@@ -10,6 +11,11 @@ logger = logging.getLogger(__name__)
 
 
 WEEKDAYS = {day: i for i, day in enumerate(calendar.day_name)}  # {'Monday:' 0,
+
+
+@cache
+def warn_once(msg, *args, **kwargs):
+    return logger.warning(msg, *args, **kwargs)
 
 
 def parse_time(string: str) -> datetime.timedelta:
@@ -366,18 +372,18 @@ class VehicleJourney:
                 if journey_timinglink and journey_timinglink.from_wait_time is not None:
                     if journey_timinglink.from_wait_time != wait_time:
                         wait_time += journey_timinglink.from_wait_time
-                    else:
-                        logger.warning(
-                            "ignored second wait time %s at %s",
+                    elif wait_time:
+                        warn_once(
+                            "correctly ignored second journey wait time %s at %s",
                             wait_time,
                             stopusage.stop,
                         )
                 elif stopusage.wait_time is not None:
                     if stopusage.wait_time != wait_time:
                         wait_time += stopusage.wait_time
-                    else:
-                        logger.warning(
-                            "ignored second wait time %s at %s",
+                    elif wait_time:
+                        warn_once(
+                            "correctly ignored second journey pattern wait time %s at %s",
                             wait_time,
                             stopusage.stop,
                         )
@@ -416,8 +422,8 @@ class VehicleJourney:
                     wait_time = stopusage.wait_time
 
                     if wait_time and wait_time == timinglink.origin.wait_time:
-                        logger.warning(
-                            "ignored second wait time %s from %s to %s",
+                        warn_once(
+                            "dodgily ignored second wait time %s from %s to %s",
                             wait_time,
                             timinglink.origin.stop,
                             stopusage.stop,
