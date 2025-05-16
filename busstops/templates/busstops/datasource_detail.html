@@ -7,6 +7,17 @@
 {% block content %}
 
 <style>
+    thead {
+        height: 80px;
+    }
+
+    .short {
+        transform: rotate(315deg);
+        transform-origin: 0px 60px;
+        white-space: nowrap;
+        padding: 0;
+    }
+
     table {
         table-layout: fixed;
         width: 100%;
@@ -14,11 +25,11 @@
     }
 
     .short {
-        width: 100px;
+        width: 60px;
     }
 
     .shortish {
-        width: 130px;
+        width: 110px;
     }
 
     td {
@@ -39,9 +50,9 @@
         <th scope="col" class="shortish">service code</th>
         <th scope="col" class="short">line name</th>
         <th scope="col" class="short">revision №</th>
-        <th scope="col" class="short">start</th>
-        <th scope="col" class="short">end</th>
-        <th scope="col" class="short">modification time/date</th>
+        <th scope="col" class="shortish">start</th>
+        <th scope="col" class="shortish">end</th>
+        <th scope="col" class="shortish">modified at</th>
         <th scope="col">file</th>
         <th scope="col" class="short">timetable</th>
         <th scope="col" class="short">trips</th>
@@ -52,9 +63,9 @@
             <td>{% ifchanged route.service_code %}{{ route.service_code }}{% endifchanged %}</td>
             <td>{% ifchanged route.line_name %}{{ route.line_name }}{% endifchanged %}</td>
             <td>{{ route.revision_number }}</td>
-            <td>{{ route.start_date }}</td>
-            <td>{{ route.end_date }}</td>
-            <td>{{ route.modified_at }}</td>
+            <td>{{ route.start_date|date }}</td>
+            <td>{{ route.end_date|date }}</td>
+            <td>{{ route.modified_at|date }}</td>
             <td class="link"><a href="{{ route.get_absolute_url }}">{{ route.code }}</a></td>
             {% if route.service %}
                 <td class="link"><a href="{{ route.service.get_absolute_url }}">{{ route.line_name }}</a></td>
