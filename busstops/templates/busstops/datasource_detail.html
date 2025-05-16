@@ -54,7 +54,6 @@
         <th scope="col" class="shortish">end</th>
         <th scope="col" class="shortish">modified at</th>
         <th scope="col">file</th>
-        <th scope="col" class="short">timetable</th>
         <th scope="col" class="short">trips</th>
     </thead>
     <tbody>
@@ -68,7 +67,6 @@
             <td>{{ route.modified_at|date }}</td>
             <td class="link"><a href="{{ route.get_absolute_url }}">{{ route.code }}</a></td>
             {% if route.service %}
-                <td class="link"><a href="{{ route.service.get_absolute_url }}">{{ route.line_name }}</a></td>
                 <td class="link"><a href="{{ route.service.get_absolute_url }}/debug">{{ route.trips }}</a></td>
             {% endif %}
         </tr>
