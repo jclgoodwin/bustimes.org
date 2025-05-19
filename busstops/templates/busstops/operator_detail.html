@@ -50,6 +50,7 @@
         <li><a href="{% url 'admin:busstops_operator_change' object.noc %}">✎ operator</a></li>
         <li><a href="{% url 'admin:busstops_service_changelist' %}{% querystring operator__noc__exact=object.noc current__exact=1 %}">✎ services</a></li>
         <li><a href="{% url 'admin:vehicles_vehicle_changelist' %}{% querystring operator__noc__exact=object.noc %}">✎ vehicles</a></li>
+        <li><a href="{% url 'admin:bustimes_timetabledatasource_changelist' %}{% querystring operators__exact=object.noc %}">✎ timetable data sources</a></li>
     </ul>
 {% endif %}
 

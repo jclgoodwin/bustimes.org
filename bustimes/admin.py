@@ -88,6 +88,16 @@ class RouteAdmin(admin.ModelAdmin):
 class TripAdmin(admin.ModelAdmin):
     list_filter = [("calendar", admin.EmptyFieldListFilter)]
     raw_id_fields = ["route"] + TripInline.raw_id_fields
+    list_display = [
+        "__str__",
+        "vehicle_journey_code",
+        "ticket_machine_code",
+        "end",
+        "headsign",
+        "inbound",
+        "block",
+        "operator_id",
+    ]
     # inlines = [StopTimeInline]
 
 

@@ -66,9 +66,7 @@
             <td>{{ route.end_date|date }}</td>
             <td>{{ route.modified_at|date }}</td>
             <td class="link"><a href="{{ route.get_absolute_url }}">{{ route.code }}</a></td>
-            {% if route.service %}
-                <td class="link"><a href="{{ route.service.get_absolute_url }}/debug">{{ route.trips }}</a></td>
-            {% endif %}
+            <td class="link"><a href="{% url 'admin:bustimes_trip_changelist' %}{% querystring route__exact=route.id %}">{{ route.trips }}</a></td>
         </tr>
     {% endfor %}
     </tbody>
