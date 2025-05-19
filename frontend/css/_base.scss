@@ -853,10 +853,6 @@ table {
     .last-seen {
         max-width: 5em;
     }
-
-    tr:target {
-        background: var(--brand-color);
-    }
 }
 
 .revisions-list li + li {
@@ -942,6 +938,10 @@ thead {
         padding-top: 0;
         vertical-align: bottom;
     }
+}
+
+tr:target {
+    background: var(--brand-color);
 }
 
 .table-wrapper {

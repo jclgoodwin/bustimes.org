@@ -647,7 +647,9 @@ class VehicleJourney(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
 
     def get_absolute_url(self):
-        return f"/vehicles/{self.vehicle_id}?date={self.datetime.date()}#journeys/{self.id}"
+        return (
+            f"/vehicles/{self.vehicle_id}?date={self.datetime.date()}#journey-{self.id}"
+        )
 
     def __str__(self):
         when = f"{self.datetime:%-d %b %y %H:%M} {self.route_name} {self.code} {self.direction}"

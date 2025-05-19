@@ -97,7 +97,7 @@
     </thead>
     <tbody>
     {% for journey in journeys %}
-        <tr>
+        <tr id="journey-{{ journey.id }}">
             {% if object.line_names|length > 1 %}
                 <td>
                     {{ journey.route_name }}
