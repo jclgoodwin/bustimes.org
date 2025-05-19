@@ -228,7 +228,9 @@ function Stops({
 }
 
 function fetchJson(url: string) {
-  return fetch(apiRoot + url).then(
+  return fetch(apiRoot + url, {
+    credentials: "omit",
+  }).then(
     (response) => {
       if (response.ok) {
         return response.json();
@@ -595,6 +597,7 @@ export default function BigMap(
       vehiclesAbortController.current = new AbortController();
 
       return fetch(`${apiRoot}vehicles.json${url}`, {
+        credentials: "omit",
         signal: vehiclesAbortController.current.signal,
       })
         .then(
@@ -666,11 +669,7 @@ export default function BigMap(
       } else {
         setJourney(undefined);
         setTrip(undefined);
-        fetch(`${apiRoot}api/trips/${props.tripId}/`).then((response) => {
-          if (response.ok) {
-            response.json().then(setTrip);
-          }
-        });
+        fetchJson(`api/trips/${props.tripId}/`).then((json) => setTrip);
       }
     } else if (props.noc) {
       setJourney(undefined);
@@ -689,13 +688,11 @@ export default function BigMap(
       } else {
         setJourney(undefined);
         setTrip(undefined);
-        fetch(`${apiRoot}journeys/${props.journeyId}.json`).then((response) => {
-          if (response.ok) {
-            response.json().then((journey: VehicleJourney) => {
-              setJourney({ ...journey, id: props.journeyId });
-            });
-          }
-        });
+        fetchJson(`journeys/${props.journeyId}.json`).then(
+          (journey: VehicleJourney) => {
+            setJourney({ ...journey, id: props.journeyId });
+          },
+        );
       }
     } else if (!props.vehicleId) {
       setJourney(undefined);
@@ -721,6 +718,9 @@ export default function BigMap(
         clearTimeout(vehiclesTimeout.current);
         setLoadingBuses(false);
       }
+
+      // debounce,
+      // to avoid making loads of requests in quick succession
       if (stopsTimeout.current) {
         clearTimeout(stopsTimeout.current);
         setLoadingStops(false);
@@ -738,6 +738,9 @@ export default function BigMap(
         ) {
           setLoadingBuses(true);
           vehiclesTimeout.current = window.setTimeout(loadVehicles, 200);
+        } else {
+          // we've zoomed in, so already have all the vehicles in this bounding box
+          vehiclesTimeout.current = window.setTimeout(loadVehicles, 12000);
         }
 
         if (
@@ -745,7 +748,7 @@ export default function BigMap(
           !containsBounds(stopsHighWaterMark.current, boundsRef.current)
         ) {
           setLoadingStops(true);
-          stopsTimeout.current = window.setTimeout(loadStops, 200);
+          stopsTimeout.current = window.setTimeout(loadStops, 200); // for debouncing purposes
         }
       }
       updateLocalStorage(_zoom, evt.target.getCenter());
