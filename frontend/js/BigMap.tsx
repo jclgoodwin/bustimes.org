@@ -669,7 +669,7 @@ export default function BigMap(
       } else {
         setJourney(undefined);
         setTrip(undefined);
-        fetchJson(`api/trips/${props.tripId}/`).then((json) => setTrip);
+        fetchJson(`api/trips/${props.tripId}/`).then(setTrip);
       }
     } else if (props.noc) {
       setJourney(undefined);
