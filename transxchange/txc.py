@@ -376,7 +376,7 @@ class VehicleJourney:
                         warn_once(
                             "correctly ignored second journey wait time %s at %s",
                             wait_time,
-                            stopusage.stop,
+                            stopusage.stop.atco_code,
                         )
                 elif stopusage.wait_time is not None:
                     if stopusage.wait_time != wait_time:
@@ -385,7 +385,7 @@ class VehicleJourney:
                         warn_once(
                             "correctly ignored second journey pattern wait time %s at %s",
                             wait_time,
-                            stopusage.stop,
+                            stopusage.stop.atco_code,
                         )
 
                 notes = (
@@ -425,8 +425,8 @@ class VehicleJourney:
                         warn_once(
                             "dodgily ignored second wait time %s from %s to %s",
                             wait_time,
-                            timinglink.origin.stop,
-                            stopusage.stop,
+                            timinglink.origin.stop.atco_code,
+                            stopusage.stop.atco_code,
                         )
                         wait_time = None
 
