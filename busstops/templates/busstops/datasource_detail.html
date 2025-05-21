@@ -60,7 +60,9 @@
     {% for route in routes %}
         <tr>
             <td>{% ifchanged route.service_code %}{{ route.service_code }}{% endifchanged %}</td>
-            <td>{% ifchanged route.line_name %}{{ route.line_name }}{% endifchanged %}</td>
+            <td>{% ifchanged route.line_name %}
+                {% if route.service_id %}<a href="{{ route.service.get_absolute_url }}">{{ route.line_name }}</a>{% else %}{{ route.line_name }}{% endif %}
+            {% endifchanged %}</td>
             <td>{{ route.revision_number }}</td>
             <td>{{ route.start_date|date }}</td>
             <td>{{ route.end_date|date }}</td>
