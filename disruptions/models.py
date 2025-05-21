@@ -31,7 +31,8 @@ class Situation(models.Model):
     participant_ref = models.CharField(max_length=36, blank=True)
     text = models.TextField(blank=True)
     data = models.TextField(blank=True)
-    created = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True, null=True)
     publication_window = DateTimeRangeField(default=from_now)
     current = models.BooleanField(default=True)
 

@@ -5,7 +5,6 @@ from django.db.backends.postgresql.psycopg_any import DateTimeTZRange
 from django.db.models import Q
 
 import io
-import xml.etree.cElementTree as ET
 import zipfile
 
 import requests
@@ -37,8 +36,6 @@ def handle_item(item, source):
 
     xml = ET.tostring(item, encoding="unicode")
 
-    created_time = parse_datetime(item.find("CreationTime").text)
-
     try:
         situation = Situation.objects.get(
             source=source, situation_number=situation_number
@@ -54,7 +51,9 @@ def handle_item(item, source):
         )
         created = True
     situation.data = xml
-    situation.created = created_time
+    situation.created_at = parse_datetime(item.find("CreationTime").text)
+    if modified_at := item.findtext("VersionedAtTime"):
+        situation.modified_at = parse_datetime(modified_at)
     situation.publication_window = get_period(item.find("PublicationWindow"))
 
     assert item.findtext("Progress") == "open"
