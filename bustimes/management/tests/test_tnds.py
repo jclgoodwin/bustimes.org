@@ -57,4 +57,4 @@ class TNDSTest(TestCase):
         mock_call_command.assert_called()
 
         source = DataSource.objects.first()
-        self.assertEqual(source.sha1, '"ef44b21891607052e5bab3a74e85bba3"')
+        self.assertEqual(source.sha1, "da39a3ee5e6b4b0d3255bfef95601890afd80709")
