@@ -18,13 +18,11 @@
     {% elif operator.region %}in <a href="{{ object.region.get_absolute_url }}">{{ object.region.the }}</a>{% endif %}
 </p>
 
-{% for note in notes %}
-    <p class="message">{{ note|safe }}</p>
-{% endfor %}
-
 <div class="ad-wrapper">
     <div id="AFM_inContentTop_ad"></div>
 </div>
+
+{% include 'situations.html' %}
 
 <ul class="tabs">
     {% if services %}

@@ -77,13 +77,11 @@ def get_command():
 
 
 def get_sha1(path):
-    sha1 = hashlib.sha1()
+    sha1 = hashlib.sha1(usedforsecurity=False)
     with path.open("rb") as open_file:
-        while True:
-            data = open_file.read(65536)
-            if not data:
-                return sha1.hexdigest()
+        while data := open_file.read(65536):
             sha1.update(data)
+    return sha1.hexdigest()
 
 
 def handle_file(command, path, qualify_filename=False):
