@@ -854,6 +854,24 @@ class OperatorDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        context["situations"] = (
+            Situation.objects.filter(
+                publication_window__contains=Now(),
+                consequence__operators=self.object,
+                current=True,
+            )
+            .distinct()
+            .prefetch_related(
+                Prefetch(
+                    "consequence_set",
+                    queryset=Consequence.objects.filter(operators=self.object),
+                    to_attr="consequences",
+                ),
+                "link_set",
+                "validityperiod_set",
+            )
+        )
+
         # services list:
 
         services = (
