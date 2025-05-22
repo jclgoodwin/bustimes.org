@@ -68,6 +68,15 @@
 
 {% block footer %}
 <footer>
+    {% if request.user.is_authenticated %}
+        <form action="{{ url('logout') }}" method="POST">
+            <ul class="user">
+                <li><a href="{{ url('user_detail', args=[request.user.id]) }}">user {{ request.user.id }}</a></li>
+                <li><a href="/rules">Rules & FAQ</a></li>
+                <li><a href="https://discord.com/invite/gY4PdDFau7">Discord</a></li>
+            </ul>
+        </form>
+    {% endif %}
     <ul>
         <li><a href="/contact">Contact</a></li>
         <li><a href="/data">Data sources</a></li>
