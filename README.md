@@ -60,7 +60,7 @@
 | bustimes/management/commands/import\_atco\_cif.py               |      235 |       25 |     89% |28-35, 40, 43-44, 66, 198, 200, 203, 205, 213, 219, 283, 316-321, 361-362, 429 |
 | bustimes/management/commands/import\_bod\_timetables.py         |      268 |       24 |     91% |46, 95, 99, 102-105, 110, 115-116, 136, 167, 177, 188, 257, 267-271, 287-289, 312, 328-329, 345 |
 | bustimes/management/commands/import\_gtfs.py                    |      235 |       22 |     91% |75, 79, 129-130, 146, 218, 220, 280-281, 283-284, 320-321, 327-328, 332-335, 343-345, 414 |
-| bustimes/management/commands/import\_gtfs\_ember.py             |       91 |        0 |    100% |           |
+| bustimes/management/commands/import\_gtfs\_ember.py             |       98 |        0 |    100% |           |
 | bustimes/management/commands/import\_gtfs\_flixbus.py           |      143 |        3 |     98% |75, 140, 206 |
 | bustimes/management/commands/import\_ni.py                      |       31 |        0 |    100% |           |
 | bustimes/management/commands/import\_passenger.py               |      118 |       35 |     70% |51-54, 56-58, 102, 112-118, 146-179 |
@@ -71,7 +71,7 @@
 | bustimes/management/tests/test\_import\_atco\_cif.py            |       70 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_bod.py                  |      233 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_gtfs.py                 |      103 |        0 |    100% |           |
-| bustimes/management/tests/test\_import\_gtfs\_ember\_flixbus.py |       75 |        0 |    100% |           |
+| bustimes/management/tests/test\_import\_gtfs\_ember\_flixbus.py |       78 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_ni.py                   |       21 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_passenger.py            |       23 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_transxchange.py         |      742 |        0 |    100% |           |
@@ -130,7 +130,7 @@
 | vehicles/management/commands/import\_bod\_avl.py                |      466 |       54 |     88% |51, 129, 145, 155-156, 199-202, 205-208, 251, 267, 282-283, 305-323, 377, 383, 437, 443, 458-459, 506-519, 548, 557-558, 577, 606, 636, 754, 829, 833 |
 | vehicles/management/commands/import\_bushub.py                  |       72 |       14 |     81% |16-17, 21-22, 25-26, 37, 40, 56-57, 66, 76, 95, 103 |
 | vehicles/management/commands/import\_edinburgh.py               |       72 |        4 |     94% |83, 87-90, 97 |
-| vehicles/management/commands/import\_gtfsr\_ember.py            |       85 |        6 |     93% |78-79, 102-104, 120 |
+| vehicles/management/commands/import\_gtfsr\_ember.py            |       87 |        6 |     93% |81-82, 105-107, 123 |
 | vehicles/management/commands/import\_gtfsr\_ie.py               |      104 |        6 |     94% |71, 98, 145, 154, 161, 165 |
 | vehicles/management/commands/import\_live\_jersey.py            |       33 |        0 |    100% |           |
 | vehicles/management/commands/import\_megabus.py                 |      118 |       29 |     75% |38-40, 42-43, 46-47, 64, 72-75, 79-82, 119-122, 125, 145-146, 148-149, 151-152, 162, 173 |
@@ -169,7 +169,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16182** | **1077** | **93%** |           |
+|                                                       **TOTAL** | **16194** | **1077** | **93%** |           |
 
 
 ## Setup coverage badge
