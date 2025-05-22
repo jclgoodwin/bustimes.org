@@ -100,18 +100,18 @@ class SiriSXTest(TestCase):
 
     def test_siri_sx_request(self):
         with use_cassette(str(VCR_DIR / "siri_sx.yaml")) as cassette:
-            with self.assertNumQueries(123):
+            with self.assertNumQueries(124):
                 bods_disruptions()
 
             cassette.rewind()
 
-            with self.assertNumQueries(11):
+            with self.assertNumQueries(3):
                 bods_disruptions()
 
             cassette.rewind()
             Situation.objects.all().update(data="")
 
-            with self.assertNumQueries(151):
+            with self.assertNumQueries(143):
                 bods_disruptions()
 
         situation = Situation.objects.first()
