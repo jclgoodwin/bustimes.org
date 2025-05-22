@@ -1,6 +1,7 @@
 import datetime
 from pathlib import Path
 from unittest.mock import patch
+from tempfile import TemporaryDirectory
 
 import fakeredis
 import time_machine
@@ -11,6 +12,7 @@ from django.test import TestCase, override_settings
 from busstops.models import DataSource, Operator, Region, Service, StopCode, StopPoint
 from vehicles.management.commands import import_gtfsr_ember
 
+from .test_import_gtfs import make_zipfile
 from ...models import Route, Trip
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
@@ -128,13 +130,21 @@ class FlixbusTest(TestCase):
 
     @time_machine.travel("2023-01-01")
     def test_import_gtfs_ember(self):
-        with patch(
-            "bustimes.management.commands.import_gtfs_ember.download_if_modified",
-            return_value=(
-                True,
-                datetime.datetime(2024, 6, 18, 10, 0, 0, tzinfo=datetime.timezone.utc),
+        with (
+            patch(
+                "bustimes.management.commands.import_gtfs_ember.download_if_modified",
+                return_value=(
+                    True,
+                    datetime.datetime(
+                        2024, 6, 18, 10, 0, 0, tzinfo=datetime.timezone.utc
+                    ),
+                ),
             ),
+            TemporaryDirectory() as directory,
+            override_settings(DATA_DIR=directory),
         ):
+            make_zipfile(directory, "ember_gtfs")
+
             call_command("import_gtfs_ember")
             call_command("import_gtfs_ember")
 
@@ -161,7 +171,7 @@ class FlixbusTest(TestCase):
         ):
             with self.assertNumQueries(58):
                 command.update()
-            with self.assertNumQueries(41):
+            with self.assertNumQueries(25):
                 command.update()
 
         response = self.client.get(service.get_absolute_url())
