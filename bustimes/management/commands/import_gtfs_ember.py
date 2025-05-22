@@ -1,5 +1,7 @@
 import logging
+from datetime import datetime, timezone
 from pathlib import Path
+from zipfile import ZipFile
 
 import gtfs_kit
 from django.conf import settings
@@ -67,6 +69,11 @@ def get_calendars(feed, source) -> dict:
     return calendars
 
 
+def get_last_modified(path):
+    info = ZipFile(path).infolist()
+    return datetime(*info[0].date_time, tzinfo=timezone.utc)
+
+
 class Command(BaseCommand):
     def handle(self, *args, **options):
         path = settings.DATA_DIR / Path("ember_gtfs.zip")
@@ -76,6 +83,9 @@ class Command(BaseCommand):
 
         modified, last_modified = download_if_modified(path, source)
         assert modified
+
+        # there's no last-modified header so use the contents of the zipfile
+        source.datetime = get_last_modified(path)
 
         feed = gtfs_kit.read_feed(path, dist_units="km")
 
@@ -214,3 +224,5 @@ class Command(BaseCommand):
                     current=False
                 )
             )
+
+            source.save(update_fields=["url", "datetime"])
