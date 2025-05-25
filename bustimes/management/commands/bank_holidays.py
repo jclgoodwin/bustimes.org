@@ -72,7 +72,7 @@ class Command(BaseCommand):
                     )
                 )
             else:
-                logger.warn(title)
+                logger.warning(title)
 
         for bank_holiday in scotland:
             if bank_holiday in england_and_wales:
@@ -99,6 +99,6 @@ class Command(BaseCommand):
                     )
                 )
             else:
-                logger.warn(title)
+                logger.warning(title)
 
         BankHolidayDate.objects.bulk_create(bank_holiday_dates, ignore_conflicts=True)

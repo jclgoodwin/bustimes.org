@@ -125,7 +125,7 @@ def liveries_css(request, version=0):
 
 
 features_string_agg = StringAgg(
-    "features__name", ", ", ordering=["features__name"], default=""
+    "features__name", ", ", order_by=["features__name"], default=""
 )
 
 
