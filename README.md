@@ -69,7 +69,7 @@
 | bustimes/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | bustimes/management/tests/test\_bank\_holidays.py               |       20 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_atco\_cif.py            |       70 |        0 |    100% |           |
-| bustimes/management/tests/test\_import\_bod.py                  |      233 |        0 |    100% |           |
+| bustimes/management/tests/test\_import\_bod.py                  |      235 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_gtfs.py                 |      103 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_gtfs\_ember\_flixbus.py |       78 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_ni.py                   |       21 |        0 |    100% |           |
@@ -93,7 +93,7 @@
 | disruptions/\_\_init\_\_.py                                     |        0 |        0 |    100% |           |
 | disruptions/admin.py                                            |       26 |        1 |     96% |        53 |
 | disruptions/models.py                                           |       72 |        5 |     93% |43, 72, 96, 104, 114 |
-| disruptions/siri\_sx.py                                         |      122 |       15 |     88% |47, 56, 76, 88-91, 102-103, 134, 144-148 |
+| disruptions/siri\_sx.py                                         |      122 |       14 |     89% |58, 78, 90-93, 104-105, 136, 146-150 |
 | disruptions/test\_siri\_sx.py                                   |       48 |        0 |    100% |           |
 | disruptions/test\_tfl\_disruptions.py                           |       34 |        0 |    100% |           |
 | disruptions/tests.py                                            |       16 |        0 |    100% |           |
@@ -169,7 +169,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16194** | **1077** | **93%** |           |
+|                                                       **TOTAL** | **16196** | **1076** | **93%** |           |
 
 
 ## Setup coverage badge
