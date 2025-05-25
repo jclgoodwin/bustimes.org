@@ -395,6 +395,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
             self.client.force_login(self.user)
             response = self.client.get(route.get_absolute_url())
             self.assertEqual(response.status_code, 200)
+            self.client.logout()
 
         response = self.client.get(service.get_absolute_url())
         self.assertContains(
@@ -513,6 +514,8 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
             response = self.client.get(route.get_absolute_url())
             self.assertEqual(200, response.status_code)
             self.assertEqual("", response.filename)
+
+            self.client.logout()
 
         self.assertEqual(BankHoliday.objects.count(), 13)
         self.assertEqual(CalendarBankHoliday.objects.count(), 130)
