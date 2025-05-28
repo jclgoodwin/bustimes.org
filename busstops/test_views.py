@@ -376,11 +376,11 @@ class ViewsTests(TestCase):
 
     def test_operator_not_found(self):
         """An operator with no services, or that doesn't exist, should should return a 404 response"""
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(8):
             response = self.client.get("/operators/VENT")  # noc
             self.assertContains(response, "Nu-Venture", status_code=404)
 
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(8):
             response = self.client.get("/operators/nu-venture")  # slug
             self.assertContains(response, "Nu-Venture", status_code=404)
 
@@ -413,13 +413,13 @@ class ViewsTests(TestCase):
         self.assertContains(response, ">Tickets<")
 
         response = self.client.get(self.service.get_absolute_url())
-        self.assertNotContains(response, "Show all stops")
+        self.assertNotContains(response, "Timing points")
         self.assertContains(response, "Melton Constable, opp Bus Shelter")
         self.assertEqual(
             response.context_data["links"][0],
             {
                 "text": "Buy tickets at National Express",
-                "url": "https://nationalexpress.prf.hn/click/camref:1011ljPYw",
+                "url": "https://nationalexpress.prf.hn/click/camref:1011ljPYw/pubref:45C",
             },
         )
 

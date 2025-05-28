@@ -27,7 +27,7 @@ class Command(BaseCommand):
         session = requests.Session()
         session.mount("https://", SourceAddressAdapter(source_address))
 
-        subscription = SiriSubscription.objects.get()
+        subscription = SiriSubscription.objects.get(name="Transport for Wales")
         consumer_address = f"{consumer_address}/siri/{subscription.uuid}"
 
         initial_termination_time = now + timedelta(hours=20) - timedelta(minutes=6)

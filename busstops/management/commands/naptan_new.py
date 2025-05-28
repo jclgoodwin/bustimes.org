@@ -2,24 +2,15 @@ import logging
 import xml.etree.ElementTree as ET
 
 import yaml
-from ciso8601 import parse_datetime
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.management.base import BaseCommand
-from django.utils.timezone import make_aware
 
 from busstops.models import AdminArea, DataSource, Locality, StopArea, StopPoint
+from busstops.utils import get_datetime
 from bustimes.download_utils import download_if_modified
 
 logger = logging.getLogger(__name__)
-
-
-def get_datetime(string):
-    if string:
-        datetime = parse_datetime(string)
-        if not datetime.tzinfo:
-            return make_aware(datetime)
-        return datetime
 
 
 def get_point(element, atco_code):

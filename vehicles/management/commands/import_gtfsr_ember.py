@@ -43,7 +43,7 @@ class Command(BaseCommand):
             (note.code, note.text): note
             for note in Note.objects.filter(trip__operator="EMBR")
         }
-        stop_notes = {}
+        stop_notes = {}  # map of notes to lists of stop ids
 
         # build list of vehicles that have moved
         for item in feed.entity:
@@ -62,17 +62,20 @@ class Command(BaseCommand):
                     vehicle_codes.append(key.replace(" ", ""))
                     self.previous_locations[key] = value
             elif item.HasField("alert"):
-                note = self.get_note(
-                    item.alert.header_text.translation[0].text[:1],
-                    item.alert.description_text.translation[0].text,
-                )
-                if note in stop_notes:
-                    stop_notes[note].append(item.alert.informed_entity[0].stop_id)
-                else:
-                    stop_notes[note] = [item.alert.informed_entity[0].stop_id]
+                header = item.alert.header_text.translation[0].text
+                if header == "Pre-booking":
+                    note = self.get_note(
+                        header[:1],
+                        item.alert.description_text.translation[0].text,
+                    )
+                    if note in stop_notes:
+                        stop_notes[note].append(item.alert.informed_entity[0].stop_id)
+                    else:
+                        stop_notes[note] = [item.alert.informed_entity[0].stop_id]
 
         self.prefetch_vehicles(vehicle_codes)
 
+        # remove old notes
         for note in self.existing_notes.values():
             if note not in stop_notes:
                 note.stoptime_set.clear()
@@ -137,8 +140,7 @@ class Command(BaseCommand):
             journey.service = trip.route.service
 
             journey.route_name = journey.service.line_name
-            if trip.destination_id:
-                journey.destination = str(trip.destination.locality)
+            journey.destination = trip.headsign
 
         vehicle.latest_journey_data = json_format.MessageToDict(item)
 

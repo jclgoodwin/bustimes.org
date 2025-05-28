@@ -7,6 +7,7 @@
 <meta name="theme-color" content="#ffff9e" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
 <meta name="color-scheme" content="dark light">
+<meta name="format-detection" content="telephone=no">
 {% block canonical %}
     {% if object.get_absolute_url %}
         <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}">
@@ -35,7 +36,13 @@
 </head>
 <body class="{% block bodyclass %}wide{% endblock %}{% if ad is False %} no-ads{% endif %}">
 <script>
-!function(){var a=localStorage&&localStorage["map-style"];!a&&window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches&&(a="_dark"),a&&-1!==a.indexOf("_dark")&&document.body.classList.add("dark-mode")}();
+(function () {
+    var a = localStorage && localStorage["map-style"];
+    var m = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if ((!a || a === "alidade_satellite") && m || a && a.indexOf("_dark") !== -1) {
+        document.body.classList.add("dark-mode")
+    }
+})();
 </script>
 
 <a href="#content" class="skip">Skip to main content</a>
@@ -68,7 +75,7 @@
     {% if user.is_authenticated %}
         <form action="{% url 'logout' %}" method="POST">
             <ul class="user">
-                <li><a href="/accounts/users/{{ user.id }}">user {{ user.id }}</a></li>
+                <li><a href="{% url 'user_detail' user.id %}">user {{ user.id }}</a></li>
                 <li>
                     {% csrf_token %}
                     <button type="submit" class="button">Log out</button>

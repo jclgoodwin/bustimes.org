@@ -2,6 +2,7 @@ import calendar
 import datetime
 import logging
 import xml.etree.cElementTree as ET
+from functools import cache
 
 from django.contrib.gis.geos import GEOSGeometry, LineString
 from django.utils.dateparse import parse_duration
@@ -10,6 +11,11 @@ logger = logging.getLogger(__name__)
 
 
 WEEKDAYS = {day: i for i, day in enumerate(calendar.day_name)}  # {'Monday:' 0,
+
+
+@cache
+def warn_once(msg, *args, **kwargs):
+    return logger.warning(msg, *args, **kwargs)
 
 
 def parse_time(string: str) -> datetime.timedelta:
@@ -156,8 +162,10 @@ class JourneyPatternStopUsage:
         if self.wait_time is not None:
             self.wait_time = parse_duration(self.wait_time.text)
             if self.wait_time.total_seconds() > 10000:
-                # bad data detected
-                logger.warning(f"long wait time {self.wait_time} at stop {self.stop}")
+                # bad data detected - we won't do anything about it, just logging FYI
+                logger.warning(
+                    "long wait time %s at stop %s", self.wait_time, self.stop
+                )
 
         self.notes = [
             (note_element.find("NoteCode").text, note_element.find("NoteText").text)
@@ -362,9 +370,23 @@ class VehicleJourney:
                 if wait_time is None:
                     wait_time = datetime.timedelta()
                 if journey_timinglink and journey_timinglink.from_wait_time is not None:
-                    wait_time += journey_timinglink.from_wait_time
+                    if journey_timinglink.from_wait_time != wait_time:
+                        wait_time += journey_timinglink.from_wait_time
+                    elif wait_time:
+                        warn_once(
+                            "correctly ignored second journey wait time %s at %s",
+                            wait_time,
+                            stopusage.stop.atco_code,
+                        )
                 elif stopusage.wait_time is not None:
-                    wait_time += stopusage.wait_time
+                    if stopusage.wait_time != wait_time:
+                        wait_time += stopusage.wait_time
+                    elif wait_time:
+                        warn_once(
+                            "correctly ignored second journey pattern wait time %s at %s",
+                            wait_time,
+                            stopusage.stop.atco_code,
+                        )
 
                 notes = (
                     journey_timinglink and journey_timinglink.notes or stopusage.notes
@@ -398,6 +420,15 @@ class VehicleJourney:
                     wait_time = journey_timinglink.to_wait_time
                 else:
                     wait_time = stopusage.wait_time
+
+                    if wait_time and wait_time == timinglink.origin.wait_time:
+                        warn_once(
+                            "dodgily ignored second wait time %s from %s to %s",
+                            wait_time,
+                            timinglink.origin.stop.atco_code,
+                            stopusage.stop.atco_code,
+                        )
+                        wait_time = None
 
             if journey_timinglink and journey_timinglink.to_activity:
                 prev_activity = journey_timinglink.to_activity

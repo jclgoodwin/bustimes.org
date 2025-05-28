@@ -66,8 +66,8 @@
     }
   },
   "scripts": {
-    "watch": "API_ROOT=/ parcel watch",
-    "build": "API_ROOT=https://bustimes.org/ parcel build",
+    "watch": "parcel watch",
+    "build": "parcel build",
     "lint": "tsc -noEmit",
     "test": "TZ=UTC jest"
   }

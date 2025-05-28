@@ -395,6 +395,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
             self.client.force_login(self.user)
             response = self.client.get(route.get_absolute_url())
             self.assertEqual(response.status_code, 200)
+            self.client.logout()
 
         response = self.client.get(service.get_absolute_url())
         self.assertContains(
@@ -494,7 +495,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
                 with self.assertNumQueries(1):
                     call_command("import_bod_timetables", "stagecoach", "SCOX")
 
-                with self.assertNumQueries(118):
+                with self.assertNumQueries(116):
                     call_command("import_bod_timetables", "stagecoach", "SCCM")
 
                 route_link.refresh_from_db()
@@ -505,7 +506,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
             response = self.client.get(f"/sources/{source.id}/routes/")
 
             self.assertEqual(
-                response.content.decode(),
+                response.text,
                 "904_FE_PF_904_20210102.xml\n904_VI_PF_904_20200830.xml",
             )
 
@@ -513,6 +514,8 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
             response = self.client.get(route.get_absolute_url())
             self.assertEqual(200, response.status_code)
             self.assertEqual("", response.filename)
+
+            self.client.logout()
 
         self.assertEqual(BankHoliday.objects.count(), 13)
         self.assertEqual(CalendarBankHoliday.objects.count(), 130)
@@ -525,6 +528,8 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
 
         self.assertEqual(2, Service.objects.count())
         self.assertEqual(2, Route.objects.count())
+
+        self.assertEqual(RouteLink.objects.count(), 4)
 
         trip = route.trip_set.last()
         response = self.client.get(f"/api/trips/{trip.id}/")

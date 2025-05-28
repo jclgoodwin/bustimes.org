@@ -1,5 +1,7 @@
 import logging
+from datetime import datetime, timezone
 from pathlib import Path
+from zipfile import ZipFile
 
 import gtfs_kit
 from django.conf import settings
@@ -67,6 +69,11 @@ def get_calendars(feed, source) -> dict:
     return calendars
 
 
+def get_last_modified(path):
+    info = ZipFile(path).infolist()
+    return datetime(*info[0].date_time, tzinfo=timezone.utc)
+
+
 class Command(BaseCommand):
     def handle(self, *args, **options):
         path = settings.DATA_DIR / Path("ember_gtfs.zip")
@@ -76,6 +83,9 @@ class Command(BaseCommand):
 
         modified, last_modified = download_if_modified(path, source)
         assert modified
+
+        # there's no last-modified header so use the contents of the zipfile
+        source.datetime = get_last_modified(path)
 
         feed = gtfs_kit.read_feed(path, dist_units="km")
 
@@ -88,6 +98,25 @@ class Command(BaseCommand):
         routes = []
 
         stops = StopPoint.objects.in_bulk(feed.stops.stop_id.to_list())
+        new_stops = [
+            StopPoint(
+                atco_code=f"ember-{stop.stop_id}",
+                common_name=stop.stop_name,
+                active=True,
+                source=source,
+                latlong=f"POINT({stop.stop_lon} {stop.stop_lat})",
+            )
+            for stop in feed.stops.itertuples()
+            if stop.stop_id not in stops
+        ]
+        StopPoint.objects.bulk_create(
+            new_stops,
+            update_conflicts=True,
+            unique_fields=["atco_code"],
+            update_fields=["common_name", "latlong"],
+        )
+        for stop in new_stops:
+            stops[stop.atco_code.removeprefix("ember-")] = stop
 
         calendars = get_calendars(feed, source)
 
@@ -130,6 +159,7 @@ class Command(BaseCommand):
                 inbound=row.direction_id == 1,
                 vehicle_journey_code=row.trip_id,
                 operator=operator,
+                headsign=row.trip_headsign,
             )
             if trip.vehicle_journey_code in existing_trips:
                 # reuse existing trip id
@@ -152,10 +182,7 @@ class Command(BaseCommand):
                 timing_status="PTP" if row.timepoint else "OTH",
             )
 
-            stop_time.stop = trip.destination = stops.get(row.stop_id)
-
-            if stop_time.stop is None:
-                stop_time.stop_code = row.stop_id
+            stop_time.stop = trip.destination = stops[row.stop_id]
 
             stop_times.append(stop_time)
 
@@ -173,6 +200,7 @@ class Command(BaseCommand):
                     "block",
                     "vehicle_journey_code",
                     "inbound",
+                    "headsign",
                 ],
             )
 
@@ -196,3 +224,5 @@ class Command(BaseCommand):
                     current=False
                 )
             )
+
+            source.save(update_fields=["url", "datetime"])

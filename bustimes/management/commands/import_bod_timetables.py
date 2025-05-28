@@ -77,13 +77,11 @@ def get_command():
 
 
 def get_sha1(path):
-    sha1 = hashlib.sha1()
+    sha1 = hashlib.sha1(usedforsecurity=False)
     with path.open("rb") as open_file:
-        while True:
-            data = open_file.read(65536)
-            if not data:
-                return sha1.hexdigest()
+        while data := open_file.read(65536):
             sha1.update(data)
+    return sha1.hexdigest()
 
 
 def handle_file(command, path, qualify_filename=False):
@@ -221,6 +219,7 @@ def bus_open_data(api_key, specific_operator):
                     name=dataset["name"], url=dataset["url"]
                 )
             command.source.name = dataset["name"]
+            command.source.description = dataset["description"]
             command.source.url = dataset["url"]
             if command.source.source_id != source.id:
                 command.source.source = source

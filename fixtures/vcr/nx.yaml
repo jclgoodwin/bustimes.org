@@ -1,0 +1,355 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.27.1
+    method: GET
+    uri: https://coachtracker.nationalexpress.com/api/eta/routes/491/O
+  response:
+    body:
+      string: '{"name":"491","dir":"O","colour":"#7cd238","category":"London","depart":"LONDON
+        VICTORIA Coach Station","arrival":"Great Yarmouth","time":"2022-06-25 14:40:38
+        +0000","services":[{"date":"2022-06-25","linkDate":"25-06-2022","startTime":{"dateTime":"2022-06-25
+        07:30:00","hrs":7,"mins":30,"time":"07:30"},"timetables":[{"arrive":{"dateTime":"2022-06-25
+        07:30:00","hrs":7,"mins":30,"time":"07:30"},"depart":{"dateTime":"2022-06-25
+        07:30:00","hrs":7,"mins":30,"time":"07:30"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        06:30:01","hrs":6,"mins":30,"time":"06:30"},"etaDepart":{"dateTime":"2022-06-25
+        07:31:01","hrs":7,"mins":31,"time":"07:31"},"etaLayover":61,"arrive":{"dateTime":"2022-06-25
+        06:30:01","hrs":6,"mins":30,"time":"06:30"},"depart":{"dateTime":"2022-06-25
+        07:30:50","hrs":7,"mins":30,"time":"07:30"},"atStop":false,"late":false,"status":"visited","timestamp":"2022-06-25
+        06:30:01 +0000","gate":null},"stopActivity":null},{"arrive":{"dateTime":"2022-06-25
+        08:15:00","hrs":8,"mins":15,"time":"08:15"},"depart":{"dateTime":"2022-06-25
+        08:15:00","hrs":8,"mins":15,"time":"08:15"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        08:10:21","hrs":8,"mins":10,"time":"08:10"},"etaDepart":{"dateTime":"2022-06-25
+        08:14:21","hrs":8,"mins":14,"time":"08:14"},"etaLayover":4,"arrive":{"dateTime":"2022-06-25
+        08:10:21","hrs":8,"mins":10,"time":"08:10"},"depart":{"dateTime":"2022-06-25
+        08:13:51","hrs":8,"mins":13,"time":"08:13"},"atStop":false,"late":false,"status":"visited","timestamp":"2022-06-25
+        08:10:21 +0000","gate":null},"stopActivity":null},{"arrive":{"dateTime":"2022-06-25
+        10:00:00","hrs":10,"mins":0,"time":"10:00"},"depart":{"dateTime":"2022-06-25
+        10:00:00","hrs":10,"mins":0,"time":"10:00"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        09:44:49","hrs":9,"mins":44,"time":"09:44"},"etaDepart":{"dateTime":"2022-06-25
+        09:59:49","hrs":9,"mins":59,"time":"09:59"},"etaLayover":15,"arrive":{"dateTime":"2022-06-25
+        09:44:49","hrs":9,"mins":44,"time":"09:44"},"depart":{"dateTime":"2022-06-25
+        10:00:07","hrs":10,"mins":0,"time":"10:00"},"atStop":false,"late":false,"status":"visited","timestamp":"2022-06-25
+        09:44:49 +0000","gate":null},"stopActivity":null},null,{"arrive":{"dateTime":"2022-06-25
+        10:50:00","hrs":10,"mins":50,"time":"10:50"},"depart":{"dateTime":"2022-06-25
+        10:55:00","hrs":10,"mins":55,"time":"10:55"},"layover":5,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        10:47:43","hrs":10,"mins":47,"time":"10:47"},"etaDepart":{"dateTime":"2022-06-25
+        10:57:43","hrs":10,"mins":57,"time":"10:57"},"etaLayover":10,"arrive":{"dateTime":"2022-06-25
+        10:47:43","hrs":10,"mins":47,"time":"10:47"},"depart":{"dateTime":"2022-06-25
+        10:57:35","hrs":10,"mins":57,"time":"10:57"},"atStop":false,"late":false,"status":"visited","timestamp":"2022-06-25
+        10:47:43 +0000","gate":null},"stopActivity":null},{"arrive":{"dateTime":"2022-06-25
+        11:10:00","hrs":11,"mins":10,"time":"11:10"},"depart":{"dateTime":"2022-06-25
+        11:10:00","hrs":11,"mins":10,"time":"11:10"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        11:18:45","hrs":11,"mins":18,"time":"11:18"},"etaDepart":{"dateTime":"2022-06-25
+        11:19:45","hrs":11,"mins":19,"time":"11:19"},"etaLayover":1,"arrive":{"dateTime":"2022-06-25
+        11:18:45","hrs":11,"mins":18,"time":"11:18"},"depart":{"dateTime":"2022-06-25
+        11:19:26","hrs":11,"mins":19,"time":"11:19"},"atStop":false,"late":false,"status":"visited","timestamp":"2022-06-25
+        11:18:45 +0000","gate":null},"stopActivity":null},{"arrive":{"dateTime":"2022-06-25
+        11:30:00","hrs":11,"mins":30,"time":"11:30"},"depart":{"dateTime":"2022-06-25
+        11:30:00","hrs":11,"mins":30,"time":"11:30"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        11:35:11","hrs":11,"mins":35,"time":"11:35"},"etaDepart":{"dateTime":"2022-06-25
+        11:35:11","hrs":11,"mins":35,"time":"11:35"},"etaLayover":0,"arrive":{"dateTime":"2022-06-25
+        11:35:11","hrs":11,"mins":35,"time":"11:35"},"depart":{"dateTime":"2022-06-25
+        11:35:11","hrs":11,"mins":35,"time":"11:35"},"atStop":true,"late":false,"status":"visited","timestamp":"2022-06-25
+        11:35:11 +0000","gate":null},"stopActivity":null}],"route":"491","dir":"O","journeyId":"AE","reference":null,"linkName":"London-Great_Yarmouth","duration":{"hrs":4,"mins":0,"time":"04:00"},"multiDay":false,"depart":"LONDON
+        VICTORIA Coach Station","arrival":"Great Yarmouth","live":{"vehicleId":"233734","vehicle":"BV19
+        XRA","lat":52.589859,"lon":1.706876,"bearing":338,"status":"-1","timestamp":{"dateTime":"2022-06-25
+        13:29:00","hrs":13,"mins":29,"time":"13:29"},"timeZone":"BST","geoLocation":"Edison
+        Way, Great Yarmouth, Norfolk"},"duplicateCount":null,"dups":null,"started":null,"next":{"date":"2022-06-25","linkDate":"25-06-2022","journeyId":"AF"},"prev":null,"customerFeedbackUrl":null},{"date":"2022-06-25","linkDate":"25-06-2022","startTime":{"dateTime":"2022-06-25
+        10:00:00","hrs":10,"mins":0,"time":"10:00"},"timetables":[{"arrive":{"dateTime":"2022-06-25
+        10:00:00","hrs":10,"mins":0,"time":"10:00"},"depart":{"dateTime":"2022-06-25
+        10:00:00","hrs":10,"mins":0,"time":"10:00"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        10:18:52","hrs":10,"mins":18,"time":"10:18"},"etaDepart":{"dateTime":"2022-06-25
+        10:27:52","hrs":10,"mins":27,"time":"10:27"},"etaLayover":9,"arrive":{"dateTime":"2022-06-25
+        10:18:52","hrs":10,"mins":18,"time":"10:18"},"depart":{"dateTime":"2022-06-25
+        10:27:56","hrs":10,"mins":27,"time":"10:27"},"atStop":false,"late":true,"status":"visited","timestamp":"2022-06-25
+        10:18:52 +0000","gate":null},"stopActivity":null},{"arrive":{"dateTime":"2022-06-25
+        10:45:00","hrs":10,"mins":45,"time":"10:45"},"depart":{"dateTime":"2022-06-25
+        10:45:00","hrs":10,"mins":45,"time":"10:45"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        11:18:10","hrs":11,"mins":18,"time":"11:18"},"etaDepart":{"dateTime":"2022-06-25
+        11:23:10","hrs":11,"mins":23,"time":"11:23"},"etaLayover":5,"arrive":{"dateTime":"2022-06-25
+        11:18:10","hrs":11,"mins":18,"time":"11:18"},"depart":{"dateTime":"2022-06-25
+        11:22:59","hrs":11,"mins":22,"time":"11:22"},"atStop":false,"late":true,"status":"visited","timestamp":"2022-06-25
+        11:18:10 +0000","gate":null},"stopActivity":null},null,null,{"arrive":{"dateTime":"2022-06-25
+        13:00:00","hrs":13,"mins":0,"time":"13:00"},"depart":{"dateTime":"2022-06-25
+        13:05:00","hrs":13,"mins":5,"time":"13:05"},"layover":5,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        14:00:45","hrs":14,"mins":0,"time":"14:00"},"etaDepart":{"dateTime":"2022-06-25
+        14:07:45","hrs":14,"mins":7,"time":"14:07"},"etaLayover":7,"arrive":{"dateTime":"2022-06-25
+        14:00:45","hrs":14,"mins":0,"time":"14:00"},"depart":{"dateTime":"2022-06-25
+        14:08:13","hrs":14,"mins":8,"time":"14:08"},"atStop":false,"late":true,"status":"visited","timestamp":"2022-06-25
+        14:00:45 +0000","gate":null},"stopActivity":null},{"arrive":{"dateTime":"2022-06-25
+        13:20:00","hrs":13,"mins":20,"time":"13:20"},"depart":{"dateTime":"2022-06-25
+        13:20:00","hrs":13,"mins":20,"time":"13:20"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        14:28:41","hrs":14,"mins":28,"time":"14:28"},"etaDepart":{"dateTime":"2022-06-25
+        14:28:41","hrs":14,"mins":28,"time":"14:28"},"etaLayover":0,"arrive":{"dateTime":"2022-06-25
+        14:28:41","hrs":14,"mins":28,"time":"14:28"},"depart":{"dateTime":"2022-06-25
+        14:28:41","hrs":14,"mins":28,"time":"14:28"},"atStop":false,"late":true,"status":"visited","timestamp":"2022-06-25
+        14:28:41 +0000","gate":null},"stopActivity":null},{"arrive":{"dateTime":"2022-06-25
+        13:40:00","hrs":13,"mins":40,"time":"13:40"},"depart":{"dateTime":"2022-06-25
+        13:40:00","hrs":13,"mins":40,"time":"13:40"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        14:43:36","hrs":14,"mins":43,"time":"14:43"},"etaDepart":{"dateTime":"2022-06-25
+        14:43:36","hrs":14,"mins":43,"time":"14:43"},"etaLayover":0,"arrive":{"dateTime":"2022-06-25
+        14:43:36","hrs":14,"mins":43,"time":"14:43"},"depart":{"dateTime":"2022-06-25
+        14:46:35","hrs":14,"mins":46,"time":"14:46"},"atStop":true,"late":true,"status":"visited","timestamp":"2022-06-25
+        14:43:36 +0000","gate":null},"stopActivity":null}],"route":"491","dir":"O","journeyId":"AF","reference":null,"linkName":"London-Great_Yarmouth","duration":{"hrs":3,"mins":40,"time":"03:40"},"multiDay":false,"depart":"LONDON
+        VICTORIA Coach Station","arrival":"Great Yarmouth","live":{"vehicleId":"233674","vehicle":"BV19
+        XPU","lat":52.589732,"lon":1.706597,"bearing":271,"status":"0","timestamp":{"dateTime":"2022-06-25
+        15:38:52","hrs":15,"mins":38,"time":"15:38"},"timeZone":"BST","geoLocation":"James
+        Watt Close, Great Yarmouth, Norfolk"},"duplicateCount":null,"dups":null,"started":null,"next":{"date":"2022-06-25","linkDate":"25-06-2022","journeyId":"AH"},"prev":{"date":"2022-06-25","linkDate":"25-06-2022","journeyId":"AE"},"customerFeedbackUrl":null},{"date":"2022-06-25","linkDate":"25-06-2022","startTime":{"dateTime":"2022-06-25
+        15:00:00","hrs":15,"mins":0,"time":"15:00"},"timetables":[{"arrive":{"dateTime":"2022-06-25
+        15:00:00","hrs":15,"mins":0,"time":"15:00"},"depart":{"dateTime":"2022-06-25
+        15:00:00","hrs":15,"mins":0,"time":"15:00"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        15:09:21","hrs":15,"mins":9,"time":"15:09"},"etaDepart":{"dateTime":"2022-06-25
+        15:36:21","hrs":15,"mins":36,"time":"15:36"},"etaLayover":27,"arrive":{"dateTime":"2022-06-25
+        15:09:21","hrs":15,"mins":9,"time":"15:09"},"depart":{"dateTime":"2022-06-25
+        15:35:55","hrs":15,"mins":35,"time":"15:35"},"atStop":false,"late":true,"status":"visited","timestamp":"2022-06-25
+        15:09:21 +0000","gate":null},"stopActivity":null},null,{"arrive":{"dateTime":"2022-06-25
+        17:20:00","hrs":17,"mins":20,"time":"17:20"},"depart":{"dateTime":"2022-06-25
+        17:20:00","hrs":17,"mins":20,"time":"17:20"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        18:29:00","hrs":18,"mins":29,"time":"18:29"},"etaDepart":{"dateTime":"2022-06-25
+        18:29:00","hrs":18,"mins":29,"time":"18:29"},"etaLayover":0,"arrive":null,"depart":null,"atStop":false,"late":true,"status":"next_stop","timestamp":"2022-06-25
+        15:39:55 +0000","gate":null},"stopActivity":null},null,{"arrive":{"dateTime":"2022-06-25
+        18:10:00","hrs":18,"mins":10,"time":"18:10"},"depart":{"dateTime":"2022-06-25
+        18:15:00","hrs":18,"mins":15,"time":"18:15"},"layover":5,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        19:19:00","hrs":19,"mins":19,"time":"19:19"},"etaDepart":{"dateTime":"2022-06-25
+        19:24:00","hrs":19,"mins":24,"time":"19:24"},"etaLayover":5,"arrive":null,"depart":null,"atStop":false,"late":true,"status":"future","timestamp":"2022-06-25
+        15:39:55 +0000","gate":null},"stopActivity":null},{"arrive":{"dateTime":"2022-06-25
+        18:30:00","hrs":18,"mins":30,"time":"18:30"},"depart":{"dateTime":"2022-06-25
+        18:30:00","hrs":18,"mins":30,"time":"18:30"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        19:39:00","hrs":19,"mins":39,"time":"19:39"},"etaDepart":{"dateTime":"2022-06-25
+        19:39:00","hrs":19,"mins":39,"time":"19:39"},"etaLayover":0,"arrive":null,"depart":null,"atStop":false,"late":true,"status":"future","timestamp":"2022-06-25
+        15:39:55 +0000","gate":null},"stopActivity":null},{"arrive":{"dateTime":"2022-06-25
+        18:50:00","hrs":18,"mins":50,"time":"18:50"},"depart":{"dateTime":"2022-06-25
+        18:50:00","hrs":18,"mins":50,"time":"18:50"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        19:59:00","hrs":19,"mins":59,"time":"19:59"},"etaDepart":{"dateTime":"2022-06-25
+        19:59:00","hrs":19,"mins":59,"time":"19:59"},"etaLayover":0,"arrive":null,"depart":null,"atStop":false,"late":true,"status":"future","timestamp":"2022-06-25
+        15:39:55 +0000","gate":null},"stopActivity":null}],"route":"491","dir":"O","journeyId":"AH","reference":null,"linkName":"London-Great_Yarmouth","duration":{"hrs":3,"mins":50,"time":"03:50"},"multiDay":false,"depart":"LONDON
+        VICTORIA Coach Station","arrival":"Great Yarmouth","live":{"vehicleId":"233553","vehicle":"BV19
+        XOZ","lat":51.491697,"lon":-0.149287,"bearing":323,"status":"0","timestamp":{"dateTime":"2022-06-25
+        15:39:55","hrs":15,"mins":39,"time":"15:39"},"timeZone":"BST","geoLocation":"Buckingham
+        Palace Road, London"},"duplicateCount":null,"dups":null,"started":null,"next":{"date":"2022-06-25","linkDate":"25-06-2022","journeyId":"AL"},"prev":{"date":"2022-06-25","linkDate":"25-06-2022","journeyId":"AF"},"customerFeedbackUrl":null},{"date":"2022-06-25","linkDate":"25-06-2022","startTime":{"dateTime":"2022-06-25
+        17:30:00","hrs":17,"mins":30,"time":"17:30"},"timetables":[{"arrive":{"dateTime":"2022-06-25
+        17:30:00","hrs":17,"mins":30,"time":"17:30"},"depart":{"dateTime":"2022-06-25
+        17:30:00","hrs":17,"mins":30,"time":"17:30"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":null,"stopActivity":null},null,null,{"arrive":{"dateTime":"2022-06-25
+        20:25:00","hrs":20,"mins":25,"time":"20:25"},"depart":{"dateTime":"2022-06-25
+        20:25:00","hrs":20,"mins":25,"time":"20:25"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":null,"stopActivity":null},{"arrive":{"dateTime":"2022-06-25
+        20:40:00","hrs":20,"mins":40,"time":"20:40"},"depart":{"dateTime":"2022-06-25
+        20:45:00","hrs":20,"mins":45,"time":"20:45"},"layover":5,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":null,"stopActivity":null},{"arrive":{"dateTime":"2022-06-25
+        21:00:00","hrs":21,"mins":0,"time":"21:00"},"depart":{"dateTime":"2022-06-25
+        21:00:00","hrs":21,"mins":0,"time":"21:00"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":null,"stopActivity":null},{"arrive":{"dateTime":"2022-06-25
+        21:20:00","hrs":21,"mins":20,"time":"21:20"},"depart":{"dateTime":"2022-06-25
+        21:20:00","hrs":21,"mins":20,"time":"21:20"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":null,"stopActivity":null}],"route":"491","dir":"O","journeyId":"AL","reference":null,"linkName":"London-Great_Yarmouth","duration":{"hrs":3,"mins":50,"time":"03:50"},"multiDay":false,"depart":"LONDON
+        VICTORIA Coach Station","arrival":"Great Yarmouth","live":null,"duplicateCount":null,"dups":null,"started":null,"next":null,"prev":{"date":"2022-06-25","linkDate":"25-06-2022","journeyId":"AH"},"customerFeedbackUrl":null}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Sat, 25 Jun 2022 14:40:38 GMT
+      Server:
+      - nginx
+      Strict-Transport-Security:
+      - max-age=31536000
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      content-length:
+      - '16413'
+    status:
+      code: 200
+      message: ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.27.1
+    method: GET
+    uri: https://coachtracker.nationalexpress.com/api/eta/routes/491/I
+  response:
+    body:
+      string: '{"name":"491","dir":"I","colour":"#7cd238","category":"London","depart":"Great
+        Yarmouth","arrival":"LONDON VICTORIA Coach Station","time":"2022-06-25 14:40:38
+        +0000","services":[{"date":"2022-06-25","linkDate":"25-06-2022","startTime":{"dateTime":"2022-06-25
+        07:30:00","hrs":7,"mins":30,"time":"07:30"},"timetables":[{"arrive":{"dateTime":"2022-06-25
+        07:30:00","hrs":7,"mins":30,"time":"07:30"},"depart":{"dateTime":"2022-06-25
+        07:30:00","hrs":7,"mins":30,"time":"07:30"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        07:22:16","hrs":7,"mins":22,"time":"07:22"},"etaDepart":{"dateTime":"2022-06-25
+        07:28:16","hrs":7,"mins":28,"time":"07:28"},"etaLayover":6,"arrive":{"dateTime":"2022-06-25
+        07:22:16","hrs":7,"mins":22,"time":"07:22"},"depart":{"dateTime":"2022-06-25
+        07:28:13","hrs":7,"mins":28,"time":"07:28"},"atStop":false,"late":false,"status":"visited","timestamp":"2022-06-25
+        07:22:16 +0000","gate":null},"stopActivity":null},{"arrive":{"dateTime":"2022-06-25
+        07:45:00","hrs":7,"mins":45,"time":"07:45"},"depart":{"dateTime":"2022-06-25
+        07:45:00","hrs":7,"mins":45,"time":"07:45"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        07:41:07","hrs":7,"mins":41,"time":"07:41"},"etaDepart":{"dateTime":"2022-06-25
+        07:41:07","hrs":7,"mins":41,"time":"07:41"},"etaLayover":0,"arrive":{"dateTime":"2022-06-25
+        07:41:07","hrs":7,"mins":41,"time":"07:41"},"depart":{"dateTime":"2022-06-25
+        07:41:29","hrs":7,"mins":41,"time":"07:41"},"atStop":false,"late":false,"status":"visited","timestamp":"2022-06-25
+        07:41:07 +0000","gate":null},"stopActivity":null},{"arrive":{"dateTime":"2022-06-25
+        08:05:00","hrs":8,"mins":5,"time":"08:05"},"depart":{"dateTime":"2022-06-25
+        08:15:00","hrs":8,"mins":15,"time":"08:15"},"layover":10,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        07:59:43","hrs":7,"mins":59,"time":"07:59"},"etaDepart":{"dateTime":"2022-06-25
+        08:17:43","hrs":8,"mins":17,"time":"08:17"},"etaLayover":18,"arrive":{"dateTime":"2022-06-25
+        07:59:43","hrs":7,"mins":59,"time":"07:59"},"depart":{"dateTime":"2022-06-25
+        08:17:31","hrs":8,"mins":17,"time":"08:17"},"atStop":false,"late":false,"status":"visited","timestamp":"2022-06-25
+        07:59:43 +0000","gate":null},"stopActivity":null},null,null,null,{"arrive":{"dateTime":"2022-06-25
+        11:20:00","hrs":11,"mins":20,"time":"11:20"},"depart":{"dateTime":"2022-06-25
+        11:20:00","hrs":11,"mins":20,"time":"11:20"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        11:11:09","hrs":11,"mins":11,"time":"11:11"},"etaDepart":{"dateTime":"2022-06-25
+        11:11:09","hrs":11,"mins":11,"time":"11:11"},"etaLayover":0,"arrive":{"dateTime":"2022-06-25
+        11:11:09","hrs":11,"mins":11,"time":"11:11"},"depart":{"dateTime":"2022-06-25
+        11:11:09","hrs":11,"mins":11,"time":"11:11"},"atStop":true,"late":false,"status":"visited","timestamp":"2022-06-25
+        11:11:09 +0000","gate":null},"stopActivity":null}],"route":"491","dir":"I","journeyId":"AF","reference":null,"linkName":"Great_Yarmouth-London","duration":{"hrs":3,"mins":50,"time":"03:50"},"multiDay":false,"depart":"Great
+        Yarmouth","arrival":"LONDON VICTORIA Coach Station","live":{"vehicleId":"233582","vehicle":"BV19
+        XPA","lat":51.524577,"lon":-0.036227,"bearing":56,"status":"-1","timestamp":{"dateTime":"2022-06-25
+        13:18:55","hrs":13,"mins":18,"time":"13:18"},"timeZone":"BST","geoLocation":"Mile
+        End Road, London"},"duplicateCount":null,"dups":null,"started":null,"next":{"date":"2022-06-25","linkDate":"25-06-2022","journeyId":"AI"},"prev":null,"customerFeedbackUrl":null},{"date":"2022-06-25","linkDate":"25-06-2022","startTime":{"dateTime":"2022-06-25
+        09:40:00","hrs":9,"mins":40,"time":"09:40"},"timetables":[{"arrive":{"dateTime":"2022-06-25
+        09:40:00","hrs":9,"mins":40,"time":"09:40"},"depart":{"dateTime":"2022-06-25
+        09:40:00","hrs":9,"mins":40,"time":"09:40"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        09:45:55","hrs":9,"mins":45,"time":"09:45"},"etaDepart":{"dateTime":"2022-06-25
+        09:48:55","hrs":9,"mins":48,"time":"09:48"},"etaLayover":3,"arrive":{"dateTime":"2022-06-25
+        09:45:55","hrs":9,"mins":45,"time":"09:45"},"depart":{"dateTime":"2022-06-25
+        09:48:51","hrs":9,"mins":48,"time":"09:48"},"atStop":false,"late":false,"status":"visited","timestamp":"2022-06-25
+        09:45:55 +0000","gate":null},"stopActivity":null},{"arrive":{"dateTime":"2022-06-25
+        09:55:00","hrs":9,"mins":55,"time":"09:55"},"depart":{"dateTime":"2022-06-25
+        09:55:00","hrs":9,"mins":55,"time":"09:55"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        10:02:19","hrs":10,"mins":2,"time":"10:02"},"etaDepart":{"dateTime":"2022-06-25
+        10:02:19","hrs":10,"mins":2,"time":"10:02"},"etaLayover":0,"arrive":{"dateTime":"2022-06-25
+        10:02:19","hrs":10,"mins":2,"time":"10:02"},"depart":{"dateTime":"2022-06-25
+        10:02:27","hrs":10,"mins":2,"time":"10:02"},"atStop":false,"late":false,"status":"visited","timestamp":"2022-06-25
+        10:02:19 +0000","gate":null},"stopActivity":null},{"arrive":{"dateTime":"2022-06-25
+        10:20:00","hrs":10,"mins":20,"time":"10:20"},"depart":{"dateTime":"2022-06-25
+        10:30:00","hrs":10,"mins":30,"time":"10:30"},"layover":10,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        10:22:25","hrs":10,"mins":22,"time":"10:22"},"etaDepart":{"dateTime":"2022-06-25
+        10:31:25","hrs":10,"mins":31,"time":"10:31"},"etaLayover":9,"arrive":{"dateTime":"2022-06-25
+        10:22:25","hrs":10,"mins":22,"time":"10:22"},"depart":{"dateTime":"2022-06-25
+        10:31:29","hrs":10,"mins":31,"time":"10:31"},"atStop":false,"late":false,"status":"visited","timestamp":"2022-06-25
+        10:22:25 +0000","gate":null},"stopActivity":null},{"arrive":{"dateTime":"2022-06-25
+        11:10:00","hrs":11,"mins":10,"time":"11:10"},"depart":{"dateTime":"2022-06-25
+        11:10:00","hrs":11,"mins":10,"time":"11:10"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        11:18:21","hrs":11,"mins":18,"time":"11:18"},"etaDepart":{"dateTime":"2022-06-25
+        11:26:21","hrs":11,"mins":26,"time":"11:26"},"etaLayover":8,"arrive":{"dateTime":"2022-06-25
+        11:18:21","hrs":11,"mins":18,"time":"11:18"},"depart":{"dateTime":"2022-06-25
+        11:25:59","hrs":11,"mins":25,"time":"11:25"},"atStop":false,"late":true,"status":"visited","timestamp":"2022-06-25
+        11:18:21 +0000","gate":null},"stopActivity":null},null,{"arrive":{"dateTime":"2022-06-25
+        12:50:00","hrs":12,"mins":50,"time":"12:50"},"depart":{"dateTime":"2022-06-25
+        12:50:00","hrs":12,"mins":50,"time":"12:50"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":null,"stopActivity":null},{"arrive":{"dateTime":"2022-06-25
+        13:50:00","hrs":13,"mins":50,"time":"13:50"},"depart":{"dateTime":"2022-06-25
+        13:50:00","hrs":13,"mins":50,"time":"13:50"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":null,"stopActivity":null}],"route":"491","dir":"I","journeyId":"AI","reference":null,"linkName":"Great_Yarmouth-London","duration":{"hrs":4,"mins":10,"time":"04:10"},"multiDay":false,"depart":"Great
+        Yarmouth","arrival":"LONDON VICTORIA Coach Station","live":null,"duplicateCount":null,"dups":null,"started":null,"next":{"date":"2022-06-25","linkDate":"25-06-2022","journeyId":"AJ"},"prev":{"date":"2022-06-25","linkDate":"25-06-2022","journeyId":"AF"},"customerFeedbackUrl":null},{"date":"2022-06-25","linkDate":"25-06-2022","startTime":{"dateTime":"2022-06-25
+        12:15:00","hrs":12,"mins":15,"time":"12:15"},"timetables":[{"arrive":{"dateTime":"2022-06-25
+        12:15:00","hrs":12,"mins":15,"time":"12:15"},"depart":{"dateTime":"2022-06-25
+        12:15:00","hrs":12,"mins":15,"time":"12:15"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        12:13:41","hrs":12,"mins":13,"time":"12:13"},"etaDepart":{"dateTime":"2022-06-25
+        12:20:41","hrs":12,"mins":20,"time":"12:20"},"etaLayover":7,"arrive":{"dateTime":"2022-06-25
+        12:13:41","hrs":12,"mins":13,"time":"12:13"},"depart":{"dateTime":"2022-06-25
+        12:20:26","hrs":12,"mins":20,"time":"12:20"},"atStop":false,"late":false,"status":"visited","timestamp":"2022-06-25
+        12:13:41 +0000","gate":null},"stopActivity":null},{"arrive":{"dateTime":"2022-06-25
+        12:30:00","hrs":12,"mins":30,"time":"12:30"},"depart":{"dateTime":"2022-06-25
+        12:30:00","hrs":12,"mins":30,"time":"12:30"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        12:34:02","hrs":12,"mins":34,"time":"12:34"},"etaDepart":{"dateTime":"2022-06-25
+        12:34:02","hrs":12,"mins":34,"time":"12:34"},"etaLayover":0,"arrive":{"dateTime":"2022-06-25
+        12:34:02","hrs":12,"mins":34,"time":"12:34"},"depart":{"dateTime":"2022-06-25
+        12:34:02","hrs":12,"mins":34,"time":"12:34"},"atStop":false,"late":false,"status":"visited","timestamp":"2022-06-25
+        12:34:02 +0000","gate":null},"stopActivity":null},{"arrive":{"dateTime":"2022-06-25
+        12:50:00","hrs":12,"mins":50,"time":"12:50"},"depart":{"dateTime":"2022-06-25
+        13:00:00","hrs":13,"mins":0,"time":"13:00"},"layover":10,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        12:55:21","hrs":12,"mins":55,"time":"12:55"},"etaDepart":{"dateTime":"2022-06-25
+        13:03:21","hrs":13,"mins":3,"time":"13:03"},"etaLayover":8,"arrive":{"dateTime":"2022-06-25
+        12:55:21","hrs":12,"mins":55,"time":"12:55"},"depart":{"dateTime":"2022-06-25
+        13:03:25","hrs":13,"mins":3,"time":"13:03"},"atStop":false,"late":false,"status":"visited","timestamp":"2022-06-25
+        12:55:21 +0000","gate":null},"stopActivity":null},null,{"arrive":{"dateTime":"2022-06-25
+        13:15:00","hrs":13,"mins":15,"time":"13:15"},"depart":{"dateTime":"2022-06-25
+        13:15:00","hrs":13,"mins":15,"time":"13:15"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        13:18:02","hrs":13,"mins":18,"time":"13:18"},"etaDepart":{"dateTime":"2022-06-25
+        13:18:02","hrs":13,"mins":18,"time":"13:18"},"etaLayover":0,"arrive":{"dateTime":"2022-06-25
+        13:18:02","hrs":13,"mins":18,"time":"13:18"},"depart":{"dateTime":"2022-06-25
+        13:18:21","hrs":13,"mins":18,"time":"13:18"},"atStop":false,"late":false,"status":"visited","timestamp":"2022-06-25
+        13:18:02 +0000","gate":null},"stopActivity":null},{"arrive":{"dateTime":"2022-06-25
+        15:20:00","hrs":15,"mins":20,"time":"15:20"},"depart":{"dateTime":"2022-06-25
+        15:20:00","hrs":15,"mins":20,"time":"15:20"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        15:53:00","hrs":15,"mins":53,"time":"15:53"},"etaDepart":{"dateTime":"2022-06-25
+        15:53:00","hrs":15,"mins":53,"time":"15:53"},"etaLayover":0,"arrive":null,"depart":null,"atStop":false,"late":true,"status":"next_stop","timestamp":"2022-06-25
+        15:40:06 +0000","gate":null},"stopActivity":null},{"arrive":{"dateTime":"2022-06-25
+        16:20:00","hrs":16,"mins":20,"time":"16:20"},"depart":{"dateTime":"2022-06-25
+        16:20:00","hrs":16,"mins":20,"time":"16:20"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        16:53:00","hrs":16,"mins":53,"time":"16:53"},"etaDepart":{"dateTime":"2022-06-25
+        16:53:00","hrs":16,"mins":53,"time":"16:53"},"etaLayover":0,"arrive":null,"depart":null,"atStop":false,"late":true,"status":"future","timestamp":"2022-06-25
+        15:40:06 +0000","gate":null},"stopActivity":null}],"route":"491","dir":"I","journeyId":"AJ","reference":null,"linkName":"Great_Yarmouth-London","duration":{"hrs":4,"mins":5,"time":"04:05"},"multiDay":false,"depart":"Great
+        Yarmouth","arrival":"LONDON VICTORIA Coach Station","live":{"vehicleId":"150845","vehicle":"BX65
+        WAJ","lat":51.584115,"lon":0.040173,"bearing":182,"status":"-1","timestamp":{"dateTime":"2022-06-25
+        15:40:06","hrs":15,"mins":40,"time":"15:40"},"timeZone":"BST","geoLocation":"North
+        Circular Road, London"},"duplicateCount":null,"dups":null,"started":null,"next":{"date":"2022-06-25","linkDate":"25-06-2022","journeyId":"AK"},"prev":{"date":"2022-06-25","linkDate":"25-06-2022","journeyId":"AI"},"customerFeedbackUrl":null},{"date":"2022-06-25","linkDate":"25-06-2022","startTime":{"dateTime":"2022-06-25
+        14:15:00","hrs":14,"mins":15,"time":"14:15"},"timetables":[{"arrive":{"dateTime":"2022-06-25
+        14:15:00","hrs":14,"mins":15,"time":"14:15"},"depart":{"dateTime":"2022-06-25
+        14:15:00","hrs":14,"mins":15,"time":"14:15"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        14:03:40","hrs":14,"mins":3,"time":"14:03"},"etaDepart":{"dateTime":"2022-06-25
+        14:16:40","hrs":14,"mins":16,"time":"14:16"},"etaLayover":13,"arrive":{"dateTime":"2022-06-25
+        14:03:40","hrs":14,"mins":3,"time":"14:03"},"depart":{"dateTime":"2022-06-25
+        14:16:26","hrs":14,"mins":16,"time":"14:16"},"atStop":false,"late":false,"status":"visited","timestamp":"2022-06-25
+        14:03:40 +0000","gate":null},"stopActivity":null},{"arrive":{"dateTime":"2022-06-25
+        14:30:00","hrs":14,"mins":30,"time":"14:30"},"depart":{"dateTime":"2022-06-25
+        14:30:00","hrs":14,"mins":30,"time":"14:30"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        14:31:07","hrs":14,"mins":31,"time":"14:31"},"etaDepart":{"dateTime":"2022-06-25
+        14:32:07","hrs":14,"mins":32,"time":"14:32"},"etaLayover":1,"arrive":{"dateTime":"2022-06-25
+        14:31:07","hrs":14,"mins":31,"time":"14:31"},"depart":{"dateTime":"2022-06-25
+        14:32:28","hrs":14,"mins":32,"time":"14:32"},"atStop":false,"late":false,"status":"visited","timestamp":"2022-06-25
+        14:31:07 +0000","gate":null},"stopActivity":null},{"arrive":{"dateTime":"2022-06-25
+        14:50:00","hrs":14,"mins":50,"time":"14:50"},"depart":{"dateTime":"2022-06-25
+        15:00:00","hrs":15,"mins":0,"time":"15:00"},"layover":10,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        14:54:15","hrs":14,"mins":54,"time":"14:54"},"etaDepart":{"dateTime":"2022-06-25
+        15:09:15","hrs":15,"mins":9,"time":"15:09"},"etaLayover":15,"arrive":{"dateTime":"2022-06-25
+        14:54:15","hrs":14,"mins":54,"time":"14:54"},"depart":{"dateTime":"2022-06-25
+        15:09:33","hrs":15,"mins":9,"time":"15:09"},"atStop":false,"late":false,"status":"visited","timestamp":"2022-06-25
+        14:54:15 +0000","gate":null},"stopActivity":null},{"arrive":{"dateTime":"2022-06-25
+        15:40:00","hrs":15,"mins":40,"time":"15:40"},"depart":{"dateTime":"2022-06-25
+        15:40:00","hrs":15,"mins":40,"time":"15:40"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        15:54:00","hrs":15,"mins":54,"time":"15:54"},"etaDepart":{"dateTime":"2022-06-25
+        15:54:00","hrs":15,"mins":54,"time":"15:54"},"etaLayover":0,"arrive":null,"depart":null,"atStop":false,"late":true,"status":"next_stop","timestamp":"2022-06-25
+        15:40:21 +0000","gate":null},"stopActivity":null},null,null,{"arrive":{"dateTime":"2022-06-25
+        18:20:00","hrs":18,"mins":20,"time":"18:20"},"depart":{"dateTime":"2022-06-25
+        18:20:00","hrs":18,"mins":20,"time":"18:20"},"layover":0,"timingPoint":0,"fareStage":0,"distance":0,"status":null,"timeZone":"BST","actualStatus":-1,"duplicateCount":0,"delayed":false,"eta":{"etaArrive":{"dateTime":"2022-06-25
+        18:34:00","hrs":18,"mins":34,"time":"18:34"},"etaDepart":{"dateTime":"2022-06-25
+        18:34:00","hrs":18,"mins":34,"time":"18:34"},"etaLayover":0,"arrive":null,"depart":null,"atStop":false,"late":true,"status":"future","timestamp":"2022-06-25
+        15:40:21 +0000","gate":null},"stopActivity":null}],"route":"491","dir":"I","journeyId":"AK","reference":null,"linkName":"Great_Yarmouth-London","duration":{"hrs":4,"mins":5,"time":"04:05"},"multiDay":false,"depart":"Great
+        Yarmouth","arrival":"LONDON VICTORIA Coach Station","live":{"vehicleId":"233734","vehicle":"BV19
+        XRA","lat":52.465688,"lon":0.925483,"bearing":246,"status":"1","timestamp":{"dateTime":"2022-06-25
+        15:40:21","hrs":15,"mins":40,"time":"15:40"},"timeZone":"BST","geoLocation":"A11,
+        Breckland, Norfolk"},"duplicateCount":null,"dups":null,"started":null,"next":null,"prev":{"date":"2022-06-25","linkDate":"25-06-2022","journeyId":"AJ"},"customerFeedbackUrl":null}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Sat, 25 Jun 2022 14:40:38 GMT
+      Server:
+      - nginx
+      Strict-Transport-Security:
+      - max-age=31536000
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      content-length:
+      - '17670'
+    status:
+      code: 200
+      message: ''
+version: 1

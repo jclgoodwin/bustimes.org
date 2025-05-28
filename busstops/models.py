@@ -3,7 +3,7 @@
 import datetime
 import logging
 import re
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlparse
 
 import yaml
 from autoslug import AutoSlugField
@@ -199,6 +199,7 @@ class StopArea(models.Model):
 
 class DataSource(models.Model):
     name = models.CharField(max_length=255, db_index=True)
+    description = models.CharField(blank=True)
     url = models.URLField(blank=True, db_index=True)
     datetime = models.DateTimeField(null=True, blank=True)
     sha1 = models.CharField(max_length=40, null=True, blank=True, db_index=True)
@@ -206,6 +207,7 @@ class DataSource(models.Model):
     source = models.ForeignKey(
         TimetableDataSource, models.CASCADE, null=True, blank=True
     )
+    # for HTTP "if-modified-since" and "if-none-match":
     last_modified = models.DateTimeField(null=True, blank=True)
     etag = models.CharField(max_length=255, blank=True)
 
@@ -222,37 +224,69 @@ class DataSource(models.Model):
         return self.name.split("_")[0]
 
     def get_nice_url(self):
+        if not self.url:
+            return
+
+        parsed_url = urlparse(self.url)
+
         # BODS
-        if self.url.startswith("https://data.bus-data.dft.gov.uk"):
+        if parsed_url.hostname.endswith(".bus-data.dft.gov.uk"):
             return self.url.replace("download/", "")
         # Passenger
-        if "open-data" in self.url or "data.discover" in self.url:
+        if (
+            parsed_url.path == "/open-data"
+            or parsed_url.hostname == "data.discoverpassenger.com"
+        ):
             return self.url
-        # Stagecoach
-        if "stagecoach" in self.url:
-            return "https://www.stagecoachbus.com/open-data"
+        match parsed_url.hostname:
+            case "opendata.stagecoachbus.com":
+                return "https://www.stagecoachbus.com/open-data"
+            case "www.transportforireland.ie":
+                return f"https://www.transportforireland.ie/transitData/PT_Data.html#:~:text={self.name}"
+
+    def is_tnds(self):
+        match self.name:
+            case (
+                "L"
+                | "GB"
+                | "Y"
+                | "SW"
+                | "SE"
+                | "EM"
+                | "EA"
+                | "WM"
+                | "S"
+                | "NE"
+                | "NW"
+                | "W"
+                | "IM"
+            ):
+                return True
+        return False
 
     def credit(self, route=None):
         url = self.get_nice_url()
         text = None
         date = self.datetime
 
-        if self.name == "L":
-            text = "Transport for London"
-        elif self.name == "GB":
-            url = "https://data.bus-data.dft.gov.uk/coach/download"
-            text = "the Bus Open Data Service (BODS)"
-        elif "tnds" in self.url:
-            url = "https://www.travelinedata.org.uk/"
-            text = "the Traveline National Dataset (TNDS)"
+        if self.is_tnds():
+            match self.name:
+                case "L":
+                    text = "Transport for London"
+                case "GB":
+                    url = "https://data.bus-data.dft.gov.uk/coach/download"
+                    text = "the Bus Open Data Service (BODS)"
+                case _:
+                    url = "https://www.travelinedata.org.uk/"
+                    text = "the Traveline National Dataset (TNDS)"
         elif url:
             text = self.get_nice_name()
-            if url and "bus-data.dft.gov.uk" in url:
+            hostname = urlparse(url).hostname
+            if hostname.endswith(".bus-data.dft.gov.uk"):
                 text = f"{text}/Bus Open Data Service (BODS)"
-        elif "transportforireland" in self.url:
-            url = f"https://www.transportforireland.ie/transitData/PT_Data.html#:~:text={self.name}"
-            text = "National Transport Authority"
-        elif self.url.startswith("https://opendata.ticketer.com/uk/"):
+            elif hostname == "www.transportforireland.ie":
+                text = "National Transport Authority"
+        elif urlparse(self.url).hostname == "opendata.ticketer.com":
             text = self.url
         elif self.name == "MET" or self.name == "ULB":
             url = self.url
@@ -644,12 +678,14 @@ class ServiceManager(models.Manager):
         vector = SearchVector(
             StringAgg("route__line_name", delimiter=" ", distinct=True, default=""),
             weight="A",
+            config="english",
         )
         vector += SearchVector("line_brand", weight="A", config="english")
         vector += SearchVector("description", weight="B", config="english")
         vector += SearchVector(
             StringAgg("operator__noc", delimiter=" ", default=""),
             weight="B",
+            config="english",
         )
         vector += SearchVector(
             StringAgg("operator__name", delimiter=" ", default=""),

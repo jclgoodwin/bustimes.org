@@ -28,6 +28,7 @@ from busstops.models import (
     StopPoint,
     StopUsage,
 )
+from busstops.utils import get_datetime
 from transxchange.txc import TransXChange
 from vehicles.models import get_text_colour
 from vosa.models import Registration
@@ -232,8 +233,10 @@ class Command(BaseCommand):
         if self.region_id:
             url = f"ftp://ftp.tnds.basemap.co.uk/{archive_name}"
             self.source, _ = DataSource.objects.get_or_create(
-                {"name": self.region_id}, url=url
+                {"url": url},
+                name=self.region_id,
             )
+            assert self.source.is_tnds()
         else:
             self.source, _ = DataSource.objects.get_or_create(name=archive_name)
 
@@ -243,7 +246,7 @@ class Command(BaseCommand):
         """
 
         operator_code = operator_element.findtext("NationalOperatorCode")
-        if not self.is_tnds() and not operator_code:
+        if not self.source.is_tnds() and not operator_code:
             operator_code = operator_element.findtext("OperatorCode")
 
         if operator_code:
@@ -280,11 +283,11 @@ class Command(BaseCommand):
             if operator_code.startswith("Rail"):
                 operator_code = operator_code.removeprefix("Rail")
 
-            if self.region_id:
-                operator = get_operator_by(self.region_id, operator_code)
-            if not operator:
-                operator = get_operator_by("National Operator Codes", operator_code)
-            if operator:
+            if self.region_id and (
+                operator := get_operator_by(self.region_id, operator_code)
+            ):
+                return operator
+            if operator := get_operator_by("National Operator Codes", operator_code):
                 return operator
 
         missing_operator = {
@@ -538,6 +541,10 @@ class Command(BaseCommand):
             for date_range in operating_profile.nonoperation_days
         ]
         for date_range in operating_profile.operation_days:
+            if not date_range.start:
+                # this should never happen
+                continue
+
             calendar_date = get_calendar_date(
                 date_range=date_range, operation=True, special=True
             )
@@ -929,9 +936,6 @@ class Command(BaseCommand):
                     description = " - ".join([origin] + vias + [destination])
         return description
 
-    def is_tnds(self):
-        return self.source.url.startswith("ftp://ftp.tnds.basemap.co.uk/")
-
     def should_defer_to_other_source(self, operators: dict, line_name: str):
         if self.source.name == "L" or not operators:
             return False
@@ -1014,7 +1018,7 @@ class Command(BaseCommand):
         if "NATX-National_Express_Ireland" in filename:
             return
 
-        if self.is_tnds():
+        if self.source.is_tnds():
             if self.source.name != "L":
                 if operators and all(
                     operator.noc in self.open_data_operators
@@ -1045,7 +1049,7 @@ class Command(BaseCommand):
             line.line_name = line.line_name.replace("_", " ")
 
             # prefer a BODS-type source over TNDS
-            if self.is_tnds() and self.should_defer_to_other_source(
+            if self.source.is_tnds() and self.should_defer_to_other_source(
                 operators, line.line_name
             ):
                 continue
@@ -1107,7 +1111,7 @@ class Command(BaseCommand):
 
             service_code = None
 
-            if self.is_tnds():
+            if self.source.is_tnds():
                 service_code = get_service_code(filename)
                 if service_code is None:
                     service_code = txc_service.service_code
@@ -1252,22 +1256,7 @@ class Command(BaseCommand):
                 if outbound_description or inbound_description:
                     service.description = outbound_description or inbound_description
 
-            # does is the service already exist in the database?
-
-            if service.id:
-                service_created = False
-            else:
-                service_created = True
             service.save()
-
-            # if not service_created:
-            #     if (
-            #         "_" in service.slug
-            #         or "-" not in service.slug
-            #         or not existing_current_service
-            #     ):
-            #         service.slug = ""
-            #         service.save(update_fields=["slug"])
 
             if operators:
                 if existing and not existing_current_service:
@@ -1307,6 +1296,7 @@ class Command(BaseCommand):
             # timetable data:
 
             route_defaults = {
+                "line_id": line.id,
                 "line_name": line.line_name,
                 "line_brand": line_brand or "",
                 "outbound_description": line.outbound_description or "",
@@ -1315,6 +1305,11 @@ class Command(BaseCommand):
                 "end_date": txc_service.operating_period.end,
                 "service": service,
                 "revision_number": transxchange.attributes["RevisionNumber"],
+                "revision_number_context": "",
+                "created_at": get_datetime(transxchange.attributes["CreationDateTime"]),
+                "modified_at": get_datetime(
+                    transxchange.attributes["ModificationDateTime"]
+                ),
                 "service_code": txc_service.service_code,
                 "public_use": service.public_use,
             }
@@ -1357,15 +1352,7 @@ class Command(BaseCommand):
 
                 # we're not interested in straight lines between stops
                 if any(len(link.track) > 2 for link in route_links):
-                    if service_created:
-                        existing_route_links = {}
-                    else:
-                        existing_route_links = {
-                            (link.from_stop_id, link.to_stop_id): link
-                            for link in service.routelink_set.all()
-                        }
-                    route_links_to_update = {}
-                    route_links_to_create = {}
+                    route_links_to_create = {}  # or update
 
                     for route_link in route_links:
                         from_stop = stops.get(route_link.from_stop)
@@ -1373,32 +1360,35 @@ class Command(BaseCommand):
 
                         if type(from_stop) is StopPoint and type(to_stop) is StopPoint:
                             key = (from_stop.atco_code, to_stop.atco_code)
-                            if key in existing_route_links:
-                                if key not in route_links_to_update:
-                                    route_links_to_update[key] = existing_route_links[
-                                        key
-                                    ]
-                                    route_links_to_update[
-                                        key
-                                    ].geometry = route_link.track
-                            else:
-                                route_links_to_create[key] = RouteLink(
-                                    from_stop_id=from_stop.atco_code,
-                                    to_stop_id=to_stop.atco_code,
-                                    geometry=route_link.track,
-                                    service=service,
-                                )
+                            route_links_to_create[key] = RouteLink(
+                                from_stop_id=from_stop.atco_code,
+                                to_stop_id=to_stop.atco_code,
+                                geometry=route_link.track,
+                                service=service,
+                            )
 
-                    RouteLink.objects.bulk_update(
-                        route_links_to_update.values(), ["geometry"]
+                    RouteLink.objects.bulk_create(
+                        route_links_to_create.values(),
+                        update_conflicts=True,
+                        update_fields=["geometry"],
+                        unique_fields=["from_stop", "to_stop", "service"],
                     )
-                    RouteLink.objects.bulk_create(route_links_to_create.values())
 
             route_code = filename
             if len(transxchange.services) > 1:
                 route_code += f"#{txc_service.service_code}"
             if len(txc_service.lines) > 1:
                 route_code += f"#{line.id}"
+
+            # diabolical trick - detect Ticketer data and set revision_number_context
+            if "tkt_oid" in operators:
+                parts = route_code.split("_")
+                if len(parts) > 5:
+                    route_defaults["revision_number_context"] = parts[1]
+                else:
+                    logger.warning(
+                        f"{filename} has {operators} but unexpected filename format"
+                    )
 
             route, route_created = Route.objects.update_or_create(
                 route_defaults, source=self.source, code=route_code

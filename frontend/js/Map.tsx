@@ -34,14 +34,19 @@ const imagesByName: { [imageName: string]: string } = {
   "route-stop-marker-circle": routeStopMarkerCircle,
   "route-stop-marker-dark": routeStopMarkerDark,
   "route-stop-marker-dark-circle": routeStopMarkerDarkCircle,
-  arrow: arrow,
+  "history-arrow": arrow,
 };
 
 const mapStyles: { [key: string]: string } = {
-  alidade_smooth: "Light",
+  positron: "Light",
+  // alidade_smooth: "Smooth",
   alidade_smooth_dark: "Dark",
   alidade_satellite: "Satellite",
   osm_bright: "Bright",
+  // bright: "Bright",
+  // liberty: "Liberty",
+  os_light: "Ordnance Survey light",
+  os_dark: "Ordnance Survey night",
 };
 
 type StyleSwitcherProps = {
@@ -153,7 +158,7 @@ export default function BusTimesMap(
       // ignore
     }
 
-    return darkModeQuery.matches ? "alidade_smooth_dark" : "alidade_smooth";
+    return darkModeQuery.matches ? "alidade_smooth_dark" : "positron";
   });
 
   useEffect(() => {
@@ -175,7 +180,7 @@ export default function BusTimesMap(
       const style = e.target.value;
       const defaultStyle = darkModeQuery.matches
         ? "alidade_smooth_dark"
-        : "alidade_smooth";
+        : "positron";
       setMapStyle(style);
       try {
         if (style === defaultStyle) {
@@ -201,20 +206,34 @@ export default function BusTimesMap(
   };
 
   useEffect(() => {
-    document.body.classList.toggle("dark-mode", mapStyle.endsWith("_dark"));
-  }, [mapStyle]);
+    document.body.classList.toggle(
+      "dark-mode",
+      mapStyle.endsWith("_dark") ||
+        (mapStyle === "alidade_satellite" && darkModeQuery.matches),
+    );
+  }, [mapStyle, darkModeQuery.matches]);
+
+  let mapStyleURL = `https://tiles.stadiamaps.com/styles/${mapStyle}.json`;
+  if (mapStyle === "os_light") {
+    mapStyleURL = "https://tiles.bustimes.org.uk/styles/light/style.json";
+  } else if (mapStyle === "os_dark") {
+    mapStyleURL = "https://tiles.bustimes.org.uk/styles/night/style.json";
+  } else if (mapStyle.indexOf("_") === -1) {
+    mapStyleURL = `https://tiles.openfreemap.org/styles/${mapStyle}`;
+  }
 
   return (
     <ThemeContext.Provider value={mapStyle}>
       <MapGL
         {...props}
         reuseMaps
+        crossSourceCollisions={false}
         touchPitch={false}
         pitchWithRotate={false}
         dragRotate={false}
         minZoom={2}
         maxZoom={18}
-        mapStyle={`https://tiles.stadiamaps.com/styles/${mapStyle}.json`}
+        mapStyle={mapStyleURL}
         RTLTextPlugin={""}
         attributionControl={false}
         // onError={(e) => captureException(e.error)}

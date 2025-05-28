@@ -2,6 +2,8 @@ import React from "react";
 
 import { Layer, type LayerProps, Source } from "react-map-gl/maplibre";
 
+import { getFont } from "./utils";
+
 import { ThemeContext } from "./Map";
 import type { TripTime } from "./TripTimetable";
 
@@ -11,8 +13,9 @@ type RouteProps = {
 
 export const Route = React.memo(function Route({ times }: RouteProps) {
   const theme = React.useContext(ThemeContext);
-  const darkMode =
-    theme === "alidade_smooth_dark" || theme === "alidade_satellite";
+  const darkMode = theme.endsWith("_dark") || theme === "alidade_satellite";
+
+  const font = getFont(theme);
 
   const stopsStyle: LayerProps = {
     id: "stops",
@@ -20,8 +23,8 @@ export const Route = React.memo(function Route({ times }: RouteProps) {
     layout: {
       "symbol-sort-key": ["get", "priority"],
       "text-field": ["get", "time"],
-      "text-size": 11,
-      "text-font": ["Stadia Regular"],
+      "text-size": 12,
+      "text-font": font,
     },
     paint: {
       "text-color": darkMode ? "#fff" : "#333",

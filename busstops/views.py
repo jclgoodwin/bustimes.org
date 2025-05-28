@@ -11,7 +11,7 @@ import requests
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.gis.db.models.functions import Distance
-from django.contrib.gis.geos import MultiLineString, Point
+from django.contrib.gis.geos import Point
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.expressions import ArraySubquery
 from django.contrib.postgres.search import SearchHeadline, SearchQuery, SearchRank
@@ -854,6 +854,24 @@ class OperatorDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        context["situations"] = (
+            Situation.objects.filter(
+                publication_window__contains=Now(),
+                consequence__operators=self.object,
+                current=True,
+            )
+            .distinct()
+            .prefetch_related(
+                Prefetch(
+                    "consequence_set",
+                    queryset=Consequence.objects.filter(operators=self.object),
+                    to_attr="consequences",
+                ),
+                "link_set",
+                "validityperiod_set",
+            )
+        )
+
         # services list:
 
         services = (
@@ -895,6 +913,10 @@ class OperatorDetailView(DetailView):
         if any(code.source_name == "MyTrip" for code in operator_codes):
             context["tickets_link"] = reverse(
                 "operator_tickets", kwargs={"slug": self.object.slug}
+            )
+        elif self.object.name == "FlixBus":
+            context["tickets_link"] = (
+                "https://www.awin1.com/cread.php?awinmid=110896&awinaffid=242611&clickref=ot"
             )
         elif self.object.name == "National Express":
             context["tickets_link"] = (
@@ -1219,7 +1241,7 @@ class ServiceDetailView(DetailView):
             for operator in operators:
                 if operator.name == "National Express":
                     context["tickets_link"] = (
-                        "https://nationalexpress.prf.hn/click/camref:1011ljPYw"
+                        f"https://nationalexpress.prf.hn/click/camref:1011ljPYw/pubref:{self.object.line_name}"
                     )
                     context["links"].append(
                         {
@@ -1228,7 +1250,17 @@ class ServiceDetailView(DetailView):
                         }
                     )
                     break
-
+                elif operator.name == "FlixBus":
+                    context["tickets_link"] = (
+                        f"https://www.awin1.com/cread.php?awinmid=110896&awinaffid=242611&clickref={self.object.line_name}"
+                    )
+                    context["links"].append(
+                        {
+                            "url": context["tickets_link"],
+                            "text": "Buy tickets at FlixBus",
+                        }
+                    )
+                    break
         context["fare_tables"] = self.get_fare_tables()
 
         for url, text in self.object.get_traveline_links(date):
@@ -1344,7 +1376,6 @@ def service_map_data(request, service_id):
                 for stop in stops.values()
             ],
         },
-        "geometry": {"type": "MultiLineString", "coordinates": []},
     }
 
     trips = (
@@ -1362,8 +1393,19 @@ def service_map_data(request, service_id):
         for route_link in service.routelink_set.all()
     }
 
-    if not route_links and type(service.geometry) is MultiLineString:
-        multi_line_string = service.geometry.coords
+    if (
+        not route_links
+        and service.geometry
+        and service.geometry.geom_type
+        in (
+            "LineString",
+            "MultiLineString",
+        )
+    ):
+        data["geometry"] = {
+            "type": service.geometry.geom_type,
+            "coordinates": service.geometry.coords,
+        }
     else:
         # build pairs of consecutive stops
 
@@ -1405,7 +1447,7 @@ def service_map_data(request, service_id):
 
             previous_pair = pair
 
-    data["geometry"]["coordinates"] = multi_line_string
+        data["geometry"] = {"type": "MultiLineString", "coordinates": multi_line_string}
 
     return JsonResponse(data)
 
@@ -1517,10 +1559,12 @@ def search(request):
                 queryset = queryset.annotate(rank=rank).order_by("-rank")
 
                 if key == "operators" or key == "localities":
-                    queryset = queryset.annotate(headline=SearchHeadline("name", query))
+                    queryset = queryset.annotate(
+                        headline=SearchHeadline("name", query, config="english")
+                    )
                 elif key == "services":
                     queryset = queryset.annotate(
-                        headline=SearchHeadline("description", query)
+                        headline=SearchHeadline("description", query, config="english")
                     )
                 context[key] = Paginator(queryset, 20).get_page(request.GET.get("page"))
 

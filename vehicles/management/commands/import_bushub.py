@@ -1,18 +1,12 @@
-import ciso8601
 import requests
 from django.contrib.gis.geos import GEOSGeometry
-from django.utils import timezone
 
 from busstops.models import Service
 
 from ...models import VehicleJourney, VehicleLocation
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 from .import_bod_avl import get_line_name_query
-
-
-def parse_datetime(string):
-    datetime = ciso8601.parse_datetime(string)
-    return timezone.make_aware(datetime)
+from .import_nx import parse_datetime
 
 
 class Command(ImportLiveVehiclesCommand):

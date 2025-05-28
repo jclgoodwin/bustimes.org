@@ -18,9 +18,9 @@ from ...download_utils import download_if_modified
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
 
-def make_zipfile(directory, collection):
-    dir_path = FIXTURES_DIR / f"GTFS_{collection}"
-    feed_path = Path(directory) / f"GTFS_{collection}.zip"
+def make_zipfile(directory, name):
+    dir_path = FIXTURES_DIR / name
+    feed_path = Path(directory) / f"{name}.zip"
     with zipfile.ZipFile(feed_path, "a") as open_zipfile:
         for item in dir_path.iterdir():
             open_zipfile.write(item, item.name)
@@ -71,9 +71,9 @@ class GTFSTest(TestCase):
 
     def test_import_gtfs(self):
         with TemporaryDirectory() as directory:
-            make_zipfile(directory, "Seamus_Doherty")
-            make_zipfile(directory, "Mortons")
-            make_zipfile(directory, "Wexford_Bus")
+            make_zipfile(directory, "GTFS_Seamus_Doherty")
+            make_zipfile(directory, "GTFS_Mortons")
+            make_zipfile(directory, "GTFS_Wexford_Bus")
 
             with (
                 vcr.use_cassette(

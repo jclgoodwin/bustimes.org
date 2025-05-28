@@ -205,7 +205,6 @@ class Command(BaseCommand):
                 operators_by_slug[operator.slug or slug] = operator
 
                 operator.url = url
-                operator.twitter = twitter
 
                 operator_codes += get_operator_codes(
                     code_sources, noc, operator, noc_line
@@ -222,12 +221,10 @@ class Command(BaseCommand):
                 if (
                     name != operator.name
                     or url != operator.url
-                    or twitter != operator.twitter
                     or vehicle_mode != operator.vehicle_mode
                 ):
                     operator.name = name
                     operator.url = url
-                    operator.twitter = twitter
                     operator.vehicle_mode = vehicle_mode
                     to_update.append(operator)
 
@@ -249,7 +246,6 @@ class Command(BaseCommand):
             to_create,
             update_fields=(
                 "url",
-                "twitter",
                 "name",
                 "vehicle_mode",
                 "slug",

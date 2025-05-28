@@ -18,7 +18,7 @@ import VehicleMarker, {
   getClickedVehicleMarkerId,
 } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
-import { getBounds } from "./utils";
+import { getBounds, getFont } from "./utils";
 
 type VehicleJourneyLocation = {
   id: number;
@@ -70,8 +70,7 @@ export const Locations = React.memo(function Locations({
   locations: VehicleJourneyLocation[];
 }) {
   const theme = React.useContext(ThemeContext);
-  const darkMode =
-    theme === "alidade_smooth_dark" || theme === "alidade_satellite";
+  const darkMode = theme.endsWith("_dark") || theme === "alidade_satellite";
 
   const routeStyle: LayerProps = {
     type: "line",
@@ -82,16 +81,18 @@ export const Locations = React.memo(function Locations({
     },
   };
 
+  const font = getFont(theme);
+
   const locationsStyle: LayerProps = {
     id: "locations",
     type: "symbol",
     layout: {
       "text-field": ["get", "time"],
       "text-size": 12,
-      "text-font": ["Stadia Regular"],
+      "text-font": font,
 
       "icon-rotate": ["+", 45, ["get", "heading"]],
-      "icon-image": "arrow",
+      "icon-image": "history-arrow",
       "icon-allow-overlap": true,
       "icon-ignore-placement": true,
       "icon-anchor": "top-left",
@@ -162,8 +163,7 @@ export const JourneyStops = React.memo(function Stops({
   setClickedStop: (s: string | undefined) => void;
 }) {
   const theme = React.useContext(ThemeContext);
-  const darkMode =
-    theme === "alidade_smooth_dark" || theme === "alidade_satellite";
+  const darkMode = theme.endsWith("_dark") || theme === "alidade_satellite";
 
   const features = React.useMemo(() => {
     return stops
@@ -409,7 +409,7 @@ export default function JourneyMap({
 }) {
   const [cursor, setCursor] = React.useState<string>();
 
-  const hoveredLocation = React.useRef<number>();
+  const hoveredLocation = React.useRef<number | null>(null);
 
   const onMouseEnter = React.useCallback((e: MapLayerMouseEvent) => {
     const vehicleId = getClickedVehicleMarkerId(e);
@@ -506,7 +506,7 @@ export default function JourneyMap({
     }
   }, []);
 
-  const mapRef = React.useRef<MapGL>();
+  const mapRef = React.useRef<MapGL | null>(null);
 
   const bounds = React.useMemo(() => {
     if (journey) {

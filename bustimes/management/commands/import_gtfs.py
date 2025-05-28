@@ -3,7 +3,7 @@ from pathlib import Path
 
 import gtfs_kit
 import pandas as pd
-from shapely.errors import EmptyPartError, GEOSException
+from shapely.errors import EmptyPartError
 from zipfile import BadZipFile
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
@@ -187,8 +187,9 @@ class Command(BaseCommand):
         try:
             for route in gtfs_kit.routes.get_routes(feed, as_gdf=True).itertuples():
                 self.routes[route.route_id].service.geometry = route.geometry.wkt
-                self.routes[route.route_id].service.save(update_fields=["geometry"])
-        except (ValueError, EmptyPartError, GEOSException):
+                if route.geometry:
+                    self.routes[route.route_id].service.save(update_fields=["geometry"])
+        except (AttributeError, EmptyPartError, ValueError):
             pass
 
         stops, stops_not_created = self.do_stops(feed)
@@ -198,12 +199,14 @@ class Command(BaseCommand):
         trips = {}
         headsigns = {}
 
+        # line as in line in a spreadsheet, not as in the Elizabeth Line
         for line in feed.trips.itertuples():
             route = self.routes[line.route_id]
             trips[line.trip_id] = Trip(
                 route=route,
                 calendar=calendars[line.service_id],
                 inbound=line.direction_id == 1,
+                headsign=line.trip_headsign,
                 ticket_machine_code=line.trip_id,
                 block=getattr(line, "block_id", ""),
                 vehicle_journey_code=getattr(line, "trip_short_name", ""),

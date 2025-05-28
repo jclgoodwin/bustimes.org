@@ -277,6 +277,7 @@ class TimetableDepartures(Departures):
                 destination=Coalesce(
                     "trip__destination__locality__name",
                     "trip__destination__common_name",
+                    "trip__headsign",
                 )
             )
             .order_by("departure")

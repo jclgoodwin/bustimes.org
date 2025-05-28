@@ -7,13 +7,29 @@
 {% block content %}
 
 <style>
-    table {
-        table-layout: fixed;
-        width: 100%;
+    thead {
+        height: 80px;
     }
 
     .short {
-        width: 100px;
+        transform: rotate(315deg);
+        transform-origin: 0px 60px;
+        white-space: nowrap;
+        padding: 0;
+    }
+
+    table {
+        table-layout: fixed;
+        width: 100%;
+        min-width: 1000px;
+    }
+
+    .short {
+        width: 60px;
+    }
+
+    .shortish {
+        width: 110px;
     }
 
     td {
@@ -25,30 +41,34 @@
 
 <p>{{ object.url }}</p>
 
+<p>{{ object.description }}</p>
+
 <p>{{ object.datetime }}</p>
 
 <table>
     <thead>
-        <th scope="col">service code</th>
+        <th scope="col" class="shortish">service code</th>
         <th scope="col" class="short">line name</th>
         <th scope="col" class="short">revision №</th>
-        <th scope="col">start</th>
-        <th scope="col">end</th>
-        <th scope="col" class="short">xml</th>
-        <th scope="col" class="short">timetable</th>
+        <th scope="col" class="shortish">start</th>
+        <th scope="col" class="shortish">end</th>
+        <th scope="col" class="shortish">modified at</th>
+        <th scope="col">file</th>
         <th scope="col" class="short">trips</th>
     </thead>
     <tbody>
     {% for route in routes %}
         <tr>
             <td>{% ifchanged route.service_code %}{{ route.service_code }}{% endifchanged %}</td>
-            <td>{% ifchanged route.line_name %}{{ route.line_name }}{% endifchanged %}</td>
+            <td>{% ifchanged route.line_name %}
+                {% if route.service_id %}<a href="{{ route.service.get_absolute_url }}">{{ route.line_name }}</a>{% else %}{{ route.line_name }}{% endif %}
+            {% endifchanged %}</td>
             <td>{{ route.revision_number }}</td>
-            <td>{{ route.start_date }}</td>
-            <td>{{ route.end_date }}</td>
-            <td class="link"><a href="{{ route.get_absolute_url }}">xml</a></td>
-            <td class="link"><a href="{{ route.service.get_absolute_url }}">{{ route.line_name }}</a></td>
-            <td class="link"><a href="{{ route.service.get_absolute_url }}/debug">{{ route.trips }}</a></td>
+            <td>{{ route.start_date|date }}</td>
+            <td>{{ route.end_date|date }}</td>
+            <td>{{ route.modified_at|date }}</td>
+            <td class="link"><a href="{{ route.get_absolute_url }}">{{ route.code }}</a></td>
+            <td class="link"><a href="{% url 'admin:bustimes_trip_changelist' %}{% querystring route__exact=route.id %}">{{ route.trips }}</a></td>
         </tr>
     {% endfor %}
     </tbody>

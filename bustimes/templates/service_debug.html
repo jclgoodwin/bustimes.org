@@ -41,9 +41,14 @@
 <details{% if forloop.first and forloop.last %} open{% endif %}>
     <summary>
         <a href="{{ route.source.get_absolute_url }}">{{ route.source }}</a>/<a href="{{ route.get_absolute_url }}">{{ route.code }}</a>
-        <br>ServiceCode: {{ route.service_code }}
+        <br>Line: {{ route.line_id }}
+        <br>LineName: {{ route.line_name }}
+        <br>ServiceCode: {{ route.service_code }} {{ route.revision_number_context }}
+        <br>CreationDateTime: {{ route.created_at }}
+        <br>ModificationDateTime: {{ route.modified_at }}
         <br>RevisionNumber: {{ route.revision_number }}
         <br>OperatingPeriod: {{ route.start_date }}–{{ route.end_date }}
+        <br>PublicUse: {{ route.public_use }}
         <br>{{ route.description }}
         <br>{{ route.origin }} to {{ route.destination }} via {{ route.via }}
 
@@ -72,7 +77,7 @@
     <td>{% if trip.sequence %}{{ trip.sequence }}{% endif %}</td>
     <td class="link">{% if trip.block %}<a href="{{ trip.get_absolute_url }}/block">{{ trip.block }}</a>{% endif %}</td>
     <td>{% firstof trip.ticket_machine_code trip.vehicle_journey_code %}</td>
-    <td>{% if trip.inbound %}in{% else %}out{% endif %}</td>
+    <td>{% if trip.headsign %}{{ trip.headsign }}{% elif trip.inbound %}in{% else %}out{% endif %}</td>
     <td class="link"><a href="{{ trip.get_absolute_url }}">{{ trip.start }}</a></td>
     <td>{{ trip.end }}</td>
     {% if trip.rowspan and trip.calendar %}

@@ -54,6 +54,7 @@ def get_routes(routes, when=None, from_date=None):
                         | ~Q(end_date=OuterRef("end_date")),  # for bad data
                         source=OuterRef("source"),
                         service_code=OuterRef("service_code"),
+                        revision_number_context=OuterRef("revision_number_context"),
                         start_date__lte=when,
                         revision_number__gt=OuterRef("revision_number"),
                     )
@@ -168,8 +169,7 @@ def get_calendars(when: date | datetime, calendar_ids=None):
 
 def get_other_trips_in_block(trip, date):
     trips = Trip.objects.filter(
-        block=trip.block,
-        route__source=trip.route.source,
+        block=trip.block, route__source=trip.route.source_id, operator=trip.operator_id
     )
     if trip.route.service_id:
         trips = trips.filter(route__service__isnull=False)

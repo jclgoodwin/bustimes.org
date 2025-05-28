@@ -49,9 +49,12 @@ class ImportOperatorsTest(TestCase):
             "AMSY": {"name": "Arriva Merseyside"},
         }
 
-        with vcr.use_cassette(str(FIXTURES_DIR / "noc.yaml")) as cassette, patch(
-            "busstops.management.commands.import_noc.yaml.safe_load",
-            return_value=mock_overrides,
+        with (
+            vcr.use_cassette(str(FIXTURES_DIR / "noc.yaml")) as cassette,
+            patch(
+                "busstops.management.commands.import_noc.yaml.safe_load",
+                return_value=mock_overrides,
+            ),
         ):
             with self.assertNumQueries(3510):
                 call_command("import_noc")
@@ -90,11 +93,11 @@ class ImportOperatorsTest(TestCase):
 
         wray = Operator.objects.get(noc="WRAY")
         self.assertEqual(wray.url, "https://www.arrivabus.co.uk/yorkshire")
-        self.assertEqual(wray.twitter, "arrivayorkshire")
+        self.assertEqual(wray.twitter, "")
 
         kernow = Operator.objects.get(noc="FCWL")
         self.assertEqual(kernow.url, "https://www.firstbus.co.uk/cornwall")
-        self.assertEqual(kernow.twitter, "by_Kernow")
+        self.assertEqual(kernow.twitter, "")
         self.assertEqual(1, kernow.operatorcode_set.count())
         self.assertEqual(1, kernow.licences.count())
 

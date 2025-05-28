@@ -44,6 +44,12 @@
                 var name = item.name;
                 if (item.noc) {
                     name += " (" + item.noc + ")";
+                } else if (item.fuel) {
+                    name += " (" + item.fuel;
+                    if (item.style) {
+                        name += " " + item.style;
+                    }
+                    name += ")";
                 }
                 return {
                     id: item.id || item.noc,

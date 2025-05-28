@@ -24,4 +24,7 @@ def urlise(value, autoescape=None):
     if "nationalexpress." in markup:
         replacement = '"https://nationalexpress.prf.hn/click/camref:1011ljPYw"'
         markup = markup.replace('"http://www.nationalexpress.com"', replacement, 1)
+    elif "flixbus." in markup:
+        replacement = '"https://www.awin1.com/cread.php?awinmid=110896&awinaffid=242611&clickref=u"'
+        markup = markup.replace('"https://www.flixbus.co.uk"', replacement, 1)
     return mark_safe(markup)

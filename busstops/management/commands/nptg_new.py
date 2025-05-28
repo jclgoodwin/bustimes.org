@@ -7,7 +7,7 @@ from django.contrib.gis.geos import GEOSGeometry
 from django.core.management.base import BaseCommand
 
 from ...models import AdminArea, DataSource, District, Locality, Region
-from .naptan_new import get_datetime
+from ...utils import get_datetime
 
 logger = logging.getLogger(__name__)
 

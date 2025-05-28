@@ -227,7 +227,7 @@ class VehiclesTests(TestCase):
         self.assertContains(response, "/vehicles/edits?operator=LYNX")
         self.assertContains(response, "/operators/lynx/map")
 
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(7):
             response = self.client.get("/operators/lynx")
         self.assertContains(response, "/operators/lynx/vehicles")
         self.assertNotContains(response, "/operators/lynx/map")
@@ -284,7 +284,7 @@ class VehiclesTests(TestCase):
         self.assertEqual(str(self.journey), "19 Oct 20 23:47 2  ")
         self.assertEqual(
             self.journey.get_absolute_url(),
-            f"/vehicles/{self.vehicle_1.id}?date=2020-10-19#journeys/{self.journey.id}",
+            f"/vehicles/{self.vehicle_1.id}?date=2020-10-19#journey-{self.journey.id}",
         )
 
         response = self.client.get(f"/api/vehiclejourneys/{self.journey.id}.json")
@@ -462,11 +462,12 @@ class VehiclesTests(TestCase):
     def test_liveries_css(self):
         response = self.client.get("/liveries.44.css")
 
-    #         self.assertEqual(
-    #             response.content.decode(),
-    #             f""".livery-{self.livery.id}{{color:#fff;fill:#fff;background:linear-gradient(90deg,red 50%,#00f 50%)}}\
-    # .livery-{self.livery.id}.right{{background:linear-gradient(270deg,red 50%,#00f 50%)}}""",
-    #         )
+        self.assertEqual(
+            response.text,
+            f""".livery-{self.livery.id}{{color:#fff;fill:#fff;background:linear-gradient(90deg,red 50%,#00f 50%)}}\
+.livery-{self.livery.id}.right{{background:linear-gradient(270deg,red 50%,#00f 50%)}}
+""",
+        )
 
     def test_vehicle_edit_1(self):
         response = self.client.get("/vehicles/edits?status=pending")

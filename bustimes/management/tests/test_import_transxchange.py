@@ -830,6 +830,9 @@ class ImportTransXChangeTest(TestCase):
 
         call_command("import_transxchange", FIXTURES_DIR / "22A 22B 22C 08032021.xml")
 
+        # re-import to test handling of already-existing ServiceCode
+        call_command("import_transxchange", FIXTURES_DIR / "22A 22B 22C 08032021.xml")
+
         self.assertEqual(str(Trip.objects.get(ticket_machine_code="1935")), "19:35")
 
         trips = Trip.objects.filter(ticket_machine_code="2045")
@@ -1043,7 +1046,7 @@ class ImportTransXChangeTest(TestCase):
             "Glossop - Piccadilly Gardens, Manchester City Centre or Ashton Under Lyne",
         )
 
-        with time_machine.travel("1 October 2017"), self.assertNumQueries(11):
+        with time_machine.travel("1 October 2017"), self.assertNumQueries(10):
             timetable = service.get_timetable(date(2017, 10, 3)).render()
         self.assertEqual(str(timetable.date), "2017-10-03")
         self.assertEqual(27, len(timetable.groupings[1].trips))
@@ -1072,11 +1075,19 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual(str(service), "N17 - Navy Blue Line - Aberdeen - Dyce")
         self.assertEqual(service.operator.first(), self.fabd)
-        for url, text in service.get_traveline_links():
-            self.assertEqual(
-                url, "https://www.travelinescotland.com/timetables?serviceId=ABBN017"
-            )
-            self.assertEqual(text, "Timetable on the Traveline Scotland website")
+
+        self.assertEqual([], list(service.get_traveline_links()))
+
+        service.service_code = "LOTH_N3"
+        self.assertEqual(
+            list(service.get_traveline_links()),
+            [
+                (
+                    "https://www.travelinescotland.com/timetables?serviceId=LOTH+N3",
+                    "Timetable on the Traveline Scotland website",
+                )
+            ],
+        )
 
         self.assertEqual(
             service.geometry.coords,
@@ -1539,7 +1550,14 @@ class ImportTransXChangeTest(TestCase):
     @time_machine.travel("2024-01-01")
     def test_frequency(self):
         # import a document with a Frequency structure (journey repeats every 10 minutes)
-        self.handle_files("FECS.zip", ["BNSM_59.xml", "CBBH_10LU.xml", "CBNL_22.xml"])
+        self.handle_files(
+            "FECS.zip",
+            [
+                "BNSM_59.xml",
+                "CBBH_10LU_CBBHPF00022806110_20240108_-_f7c2d694-e847-449a-b1c1-34f9a76c3a4d.xml",
+                "CBNL_22_CBNLPF10565247522_20230827_-_d32401c6-d8e7-4045-ba4d-65f3a9061625.xml",
+            ],
+        )
 
         # automatically created journey every 10 minutes
         route = Route.objects.get(line_name="59")
@@ -1567,3 +1585,21 @@ class ImportTransXChangeTest(TestCase):
             response,
             '"UoN Main Campus Beeston La, East Mids Conf Ctr",,,18:45,then every 15 minutes until,23:15',
         )
+
+    @time_machine.travel("2025-05-14")
+    def test_ticketer_wait_times(self):
+        Operator.objects.create(noc="MDCL", name="Midland Classic")
+
+        self.handle_files(
+            "current.zip", ["MDCL_9_MDCLPD105080159_20250506_-_2108484.xml"]
+        )
+        route = Route.objects.get(service_code="PD1050801:5")
+        self.assertEqual(route.revision_number_context, "9")
+
+        trip = route.trip_set.get(vehicle_journey_code="vj_28")
+        self.assertEqual(str(trip.start), "18:47")
+        self.assertEqual(str(trip.end), "20:23")
+
+        trip = route.trip_set.get(vehicle_journey_code="vj_1")
+        self.assertEqual(str(trip.start), "06:20")
+        self.assertEqual(str(trip.end), "08:08")

@@ -273,7 +273,7 @@ class Timetable:
         for trip in trips:
             trip.route = routes[trip.route_id]
 
-        if len(self.current_routes) > 1 and self.operators and len(self.operators) > 1:
+        if len(self.current_routes) > 1:
             self.correct_directions(trips)
 
         for trip in trips:

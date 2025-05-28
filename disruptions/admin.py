@@ -29,10 +29,19 @@ class SituationAdmin(admin.ModelAdmin):
         "source",
         "current",
         "stops",
+        "created_at",
+        "modified_at",
     ]
-    list_filter = ["current", "source", "participant_ref", "reason"]
+    list_filter = [
+        "current",
+        "source",
+        "participant_ref",
+        "reason",
+        "created_at",
+        "modified_at",
+    ]
     readonly_fields = [
-        "created",
+        "created_at",
         "situation_number",
         "reason",
         "participant_ref",

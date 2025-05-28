@@ -6,10 +6,6 @@
         <h2>
             {{ stopusage.direction.capitalize }}
         </h2>
-        {% if has_minor_stops %}
-            <input type="checkbox" id="show-all-stops-{{ forloop.counter }}"{% if stopusages|length < 20 %} checked{% endif %}>
-            <label for="show-all-stops-{{ forloop.counter }}">Show all stops</label>
-        {% endif %}
         <ul class="route">
     {% endifchanged %}
     {% ifchanged stopusage.stop stopusage.direction %}{% if not stopusage.suspended %}

@@ -5,7 +5,6 @@ from django.db.backends.postgresql.psycopg_any import DateTimeTZRange
 from django.db.models import Q
 
 import io
-import xml.etree.cElementTree as ET
 import zipfile
 
 import requests
@@ -30,31 +29,33 @@ def get_operators(operator_ref):
     )
 
 
-def handle_item(item, source):
+def handle_item(item, source: DataSource, current_situations: dict):
     situation_number = item.findtext("SituationNumber")
 
     item.find("Source/TimeOfCommunication").text = None
 
     xml = ET.tostring(item, encoding="unicode")
 
-    created_time = parse_datetime(item.find("CreationTime").text)
+    situation = current_situations.get(situation_number)
+    if not situation:
+        situation = source.situation_set.filter(
+            situation_number=situation_number
+        ).first()
 
-    try:
-        situation = Situation.objects.get(
-            source=source, situation_number=situation_number
-        )
-        if situation.data == xml and situation.current:
+    if situation:
+        if situation.data == xml:
             return situation.id  # hasn't changed
         created = False
-        if not situation.current:
-            situation.current = True
-    except Situation.DoesNotExist:
+    else:
         situation = Situation(
             source=source, situation_number=situation_number, current=True
         )
         created = True
+
     situation.data = xml
-    situation.created = created_time
+    situation.created_at = parse_datetime(item.find("CreationTime").text)
+    if modified_at := item.findtext("VersionedAtTime"):
+        situation.modified_at = parse_datetime(modified_at)
     situation.publication_window = get_period(item.find("PublicationWindow"))
 
     assert item.findtext("Progress") == "open"
@@ -166,12 +167,16 @@ def bods_disruptions():
     assert len(namelist) == 1
     open_file = archive.open(namelist[0])
 
+    current_situations = {
+        s.situation_number: s for s in source.situation_set.filter(current=True)
+    }
+
     for _, element in ET.iterparse(open_file):
         if element.tag[:29] == "{http://www.siri.org.uk/siri}":
             element.tag = element.tag[29:]
 
         if element.tag.endswith("PtSituationElement"):
-            situations.append(handle_item(element, source))
+            situations.append(handle_item(element, source, current_situations))
             element.clear()
 
     source.situation_set.filter(current=True).exclude(id__in=situations).update(

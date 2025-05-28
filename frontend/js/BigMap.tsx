@@ -26,12 +26,12 @@ import VehicleMarker, {
 
 import { JourneyStops, Locations, type VehicleJourney } from "./JourneyMap";
 import LoadingSorry from "./LoadingSorry";
-import BusTimesMap from "./Map";
+import BusTimesMap, { ThemeContext } from "./Map";
 import StopPopup, { type Stop } from "./StopPopup";
 import { Route } from "./TripMap";
 import TripTimetable, { type Trip, tripFromJourney } from "./TripTimetable";
 import VehiclePopup from "./VehiclePopup";
-import { getBounds } from "./utils";
+import { getBounds, getFont } from "./utils";
 
 import { decodeTimeAwarePolyline } from "./time-aware-polyline";
 
@@ -73,7 +73,7 @@ function getBoundsQueryString(bounds: LngLatBounds): string {
 }
 
 function containsBounds(
-  a: LngLatBounds | undefined,
+  a: LngLatBounds | null,
   b: LngLatBounds,
 ): boolean | undefined {
   // console.log(a, b);
@@ -180,6 +180,10 @@ function Stops({
 
   const clickedStop = stopsById && clickedStopUrl && stopsById[clickedStopUrl];
 
+  const theme = React.useContext(ThemeContext);
+
+  const font = getFont(theme);
+
   return (
     <React.Fragment>
       {stops ? (
@@ -191,7 +195,7 @@ function Stops({
               minzoom: 14,
               layout: {
                 "text-field": ["get", "icon"],
-                "text-font": ["Stadia Regular"],
+                "text-font": font,
                 "text-allow-overlap": true,
                 "text-size": 10,
                 "icon-rotate": ["+", 45, ["get", "bearing"]],
@@ -224,7 +228,9 @@ function Stops({
 }
 
 function fetchJson(url: string) {
-  return fetch(apiRoot + url).then(
+  return fetch(apiRoot + url, {
+    credentials: "omit",
+  }).then(
     (response) => {
       if (response.ok) {
         return response.json();
@@ -465,7 +471,7 @@ export default function BigMap(
       }
   ),
 ) {
-  const mapRef = React.useRef<MapGL>();
+  const mapRef = React.useRef<MapGL | null>(null);
 
   const [trip, setTrip] = React.useState<Trip | undefined>(props.trip);
 
@@ -517,12 +523,12 @@ export default function BigMap(
   }, [bounds]);
 
   // slippy map stuff
-  const boundsRef = React.useRef<LngLatBounds>();
-  const stopsHighWaterMark = React.useRef<LngLatBounds>();
-  const stopsTimeout = React.useRef<number>();
-  const vehiclesHighWaterMark = React.useRef<LngLatBounds>();
-  const vehiclesTimeout = React.useRef<number>();
-  const vehiclesAbortController = React.useRef<AbortController>();
+  const boundsRef = React.useRef<LngLatBounds | null>(null);
+  const stopsHighWaterMark = React.useRef<LngLatBounds | null>(null);
+  const stopsTimeout = React.useRef<number | null>(null);
+  const vehiclesHighWaterMark = React.useRef<LngLatBounds | null>(null);
+  const vehiclesTimeout = React.useRef<number | null>(null);
+  const vehiclesAbortController = React.useRef<AbortController | null>(null);
   const vehiclesLength = React.useRef<number>(0);
 
   const loadStops = React.useCallback(() => {
@@ -543,14 +549,16 @@ export default function BigMap(
       if (!first && document.hidden) {
         return;
       }
-      clearTimeout(vehiclesTimeout.current);
+      if (vehiclesTimeout.current) {
+        clearTimeout(vehiclesTimeout.current);
+      }
 
       if (vehiclesAbortController.current) {
         vehiclesAbortController.current.abort();
-        vehiclesAbortController.current = undefined;
+        vehiclesAbortController.current = null;
       }
 
-      let _bounds: LngLatBounds | undefined;
+      let _bounds: LngLatBounds;
       let url: string | undefined;
       switch (props.mode) {
         case MapMode.Slippy:
@@ -589,6 +597,7 @@ export default function BigMap(
       vehiclesAbortController.current = new AbortController();
 
       return fetch(`${apiRoot}vehicles.json${url}`, {
+        credentials: "omit",
         signal: vehiclesAbortController.current.signal,
       })
         .then(
@@ -660,11 +669,7 @@ export default function BigMap(
       } else {
         setJourney(undefined);
         setTrip(undefined);
-        fetch(`${apiRoot}api/trips/${props.tripId}/`).then((response) => {
-          if (response.ok) {
-            response.json().then(setTrip);
-          }
-        });
+        fetchJson(`api/trips/${props.tripId}/`).then(setTrip);
       }
     } else if (props.noc) {
       setJourney(undefined);
@@ -683,13 +688,11 @@ export default function BigMap(
       } else {
         setJourney(undefined);
         setTrip(undefined);
-        fetch(`${apiRoot}journeys/${props.journeyId}.json`).then((response) => {
-          if (response.ok) {
-            response.json().then((journey: VehicleJourney) => {
-              setJourney({ ...journey, id: props.journeyId });
-            });
-          }
-        });
+        fetchJson(`journeys/${props.journeyId}.json`).then(
+          (journey: VehicleJourney) => {
+            setJourney({ ...journey, id: props.journeyId });
+          },
+        );
       }
     } else if (!props.vehicleId) {
       setJourney(undefined);
@@ -715,6 +718,9 @@ export default function BigMap(
         clearTimeout(vehiclesTimeout.current);
         setLoadingBuses(false);
       }
+
+      // debounce,
+      // to avoid making loads of requests in quick succession
       if (stopsTimeout.current) {
         clearTimeout(stopsTimeout.current);
         setLoadingStops(false);
@@ -732,6 +738,9 @@ export default function BigMap(
         ) {
           setLoadingBuses(true);
           vehiclesTimeout.current = window.setTimeout(loadVehicles, 200);
+        } else {
+          // we've zoomed in, so already have all the vehicles in this bounding box
+          vehiclesTimeout.current = window.setTimeout(loadVehicles, 12000);
         }
 
         if (
@@ -739,7 +748,7 @@ export default function BigMap(
           !containsBounds(stopsHighWaterMark.current, boundsRef.current)
         ) {
           setLoadingStops(true);
-          stopsTimeout.current = window.setTimeout(loadStops, 200);
+          stopsTimeout.current = window.setTimeout(loadStops, 200); // for debouncing purposes
         }
       }
       updateLocalStorage(_zoom, evt.target.getCenter());
@@ -824,7 +833,7 @@ export default function BigMap(
 
   const [cursor, setCursor] = React.useState<string>();
 
-  const hoveredLocation = React.useRef<number>();
+  const hoveredLocation = React.useRef<number | null>(null);
 
   const onMouseEnter = React.useCallback((e: MapLayerMouseEvent) => {
     const vehicleId = getClickedVehicleMarkerId(e);
@@ -837,7 +846,7 @@ export default function BigMap(
       // journey map
       for (const feature of e.features) {
         if (feature.layer.id === "locations") {
-          if (hoveredLocation.current !== undefined) {
+          if (hoveredLocation.current) {
             e.target.setFeatureState(
               { source: "locations", id: hoveredLocation.current },
               { hover: false },
