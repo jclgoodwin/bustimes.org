@@ -41,7 +41,7 @@
 | busstops/models.py                                              |      627 |       25 |     96% |275, 321, 423, 460, 510, 536, 626, 665, 759, 823, 865-869, 874, 885, 904-905, 973, 985-989, 1047, 1089, 1104, 1141 |
 | busstops/templatetags/\_\_init\_\_.py                           |        0 |        0 |    100% |           |
 | busstops/templatetags/date\_range.py                            |       25 |        3 |     88% | 9, 22, 28 |
-| busstops/templatetags/urlise.py                                 |       16 |        2 |     88% |     36-37 |
+| busstops/templatetags/urlise.py                                 |       16 |        0 |    100% |           |
 | busstops/test\_admin.py                                         |       52 |        0 |    100% |           |
 | busstops/test\_middleware.py                                    |       10 |        0 |    100% |           |
 | busstops/test\_models.py                                        |      143 |        0 |    100% |           |
@@ -169,7 +169,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16195** | **1076** | **93%** |           |
+|                                                       **TOTAL** | **16195** | **1074** | **93%** |           |
 
 
 ## Setup coverage badge
