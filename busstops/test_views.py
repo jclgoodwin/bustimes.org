@@ -406,15 +406,14 @@ class ViewsTests(TestCase):
 
     def test_national_express_service(self):
         self.chariots.name = "National Express"
-        self.chariots.url = "http://nationalexpress.com"
+        self.chariots.url = "http://www.nationalexpress.com"
         self.chariots.save()
-
-        response = self.client.get(self.chariots.get_absolute_url())
-        self.assertContains(response, ">Tickets<")
 
         response = self.client.get(self.service.get_absolute_url())
         self.assertNotContains(response, "Timing points")
         self.assertContains(response, "Melton Constable, opp Bus Shelter")
+
+        # check for affiliate links
         self.assertEqual(
             response.context_data["links"][0],
             {
@@ -424,8 +423,9 @@ class ViewsTests(TestCase):
         )
 
         response = self.client.get(self.chariots.get_absolute_url())
+        self.assertContains(response, ">Tickets<")
         self.assertContains(
-            response, "https://nationalexpress.prf.hn/click/camref:1011ljPYw"
+            response, "https://nationalexpress.prf.hn/click/camref:1011ljPYw", 2
         )
 
     def test_service_redirect(self):
