@@ -196,6 +196,7 @@ STNE:
 RBTS:
   name: Roberts Travel
 KCTB:
+  # name: Konectbus (Norfolk)
   phone: 03300 539358
   address: |
     Norwich Bus Station
@@ -203,6 +204,7 @@ KCTB:
     Norwich
     NR1 3NX
 HEDO:
+  name: KonectBuses (formerly Hedingham & Chambers)
   url: https://www.hedinghamandchambers.co.uk/
 CHAM:
   url: https://www.hedinghamandchambers.co.uk/
