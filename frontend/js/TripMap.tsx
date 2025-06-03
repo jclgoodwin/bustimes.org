@@ -58,8 +58,10 @@ export const Route = React.memo(function Route({ times }: RouteProps) {
 
   for (const time of times) {
     if (time.track) {
+      // wiggly line from previous stop to this one
       lineStrings.push(time.track);
     } else if (prevTime && prevLocation && time.stop.location) {
+      // straight line from last stop with coordinates to this one
       if (prevTime.track || i === null) {
         lines.push([prevLocation, time.stop.location]);
         i = lines.length - 1;
@@ -69,7 +71,9 @@ export const Route = React.memo(function Route({ times }: RouteProps) {
     }
 
     prevTime = time;
-    prevLocation = time.stop.location;
+    if (time.stop.location) {
+      prevLocation = time.stop.location;
+    }
   }
 
   return (
