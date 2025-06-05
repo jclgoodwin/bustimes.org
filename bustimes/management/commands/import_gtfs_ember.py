@@ -85,7 +85,12 @@ class Command(BaseCommand):
         assert modified
 
         # there's no last-modified header so use the contents of the zipfile
-        source.datetime = get_last_modified(path)
+        if not last_modified:
+            last_modified = get_last_modified(path)
+
+        if source.datetime == last_modified:
+            return  # no new data to import
+        source.datetime = last_modified
 
         feed = gtfs_kit.read_feed(path, dist_units="km")
 
