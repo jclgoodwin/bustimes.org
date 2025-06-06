@@ -24,7 +24,9 @@ MODES = {
     2: "rail",
     3: "bus",
     4: "ferry",
+    6: "cable car",
     200: "coach",
+    1100: "air",
 }
 
 
@@ -136,7 +138,10 @@ class Command(BaseCommand):
         service.service_code = line.route_id
         service.line_name = line_name
         service.description = description
-        service.mode = MODES.get(line.route_type, "")
+        if line.route_type in modes:
+            service.mode = MODES[line.route_type]
+        else:
+            logger.warning("unknown route type %s", line.route_type)
         service.current = True
         service.source = self.source
         service.save()
