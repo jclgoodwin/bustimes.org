@@ -138,10 +138,10 @@ class Command(BaseCommand):
         service.service_code = line.route_id
         service.line_name = line_name
         service.description = description
-        if line.route_type in modes:
+        if line.route_type in MODES:
             service.mode = MODES[line.route_type]
         else:
-            logger.warning("unknown route type %s", line.route_type)
+            logger.warning("unknown route type %s", line)
         service.current = True
         service.source = self.source
         service.save()
