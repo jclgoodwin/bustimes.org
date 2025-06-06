@@ -20,7 +20,7 @@
 | buses/\_\_init\_\_.py                                           |        0 |        0 |    100% |           |
 | buses/context\_processors.py                                    |        7 |        0 |    100% |           |
 | buses/jinja2.py                                                 |       36 |        2 |     94% |    40, 61 |
-| buses/settings.py                                               |      111 |       21 |     81% |96-104, 124, 207, 226-234, 251-267, 319 |
+| buses/settings.py                                               |      121 |       30 |     75% |94-102, 122, 141-149, 205, 224-232, 249-265, 317 |
 | buses/tests.py                                                  |        5 |        0 |    100% |           |
 | buses/urls.py                                                   |        6 |        0 |    100% |           |
 | buses/utils.py                                                  |       17 |        0 |    100% |           |
@@ -37,7 +37,7 @@
 | busstops/management/tests/test\_import\_naptan.py               |       67 |        0 |    100% |           |
 | busstops/management/tests/test\_import\_nptg.py                 |       31 |        0 |    100% |           |
 | busstops/management/tests/test\_import\_operators.py            |       64 |        0 |    100% |           |
-| busstops/middleware.py                                          |       20 |        0 |    100% |           |
+| busstops/middleware.py                                          |       28 |        7 |     75% |     29-43 |
 | busstops/models.py                                              |      627 |       25 |     96% |275, 321, 423, 460, 510, 536, 626, 665, 759, 823, 865-869, 874, 885, 904-905, 973, 985-989, 1047, 1089, 1104, 1141 |
 | busstops/templatetags/\_\_init\_\_.py                           |        0 |        0 |    100% |           |
 | busstops/templatetags/date\_range.py                            |       25 |        3 |     88% | 9, 22, 28 |
@@ -169,7 +169,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16198** | **1080** | **93%** |           |
+|                                                       **TOTAL** | **16216** | **1096** | **93%** |           |
 
 
 ## Setup coverage badge
