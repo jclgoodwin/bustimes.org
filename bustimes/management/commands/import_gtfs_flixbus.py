@@ -91,6 +91,8 @@ class Command(BaseCommand):
         if not modified:
             return
 
+        print(f"{source} {last_modified}")
+
         feed = gtfs_kit.read_feed(path, dist_units="km")
 
         mask = feed.routes.route_id.str.startswith(
