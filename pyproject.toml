@@ -41,6 +41,7 @@ dependencies = [
     "lightningcss-cli>=1.29.2,<2",
     "websockets>=14.2",
     "govuk-bank-holidays>=0.15",
+    "django-multidb-router>=0.10",
 ]
 
 [dependency-groups]

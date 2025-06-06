@@ -92,6 +92,7 @@ dependencies = [
     { name = "django-cors-headers" },
     { name = "django-email-obfuscator" },
     { name = "django-filter" },
+    { name = "django-multidb-router" },
     { name = "django-simple-history" },
     { name = "django-sql-utils" },
     { name = "django-template-minifier" },
@@ -154,6 +155,7 @@ requires-dist = [
     { name = "django-cors-headers", specifier = ">=4.2.0,<5" },
     { name = "django-email-obfuscator", specifier = ">=0.1.5,<0.2" },
     { name = "django-filter", specifier = "~=25.1" },
+    { name = "django-multidb-router", specifier = ">=0.10" },
     { name = "django-simple-history", specifier = ">=3.0.0,<4" },
     { name = "django-sql-utils", specifier = ">=0.7.0,<0.8" },
     { name = "django-template-minifier", specifier = ">=1.1.0,<2" },
@@ -394,6 +396,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/b5/40/c702a6fe8cccac9bf426b55724ebdf57d10a132bae80a17691d0cf0b9bac/django_filter-25.1.tar.gz", hash = "sha256:1ec9eef48fa8da1c0ac9b411744b16c3f4c31176c867886e4c48da369c407153", size = 143021, upload-time = "2025-02-14T16:30:53.238Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/07/a6/70dcd68537c434ba7cb9277d403c5c829caf04f35baf5eb9458be251e382/django_filter-25.1-py3-none-any.whl", hash = "sha256:4fa48677cf5857b9b1347fed23e355ea792464e0fe07244d1fdfb8a806215b80", size = 94114, upload-time = "2025-02-14T16:30:50.435Z" },
+]
+
+[[package]]
+name = "django-multidb-router"
+version = "0.10"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ad/95/ad33d474a299ed0917dafb701027806f76b48e657c923756da0e3944d2bf/django-multidb-router-0.10.tar.gz", hash = "sha256:a10bf4b664465090a5f2e8543dd1491eaf8dde7c551270e546324454e7280964", size = 9129, upload-time = "2021-09-23T20:01:54.662Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/84/05/0983a9627858c1a95726e6df8af6e20f358a689ee54785391486fe8264fc/django_multidb_router-0.10-py3-none-any.whl", hash = "sha256:6802bbfce3a0dac343f93a290df12a9979aed99b350bc0148a7430353efae8b6", size = 10427, upload-time = "2021-09-23T20:01:53.125Z" },
 ]
 
 [[package]]

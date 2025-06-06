@@ -14,9 +14,7 @@ from sentry_sdk.integrations.redis import RedisIntegration
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY", "")
-ALLOWED_HOSTS = os.environ.get(
-    "ALLOWED_HOSTS", "*"
-).split()
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split()
 
 CSRF_TRUSTED_ORIGINS = os.environ.get(
     "CSRF_TRUSTED_ORIGINS",
@@ -139,16 +137,16 @@ REST_FRAMEWORK = {
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 READ_DATABASE = "default"
-# if os.environ.get("READ_ONLY_DB_HOST"):
-#     REPLICA_DATABASES = []
-#     for i, host in enumerate(os.environ["READ_ONLY_DB_HOST"].split()):
-#         key = f"read-only-{i}"
-#         DATABASES[key] = DATABASES["default"].copy()
-#         DATABASES[key]["HOST"] = host
-#         REPLICA_DATABASES.append(key)
-#     DATABASE_ROUTERS = ["multidb.PinningReplicaRouter"]
-#     MIDDLEWARE.append("busstops.middleware.pin_db_middleware")
-#     READ_DATABASE = key
+if os.environ.get("READ_ONLY_DB_HOST"):
+    REPLICA_DATABASES = []
+    for i, host in enumerate(os.environ["READ_ONLY_DB_HOST"].split()):
+        key = f"read-only-{i}"
+        DATABASES[key] = DATABASES["default"].copy()
+        DATABASES[key]["HOST"] = host
+        REPLICA_DATABASES.append(key)
+    DATABASE_ROUTERS = ["multidb.PinningReplicaRouter"]
+    MIDDLEWARE.append("busstops.middleware.pin_db_middleware")
+    READ_DATABASE = key
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = None
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000

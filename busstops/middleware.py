@@ -4,7 +4,6 @@ from http import HTTPStatus
 from django.middleware.gzip import GZipMiddleware
 from django.utils.cache import add_never_cache_headers
 
-# from multidb.pinning import pin_this_thread, unpin_this_thread
 from whitenoise.middleware import WhiteNoiseMiddleware
 
 
@@ -26,20 +25,22 @@ class WhiteNoiseWithFallbackMiddleware(WhiteNoiseMiddleware):
         return response
 
 
-# def pin_db_middleware(get_response):
-#     def middleware(request):
-#         if (
-#             request.method == "POST"
-#             or request.path.startswith("/admin/")
-#             or request.path.startswith("/accounts/")
-#             or "/edit" in request.path
-#         ):
-#             pin_this_thread()
-#         else:
-#             unpin_this_thread()
-#         return get_response(request)
+def pin_db_middleware(get_response):
+    from multidb.pinning import pin_this_thread, unpin_this_thread
 
-#     return middleware
+    def middleware(request):
+        if (
+            request.method == "POST"
+            or request.path.startswith("/admin/")
+            or request.path.startswith("/accounts/")
+            or "/edit" in request.path
+        ):
+            pin_this_thread()
+        else:
+            unpin_this_thread()
+        return get_response(request)
+
+    return middleware
 
 
 class GZipIfNotStreamingMiddleware(GZipMiddleware):
