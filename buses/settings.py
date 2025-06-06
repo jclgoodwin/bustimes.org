@@ -138,7 +138,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 READ_DATABASE = "default"
 if os.environ.get("READ_ONLY_DB_HOST"):
-    REPLICA_DATABASES = ["default"]
+    REPLICA_DATABASES = []
     for i, host in enumerate(os.environ["READ_ONLY_DB_HOST"].split()):
         key = f"read-only-{i}"
         DATABASES[key] = DATABASES["default"].copy()
