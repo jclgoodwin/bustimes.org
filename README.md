@@ -69,7 +69,7 @@
 | bustimes/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | bustimes/management/tests/test\_bank\_holidays.py               |       20 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_atco\_cif.py            |       70 |        0 |    100% |           |
-| bustimes/management/tests/test\_import\_bod.py                  |      235 |        0 |    100% |           |
+| bustimes/management/tests/test\_import\_bod.py                  |      241 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_gtfs.py                 |      103 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_gtfs\_ember\_flixbus.py |       78 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_ni.py                   |       21 |        0 |    100% |           |
@@ -169,7 +169,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16220** | **1097** | **93%** |           |
+|                                                       **TOTAL** | **16226** | **1097** | **93%** |           |
 
 
 ## Setup coverage badge

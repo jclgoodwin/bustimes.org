@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_3baf1eb7e8e062db_admin_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.8.2">coverage.py v7.8.2</a>,
-            created at 2025-06-06 09:29 +0000
+            created at 2025-06-09 06:39 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -900,7 +900,7 @@
     <p class="run"><span class="n"><a id="t818" href="#t818">818</a></span><span class="t"><span class="key">def</span> <span class="nam">stop_departures</span><span class="op">(</span><span class="nam">request</span><span class="op">,</span> <span class="nam">atco_code</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t819" href="#t819">819</a></span><span class="t">    <span class="nam">stop</span> <span class="op">=</span> <span class="nam">get_object_or_404</span><span class="op">(</span><span class="nam">StopPoint</span><span class="op">,</span> <span class="nam">atco_code</span><span class="op">=</span><span class="nam">atco_code</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t820" href="#t820">820</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t821" href="#t821">821</a></span><span class="t">    <span class="nam">services</span> <span class="op">=</span> <span class="nam">stop</span><span class="op">.</span><span class="nam">service_set</span><span class="op">.</span><span class="nam">annotate</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t821" href="#t821">821</a></span><span class="t">    <span class="nam">services</span> <span class="op">=</span> <span class="nam">stop</span><span class="op">.</span><span class="nam">service_set</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span><span class="nam">current</span><span class="op">=</span><span class="key">True</span><span class="op">)</span><span class="op">.</span><span class="nam">annotate</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t822" href="#t822">822</a></span><span class="t">        <span class="nam">operators</span><span class="op">=</span><span class="nam">ArrayAgg</span><span class="op">(</span><span class="str">"operator__name"</span><span class="op">,</span> <span class="nam">distinct</span><span class="op">=</span><span class="key">True</span><span class="op">,</span> <span class="nam">default</span><span class="op">=</span><span class="key">None</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t823" href="#t823">823</a></span><span class="t">    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t824" href="#t824">824</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -1739,7 +1739,7 @@
             <a class="nav" href="z_3baf1eb7e8e062db_admin_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.8.2">coverage.py v7.8.2</a>,
-            created at 2025-06-06 09:29 +0000
+            created at 2025-06-09 06:39 +0000
         </p>
     </div>
 </footer>
