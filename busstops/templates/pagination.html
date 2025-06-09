@@ -2,25 +2,25 @@
     <nav>
         <ul class="horizontal">
             {% if page.has_previous %}
-                <li><a href="{% querystring page=1 %}{{ hash }}">1</a></li>
                 {% if page.previous_page_number > 1 %}
+                    <li><a href="{% querystring page=1 %}{{ hash }}">1</a></li>
                     {% if page.previous_page_number > 2 %}
                         <li>&hellip;</li>
                     {% endif %}
-                    <li><a href="{% querystring page=page.previous_page_number %}{{ hash }}">{{ page.previous_page_number }}</a></li>
                 {% endif %}
+                <li><a rel="prev" href="{% querystring page=page.previous_page_number %}{{ hash }}">{{ page.previous_page_number }}</a></li>
             {% endif %}
 
             <li><strong>{{ page.number }}</strong></li>
 
             {% if page.has_next %}
+                <li><a rel="next" href="{% querystring page=page.next_page_number %}{{ hash }}">{{ page.next_page_number }}</a></li>
                 {% if page.next_page_number < page.paginator.num_pages %}
-                    <li><a href="{% querystring page=page.next_page_number %}{{ hash }}">{{ page.next_page_number }}</a></li>
                     {% if page.next_page_number < page.paginator.num_pages|add:-1 %}
                         <li>&hellip;</li>
                     {% endif %}
+                    <li><a href="{% querystring page=page.paginator.num_pages %}{{ hash }}">{{ page.paginator.num_pages }}</a></li>
                 {% endif %}
-                <li><a href="{% querystring page=page.paginator.num_pages %}{{ hash }}">{{ page.paginator.num_pages }}</a></li>
             {% endif %}
         </ul>
     </nav>

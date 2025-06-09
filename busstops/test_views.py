@@ -243,13 +243,15 @@ class ViewsTests(TestCase):
         response = self.client.get("/search?q=sandwich+deal")
         self.assertContains(response, "<b>Sandwich</b> - <b>Deal</b>")
         self.assertContains(
-            response, '<li><a href="?q=sandwich+deal&amp;page=2#services">2</a></li>'
+            response,
+            '<li><a rel="next" href="?q=sandwich+deal&amp;page=2#services">2</a></li>',
         )
 
         response = self.client.get("/search?q=sandwich+deal&page=2")
         # explicity link to page 1
         self.assertContains(
-            response, '<li><a href="?q=sandwich+deal&amp;page=1#services">1</a></li>'
+            response,
+            '<li><a rel="prev" href="?q=sandwich+deal&amp;page=1#services">1</a></li>',
         )
 
     def test_postcode(self):
