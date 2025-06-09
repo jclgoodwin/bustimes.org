@@ -818,7 +818,7 @@ class StopAreaDetailView(DetailView):
 def stop_departures(request, atco_code):
     stop = get_object_or_404(StopPoint, atco_code=atco_code)
 
-    services = stop.service_set.annotate(
+    services = stop.service_set.filter(current=True).annotate(
         operators=ArrayAgg("operator__name", distinct=True, default=None)
     )
 
