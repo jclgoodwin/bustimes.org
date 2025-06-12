@@ -23,7 +23,7 @@ class Command(ImportLiveVehiclesCommand):
         return datetime.datetime.combine(now_datetime, then_time)
 
     def get_vehicle(self, item):
-        parts = item["bus"].split("-")
+        parts = item["bus"].split("-", 4)
         vehicle_code = parts[-1]
         defaults = {
             "operator_id": self.operator,
@@ -39,6 +39,8 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_journey(self, item, vehicle):
         journey = VehicleJourney()
+        parts = item["bus"].split("-", 4)
+        journey.code = parts[2]
         journey.route_name = item["line"]
         journey.direction = item["direction"][:8]
         return journey
