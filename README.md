@@ -76,7 +76,7 @@
 | bustimes/management/tests/test\_import\_passenger.py            |       23 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_transxchange.py         |      742 |        0 |    100% |           |
 | bustimes/management/tests/test\_tnds.py                         |       19 |        0 |    100% |           |
-| bustimes/models.py                                              |      326 |        6 |     98% |103, 361, 364, 393, 430, 464 |
+| bustimes/models.py                                              |      326 |        7 |     98% |103, 203, 361, 364, 393, 430, 464 |
 | bustimes/tests.py                                               |      130 |        0 |    100% |           |
 | bustimes/timetables.py                                          |      637 |       53 |     92% |62, 102-115, 144, 226-237, 268-269, 341-344, 356, 369-374, 388, 407, 482, 485, 501-504, 506, 533, 642-657, 743-744, 815, 961-963 |
 | bustimes/urls.py                                                |        3 |        0 |    100% |           |
@@ -132,7 +132,7 @@
 | vehicles/management/commands/import\_edinburgh.py               |       72 |        4 |     94% |83, 87-90, 97 |
 | vehicles/management/commands/import\_gtfsr\_ember.py            |       87 |        6 |     93% |81-82, 105-107, 123 |
 | vehicles/management/commands/import\_gtfsr\_ie.py               |      104 |        6 |     94% |71, 98, 145, 154, 161, 165 |
-| vehicles/management/commands/import\_live\_jersey.py            |       33 |        0 |    100% |           |
+| vehicles/management/commands/import\_live\_jersey.py            |       35 |        0 |    100% |           |
 | vehicles/management/commands/import\_megabus.py                 |      118 |       29 |     75% |38-40, 42-43, 46-47, 64, 72-75, 79-82, 119-122, 125, 145-146, 148-149, 151-152, 162, 173 |
 | vehicles/management/commands/import\_natexp.py                  |        6 |        0 |    100% |           |
 | vehicles/management/commands/import\_nx.py                      |      100 |       16 |     84% |84-86, 88-89, 107-112, 132-137, 154-155 |
@@ -169,7 +169,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16226** | **1097** | **93%** |           |
+|                                                       **TOTAL** | **16228** | **1098** | **93%** |           |
 
 
 ## Setup coverage badge
