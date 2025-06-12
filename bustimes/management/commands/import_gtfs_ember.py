@@ -88,11 +88,11 @@ class Command(BaseCommand):
         if not last_modified:
             last_modified = get_last_modified(path)
 
-        print(f"{source} {last_modified}")
-
         if source.datetime == last_modified:
             return  # no new data to import
         source.datetime = last_modified
+
+        print(f"{source} {last_modified}")
 
         feed = gtfs_kit.read_feed(path, dist_units="km")
 

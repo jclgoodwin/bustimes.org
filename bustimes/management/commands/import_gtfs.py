@@ -26,7 +26,7 @@ MODES = {
     4: "ferry",
     6: "cable car",
     200: "coach",
-    1100: "air",
+    76: "air",  # 1100
 }
 
 
