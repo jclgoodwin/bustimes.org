@@ -382,32 +382,10 @@ class Command(ImportLiveVehiclesCommand):
         if not route_name and ticket_machine:
             route_name = ticket_machine.get("TicketMachineServiceCode", "")
 
-        origin_aimed_departure_time = monitored_vehicle_journey.get(
+        if origin_aimed_departure_time := monitored_vehicle_journey.get(
             "OriginAimedDepartureTime"
-        )
-        if origin_aimed_departure_time:
+        ):
             origin_aimed_departure_time = parse_datetime(origin_aimed_departure_time)
-
-            # detect and correct Ticketer timezone bug during British Summer Time
-            if (
-                journey_code
-                and len(journey_code) == 4
-                and journey_code.isdigit()
-                and int(journey_code) < 2400
-            ):
-                hours = int(journey_code[:-2])
-                minutes = int(journey_code[-2:])
-                if (
-                    minutes == origin_aimed_departure_time.minute
-                    and hours == origin_aimed_departure_time.hour
-                ):
-                    origin_aimed_departure_time = timezone.localtime(
-                        origin_aimed_departure_time
-                    )
-                    HOUR = timedelta(hours=1)
-                    if (origin_aimed_departure_time - HOUR).hour == hours:
-                        origin_aimed_departure_time -= HOUR
-                        logger.warning("adjusted timezone", exc_info=True)
 
         journey = None
 
