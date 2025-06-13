@@ -18,9 +18,7 @@ class Command(ImportLiveVehiclesCommand):
     def get_vehicle(self, item):
         print(item)
         code = item["vehicleRef"]
-        defaults = {"fleet_code": code}
-        if code.isdigit():
-            defaults["fleet_number"] = code
+        defaults = {"reg": code}
 
         return self.vehicles.get_or_create(defaults, code=code, operator_id="SGUE")
 
