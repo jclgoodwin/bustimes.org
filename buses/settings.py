@@ -20,6 +20,7 @@ CSRF_TRUSTED_ORIGINS = os.environ.get(
     "CSRF_TRUSTED_ORIGINS",
     "https://bustimes.org",
 ).split()
+CSRF_FAILURE_VIEW = "busstops.views.csrf_failure"
 
 TEST = "test" in sys.argv or "pytest" in sys.argv[0]
 DEBUG = bool(os.environ.get("DEBUG", False))

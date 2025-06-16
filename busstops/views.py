@@ -5,6 +5,7 @@ import datetime
 import os
 import sys
 import traceback
+import logging
 from http import HTTPStatus
 
 import requests
@@ -25,6 +26,7 @@ from django.http import (
     Http404,
     HttpResponse,
     HttpResponseBadRequest,
+    HttpResponseRedirect,
     JsonResponse,
     StreamingHttpResponse,
 )
@@ -34,6 +36,7 @@ from django.urls import resolve, reverse
 from django.utils import timezone
 from django.utils.cache import patch_response_headers
 from django.utils.functional import SimpleLazyObject
+from django.views.csrf import csrf_failure as django_csrf_failure
 from django.views.decorators.cache import cache_control
 from django.views.generic.detail import DetailView
 from redis.exceptions import ConnectionError
@@ -137,20 +140,17 @@ def not_found(request, exception):
         except Http404:
             pass
 
-    # assert "#" not in request.path
-
     # anonymise request (cos response may be cached)
     request.user = AnonymousUser
-
-    if request.resolver_match:
-        cache_timeout = 600  # ten minutes
-    else:
-        cache_timeout = 3600  # no matching url pattern, cache for an hour
 
     context["ad"] = False
     response = render(request, "404.html", context)
     response.status_code = HTTPStatus.NOT_FOUND
-    patch_response_headers(response, cache_timeout=cache_timeout)
+
+    if not request.resolver_match:
+        # no matching url pattern, cache for an hour
+        patch_response_headers(response, cache_timeout=3600)
+
     return response
 
 
@@ -163,6 +163,19 @@ def error(request):
     response = render(None, "500.html", context)
     response.status_code = 500
     return response
+
+
+def csrf_failure(request, reason=""):
+    logging.warning("CSRF failure: %s", reason)
+    if (
+        request.resolver_match
+        and request.resolver_match.url_name == "login"
+        and request.user.is_authenticated
+    ):
+        return HttpResponseRedirect(
+            request.POST.get("next", settings.LOGIN_REDIRECT_URL)
+        )
+    return django_csrf_failure(request, reason)
 
 
 @cache_control(max_age=3600)
