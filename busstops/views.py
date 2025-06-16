@@ -173,7 +173,7 @@ def csrf_failure(request, reason=""):
         and request.user.is_authenticated
     ):
         return HttpResponseRedirect(
-            request.POST.get("next", settings.LOGIN_REDIRECT_URL)
+            request.POST.get("next") or settings.LOGIN_REDIRECT_URL
         )
     return django_csrf_failure(request, reason)
 
