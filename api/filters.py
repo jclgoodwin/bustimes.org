@@ -83,10 +83,11 @@ class OperatorFilter(FilterSet):
 class TripFilter(FilterSet):
     route = ModelChoiceFilter(queryset=Trip.objects, widget=NumberInput)
     operator = ModelChoiceFilter(queryset=Operator.objects, widget=TextInput)
-
+    service = ModelChoiceFilter(queryset=Service.objects, field_name="route__service", widget=NumberInput)
+        
     class Meta:
         model = Trip
-        fields = ["ticket_machine_code", "vehicle_journey_code", "block"]
+        fields = ["ticket_machine_code", "vehicle_journey_code", "block", "service"]
 
 
 class LiveryFilter(FilterSet):
