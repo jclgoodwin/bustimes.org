@@ -39,9 +39,9 @@
 
 <h1>{{ object }}</h1>
 
-<p>{{ object.url }}</p>
+<p><code>{{ object.url }}</code></p>
 
-<p>{{ object.description }}</p>
+<p><i>{{ object.description }}</i></p>
 
 <p>{{ object.datetime }}</p>
 
@@ -61,7 +61,7 @@
         <tr>
             <td>{% ifchanged route.service_code %}{{ route.service_code }}{% endifchanged %}</td>
             <td>{% ifchanged route.line_name %}
-                {% if route.service_id %}<a href="{{ route.service.get_absolute_url }}">{{ route.line_name }}</a>{% else %}{{ route.line_name }}{% endif %}
+                {% if route.service_id %}<a href="{{ route.service.get_absolute_url }}/debug">{{ route.line_name }}</a>{% else %}{{ route.line_name }}{% endif %}
             {% endifchanged %}</td>
             <td>{{ route.revision_number }}</td>
             <td>{{ route.start_date|date }}</td>
