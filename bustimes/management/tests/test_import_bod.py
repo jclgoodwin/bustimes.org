@@ -186,8 +186,10 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
         self.assertEqual(response.status_code, 404)  # no block
 
         response = self.client.get(f"/api/trips/{trip.id}.json")
-        json = response.json()
-        self.assertEqual(27, len(json["times"]))
+        self.assertEqual(27, len(response.json()["times"]))
+
+        response = self.client.get(f"/api/trips/?service={route.service_id}")
+        self.assertEqual(4, len(response.json()["results"]))
 
         response = self.client.get(trip.get_absolute_url())
 
