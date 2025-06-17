@@ -468,6 +468,10 @@ def vehicles_json(request) -> JsonResponse:
                         }
                     if vehicle.latest_journey_id == item["journey_id"]:
                         journeys_to_cache_later[journey_cache_key] = journey
+                    else:
+                        logging.warning(
+                            f"{vehicle=} {vehicle.latest_journey_id=} {item['journey_id']=}"
+                        )
                     item.update(journey)
 
             if (
