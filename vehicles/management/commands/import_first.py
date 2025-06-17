@@ -6,6 +6,7 @@ from uuid import uuid4
 import requests
 from asgiref.sync import sync_to_async
 from ciso8601 import parse_datetime
+from django.db.models import Q
 from django.contrib.gis.db.models import Extent
 from django.contrib.gis.geos import Point
 from django.utils import timezone
@@ -31,12 +32,14 @@ class Command(ImportLiveVehiclesCommand):
             created = False
         else:
             fleet_number = int(vehicle_code) if vehicle_code.isdigit() else None
-            vehicle = Vehicle.objects.create(
-                source=self.source,
-                operator=item["operator"],
+            vehicle, _ = Vehicle.objects.get_or_create(
+                {
+                    "source": self.source,
+                    "fleet_code": str(fleet_number or ""),
+                    "fleet_number": fleet_number,
+                },
+                operator_id=item["operator"],
                 code=vehicle_code,
-                fleet_code=str(fleet_number or ""),
-                fleet_number=fleet_number,
             )
             created = True
 
@@ -196,7 +199,7 @@ class Command(ImportLiveVehiclesCommand):
         self.source = DataSource.objects.get(name="First")
 
         self.cache = {}
-        operator = Operator.objects.get(name=operator_name)
+        operator = Operator.objects.get(Q(name=operator_name) | Q(noc=operator_name))
 
         extent = self.get_extent(operator)
         asyncio.run(self.sock_it(extent))
