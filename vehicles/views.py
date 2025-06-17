@@ -458,7 +458,6 @@ def vehicles_json(request) -> JsonResponse:
                 except KeyError:
                     continue  # vehicle was deleted?
                 else:
-                    assert vehicle.latest_journey_id == item["journey_id"]
                     journey = {"vehicle": vehicle.get_json()}
                     if vehicle.service_slug:
                         journey["service"] = {
@@ -467,7 +466,8 @@ def vehicles_json(request) -> JsonResponse:
                             or item.get("service")
                             and item["service"]["line_name"],
                         }
-                    journeys_to_cache_later[journey_cache_key] = journey
+                    if vehicle.latest_journey_id == item["journey_id"]:
+                        journeys_to_cache_later[journey_cache_key] = journey
                     item.update(journey)
 
             if (
