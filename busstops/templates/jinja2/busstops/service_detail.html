@@ -61,28 +61,30 @@
 
 {% if object.geometry %}
     <div id="map"><div class="service-map"><a href="#" class="map-button">Close map</a></div></div>
-
-    <ul class="tabs">
-        <li>Timetable</li>
-        <li id="map-link"><a href="#map">Map</a></li>
-        {% if tickets_link %}
-            <li><a href="{{ tickets_link }}">Tickets</a></li>
-        {% endif %}
-    </ul>
 {% endif %}
+
+<ul class="tabs">
+    <li>Timetable</li>
+    {% if object.geometry %}
+        <li id="map-link"><a href="#map">Map</a></li>
+    {% endif %}
+    {% if tickets_link %}
+        <li><a href="{{ tickets_link }}">Tickets</a></li>
+    {% endif %}
+    {% if vehicles %}
+        <li><a href="{{ object.get_absolute_url() }}/vehicles">Vehicles</a>
+    {% endif %}
+</ul>
 
 <div id="timetable">
     {% include 'timetable.html' %}
 </div>
 
-{% if registrations or vehicles %}
+{% if registrations %}
     <ul class="horizontal">
         {% for registration in registrations %}
             <li><a href="{{ registration.get_absolute_url() }}">{{ registration.registration_number }}</a>
         {% endfor %}
-        {% if vehicles %}
-            <li><a href="{{ object.get_absolute_url() }}/vehicles">Vehicles</a>
-        {% endif %}
     </ul>
 {% endif %}
 
