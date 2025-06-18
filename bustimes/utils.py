@@ -70,10 +70,8 @@ def get_routes(routes, when=None, from_date=None):
 
         # complicated way of working out which Passenger .zip applies
         routes = routes.filter(
-            ~Q(version=None)
+            Q(version=None)
             | Q(
-                Q(version__start_date__lte=when),
-                Q(version__end_date__gte=when),
                 ~Exists(
                     Version.objects.filter(
                         source=OuterRef("version__source"),
@@ -82,6 +80,8 @@ def get_routes(routes, when=None, from_date=None):
                         start_date__gt=OuterRef("version__start_date"),
                     )
                 ),
+                version__start_date__lte=when,
+                version__end_date__gte=when,
             )
         )
 
