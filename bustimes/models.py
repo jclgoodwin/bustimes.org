@@ -35,8 +35,18 @@ class TimetableDataSource(models.Model):
         return self.name
 
 
+class Version(models.Model):
+    source = models.ForeignKey(TimetableDataSource, models.CASCADE)
+    from_date = models.DateField(null=True, blank=True)
+    to_date = models.DateField(null=True, blank=True)
+    datetime = models.DateTimeField(null=True, blank=True)
+    name = models.CharField(null=True, blank=True)
+    url = models.URLField(null=True, blank=True)
+
+
 class Route(models.Model):
     source = models.ForeignKey("busstops.DataSource", models.CASCADE)
+    version = models.ForeignKey(Version, models.CASCADE, null=True, blank=True)
     code = models.CharField(max_length=255, blank=True)  # qualified filename
     service_code = models.CharField(max_length=255, blank=True)
     revision_number_context = models.CharField(max_length=48, blank=True)

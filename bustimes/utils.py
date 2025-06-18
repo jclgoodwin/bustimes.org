@@ -17,7 +17,15 @@ from django.db.models import (
 from django.utils import timezone
 from sql_util.utils import Exists
 
-from .models import Calendar, CalendarBankHoliday, CalendarDate, StopTime, Trip, Route
+from .models import (
+    Calendar,
+    CalendarBankHoliday,
+    CalendarDate,
+    StopTime,
+    Trip,
+    Route,
+    Version,
+)
 
 differ = Differ(charjunk=lambda _: True)
 logger = logging.getLogger(__name__)
@@ -62,30 +70,22 @@ def get_routes(routes, when=None, from_date=None):
             ).order_by("id")
 
     # complicated way of working out which Passenger .zip applies
-    current_prefixes = {}
-    for route in routes:
-        if route.source.settings and route.source_id not in current_prefixes:
-            current_prefixes[route.source.id] = None
-
-            prefix_dates = [
-                (prefix, date.fromisoformat(dates[0]), date.fromisoformat(dates[1]))
-                for prefix, dates in route.source.settings.items()
-            ]
-            prefix_dates.sort(key=lambda item: item[1])  # sort by from_date
-            for prefix, start, end in prefix_dates:
-                if when and (start <= when < end):
-                    current_prefixes[route.source_id] = prefix
-    if current_prefixes:
-        routes = [
-            route
-            for route in routes
-            if route.source_id not in current_prefixes
-            or (
-                current_prefixes[route.source.id]
-                and route.code.startswith(current_prefixes[route.source_id])
+    if when:
+        routes = routes.filter(
+            ~Q(version=None)
+            | Q(
+                Q(version__start_date__lte=when),
+                Q(version__end_date__gte=when),
+                ~Exists(
+                    Version.objects.filter(
+                        source=OuterRef("version__source"),
+                        start_date__lte=when,
+                        end_date__gte=when,
+                        start_date__gt=OuterRef("version__start_date"),
+                    )
+                ),
             )
-        ]
-        return routes
+        )
 
     if when:
         routes = [route for route in routes if route.contains(when)]
