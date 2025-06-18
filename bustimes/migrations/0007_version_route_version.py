@@ -4,21 +4,32 @@ import django.db.models.deletion
 from django.db import migrations, models
 
 
-def forwards_func(apps, schema_editor):
+def create_versions(apps, schema_editor):
     TimetableDataSource = apps.get_model("bustimes", "TimetableDataSource")
     DataSource = apps.get_model("busstops", "DataSource")
     Version = apps.get_model("bustimes", "Version")
-    db_alias = schema_editor.connection.alias
-    for source in TimetableDataSource.objects.filter(url__startswith="https://data.discoverpassenger.com/operator/"):
-        data_source = DataSource.objects.get(url=source.url)
-        data_source.source = source
+    # db_alias = schema_editor.connection.alias
+    sources = TimetableDataSource.objects
+    for timetable_source in sources.filter(url__startswith="https://data.discoverpassenger.com/operator/"):
+        try:
+            data_source = DataSource.objects.get(url=timetable_source.url)
+        except DataSource.DoesNotExist:
+            continue
+        data_source.source = timetable_source
         data_source.save()
-        Version.objects.using(db_alias).bulk_create(
-            [
-                Version(source=source, name=filename, start_date=start_date, end_date=end_date)
-                for filename, (start_date, end_date) in source.settings.items()
-            ]
-        )
+        if data_source.settings:
+            versions = Version.objects.bulk_create(
+                [
+                    Version(source=timetable_source, name=filename, start_date=start_date, end_date=end_date)
+                    for filename, (start_date, end_date) in data_source.settings.items()
+                ]
+            )
+            for version in versions:
+                data_source.route_set.filter(code__startswith=version.name).update(version=version)
+
+
+def remove_versions(apps, schema_editor):
+    pass
 
 
 class Migration(migrations.Migration):
@@ -45,4 +56,5 @@ class Migration(migrations.Migration):
             name='version',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='bustimes.version'),
         ),
+        migrations.RunPython(create_versions, remove_versions)
     ]

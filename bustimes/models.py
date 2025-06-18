@@ -43,6 +43,9 @@ class Version(models.Model):
     name = models.CharField(null=True, blank=True)
     url = models.URLField(null=True, blank=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Route(models.Model):
     source = models.ForeignKey("busstops.DataSource", models.CASCADE)

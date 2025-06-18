@@ -152,24 +152,25 @@ class Command(BaseCommand):
                 foreign_operators = [o for o in operator_ids if o not in operators]
                 logger.info(f"  {foreign_operators}")
 
-            # even if there are no new versions, delete old routes from expired versions
-            old_routes = command.source.route_set
-            for version, _ in versions:
-                old_routes = old_routes.filter(~Q(version=version))
-            old_routes = old_routes.delete()
+            # even if there are no new versions, delete expired versions
+            old_versions = source.version_set.filter(
+                ~Q(id__in=[version.id for version in versions])
+            )
+            old_versions = old_versions.delete()
+
             if not (new_versions or operator_name):
-                if old_routes[0]:
+                if old_versions[0]:
                     logger.info(source.name)
                 else:
                     sleep(2)
                     continue
-            logger.info(f"  {old_routes=}")
+            logger.info(f"  {old_versions=}")
 
             # mark old services as not current
             old_services = command.source.service_set.filter(current=True, route=None)
             logger.info(f"  old services: {old_services.update(current=False)}")
 
-            if new_versions or operator_name or old_routes:
+            if new_versions or operator_name or old_versions:
                 if not (new_versions or operator_name):
                     remaining_services = command.source.service_set.filter(current=True)
                     command.service_ids = remaining_services.values_list(
