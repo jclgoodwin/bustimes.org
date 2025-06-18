@@ -37,8 +37,8 @@ class TimetableDataSource(models.Model):
 
 class Version(models.Model):
     source = models.ForeignKey(TimetableDataSource, models.CASCADE)
-    from_date = models.DateField(null=True, blank=True)
-    to_date = models.DateField(null=True, blank=True)
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
     datetime = models.DateTimeField(null=True, blank=True)
     name = models.CharField(null=True, blank=True)
     url = models.URLField(null=True, blank=True)
@@ -71,11 +71,6 @@ class Route(models.Model):
         "busstops.Service", models.CASCADE, null=True, blank=True
     )
     public_use = models.BooleanField(null=True)
-
-    def contains(self, date):
-        if not self.start_date or self.start_date <= date:
-            if not self.end_date or self.end_date >= date:
-                return True
 
     class Meta:
         unique_together = ("source", "code")
@@ -177,7 +172,10 @@ class Calendar(models.Model):
         "busstops.DataSource", models.CASCADE, null=True, blank=True
     )
 
-    contains = Route.contains
+    def contains(self, date):
+        if not self.start_date or self.start_date <= date:
+            if not self.end_date or self.end_date >= date:
+                return True
 
     class Meta:
         indexes = [models.Index(fields=["start_date", "end_date"])]
@@ -316,7 +314,7 @@ class CalendarDate(models.Model):
     special = models.BooleanField(default=False, db_index=True)
     summary = models.CharField(max_length=255, blank=True)
 
-    contains = Route.contains
+    contains = Calendar.contains
 
     def __str__(self):
         string = str(self.start_date)

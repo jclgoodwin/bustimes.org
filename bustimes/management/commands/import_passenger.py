@@ -38,8 +38,8 @@ def get_version(dates, url):
 
     return (
         Version(
-            from_date=dates[0],
-            to_date=dates[0],
+            start_date=dates[0],
+            end_date=dates[1],
             url=url,
             name=filename,
         ),
@@ -125,10 +125,6 @@ class Command(BaseCommand):
             )
             command.source.source = source
 
-            # command.source.settings = {
-            #     version["filename"]: version["dates"] for version in versions
-            # }
-
             if new_versions or operator_name:
                 logger.info(source.name)
 
@@ -144,6 +140,7 @@ class Command(BaseCommand):
                     if modified or operator_name:
                         logger.info(version)
                         command.version = version
+                        version.source = source
                         version.save()
                         handle_file(command, version.name, qualify_filename=True)
 

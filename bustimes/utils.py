@@ -44,15 +44,14 @@ class log_time_taken:
 
 def get_routes(routes, when=None, from_date=None):
     if when:
+        filter_by_revision_number = True
         if type(routes) is list:
-            if filter_by_revision_number := any(
-                route.revision_number for route in routes
-            ):
-                routes = Route.objects.filter(
-                    id__in=[route.id for route in routes]
-                ).select_related("source")
-        else:
-            filter_by_revision_number = True
+            filter_by_revision_number = any(route.revision_number for route in routes)
+
+            routes = Route.objects.filter(
+                id__in=[route.id for route in routes]
+            ).select_related("source")
+
         if filter_by_revision_number:
             routes = routes.filter(
                 Q(start_date=None) | Q(start_date__lte=when),
@@ -69,8 +68,7 @@ def get_routes(routes, when=None, from_date=None):
                 ),
             ).order_by("id")
 
-    # complicated way of working out which Passenger .zip applies
-    if when:
+        # complicated way of working out which Passenger .zip applies
         routes = routes.filter(
             ~Q(version=None)
             | Q(
@@ -87,8 +85,10 @@ def get_routes(routes, when=None, from_date=None):
             )
         )
 
-    if when:
-        routes = [route for route in routes if route.contains(when)]
+        routes = routes.filter(
+            Q(start_date=None) | Q(start_date__lte=when),
+            Q(end_date=None) | Q(end_date__gte=when),
+        )
 
     if from_date:
         # just filter out previous versions

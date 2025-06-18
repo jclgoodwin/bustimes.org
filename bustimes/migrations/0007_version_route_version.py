@@ -15,8 +15,8 @@ def forwards_func(apps, schema_editor):
         data_source.save()
         Version.objects.using(db_alias).bulk_create(
             [
-                Version(source=source, name=filename, from_date=from_date, to_date=to_date)
-                for filename, (from_date, to_date) in source.settings.items()
+                Version(source=source, name=filename, start_date=start_date, end_date=end_date)
+                for filename, (start_date, end_date) in source.settings.items()
             ]
         )
 
@@ -32,8 +32,8 @@ class Migration(migrations.Migration):
             name='Version',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('from_date', models.DateField(blank=True, null=True)),
-                ('to_date', models.DateField(blank=True, null=True)),
+                ('start_date', models.DateField(blank=True, null=True)),
+                ('end_date', models.DateField(blank=True, null=True)),
                 ('datetime', models.DateTimeField(blank=True, null=True)),
                 ('name', models.CharField(blank=True, null=True)),
                 ('url', models.URLField(blank=True, null=True)),
