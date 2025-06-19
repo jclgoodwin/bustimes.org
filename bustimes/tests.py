@@ -7,7 +7,16 @@ from vcr import use_cassette
 from busstops.models import DataSource, Service
 from vehicles.models import Livery, Vehicle, VehicleCode
 
-from .models import Calendar, CalendarDate, Garage, Route, StopTime, Trip
+from .models import (
+    Calendar,
+    CalendarDate,
+    Garage,
+    Route,
+    StopTime,
+    Trip,
+    TimetableDataSource,
+    Version,
+)
 from .utils import get_routes
 
 
@@ -316,8 +325,10 @@ class BusTimesTest(TestCase):
         ]
         Route.objects.bulk_create(routes)
 
-        self.assertEqual(get_routes(routes, when=date(2023, 2, 22)), routes[1:2])
-        self.assertEqual(get_routes(routes, when=date(2023, 3, 22)), routes[2:])
+        self.assertQuerySetEqual(
+            get_routes(routes, when=date(2023, 2, 22)), routes[1:2]
+        )
+        self.assertQuerySetEqual(get_routes(routes, when=date(2023, 3, 22)), routes[2:])
 
     def test_get_routes_tfl(self):
         source = DataSource.objects.create(id=1, name="L")
@@ -355,40 +366,57 @@ class BusTimesTest(TestCase):
         self.assertFalse(get_routes([]), 2)
 
     def test_get_routes_passenger(self):
-        source = DataSource(
-            id=1,
-            name="McGill",
-            settings={
-                "mcgills_1714387585.zip": ["2024-05-06", "2024-05-07"],
-                "mcgills_1714388037.zip": ["2024-05-13", "2025-05-14"],
-                "mcgills_1714389553.zip": ["2024-04-29", "2025-04-30"],
-            },
+        tds = TimetableDataSource.objects.create()
+        ds = DataSource.objects.create(id=1, name="McGill", source=tds)
+        versions = Version.objects.bulk_create(
+            [
+                Version(
+                    source=tds,
+                    name="mcgills_1714387585.zip",
+                    start_date=date(2024, 5, 6),
+                    end_date=date(2024, 5, 7),
+                ),
+                Version(
+                    source=tds,
+                    name="mcgills_1714388037.zip",
+                    start_date=date(2024, 5, 13),
+                    end_date=date(2025, 5, 14),
+                ),
+                Version(
+                    source=tds,
+                    name="mcgills_1714389553.zip",
+                    start_date=date(2024, 4, 29),
+                    end_date=date(2025, 4, 30),
+                ),
+            ]
         )
-        routes = [
-            Route(
-                id=1,
-                code="mcgills_1714387585.zip/foo.xml",  # starts 2024-05-06
-                source=source,
-                line_name="1",
-            ),
-            Route(
-                id=2,
-                code="mcgills_1714388037.zip/foo.xml",  # starts 2024-05-13
-                source=source,
-                line_name="2",
-            ),
-            Route(
-                id=3,
-                code="mcgills_1714389553.zip/foo.xml",  # starts 2024-04-29
-                source=source,
-                line_name="3",
-            ),
-        ]
+        routes = Route.objects.bulk_create(
+            [
+                Route(
+                    version=versions[0],
+                    code="mcgills_1714387585.zip/foo.xml",  # starts 2024-05-06
+                    source=ds,
+                    line_name="1",
+                ),
+                Route(
+                    version=versions[1],
+                    code="mcgills_1714388037.zip/foo.xml",  # starts 2024-05-13
+                    source=ds,
+                    line_name="2",
+                ),
+                Route(
+                    version=versions[2],
+                    code="mcgills_1714389553.zip/foo.xml",  # starts 2024-04-29
+                    source=ds,
+                    line_name="3",
+                ),
+            ]
+        )
 
-        self.assertEqual(get_routes(routes, date(2024, 4, 1)), [])
-        self.assertEqual(get_routes(routes, date(2024, 4, 29)), [routes[2]])
-        self.assertEqual(get_routes(routes, date(2024, 5, 6)), [routes[0]])
-        self.assertEqual(get_routes(routes, date(2024, 5, 14)), [routes[1]])
+        self.assertQuerySetEqual(get_routes(routes, date(2024, 4, 1)), [])
+        self.assertQuerySetEqual(get_routes(routes, date(2024, 4, 29)), [routes[2]])
+        self.assertQuerySetEqual(get_routes(routes, date(2024, 5, 6)), [routes[0]])
+        self.assertQuerySetEqual(get_routes(routes, date(2024, 5, 14)), [routes[1]])
 
     def test_garage(self):
         garage = Garage(code="LOW", name="LOWESTOFT TOWN")

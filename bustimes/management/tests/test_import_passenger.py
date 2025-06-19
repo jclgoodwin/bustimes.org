@@ -40,10 +40,7 @@ class ImportPassengerTest(TestCase):
             cm.output,
             [
                 "INFO:bustimes.management.commands.import_bod_timetables:Unilink",
-                "INFO:bustimes.management.commands.import_bod_timetables:{"
-                "'dates': ['2022-03-27', '2022-04-24'], "
-                "'url': 'https://s3-eu-west-1.amazonaws.com/passenger-sources/unilink/txc/unilink_1648047602.zip', "
-                "'filename': 'unilink_1648047602.zip', 'modified': True}",
+                "INFO:bustimes.management.commands.import_bod_timetables:unilink_1648047602.zip",
             ],
         )
 
@@ -56,6 +53,6 @@ class ImportPassengerTest(TestCase):
         # date from timestamp in code (1653042367)
         self.assertEqual(
             source.credit(route),
-            """<a href="https://data.discoverpassenger.com/operator/unilink" rel="nofollow">Unilink</a>, """
-            + """<time datetime="2022-05-20">20 May 2022</time>""",
+            """<a href="https://data.discoverpassenger.com/operator/unilink" rel="nofollow">Unilink</a>"""
+            + """, <time datetime="2022-05-20">20 May 2022</time>""",
         )
