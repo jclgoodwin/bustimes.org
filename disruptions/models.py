@@ -130,3 +130,19 @@ class Consequence(models.Model):
         if service:
             return service.get_absolute_url()
         return ""
+
+
+class AffectedJourney(models.Model):
+    situation = models.ForeignKey(Situation, models.CASCADE)
+    trip = models.ForeignKey("bustimes.Trip", models.CASCADE)
+    origin_departure_time = models.DateTimeField(null=True, blank=True)
+    condition = models.CharField()  # cancelled, altered, etc
+
+
+class Call(models.Model):
+    journey = models.ForeignKey(AffectedJourney, models.CASCADE)
+    stop_time = models.ForeignKey("bustimes.StopTime", models.CASCADE)
+    arrival_time = models.DateTimeField(null=True, blank=True)
+    departure_time = models.DateTimeField(null=True, blank=True)
+    condition = models.CharField()
+    order = models.PositiveSmallIntegerField()
