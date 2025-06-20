@@ -17,7 +17,15 @@ from django.db.models import (
 from django.utils import timezone
 from sql_util.utils import Exists
 
-from .models import Calendar, CalendarBankHoliday, CalendarDate, StopTime, Trip, Route
+from .models import (
+    Calendar,
+    CalendarBankHoliday,
+    CalendarDate,
+    StopTime,
+    Trip,
+    Route,
+    Version,
+)
 
 differ = Differ(charjunk=lambda _: True)
 logger = logging.getLogger(__name__)
@@ -36,15 +44,14 @@ class log_time_taken:
 
 def get_routes(routes, when=None, from_date=None):
     if when:
+        filter_by_revision_number = True
         if type(routes) is list:
-            if filter_by_revision_number := any(
-                route.revision_number for route in routes
-            ):
-                routes = Route.objects.filter(
-                    id__in=[route.id for route in routes]
-                ).select_related("source")
-        else:
-            filter_by_revision_number = True
+            filter_by_revision_number = any(route.revision_number for route in routes)
+
+            routes = Route.objects.filter(
+                id__in=[route.id for route in routes]
+            ).select_related("source")
+
         if filter_by_revision_number:
             routes = routes.filter(
                 Q(start_date=None) | Q(start_date__lte=when),
@@ -61,34 +68,27 @@ def get_routes(routes, when=None, from_date=None):
                 ),
             ).order_by("id")
 
-    # complicated way of working out which Passenger .zip applies
-    current_prefixes = {}
-    for route in routes:
-        if route.source.settings and route.source_id not in current_prefixes:
-            current_prefixes[route.source.id] = None
-
-            prefix_dates = [
-                (prefix, date.fromisoformat(dates[0]), date.fromisoformat(dates[1]))
-                for prefix, dates in route.source.settings.items()
-            ]
-            prefix_dates.sort(key=lambda item: item[1])  # sort by from_date
-            for prefix, start, end in prefix_dates:
-                if when and (start <= when < end):
-                    current_prefixes[route.source_id] = prefix
-    if current_prefixes:
-        routes = [
-            route
-            for route in routes
-            if route.source_id not in current_prefixes
-            or (
-                current_prefixes[route.source.id]
-                and route.code.startswith(current_prefixes[route.source_id])
+        # complicated way of working out which Passenger .zip applies
+        routes = routes.filter(
+            Q(version=None)
+            | Q(
+                ~Exists(
+                    Version.objects.filter(
+                        source=OuterRef("version__source"),
+                        start_date__lte=when,
+                        end_date__gte=when,
+                        start_date__gt=OuterRef("version__start_date"),
+                    )
+                ),
+                version__start_date__lte=when,
+                version__end_date__gte=when,
             )
-        ]
-        return routes
+        )
 
-    if when:
-        routes = [route for route in routes if route.contains(when)]
+        routes = routes.filter(
+            Q(start_date=None) | Q(start_date__lte=when),
+            Q(end_date=None) | Q(end_date__gte=when),
+        )
 
     if from_date:
         # just filter out previous versions

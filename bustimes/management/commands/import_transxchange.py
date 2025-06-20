@@ -193,6 +193,7 @@ def get_registration(service_code):
 
 class Command(BaseCommand):
     bank_holidays = None
+    version = None
 
     @staticmethod
     def add_arguments(parser):
@@ -1312,6 +1313,7 @@ class Command(BaseCommand):
                 ),
                 "service_code": txc_service.service_code,
                 "public_use": service.public_use,
+                "version": self.version,
             }
 
             for key in ("outbound_description", "inbound_description"):

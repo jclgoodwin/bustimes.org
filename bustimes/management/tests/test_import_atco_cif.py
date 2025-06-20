@@ -87,7 +87,7 @@ class ImportAtcoCifTest(TestCase):
         self.assertNotContains(response, "Sunday")
         self.assertContains(response, '17:05<abbr title="pick up only">p</abbr>')
 
-        with time_machine.travel("2019-08-12"), self.assertNumQueries(7):
+        with time_machine.travel("2019-08-12"), self.assertNumQueries(8):
             response = self.client.get(
                 f"/services/{service.id}/timetable?date=2019-08-12"
             )

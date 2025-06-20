@@ -22,6 +22,7 @@ from .models import (
     StopTime,
     TimetableDataSource,
     Trip,
+    Version,
 )
 
 
@@ -45,6 +46,10 @@ class StopTimeInline(admin.TabularInline):
     autocomplete_fields = ["stop"]
 
 
+class VersionInline(admin.TabularInline):
+    model = Version
+
+
 @admin.register(TimetableDataSource)
 class TimetableDataSourceAdmin(admin.ModelAdmin):
     autocomplete_fields = ["operators"]
@@ -52,6 +57,7 @@ class TimetableDataSourceAdmin(admin.ModelAdmin):
     list_filter = ["active", "complete"]
     search_fields = ["url", "name", "search"]
     actions = ["activate", "deactivate"]
+    inlines = [VersionInline]
 
     def nocs(self, obj):
         return obj.nocs

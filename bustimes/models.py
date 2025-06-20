@@ -35,8 +35,21 @@ class TimetableDataSource(models.Model):
         return self.name
 
 
+class Version(models.Model):
+    source = models.ForeignKey(TimetableDataSource, models.CASCADE)
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+    datetime = models.DateTimeField(null=True, blank=True)
+    name = models.CharField(null=True, blank=True)
+    url = models.URLField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Route(models.Model):
     source = models.ForeignKey("busstops.DataSource", models.CASCADE)
+    version = models.ForeignKey(Version, models.CASCADE, null=True, blank=True)
     code = models.CharField(max_length=255, blank=True)  # qualified filename
     service_code = models.CharField(max_length=255, blank=True)
     revision_number_context = models.CharField(max_length=48, blank=True)
@@ -61,11 +74,6 @@ class Route(models.Model):
         "busstops.Service", models.CASCADE, null=True, blank=True
     )
     public_use = models.BooleanField(null=True)
-
-    def contains(self, date):
-        if not self.start_date or self.start_date <= date:
-            if not self.end_date or self.end_date >= date:
-                return True
 
     class Meta:
         unique_together = ("source", "code")
@@ -167,7 +175,10 @@ class Calendar(models.Model):
         "busstops.DataSource", models.CASCADE, null=True, blank=True
     )
 
-    contains = Route.contains
+    def contains(self, date):
+        if not self.start_date or self.start_date <= date:
+            if not self.end_date or self.end_date >= date:
+                return True
 
     class Meta:
         indexes = [models.Index(fields=["start_date", "end_date"])]
@@ -306,7 +317,7 @@ class CalendarDate(models.Model):
     special = models.BooleanField(default=False, db_index=True)
     summary = models.CharField(max_length=255, blank=True)
 
-    contains = Route.contains
+    contains = Calendar.contains
 
     def __str__(self):
         string = str(self.start_date)
