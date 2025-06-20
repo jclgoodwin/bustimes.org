@@ -63,7 +63,7 @@
 | bustimes/management/commands/import\_gtfs\_ember.py             |      103 |        6 |     94% |73-74, 89, 132, 137, 173 |
 | bustimes/management/commands/import\_gtfs\_flixbus.py           |      144 |        3 |     98% |75, 142, 208 |
 | bustimes/management/commands/import\_ni.py                      |       31 |        0 |    100% |           |
-| bustimes/management/commands/import\_passenger.py               |      120 |       34 |     72% |54-57, 59-61, 105, 115-119, 147-184 |
+| bustimes/management/commands/import\_passenger.py               |      116 |       34 |     71% |51-54, 56-58, 102, 112-116, 142-179 |
 | bustimes/management/commands/import\_tnds.py                    |       43 |        0 |    100% |           |
 | bustimes/management/commands/import\_transxchange.py            |      772 |       77 |     90% |83, 95, 141-142, 290, 369, 372-386, 415, 547, 589-590, 627-628, 630-631, 654-655, 665, 673-674, 732, 743, 779, 805, 809-811, 865-869, 930, 934, 936, 949-954, 991-992, 1003, 1020, 1028, 1030-1033, 1056, 1083, 1122, 1153-1154, 1181-1183, 1190, 1195-1196, 1207, 1212, 1225, 1250, 1284-1285, 1321-1322, 1391 |
 | bustimes/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
@@ -169,7 +169,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16217** | **1102** | **93%** |           |
+|                                                       **TOTAL** | **16213** | **1102** | **93%** |           |
 
 
 ## Setup coverage badge
