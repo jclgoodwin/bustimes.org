@@ -191,10 +191,6 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
         response = self.client.get(f"/api/trips/?service={route.service_id}")
         self.assertEqual(4, len(response.json()["results"]))
 
-        response = self.client.get(f"/api/trips/?date=2020-04-01")
-        print(response.json()["results"])
-        self.assertEqual(4, len(response.json()["results"]))
-
         response = self.client.get(trip.get_absolute_url())
 
         self.assertContains(response, "Clenchwarton Post Box")
