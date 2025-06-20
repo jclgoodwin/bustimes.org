@@ -154,8 +154,11 @@ class Command(BaseCommand):
 
             # even if there are no new versions, delete expired versions
             old_versions = source.version_set.filter(
-                ~Q(id__in=[version.id for version in versions])
+                ~Q(id__in=[version.id for version, _ in versions])
             )
+            source.route_set.filter(
+                version__in=old_versions, service__isnull=False
+            ).update(service=None, version=None)
             old_versions = old_versions.delete()
 
             if not (new_versions or operator_name):
