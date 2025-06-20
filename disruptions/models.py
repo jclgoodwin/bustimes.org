@@ -19,6 +19,10 @@ class Situation(models.Model):
             "name__in": (
                 "bustimes.org",
                 "TfL",
+                "TfL disruptions",
+                "TfL statuses",
+                "BODS disruptions",
+                "BODS cancellations",
                 "Bus Open Data",
             )
         },
@@ -37,7 +41,7 @@ class Situation(models.Model):
     current = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.summary or self.text or super().__str__()
+        return self.summary or self.text or self.situation_number or super().__str__()
 
     def nice_reason(self):
         return camel_case_to_spaces(self.reason)
