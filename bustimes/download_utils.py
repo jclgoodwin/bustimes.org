@@ -14,7 +14,7 @@ def write_file(path, response):
 
 def download(path, url, session=None):
     response = (session or requests).get(url, stream=True, timeout=61)
-    assert response.ok
+    response.raise_for_status()
     write_file(path, response)
 
 

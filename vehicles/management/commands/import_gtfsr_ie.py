@@ -37,7 +37,7 @@ class Command(ImportLiveVehiclesCommand):
         response = self.session.get(
             self.url, headers={"x-api-key": settings.NTA_API_KEY}, timeout=10
         )
-        assert response.ok
+        response.raise_for_status()
 
         feed = gtfs_realtime_pb2.FeedMessage()
         feed.ParseFromString(response.content)
@@ -139,7 +139,7 @@ class Command(ImportLiveVehiclesCommand):
             trips = Trip.objects.filter(
                 route__source=self.source,
                 start=start_time,
-                inbound=item.vehicle.trip.direction_id == 1
+                inbound=item.vehicle.trip.direction_id == 1,
             )
             if service:
                 trips = trips.filter(route__service=service)

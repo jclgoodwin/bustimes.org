@@ -33,7 +33,7 @@ def get_response(source, code):
     )
     if response.status_code == HTTPStatus.NOT_FOUND:
         raise Http404
-    assert response.ok
+    response.raise_for_status()
     return response.json()
 
 

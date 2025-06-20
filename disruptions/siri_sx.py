@@ -160,7 +160,7 @@ def bods_disruptions():
     situations = []
 
     response = requests.get(url, timeout=61)
-    assert response.ok
+    response.raise_for_status()
     archive = zipfile.ZipFile(io.BytesIO(response.content))
 
     namelist = archive.namelist()

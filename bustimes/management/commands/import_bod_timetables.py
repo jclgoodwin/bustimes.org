@@ -170,7 +170,7 @@ def bus_open_data(api_key, specific_operator):
         url = f"{url_prefix}/api/v1/dataset/"
         while url:
             response = session.get(url, params=params)
-            assert response.ok
+            response.raise_for_status()
             json = response.json()
             results = json["results"]
             if not results:

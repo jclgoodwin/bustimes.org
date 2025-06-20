@@ -31,7 +31,7 @@ class Command(BaseCommand):
 
     def get_items(self):
         response = self.session.get(self.url, timeout=10)
-        assert response.ok
+        response.raise_for_status()
 
         feed = gtfs_realtime_pb2.FeedMessage()
         feed.ParseFromString(response.content)
