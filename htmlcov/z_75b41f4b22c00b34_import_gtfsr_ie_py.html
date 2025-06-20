@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_75b41f4b22c00b34_import_live_jersey_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.9.1">coverage.py v7.9.1</a>,
-            created at 2025-06-20 11:21 +0000
+            created at 2025-06-20 14:29 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -119,7 +119,7 @@
     <p class="run"><span class="n"><a id="t37" href="#t37">37</a></span><span class="t">        <span class="nam">response</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">session</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t38" href="#t38">38</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">url</span><span class="op">,</span> <span class="nam">headers</span><span class="op">=</span><span class="op">{</span><span class="str">"x-api-key"</span><span class="op">:</span> <span class="nam">settings</span><span class="op">.</span><span class="nam">NTA_API_KEY</span><span class="op">}</span><span class="op">,</span> <span class="nam">timeout</span><span class="op">=</span><span class="num">10</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t39" href="#t39">39</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t40" href="#t40">40</a></span><span class="t">        <span class="key">assert</span> <span class="nam">response</span><span class="op">.</span><span class="nam">ok</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t40" href="#t40">40</a></span><span class="t">        <span class="nam">response</span><span class="op">.</span><span class="nam">raise_for_status</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t41" href="#t41">41</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t42" href="#t42">42</a></span><span class="t">        <span class="nam">feed</span> <span class="op">=</span> <span class="nam">gtfs_realtime_pb2</span><span class="op">.</span><span class="nam">FeedMessage</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t43" href="#t43">43</a></span><span class="t">        <span class="nam">feed</span><span class="op">.</span><span class="nam">ParseFromString</span><span class="op">(</span><span class="nam">response</span><span class="op">.</span><span class="nam">content</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -221,7 +221,7 @@
     <p class="run"><span class="n"><a id="t139" href="#t139">139</a></span><span class="t">            <span class="nam">trips</span> <span class="op">=</span> <span class="nam">Trip</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t140" href="#t140">140</a></span><span class="t">                <span class="nam">route__source</span><span class="op">=</span><span class="nam">self</span><span class="op">.</span><span class="nam">source</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t141" href="#t141">141</a></span><span class="t">                <span class="nam">start</span><span class="op">=</span><span class="nam">start_time</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t142" href="#t142">142</a></span><span class="t">                <span class="nam">inbound</span><span class="op">=</span><span class="nam">item</span><span class="op">.</span><span class="nam">vehicle</span><span class="op">.</span><span class="nam">trip</span><span class="op">.</span><span class="nam">direction_id</span> <span class="op">==</span> <span class="num">1</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t142" href="#t142">142</a></span><span class="t">                <span class="nam">inbound</span><span class="op">=</span><span class="nam">item</span><span class="op">.</span><span class="nam">vehicle</span><span class="op">.</span><span class="nam">trip</span><span class="op">.</span><span class="nam">direction_id</span> <span class="op">==</span> <span class="num">1</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t143" href="#t143">143</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t144" href="#t144">144</a></span><span class="t">            <span class="key">if</span> <span class="nam">service</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t145" href="#t145">145</a></span><span class="t">                <span class="nam">trips</span> <span class="op">=</span> <span class="nam">trips</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span><span class="nam">route__service</span><span class="op">=</span><span class="nam">service</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -272,7 +272,7 @@
             <a class="nav" href="z_75b41f4b22c00b34_import_live_jersey_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.9.1">coverage.py v7.9.1</a>,
-            created at 2025-06-20 11:21 +0000
+            created at 2025-06-20 14:29 +0000
         </p>
     </div>
 </footer>

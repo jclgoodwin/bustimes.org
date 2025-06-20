@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_2c17191315bcbf2a_admin_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.9.1">coverage.py v7.9.1</a>,
-            created at 2025-06-20 11:21 +0000
+            created at 2025-06-20 14:29 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -1207,7 +1207,7 @@
     <p class="run"><span class="n"><a id="t1125" href="#t1125">1125</a></span><span class="t">    <span class="nam">vehicle</span> <span class="op">=</span> <span class="nam">get_object_or_404</span><span class="op">(</span><span class="nam">Vehicle</span><span class="op">,</span> <span class="op">**</span><span class="nam">kwargs</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1126" href="#t1126">1126</a></span><span class="t">    <span class="key">if</span> <span class="key">not</span> <span class="nam">vehicle</span><span class="op">.</span><span class="nam">latest_journey_data</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t1127" href="#t1127">1127</a></span><span class="t">        <span class="key">raise</span> <span class="nam">Http404</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t1128" href="#t1128">1128</a></span><span class="t">    <span class="key">return</span> <span class="nam">JsonResponse</span><span class="op">(</span><span class="nam">vehicle</span><span class="op">.</span><span class="nam">latest_journey_data</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t1128" href="#t1128">1128</a></span><span class="t">    <span class="key">return</span> <span class="nam">JsonResponse</span><span class="op">(</span><span class="nam">vehicle</span><span class="op">.</span><span class="nam">latest_journey_data</span><span class="op">,</span> <span class="nam">safe</span><span class="op">=</span><span class="key">False</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1129" href="#t1129">1129</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1130" href="#t1130">1130</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1131" href="#t1131">1131</a></span><span class="t"><span class="key">def</span> <span class="nam">debug</span><span class="op">(</span><span class="nam">request</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -1315,7 +1315,7 @@
             <a class="nav" href="z_2c17191315bcbf2a_admin_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.9.1">coverage.py v7.9.1</a>,
-            created at 2025-06-20 11:21 +0000
+            created at 2025-06-20 14:29 +0000
         </p>
     </div>
 </footer>

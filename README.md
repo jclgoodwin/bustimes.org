@@ -138,8 +138,9 @@
 | vehicles/management/commands/import\_nx.py                      |      100 |       16 |     84% |84-86, 88-89, 107-112, 132-137, 154-155 |
 | vehicles/management/commands/import\_polar.py                   |       75 |       25 |     67% |13-14, 25, 28, 33-39, 45-47, 51, 61-62, 65, 79-82, 85, 98, 105 |
 | vehicles/management/commands/import\_stagecoach\_avl.py         |       94 |       15 |     84% |105, 116-127, 155, 162, 167-168, 179-185, 207-215 |
+| vehicles/management/commands/signalr.py                         |       65 |        5 |     92% |57, 74-76, 88 |
 | vehicles/management/commands/siri\_vm\_subscribe.py             |       26 |        7 |     73% |     27-55 |
-| vehicles/management/import\_live\_vehicles.py                   |      283 |       59 |     79% |38, 51-67, 80, 121, 130, 136-138, 162, 177, 181, 190-193, 202, 215, 223, 228, 232-233, 235-236, 241-242, 256-262, 294-295, 336, 339-340, 354-355, 370-371, 375, 398-399, 406-410, 427, 437-439 |
+| vehicles/management/import\_live\_vehicles.py                   |      283 |       58 |     80% |38, 51-67, 121, 130, 136-138, 162, 177, 181, 190-193, 202, 215, 223, 228, 232-233, 235-236, 241-242, 256-262, 294-295, 336, 339-340, 354-355, 370-371, 375, 398-399, 406-410, 427, 437-439 |
 | vehicles/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | vehicles/management/tests/test\_bod\_avl.py                     |      295 |        0 |    100% |           |
 | vehicles/management/tests/test\_bushub.py                       |       48 |        0 |    100% |           |
@@ -147,6 +148,7 @@
 | vehicles/management/tests/test\_import\_live\_jersey.py         |       31 |        0 |    100% |           |
 | vehicles/management/tests/test\_import\_nx.py                   |       77 |        0 |    100% |           |
 | vehicles/management/tests/test\_polar.py                        |       33 |        0 |    100% |           |
+| vehicles/management/tests/test\_signalr.py                      |       22 |        0 |    100% |           |
 | vehicles/management/tests/test\_siri\_post.py                   |       40 |        0 |    100% |           |
 | vehicles/management/tests/test\_stagecoach\_avl.py              |       33 |        0 |    100% |           |
 | vehicles/management/tests/test\_stats.py                        |       24 |        0 |    100% |           |
@@ -169,7 +171,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16213** | **1102** | **93%** |           |
+|                                                       **TOTAL** | **16300** | **1106** | **93%** |           |
 
 
 ## Setup coverage badge
