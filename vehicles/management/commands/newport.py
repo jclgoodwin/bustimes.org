@@ -16,7 +16,6 @@ class Command(ImportLiveVehiclesCommand):
         return parse_datetime(item["reported"])
 
     def get_vehicle(self, item):
-        print(item)
         code = item["vehicleRef"]
         defaults = {"reg": code}
 
@@ -27,10 +26,10 @@ class Command(ImportLiveVehiclesCommand):
 
         latest_journey = vehicle.latest_journey
         if latest_journey and latest_journey.datetime == datetime:
-            return latest_journey
+            journey = latest_journey
         else:
             try:
-                return vehicle.vehiclejourney_set.get(datetime=datetime)
+                journey = vehicle.vehiclejourney_set.get(datetime=datetime)
             except VehicleJourney.DoesNotExist:
                 journey = VehicleJourney(datetime=datetime)
 

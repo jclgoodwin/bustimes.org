@@ -151,7 +151,7 @@ class Command(BaseCommand):
             old_versions = source.version_set.filter(
                 ~Q(id__in=[version.id for version, _ in versions])
             )
-            source.route_set.filter(
+            command.source.route_set.filter(
                 version__in=old_versions, service__isnull=False
             ).update(service=None, version=None)
             old_versions = old_versions.delete()
