@@ -1125,7 +1125,7 @@ def latest_journey_debug(request, **kwargs):
     vehicle = get_object_or_404(Vehicle, **kwargs)
     if not vehicle.latest_journey_data:
         raise Http404
-    return JsonResponse(vehicle.latest_journey_data)
+    return JsonResponse(vehicle.latest_journey_data, safe=False)
 
 
 def debug(request):
