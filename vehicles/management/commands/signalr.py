@@ -38,11 +38,11 @@ class Command(ImportLiveVehiclesCommand):
                 "latest_journey"
             ).get_or_create(
                 {
-                    "source": self.source,
+                    "operator_id": self.operator_id,
                     "fleet_code": str(fleet_number or vehicle_code),
                     "fleet_number": fleet_number,
                 },
-                operator_id=self.operator_id,
+                source=self.source,
                 code=vehicle_code,
             )
 
@@ -138,6 +138,8 @@ class Command(ImportLiveVehiclesCommand):
                     "_": int(time.time() * 1000),
                 },
             )
+            if not response.ok:
+                return
             for part in response.content.split(b"\x1e"):
                 if part:
                     part = json.loads(part)
