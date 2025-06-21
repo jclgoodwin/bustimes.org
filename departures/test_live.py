@@ -150,7 +150,7 @@ class LiveDeparturesTest(TestCase):
                         <tr>
                             <td></td>
                             <th scope="col">To</th>
-                            <th scope="col">Ex&shy;pected</th>
+                            <th scope="col">Expected</th>
                         </tr>
                     <tr><td><a href="/services/8">8</a></td><td>Bow Church
                         <div class="vehicle">LTZ1414</div></td>
@@ -228,9 +228,13 @@ class LiveDeparturesTest(TestCase):
         )
         Vehicle.objects.create(source=vehicle_source, code="686")
 
-        with time_machine.travel(datetime(2022, 6, 14, 12)), vcr.use_cassette(
-            "fixtures/vcr/edinburgh.yaml", decode_compressed_response=True
-        ), self.assertNumQueries(9):
+        with (
+            time_machine.travel(datetime(2022, 6, 14, 12)),
+            vcr.use_cassette(
+                "fixtures/vcr/edinburgh.yaml", decode_compressed_response=True
+            ),
+            self.assertNumQueries(9),
+        ):
             response = self.client.get(stop.get_absolute_url())
         self.assertContains(response, '<a href="/vehicles/none-686#journeys/None">')
 
@@ -304,7 +308,7 @@ class LiveDeparturesTest(TestCase):
                     <tr>
                         <td></td>
                         <th scope="col">To</th>
-                        <th scope="col">Sched&shy;uled</th>
+                        <th scope="col">Scheduled</th>
                     </tr>
                     <tr><td>X98</td><td>Bratislava</td><td>11:53</td><td></td></tr>
                 </tbody></table>
@@ -313,7 +317,7 @@ class LiveDeparturesTest(TestCase):
                     <tr>
                         <td></td>
                         <th scope="col">To</th>
-                        <th scope="col">Sched&shy;uled</th>
+                        <th scope="col">Scheduled</th>
                     </tr>
                     <tr><td>9</td><td>Shilbottle</td><td>11:53</td><td></td></tr>
                 </tbody></table>
