@@ -3,8 +3,6 @@
 import csv
 import datetime
 import os
-import sys
-import traceback
 import logging
 from http import HTTPStatus
 
@@ -151,17 +149,6 @@ def not_found(request, exception):
         # no matching url pattern, cache for an hour
         patch_response_headers(response, cache_timeout=3600)
 
-    return response
-
-
-def error(request):
-    context = {}
-    _, exception, tb = sys.exc_info()
-    context["exception"] = exception
-    if request.user.is_superuser:
-        context["traceback"] = traceback.format_tb(tb)
-    response = render(None, "500.html", context)
-    response.status_code = 500
     return response
 
 
