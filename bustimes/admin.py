@@ -19,6 +19,7 @@ from .models import (
     Garage,
     Note,
     Route,
+    RouteLink,
     StopTime,
     TimetableDataSource,
     Trip,
@@ -198,3 +199,9 @@ class BankHolidayAdmin(admin.ModelAdmin):
                 calendars=SubqueryCount("calendarbankholiday"),
             )
         return queryset
+
+
+@admin.register(RouteLink)
+class RouteLinkAdmin(admin.ModelAdmin):
+    raw_id_fields = ["from_stop", "to_stop", "service"]
+    list_display = ["from_stop", "to_stop", "service"]
