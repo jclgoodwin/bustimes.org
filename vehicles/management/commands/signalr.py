@@ -1,3 +1,4 @@
+from http import HTTPStatus
 import time
 import json
 
@@ -130,21 +131,21 @@ class Command(ImportLiveVehiclesCommand):
             data=json.dumps({"protocol": "json", "version": 1}) + "\x1e",
         )
 
-        while response.ok:
-            response = session.get(
+        while (
+            response := session.get(
                 hub_url,
                 params={
                     "id": negotiation["connectionToken"],
                     "_": int(time.time() * 1000),
                 },
             )
-            if not response.ok:
-                return
-            for part in response.content.split(b"\x1e"):
-                if part:
-                    part = json.loads(part)
-                    if "arguments" in part:
-                        for argument in part["arguments"]:
-                            for location in argument["locations"]:
-                                self.handle_item(location)
-                        self.save()
+        ).ok or response.status_code == HTTPStatus.GATEWAY_TIMEOUT:
+            if response.ok:
+                for part in response.content.split(b"\x1e"):
+                    if part:
+                        part = json.loads(part)
+                        if "arguments" in part:
+                            for argument in part["arguments"]:
+                                for location in argument["locations"]:
+                                    self.handle_item(location)
+                            self.save()
