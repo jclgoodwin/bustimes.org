@@ -86,25 +86,15 @@ class Command(ImportLiveVehiclesCommand):
         return line_names
 
     def create_vehicle_location(self, item):
-        heading = item["live"]["bearing"]
-
-        delay = None
-        for timetable in item["timetables"]:
-            if (
-                timetable
-                and timetable["eta"]
-                and timetable["eta"]["status"] == "next_stop"
-            ):
-                aimed_arrival = parse_datetime(timetable["arrive"]["dateTime"])
-                expected_arrival = parse_datetime(
-                    timetable["eta"]["etaArrive"]["dateTime"]
-                )
-                delay = expected_arrival - aimed_arrival
-                break
-
+        delay = item["tracking"]["current_delay_seconds"]
+        if delay is not None:
+            delay = timedelta(seconds=delay)
         return VehicleLocation(
-            latlong=Point(item["live"]["lon"], item["live"]["lat"]),
-            heading=heading,
+            latlong=Point(
+                item["active_vehicle"]["current_wgs84_longitude_degrees"],
+                item["active_vehicle"]["current_wgs84_latitude_degrees"],
+            ),
+            heading=item["active_vehicle"]["current_forward_azimuth_degrees"],
             delay=delay,
         )
 
@@ -183,15 +173,7 @@ class Command(ImportLiveVehiclesCommand):
         if (now - updated_at).total_seconds() > 600:
             return
 
-        delay = item["tracking"]["current_delay_seconds"]
-        location = VehicleLocation(
-            latlong=Point(
-                item["active_vehicle"]["current_wgs84_longitude_degrees"],
-                item["active_vehicle"]["current_wgs84_latitude_degrees"],
-            ),
-            heading=item["active_vehicle"]["current_forward_azimuth_degrees"],
-            delay=timedelta(seconds=delay) if delay is not None else None,
-        )
+        location = self.create_vehicle_location(item)
         location.datetime = updated_at
         location.journey = journey
         location.id = journey.id
