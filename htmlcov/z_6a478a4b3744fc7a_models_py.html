@@ -55,8 +55,8 @@
         </aside>
         <h2>
             <span class="text">503 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">468<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">35<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">466<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">37<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_6a478a4b3744fc7a_rtpi_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.9.1">coverage.py v7.9.1</a>,
-            created at 2025-06-25 09:57 +0000
+            created at 2025-06-25 13:09 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -805,7 +805,7 @@
     <p class="run"><span class="n"><a id="t723" href="#t723">723</a></span><span class="t">    <span class="key">def</span> <span class="nam">get_appendage</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t724" href="#t724">724</a></span><span class="t">        <span class="nam">delay</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">delay</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t725" href="#t725">725</a></span><span class="t">        <span class="key">if</span> <span class="nam">delay</span> <span class="key">is</span> <span class="key">not</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t726" href="#t726">726</a></span><span class="t">            <span class="nam">delay</span> <span class="op">=</span> <span class="nam">round</span><span class="op">(</span><span class="nam">delay</span><span class="op">.</span><span class="nam">total_seconds</span><span class="op">(</span><span class="op">)</span> <span class="op">/</span> <span class="num">60</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t726" href="#t726">726</a></span><span class="t">            <span class="nam">delay</span> <span class="op">=</span> <span class="nam">round</span><span class="op">(</span><span class="nam">delay</span><span class="op">.</span><span class="nam">total_seconds</span><span class="op">(</span><span class="op">)</span> <span class="op">/</span> <span class="num">60</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t727" href="#t727">727</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t728" href="#t728">728</a></span><span class="t">        <span class="key">if</span> <span class="nam">self</span><span class="op">.</span><span class="nam">heading</span> <span class="key">is</span> <span class="key">None</span> <span class="key">or</span> <span class="nam">type</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">heading</span><span class="op">)</span> <span class="key">is</span> <span class="nam">int</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t729" href="#t729">729</a></span><span class="t">            <span class="nam">heading</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">heading</span>&nbsp;</span><span class="r"></span></p>
@@ -857,7 +857,7 @@
     <p class="pln"><span class="n"><a id="t775" href="#t775">775</a></span><span class="t">        <span class="op">}</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t776" href="#t776">776</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t777" href="#t777">777</a></span><span class="t">        <span class="key">if</span> <span class="nam">self</span><span class="op">.</span><span class="nam">delay</span> <span class="key">is</span> <span class="key">not</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t778" href="#t778">778</a></span><span class="t">            <span class="nam">json</span><span class="op">[</span><span class="str">"delay"</span><span class="op">]</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">delay</span><span class="op">.</span><span class="nam">total_seconds</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t778" href="#t778">778</a></span><span class="t">            <span class="nam">json</span><span class="op">[</span><span class="str">"delay"</span><span class="op">]</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">delay</span><span class="op">.</span><span class="nam">total_seconds</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t779" href="#t779">779</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t780" href="#t780">780</a></span><span class="t">        <span class="key">if</span> <span class="nam">self</span><span class="op">.</span><span class="nam">tfl_code</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t781" href="#t781">781</a></span><span class="t">            <span class="nam">json</span><span class="op">[</span><span class="str">"tfl_code"</span><span class="op">]</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">tfl_code</span>&nbsp;</span><span class="r"></span></p>
@@ -900,7 +900,7 @@
             <a class="nav" href="z_6a478a4b3744fc7a_rtpi_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.9.1">coverage.py v7.9.1</a>,
-            created at 2025-06-25 09:57 +0000
+            created at 2025-06-25 13:09 +0000
         </p>
     </div>
 </footer>
