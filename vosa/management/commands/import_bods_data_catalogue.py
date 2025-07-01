@@ -9,6 +9,7 @@ from django.core.management import BaseCommand
 
 from bustimes.download_utils import download_if_modified
 
+from busstops.models import DataSource
 from ...models import Licence, Registration  # , Variation
 
 logger = logging.getLogger(__name__)
@@ -25,9 +26,11 @@ class Command(BaseCommand):
             yield from csv.DictReader(open_file)
 
     def handle(self, **kwargs) -> None:
+        source, _ = DataSource.objects.get_or_create(
+            url="https://data.bus-data.dft.gov.uk/catalogue/"
+        )
         is_modified, modified_at = download_if_modified(
-            settings.DATA_DIR / "data_catalogue.zip",
-            url="https://data.bus-data.dft.gov.uk/catalogue/",
+            settings.DATA_DIR / "data_catalogue.zip", source
         )
         print(is_modified, modified_at)
 
@@ -45,8 +48,8 @@ class Command(BaseCommand):
             io.TextIOWrapper(f) as wrapped_f,
         ):
             for row in csv.DictReader(wrapped_f):
-                if row["OTC:Registration Number"]:
-                    reg = regs.get(row["OTC:Registration Number"])
+                if reg_no := row["OTC:Registration Number"]:
+                    reg = regs.get(reg_no)
                     if not reg:
                         lic = lics.get(row["OTC:Licence Number"])
                         assert row["OTC Status"] == "Registered"
@@ -55,7 +58,7 @@ class Command(BaseCommand):
                             continue
 
                         reg = Registration(
-                            registration_number=row["OTC:Registration Number"],
+                            registration_number=reg_no,
                             registered=True,
                             licence=lic,
                         )
@@ -63,12 +66,22 @@ class Command(BaseCommand):
                     reg.start_point = row["OTC:Start Point"]
                     reg.finish_point = row["OTC:Finish Point"]
                     reg.via = row["OTC:Via"]
-                    reg.service_type_description = row["OTC:Service Type Description"]
+                    reg.service_type_description = row[
+                        "OTC:Service Type Description"
+                    ].removesuffix("�")
+                    reg.traffic_area_office_covered_by_area = row[
+                        "Traveline Region"
+                    ].replace("|", "\n")
+                    reg.authority_description = row[
+                        "Local Transport Authority"
+                    ].replace("|", "\n")
 
                     if reg.id:
                         regs_to_update.append(reg)
-                    else:
+                    elif reg_no not in regs:
                         regs_to_create.append(reg)
+
+                        regs[reg_no] = reg
 
         Licence.objects.bulk_create(lics_to_create)
         Registration.objects.bulk_create(regs_to_create)
@@ -80,5 +93,7 @@ class Command(BaseCommand):
                 "finish_point",
                 "via",
                 "service_type_description",
+                "traffic_area_office_covered_by_area",
+                "authority_description",
             ],
         )

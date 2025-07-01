@@ -17,11 +17,13 @@
             <dt>Type</dt>
             <dd>{{ object.service_type_description|linebreaksbr }}</dd>
 
-            <dt>Supported by subsidy?</dt>
-            <dd>{{ object.subsidies_description }}{% if object.subsidies_details %}<br>
-                    {{ object.subsidies_details|linebreaksbr }}
-                {% endif %}
-            </dd>
+            {% if object.subsidies_description or object.subsidies_details %}
+                <dt>Supported by subsidy?</dt>
+                <dd>{{ object.subsidies_description }}{% if object.subsidies_details %}<br>
+                        {{ object.subsidies_details|linebreaksbr }}
+                    {% endif %}
+                </dd>
+            {% endif %}
 
             <dt>Authorities</dt>
             <dd>{{ object.authority_description|linebreaksbr }}</dd>
