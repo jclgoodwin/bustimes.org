@@ -5,6 +5,7 @@ import datetime
 import os
 import logging
 from http import HTTPStatus
+from urllib.parse import urlencode
 
 import requests
 from django.conf import settings
@@ -86,6 +87,11 @@ def version(request):
     return HttpResponse(
         os.environ.get("KAMAL_CONTAINER_NAME"), content_type="text/plain"
     )
+
+
+def flixbus_affiliate_link(**kwargs) -> str:
+    query = {"awinmid": 110896, "awinaffid": 242611, **kwargs}
+    return f"https://www.awin1.com/cread.php?{urlencode(query)}"
 
 
 def not_found(request, exception):
@@ -915,8 +921,9 @@ class OperatorDetailView(DetailView):
                 "operator_tickets", kwargs={"slug": self.object.slug}
             )
         elif self.object.name == "FlixBus":
-            context["tickets_link"] = (
-                "https://www.awin1.com/cread.php?awinmid=110896&awinaffid=242611&clickref=ot"
+            context["tickets_link"] = flixbus_affiliate_link(
+                clickref="ot",
+                ued="https://www.flixbus.co.uk/bus-routes/london-london-stansted-airport",
             )
         elif self.object.name == "National Express":
             context["tickets_link"] = (
@@ -1250,10 +1257,18 @@ class ServiceDetailView(DetailView):
                         }
                     )
                     break
-                elif operator.name == "FlixBus":
-                    context["tickets_link"] = (
-                        f"https://www.awin1.com/cread.php?awinmid=110896&awinaffid=242611&clickref={self.object.line_name}"
-                    )
+                elif (
+                    operator.name == "FlixBus"
+                    or self.object.service_code == "PF0000508:488"
+                ):
+                    query = {"clickref": self.object.line_name}
+                    if context["breadcrumb"][0].name == "Scotland":
+                        query["ued"] = "https://www.flixbus.co.uk/scotland"
+                    elif self.object.service_code == "PF0000508:488":  # Green Line 757
+                        query["ued"] = (
+                            "https://www.flixbus.co.uk/coach/london-luton-airport"
+                        )
+                    context["tickets_link"] = flixbus_affiliate_link(**query)
                     context["links"].append(
                         {
                             "url": context["tickets_link"],
