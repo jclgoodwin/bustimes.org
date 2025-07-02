@@ -30,7 +30,6 @@ class Command(BaseCommand):
 
         lics = Licence.objects.in_bulk(field_name="licence_number")
         lics_to_create = []
-        # lics_to_update = []
 
         regs = Registration.objects.in_bulk(field_name="registration_number")
         regs_to_create = []
@@ -38,13 +37,16 @@ class Command(BaseCommand):
 
         variations = []
 
+        previous_reg_no = None
+
         with (
             zipfile.ZipFile(settings.DATA_DIR / "data_catalogue.zip") as z,
             z.open("timetables_data_catalogue.csv", mode="r") as f,
             io.TextIOWrapper(f) as wrapped_f,
         ):
             for row in csv.DictReader(wrapped_f):
-                if reg_no := row["OTC:Registration Number"]:
+                reg_no = row["OTC:Registration Number"]
+                if reg_no and reg_no != previous_reg_no:
                     reg = regs.get(reg_no)
                     if not reg:
                         lic = lics.get(row["OTC:Licence Number"])
@@ -89,6 +91,8 @@ class Command(BaseCommand):
                         ],
                     )
                     variations.append(variation)
+
+                    previous_reg_no = reg_no
 
         Licence.objects.bulk_create(lics_to_create)
         Registration.objects.bulk_create(regs_to_create)
