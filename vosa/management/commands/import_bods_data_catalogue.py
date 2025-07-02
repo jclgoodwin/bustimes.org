@@ -2,7 +2,6 @@ import csv
 import io
 import logging
 import zipfile
-from datetime import datetime
 
 from django.conf import settings
 from django.core.management import BaseCommand
@@ -10,14 +9,9 @@ from django.core.management import BaseCommand
 from bustimes.download_utils import download_if_modified
 
 from busstops.models import DataSource
-from ...models import Licence, Registration  # , Variation
+from ...models import Licence, Registration, Variation
 
 logger = logging.getLogger(__name__)
-
-
-def parse_date(date_string: str):
-    if date_string:
-        return datetime.strptime(date_string, "%d/%m/%y").date()
 
 
 class Command(BaseCommand):
@@ -41,6 +35,8 @@ class Command(BaseCommand):
         regs = Registration.objects.in_bulk(field_name="registration_number")
         regs_to_create = []
         regs_to_update = []
+
+        variations = []
 
         with (
             zipfile.ZipFile(settings.DATA_DIR / "data_catalogue.zip") as z,
@@ -83,6 +79,17 @@ class Command(BaseCommand):
 
                         regs[reg_no] = reg
 
+                    variation = Variation(
+                        registration=reg,
+                        variation_number=row["OTC:Variation Number"],
+                        effective_date=row["OTC:Effective Date"] or None,
+                        date_received=row["OTC:Received Date"] or None,
+                        service_type_other_details=row[
+                            "OTC:Service Type Other Details"
+                        ],
+                    )
+                    variations.append(variation)
+
         Licence.objects.bulk_create(lics_to_create)
         Registration.objects.bulk_create(regs_to_create)
         Registration.objects.bulk_update(
@@ -96,4 +103,9 @@ class Command(BaseCommand):
                 "traffic_area_office_covered_by_area",
                 "authority_description",
             ],
+        )
+
+        Variation.objects.bulk_create(
+            variations,
+            ignore_conflicts=True,
         )
