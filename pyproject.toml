@@ -46,7 +46,7 @@ dependencies = [
 
 [dependency-groups]
 test = [
-    "lxml>=5.0.0,<6",
+    "lxml>=6.0.0,<7",
     "asgiref>=3.4.1,<4",
     "gtfs-kit>=10.0.0,<11",
     "requests-toolbelt>=1.0.0,<2",
