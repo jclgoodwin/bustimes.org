@@ -50,7 +50,7 @@ ticket machines, a byproduct of the live bus tracking.</p>
 {% if not parent %}
     <ul class="horizontal">
         <li><a href="/vehicles/edits?operator={{ object.noc }}&status=approved">Recent changes</a></li>
-        {% if request.user.Trusted %}
+        {% if request.user.trusted %}
             <li><a href="/vehicles/edits?operator={{ object.noc }}&status=pending">Pending vehicle edits</a></li>
         {% endif %}
         {% if request.user.is_superuser %}
