@@ -1554,20 +1554,20 @@ body.has-overlay {
 .tabs {
     border-bottom: 1px solid var(--brand-color-darker);
     display: flex;
-    overflow: visible;
-    margin: 1em -1em;
+    overflow: auto;
+    margin: 1em -.75em;
 
     > li {
         box-shadow: inset 0 -4px var(--brand-color-darker);
         float: left;
-        margin: 0 1em;
+        margin: 0 .75em;
         padding-top: .25em;
         padding-bottom: .75em;
 
         > a {
             box-shadow: inset 0 -4px var(--background-color);
-            padding: .25em 1em .75em;
-            margin: -.25em -1em -.75em;
+            padding: .25em .75em .75em;
+            margin: -.25em -.75em -.75em;
         }
     }
 }
