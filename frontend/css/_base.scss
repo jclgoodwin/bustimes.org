@@ -542,12 +542,11 @@ ol ::marker {
 .history {
     ul {
         display: flex;
+        flex-wrap: wrap;
+        gap: 1em 1.5em;
 
         li {
             margin: 0;
-        }
-        li + li {
-            margin-left: 1.5em;
         }
 
         strong {
