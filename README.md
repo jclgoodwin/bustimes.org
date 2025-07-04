@@ -58,7 +58,7 @@
 | bustimes/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
 | bustimes/management/commands/bank\_holidays.py                  |       52 |        1 |     98% |       102 |
 | bustimes/management/commands/import\_atco\_cif.py               |      235 |       25 |     89% |28-35, 40, 43-44, 66, 198, 200, 203, 205, 213, 219, 283, 316-321, 361-362, 429 |
-| bustimes/management/commands/import\_bod\_timetables.py         |      268 |       24 |     91% |46, 95, 99, 102-105, 110, 115-116, 136, 167, 177, 188, 257, 267-271, 287-289, 312, 328-329, 345 |
+| bustimes/management/commands/import\_bod\_timetables.py         |      268 |       24 |     91% |47, 96, 100, 103-106, 111, 116-117, 137, 168, 178, 189, 258, 268-272, 288-290, 313, 329-330, 346 |
 | bustimes/management/commands/import\_gtfs.py                    |      237 |       23 |     90% |77, 81, 131-132, 144, 151, 223, 225, 285-286, 288-289, 325-326, 332-333, 337-340, 348-350, 419 |
 | bustimes/management/commands/import\_gtfs\_ember.py             |      103 |        6 |     94% |73-74, 89, 132, 137, 173 |
 | bustimes/management/commands/import\_gtfs\_flixbus.py           |      144 |        3 |     98% |75, 142, 208 |
