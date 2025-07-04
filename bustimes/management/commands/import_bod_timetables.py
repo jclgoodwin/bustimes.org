@@ -35,7 +35,8 @@ def clean_up(timetable_data_source, sources, incomplete=False):
         ~Q(source__in=sources),
         Q(source__source=timetable_data_source)
         | Q(
-            ~Q(source__name__in=("L", "bustimes.org")),
+            ~Q(source__name="L"),
+            ~Q(source__url=""),
             Exists(service_operators.filter(operator__in=operators)),
             ~Exists(
                 service_operators.filter(~Q(operator__in=operators))
@@ -51,7 +52,7 @@ def clean_up(timetable_data_source, sources, incomplete=False):
     routes.update(service=None)
     # routes.delete()
     Service.objects.filter(
-        ~Q(source__name="bustimes.org"),
+        ~Q(source__url=""),
         operator__in=operators,
         current=True,
         route=None,
