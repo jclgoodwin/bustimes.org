@@ -42,6 +42,7 @@ dependencies = [
     "websockets>=14.2",
     "govuk-bank-holidays>=0.15",
     "django-multidb-router>=0.10",
+    "pyrosm>=0.6.2",
 ]
 
 [dependency-groups]
