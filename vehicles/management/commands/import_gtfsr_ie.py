@@ -14,6 +14,18 @@ from bustimes.utils import get_calendars
 from ...models import Vehicle, VehicleJourney, VehicleLocation
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
+occupancies = {
+    0: "Empty",
+    1: "Many seats available",
+    2: "Few seats available",
+    3: "Standing room only",
+    4: "Crushed standing room only",
+    5: "Full",
+    6: "Not accepting passengers",
+    7: "No data available",
+    8: "Not boardable",
+}
+
 
 class Command(ImportLiveVehiclesCommand):
     source_name = "Realtime Transport Operators"
@@ -180,4 +192,5 @@ class Command(ImportLiveVehiclesCommand):
             latlong=GEOSGeometry(
                 f"POINT({item.vehicle.position.longitude} {item.vehicle.position.latitude})"
             ),
+            occupancy=occupancies.get(item.vehicle.occupancy_status),
         )
