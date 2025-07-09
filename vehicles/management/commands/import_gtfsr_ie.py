@@ -192,5 +192,5 @@ class Command(ImportLiveVehiclesCommand):
             latlong=GEOSGeometry(
                 f"POINT({item.vehicle.position.longitude} {item.vehicle.position.latitude})"
             ),
-            occupancy=occupancies.get(item.vehicle.occupancy_status),
+            occupancy=occupancies.get(item.vehicle.occupancy_status or None),
         )
