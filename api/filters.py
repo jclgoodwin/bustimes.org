@@ -11,7 +11,7 @@ from django_filters.rest_framework import (
 
 from busstops.models import Operator, Service, StopPoint
 from bustimes.models import Trip
-from vehicles.models import Livery, Vehicle, VehicleType, VehicleJourney
+from vehicles.models import Livery, Vehicle, VehicleType, DataSource
 
 
 class VehicleFilter(FilterSet):
@@ -34,9 +34,7 @@ class VehicleJourneyFilter(FilterSet):
     vehicle = ModelChoiceFilter(queryset=Vehicle.objects, widget=NumberInput)
     service = ModelChoiceFilter(queryset=Service.objects, widget=NumberInput)
     trip = ModelChoiceFilter(queryset=Trip.objects, widget=NumberInput)
-    source = ModelChoiceFilter(
-        queryset=VehicleJourney.source.field.model.objects, widget=NumberInput
-    )
+    source = ModelChoiceFilter(queryset=DataSource.objects, widget=NumberInput)
     datetime = DateTimeFilter()
 
 
@@ -83,8 +81,10 @@ class OperatorFilter(FilterSet):
 class TripFilter(FilterSet):
     route = ModelChoiceFilter(queryset=Trip.objects, widget=NumberInput)
     operator = ModelChoiceFilter(queryset=Operator.objects, widget=TextInput)
-    service = ModelChoiceFilter(queryset=Service.objects, field_name="route__service", widget=NumberInput)
-        
+    service = ModelChoiceFilter(
+        queryset=Service.objects, field_name="route__service", widget=NumberInput
+    )
+
     class Meta:
         model = Trip
         fields = ["ticket_machine_code", "vehicle_journey_code", "block", "service"]
