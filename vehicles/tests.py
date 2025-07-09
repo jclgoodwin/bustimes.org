@@ -300,7 +300,7 @@ class VehiclesTests(TestCase):
 
         self.assertEqual(location.get_redis_json()["coordinates"], (0.0, 51.0))
 
-        location.occupancy = "seatsAvailable"
+        location.occupancy = "Seats available"
         self.assertEqual(location.get_redis_json()["seats"], "Seats available")
 
         location.wheelchair_occupancy = 0

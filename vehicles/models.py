@@ -682,16 +682,6 @@ class VehicleJourney(models.Model):
         return f"{url}?date={date}"
 
 
-# class VehiclePosition:
-#     journey = models.ForeignKey(VehicleJourney, on_delete)
-
-
-class Occupancy(models.TextChoices):
-    SEATS_AVAILABLE = "seatsAvailable", "Seats available"
-    STANDING_AVAILABLE = "standingAvailable", "Standing available"
-    FULL = "full", "Full"
-
-
 class VehicleLocation:
     """This used to be a model,
     is no longer stored in the database
@@ -710,9 +700,6 @@ class VehicleLocation:
         self.occupancy_thresholds = None
         self.block = block
         self.tfl_code = None
-
-    def get_occupancy_display(self):
-        return Occupancy(self.occupancy).label
 
     def __str__(self):
         return f"{self.datetime:%-d %b %Y %H:%M:%S}"
@@ -787,12 +774,12 @@ class VehicleLocation:
             json["service"] = {"line_name": journey.route_name}
 
         if self.seated_occupancy is not None and self.seated_capacity is not None:
-            if self.occupancy == "full":
+            if self.occupancy == "Full":
                 json["seats"] = self.occupancy
             else:
                 json["seats"] = f"{self.seated_capacity - self.seated_occupancy} free"
         elif self.occupancy:
-            json["seats"] = self.get_occupancy_display()
+            json["seats"] = self.occupancy
         if self.wheelchair_occupancy is not None and self.wheelchair_capacity:
             if self.wheelchair_occupancy < self.wheelchair_capacity:
                 json["wheelchair"] = "free"
