@@ -13,7 +13,7 @@
 | accounts/views.py                                               |       62 |        1 |     98% |       110 |
 | api/\_\_init\_\_.py                                             |        0 |        0 |    100% |           |
 | api/api.py                                                      |       11 |        0 |    100% |           |
-| api/filters.py                                                  |       63 |        5 |     92% |     57-61 |
+| api/filters.py                                                  |       63 |        5 |     92% |     55-59 |
 | api/serializers.py                                              |      111 |        0 |    100% |           |
 | api/tests.py                                                    |        9 |        0 |    100% |           |
 | api/views.py                                                    |       93 |        0 |    100% |           |
