@@ -28,6 +28,7 @@ from busstops.models import (
     StopPoint,
     StopUsage,
 )
+from busstops.management.commands.naptan_new import get_stop
 from busstops.utils import get_datetime
 from transxchange.txc import TransXChange
 from vehicles.models import get_text_colour
@@ -688,7 +689,7 @@ class Command(BaseCommand):
                 stop_time.stop = stops[atco_code]
                 trip.destination = stop_time.stop
         else:
-            # stop missing from TransXChange StopPoints
+            # stop missing from TransXChange StopPoints - this should never happen
             try:
                 stops[atco_code] = StopPoint.objects.get(atco_code__iexact=atco_code)
             except StopPoint.DoesNotExist:
@@ -1403,8 +1404,7 @@ class Command(BaseCommand):
                     route, route_created, stops, journeys, txc_service, operators
                 )
 
-    @staticmethod
-    def do_stops(transxchange_stops: dict) -> dict:
+    def do_stops(self, transxchange_stops: dict) -> dict:
         stops = list(transxchange_stops.keys())
         for atco_code in transxchange_stops:
             # deal with leading 0 being removed by Microsoft Excel maybe
@@ -1421,8 +1421,9 @@ class Command(BaseCommand):
             .only("atco_code")
             .order_by()
         )
-
         stops = {stop.atco_code_upper: stop for stop in stops}
+
+        ad_hoc_stops = {}
 
         for atco_code, stop in transxchange_stops.items():
             atco_code_upper = atco_code.upper()
@@ -1435,7 +1436,20 @@ class Command(BaseCommand):
                 elif atco_code[:3] == "910" and atco_code[:-1] in stops:
                     stops[atco_code_upper] = stops[atco_code[:-1]]
                 else:
-                    stops[atco_code_upper] = str(stop)[:255]  # stop not in NaPTAN
+                    stop = get_stop(stop.element, f"{self.source.id}:{atco_code_upper}")
+                    stop.source = self.source
+                    stop.timing_status = ""
+                    stop.bus_stop_type = ""
+                    stop.stop_type = ""
+                    ad_hoc_stops[atco_code_upper] = stop
+                    stops[atco_code_upper] = stop
+
+        StopPoint.objects.bulk_create(
+            ad_hoc_stops.values(),
+            update_conflicts=True,
+            unique_fields=["atco_code"],
+            update_fields=["common_name", "naptan_code", "latlong", "bearing"],
+        )
 
         return stops
 

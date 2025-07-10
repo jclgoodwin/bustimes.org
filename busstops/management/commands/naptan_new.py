@@ -13,7 +13,7 @@ from bustimes.download_utils import download_if_modified
 logger = logging.getLogger(__name__)
 
 
-def get_point(element, atco_code):
+def get_point(element):
     if element is None:
         return
 
@@ -73,7 +73,7 @@ nothings = {
 
 
 def get_stop(element, atco_code):
-    point = get_point(element.find("Place/Location"), atco_code)
+    point = get_point(element.find("Place/Location"))
 
     bearing = element.findtext(
         "StopClassification/OnStreet/Bus/MarkedPoint/Bearing/CompassPoint"
