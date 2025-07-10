@@ -146,7 +146,7 @@
                             <tr><th></th>
                             {% for foot in row %}
                                 <td{% if foot.span > 1 %} colspan="{{ foot.span }}"{% endif %}>
-                                    {% if foot.note %}{% if foot.note.stoptimes %}<strong>{{ foot.note.code }}</strong> {% endif %}{{ urlise(foot.note.text) }}{% endif %}
+                                    {% if foot.note %}{% if foot.note.stoptimes %}<strong>{{ foot.note.code }}</strong> {% endif %}{{ linebreaksbr(urlise(foot.note.text)) }}{% endif %}
                                 </td>
                             {% endfor %}
                             </tr>
@@ -161,7 +161,7 @@
         {% for row in grouping.column_feet.values() %}
             {% if (row|length) == 1 %}
                 {% for foot in row %}
-                    <p>{% if foot.note.stoptimes %}<strong>{{ foot.note.code }}</strong> {% endif %}{{ urlise(foot.note.text) }}</p>
+                    <p>{% if foot.note.stoptimes %}<strong>{{ foot.note.code }}</strong> {% endif %}{{ linebreaksbr(urlise(foot.note.text)) }}</p>
                 {% endfor %}
             {% endif %}
         {% endfor %}
