@@ -33,6 +33,11 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand, logger
 Status = namedtuple(
     "Status", ("fetched_at", "timestamp", "total_items", "changed_items")
 )
+occupancies = {
+    "seatsAvailable": "Seats available",
+    "standingAvailable": "Standing available",
+    "full": "Full",
+}
 
 
 def get_destination_ref(destination_ref: str) -> str | None:
@@ -556,7 +561,7 @@ class Command(ImportLiveVehiclesCommand):
         location = VehicleLocation(
             latlong=latlong,
             heading=bearing,
-            occupancy=monitored_vehicle_journey.get("Occupancy"),
+            occupancy=occupancies.get(monitored_vehicle_journey.get("Occupancy")),
             block=monitored_vehicle_journey.get("BlockRef"),
         )
         if monitored_vehicle_journey["OperatorRef"] == "TFLO":
