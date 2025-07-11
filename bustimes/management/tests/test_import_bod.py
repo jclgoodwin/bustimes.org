@@ -485,14 +485,14 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
                 "bustimes.management.commands.import_bod_timetables.download_if_modified",
                 return_value=(True, parse_datetime("2020-06-10T12:00:00+01:00")),
             ) as download_if_modified:
-                with self.assertNumQueries(110):
+                with self.assertNumQueries(112):
                     call_command("import_bod_timetables", "stagecoach")
                 download_if_modified.assert_called_with(
                     path, DataSource.objects.get(name="Stagecoach East"), ANY
                 )
 
                 route_links = RouteLink.objects.order_by("id")
-                self.assertEqual(len(route_links), 4)
+                self.assertEqual(len(route_links), 210)
                 route_link = route_links[0]
                 route_link.geometry = (
                     "SRID=4326;LINESTRING(0 0, 0 0)"  # should be overwritten later
@@ -505,11 +505,11 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
                 with self.assertNumQueries(1):
                     call_command("import_bod_timetables", "stagecoach", "SCOX")
 
-                with self.assertNumQueries(116):
+                with self.assertNumQueries(118):
                     call_command("import_bod_timetables", "stagecoach", "SCCM")
 
                 route_link.refresh_from_db()
-                self.assertEqual(len(route_link.geometry.coords), 32)
+                self.assertEqual(len(route_link.geometry.coords), 14)
 
             self.client.force_login(self.user)
             source = DataSource.objects.filter(name="Stagecoach East").first()
@@ -539,7 +539,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
         self.assertEqual(2, Service.objects.count())
         self.assertEqual(2, Route.objects.count())
 
-        self.assertEqual(RouteLink.objects.count(), 4)
+        self.assertEqual(RouteLink.objects.count(), 210)
 
         trip = route.trip_set.last()
         response = self.client.get(f"/api/trips/{trip.id}/")
