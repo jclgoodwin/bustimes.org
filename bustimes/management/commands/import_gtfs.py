@@ -10,6 +10,7 @@ from django.contrib.gis.geos import GEOSGeometry
 from django.core.management.base import BaseCommand
 from django.db.models import Count, Exists, OuterRef, Q
 from django.db.models.functions import Now
+from django.db.transaction import atomic
 
 from busstops.models import AdminArea, DataSource, Operator, Region, Service, StopPoint
 
@@ -419,7 +420,8 @@ class Command(BaseCommand):
                     source.datetime = last_modified
                 self.source = source
                 try:
-                    self.handle_zipfile(path)
+                    with atomic():
+                        self.handle_zipfile(path)
                 except (OSError, BadZipFile) as e:
                     logger.exception(e)
 
