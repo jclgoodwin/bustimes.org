@@ -1,7 +1,7 @@
 from django.contrib import admin
 from sql_util.utils import SubqueryCount
 
-from .models import Consequence, Link, Situation, ValidityPeriod
+from .models import Consequence, Link, Situation, ValidityPeriod, AffectedJourney
 
 
 class ConsequenceInline(admin.StackedInline):
@@ -19,9 +19,19 @@ class LinkInline(admin.TabularInline):
     model = Link
 
 
+class AffectedJourneyInline(admin.TabularInline):
+    model = AffectedJourney
+    raw_id_fields = ["trip"]
+
+
 @admin.register(Situation)
 class SituationAdmin(admin.ModelAdmin):
-    inlines = [ValidityPeriodInline, LinkInline, ConsequenceInline]
+    inlines = [
+        ValidityPeriodInline,
+        LinkInline,
+        ConsequenceInline,
+        AffectedJourneyInline,
+    ]
     list_display = [
         "__str__",
         "reason",
