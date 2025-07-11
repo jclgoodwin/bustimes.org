@@ -55,8 +55,8 @@
         </aside>
         <h2>
             <span class="text">637 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">589<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">48<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">588<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">49<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_3baf1eb7e8e062db_admin_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.9.2">coverage.py v7.9.2</a>,
-            created at 2025-07-10 16:39 +0000
+            created at 2025-07-11 12:59 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -1420,13 +1420,13 @@
     <p class="pln"><span class="n"><a id="t1338" href="#t1338">1338</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1339" href="#t1339">1339</a></span><span class="t">        <span class="key">for</span> <span class="nam">row</span> <span class="key">in</span> <span class="nam">grouping</span><span class="op">.</span><span class="nam">rows</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1340" href="#t1340">1340</a></span><span class="t">            <span class="key">if</span> <span class="nam">type</span><span class="op">(</span><span class="nam">row</span><span class="op">.</span><span class="nam">stop</span><span class="op">)</span> <span class="key">is</span> <span class="nam">StopPoint</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t1341" href="#t1341">1341</a></span><span class="t">                <span class="nam">stop</span> <span class="op">=</span> <span class="op">[</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t1341" href="#t1341">1341</a></span><span class="t">                <span class="nam">stop</span> <span class="op">=</span> <span class="op">[</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1342" href="#t1342">1342</a></span><span class="t">                    <span class="nam">row</span><span class="op">.</span><span class="nam">stop</span><span class="op">.</span><span class="nam">get_qualified_name</span><span class="op">(</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1343" href="#t1343">1343</a></span><span class="t">                    <span class="nam">row</span><span class="op">.</span><span class="nam">stop</span><span class="op">.</span><span class="nam">naptan_code</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1344" href="#t1344">1344</a></span><span class="t">                    <span class="nam">row</span><span class="op">.</span><span class="nam">stop</span><span class="op">.</span><span class="nam">atco_code</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1345" href="#t1345">1345</a></span><span class="t">                <span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1346" href="#t1346">1346</a></span><span class="t">            <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t1347" href="#t1347">1347</a></span><span class="t">                <span class="nam">stop</span> <span class="op">=</span> <span class="op">[</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t1347" href="#t1347">1347</a></span><span class="t">                <span class="nam">stop</span> <span class="op">=</span> <span class="op">[</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1348" href="#t1348">1348</a></span><span class="t">                    <span class="nam">str</span><span class="op">(</span><span class="nam">row</span><span class="op">.</span><span class="nam">stop</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1349" href="#t1349">1349</a></span><span class="t">                    <span class="str">""</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1350" href="#t1350">1350</a></span><span class="t">                    <span class="str">""</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
@@ -1533,7 +1533,7 @@
     <p class="mis show_mis"><span class="n"><a id="t1451" href="#t1451">1451</a></span><span class="t">                <span class="nam">multi_line_string</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">line_string</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1452" href="#t1452">1452</a></span><span class="t">            <span class="key">if</span> <span class="nam">pair</span> <span class="key">in</span> <span class="nam">route_links</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1453" href="#t1453">1453</a></span><span class="t">                <span class="nam">line_string</span> <span class="op">+=</span> <span class="nam">route_links</span><span class="op">[</span><span class="nam">pair</span><span class="op">]</span><span class="op">.</span><span class="nam">geometry</span><span class="op">.</span><span class="nam">coords</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t1454" href="#t1454">1454</a></span><span class="t">            <span class="key">elif</span> <span class="nam">origin</span> <span class="key">in</span> <span class="nam">stops</span> <span class="key">and</span> <span class="nam">destination</span> <span class="key">in</span> <span class="nam">stops</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t1454" href="#t1454">1454</a></span><span class="t">            <span class="key">elif</span> <span class="nam">origin</span> <span class="key">in</span> <span class="nam">stops</span> <span class="key">and</span> <span class="nam">destination</span> <span class="key">in</span> <span class="nam">stops</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t1455" href="#t1455">1455</a></span><span class="t">                <span class="nam">origin</span> <span class="op">=</span> <span class="nam">stops</span><span class="op">[</span><span class="nam">origin</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t1456" href="#t1456">1456</a></span><span class="t">                <span class="nam">destination</span> <span class="op">=</span> <span class="nam">stops</span><span class="op">[</span><span class="nam">destination</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t1457" href="#t1457">1457</a></span><span class="t">                <span class="key">if</span> <span class="nam">origin</span><span class="op">.</span><span class="nam">latlong</span> <span class="key">and</span> <span class="nam">destination</span><span class="op">.</span><span class="nam">latlong</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -1754,7 +1754,7 @@
             <a class="nav" href="z_3baf1eb7e8e062db_admin_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.9.2">coverage.py v7.9.2</a>,
-            created at 2025-07-10 16:39 +0000
+            created at 2025-07-11 12:59 +0000
         </p>
     </div>
 </footer>
