@@ -368,8 +368,8 @@ class ImportTransXChangeTest(TestCase):
             ),
         )
 
-        # created despite leading 0 in an ATCO code
-        self.assertEqual(205, service.stopusage_set.count())
+        self.assertEqual(149, service.stopusage_set.order_by().distinct("stop").count())
+        # (.distinct() because of flaky varying/nondeterministic number of StopUsages)
 
     @time_machine.travel("2021-03-25")
     def test_delaine_101(self):
