@@ -1436,13 +1436,16 @@ class Command(BaseCommand):
                 elif atco_code[:3] == "910" and atco_code[:-1] in stops:
                     stops[atco_code_upper] = stops[atco_code[:-1]]
                 else:
-                    stop = get_stop(stop.element, f"{self.source.id}:{atco_code_upper}")
-                    stop.source = self.source
-                    stop.timing_status = ""
-                    stop.bus_stop_type = ""
-                    stop.stop_type = ""
-                    ad_hoc_stops[atco_code_upper] = stop
-                    stops[atco_code_upper] = stop
+                    stoppoint = get_stop(
+                        stop.element, f"{self.source.id}:{atco_code_upper}"
+                    )
+                    stoppoint.common_name = str(stop)[:48]
+                    stoppoint.source = self.source
+                    stoppoint.timing_status = ""
+                    stoppoint.bus_stop_type = ""
+                    stoppoint.stop_type = ""
+                    ad_hoc_stops[atco_code_upper] = stoppoint
+                    stops[atco_code_upper] = stoppoint
 
         StopPoint.objects.bulk_create(
             ad_hoc_stops.values(),

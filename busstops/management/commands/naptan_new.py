@@ -108,7 +108,7 @@ def get_stop(element, atco_code):
 def get_stop_area(element):
     stop_area_code = element.findtext("StopAreaCode")
 
-    point = get_point(element.find("Location"), stop_area_code)
+    point = get_point(element.find("Location"))
 
     return StopArea(
         id=stop_area_code,
