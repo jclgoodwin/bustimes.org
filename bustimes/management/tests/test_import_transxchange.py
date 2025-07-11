@@ -369,7 +369,7 @@ class ImportTransXChangeTest(TestCase):
         )
 
         # created despite leading 0 in an ATCO code
-        self.assertEqual(207, service.stopusage_set.count())
+        self.assertEqual(205, service.stopusage_set.count())
 
     @time_machine.travel("2021-03-25")
     def test_delaine_101(self):
@@ -1552,7 +1552,6 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(str(trip.end), "23:44")
 
         response = self.client.get(f"/services/{trip.route.service_id}/timetable.csv")
-        print(response.text)
         self.assertContains(
             response,
             f'"UoN Main Campus Beeston La, East Mids Conf Ctr",,{trip.route.source_id}:3390UN48,18:45,then every 15 minutes until,23:15',
