@@ -40,6 +40,7 @@ class StopPointAdmin(GISModelAdmin):
     ]
     list_select_related = ["locality", "admin_area"]
     list_filter = [
+        ("source", admin.RelatedOnlyFieldListFilter),
         "modified_at",
         "created_at",
         "active",
