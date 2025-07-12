@@ -160,13 +160,13 @@ day_keys = (
 
 
 class Calendar(models.Model):
-    mon = models.BooleanField()
-    tue = models.BooleanField()
-    wed = models.BooleanField()
-    thu = models.BooleanField()
-    fri = models.BooleanField()
-    sat = models.BooleanField()
-    sun = models.BooleanField()
+    mon = models.BooleanField(default=False)
+    tue = models.BooleanField(default=False)
+    wed = models.BooleanField(default=False)
+    thu = models.BooleanField(default=False)
+    fri = models.BooleanField(default=False)
+    sat = models.BooleanField(default=False)
+    sun = models.BooleanField(default=False)
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
     summary = models.CharField(max_length=255, blank=True)

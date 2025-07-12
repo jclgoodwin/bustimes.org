@@ -18,30 +18,14 @@ class GetTripTest(TestCase):
             tue=True,
             wed=True,
             thu=True,
-            fri=False,
-            sat=False,
-            sun=False,
         )
-
         fridays = Calendar.objects.create(
             start_date="2025-07-01",
-            mon=False,
-            tue=False,
-            wed=False,
-            thu=False,
             fri=True,
-            sat=False,
-            sun=False,
         )
         saturdays = Calendar.objects.create(
             start_date="2025-07-01",
-            mon=False,
-            tue=False,
-            wed=False,
-            thu=False,
-            fri=False,
             sat=True,
-            sun=False,
         )
 
         cls.service = Service.objects.create(line_name="25")
@@ -74,15 +58,28 @@ class GetTripTest(TestCase):
         )
 
     def test_after_midnight(self):
-        """ "It's 2am on Saturday - get_trip should get the trip with the Friday calendar"""
+        """It's 2am on Saturday - get_trip should get the trip with the Friday calendar"""
 
         journey = VehicleJourney(
             service=self.service,
             code="1111",
             datetime=datetime(2025, 7, 12, 1, 0, 0, tzinfo=timezone.utc),  # 2am BST
         )
-
         trip = journey.get_trip()
-        self.assertTrue(trip.calendar.fri)
         self.assertFalse(trip.calendar.thu)
+        self.assertTrue(trip.calendar.fri)
         self.assertFalse(trip.calendar.sat)
+
+        # Friday mornihg
+        journey.datetime = datetime(2025, 7, 11, 1, 0, 0, tzinfo=timezone.utc)
+        trip = journey.get_trip()
+        self.assertTrue(trip.calendar.thu)
+        self.assertFalse(trip.calendar.fri)
+        self.assertFalse(trip.calendar.sat)
+
+        # Sunday mornihg
+        journey.datetime = datetime(2025, 7, 13, 1, 0, 0, tzinfo=timezone.utc)
+        trip = journey.get_trip()
+        self.assertFalse(trip.calendar.thu)
+        self.assertFalse(trip.calendar.fri)
+        self.assertTrue(trip.calendar.sat)

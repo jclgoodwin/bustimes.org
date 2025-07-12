@@ -510,13 +510,6 @@ class Command(BaseCommand):
             return self.calendar_cache[calendar_hash]
 
         calendar = Calendar(
-            mon=False,
-            tue=False,
-            wed=False,
-            thu=False,
-            fri=False,
-            sat=False,
-            sun=False,
             start_date=operating_period.start,
             end_date=operating_period.end,
             source=self.source,

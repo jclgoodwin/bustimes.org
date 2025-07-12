@@ -25,13 +25,7 @@ class NatExpTest(TestCase):
         service.operator.add("NATX")
         route = Route.objects.create(service=service, source=cls.source)
         calendar = Calendar.objects.create(
-            mon=False,
-            tue=False,
-            wed=False,
-            thu=False,
-            fri=False,
             sat=True,
-            sun=False,
             start_date="2022-06-01",
         )
         Trip.objects.create(

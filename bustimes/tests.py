@@ -51,13 +51,6 @@ class BusTimesTest(TestCase):
 
     def test_calendar(self):
         calendar = Calendar(
-            mon=False,
-            tue=False,
-            wed=False,
-            thu=False,
-            fri=False,
-            sat=False,
-            sun=False,
             start_date=date(2021, 1, 3),
         )
 

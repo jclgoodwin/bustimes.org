@@ -861,8 +861,6 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             wed=True,
             thu=True,
             fri=True,
-            sat=False,
-            sun=False,
             start_date="2024-07-04",
         )
         stop = StopPoint.objects.create(atco_code="3390BU05", active=True)

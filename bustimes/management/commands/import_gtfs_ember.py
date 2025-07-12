@@ -43,13 +43,6 @@ def get_calendars(feed, source) -> dict:
 
             if (calendar := calendars.get(row.service_id)) is None:
                 calendar = Calendar(
-                    mon=False,
-                    tue=False,
-                    wed=False,
-                    thu=False,
-                    fri=False,
-                    sat=False,
-                    sun=False,
                     start_date=row.date,  # dummy date
                 )
                 calendars[row.service_id] = calendar
