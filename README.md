@@ -60,12 +60,12 @@
 | bustimes/management/commands/import\_atco\_cif.py               |      235 |       25 |     89% |28-35, 40, 43-44, 66, 198, 200, 203, 205, 213, 219, 283, 316-321, 361-362, 429 |
 | bustimes/management/commands/import\_bod\_timetables.py         |      268 |       24 |     91% |47, 96, 100, 103-106, 111, 116-117, 137, 168, 178, 189, 258, 268-272, 288-290, 313, 329-330, 346 |
 | bustimes/management/commands/import\_gtfs.py                    |      239 |       23 |     90% |78, 82, 132-133, 145, 152, 224, 226, 286-287, 289-290, 326-327, 333-334, 338-341, 349-351, 420 |
-| bustimes/management/commands/import\_gtfs\_ember.py             |      103 |        6 |     94% |73-74, 89, 132, 137, 173 |
+| bustimes/management/commands/import\_gtfs\_ember.py             |      103 |        6 |     94% |66-67, 82, 125, 130, 166 |
 | bustimes/management/commands/import\_gtfs\_flixbus.py           |      144 |        3 |     98% |75, 142, 208 |
 | bustimes/management/commands/import\_ni.py                      |       31 |        0 |    100% |           |
 | bustimes/management/commands/import\_passenger.py               |      116 |       34 |     71% |51-54, 56-58, 102, 112-116, 142-179 |
 | bustimes/management/commands/import\_tnds.py                    |       43 |        0 |    100% |           |
-| bustimes/management/commands/import\_transxchange.py            |      781 |       77 |     90% |84, 96, 142-143, 291, 370, 373-387, 416, 548, 590-591, 628-629, 631-632, 655-656, 666, 674-675, 733, 744, 780, 806, 810-812, 866-870, 931, 935, 937, 950-955, 992-993, 1004, 1021, 1029, 1031-1034, 1057, 1084, 1123, 1154-1155, 1182-1184, 1191, 1196-1197, 1208, 1213, 1226, 1251, 1285-1286, 1322-1323, 1392 |
+| bustimes/management/commands/import\_transxchange.py            |      781 |       77 |     90% |84, 96, 142-143, 291, 370, 373-387, 416, 541, 583-584, 621-622, 624-625, 648-649, 659, 667-668, 726, 737, 773, 799, 803-805, 859-863, 924, 928, 930, 943-948, 985-986, 997, 1014, 1022, 1024-1027, 1050, 1077, 1116, 1147-1148, 1175-1177, 1184, 1189-1190, 1201, 1206, 1219, 1244, 1278-1279, 1315-1316, 1385 |
 | bustimes/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | bustimes/management/tests/test\_bank\_holidays.py               |       20 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_atco\_cif.py            |       70 |        0 |    100% |           |
@@ -77,7 +77,7 @@
 | bustimes/management/tests/test\_import\_transxchange.py         |      742 |        0 |    100% |           |
 | bustimes/management/tests/test\_tnds.py                         |       19 |        0 |    100% |           |
 | bustimes/models.py                                              |      335 |        6 |     98% |111, 372, 375, 404, 441, 475 |
-| bustimes/test\_get\_trip.py                                     |       21 |        0 |    100% |           |
+| bustimes/test\_get\_trip.py                                     |       31 |        0 |    100% |           |
 | bustimes/tests.py                                               |      132 |        0 |    100% |           |
 | bustimes/timetables.py                                          |      637 |       53 |     92% |102-115, 144, 226-237, 268-269, 329, 341-344, 356, 369-374, 388, 407, 482, 485, 501-504, 506, 533, 642-657, 743-744, 815, 961-963 |
 | bustimes/urls.py                                                |        3 |        0 |    100% |           |
@@ -169,7 +169,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16210** | **1095** | **93%** |           |
+|                                                       **TOTAL** | **16220** | **1095** | **93%** |           |
 
 
 ## Setup coverage badge
