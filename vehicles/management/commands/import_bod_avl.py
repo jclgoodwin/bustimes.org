@@ -3,7 +3,7 @@ import functools
 import io
 import json
 import zipfile
-from datetime import date, timedelta
+from datetime import timedelta
 
 import xmltodict
 from ciso8601 import parse_datetime
@@ -354,13 +354,12 @@ class Command(ImportLiveVehiclesCommand):
         monitored_vehicle_journey = item["MonitoredVehicleJourney"]
 
         journey_ref = monitored_vehicle_journey.get("VehicleJourneyRef")
-        journey_date = None
 
         if not journey_ref:
             try:
-                framed = monitored_vehicle_journey["FramedVehicleJourneyRef"]
-                journey_ref = framed["DatedVehicleJourneyRef"]
-                journey_date = date.fromisoformat(framed["DataFrameRef"])
+                journey_ref = monitored_vehicle_journey["FramedVehicleJourneyRef"][
+                    "DatedVehicleJourneyRef"
+                ]
             except (KeyError, ValueError):
                 pass
 
@@ -410,7 +409,6 @@ class Command(ImportLiveVehiclesCommand):
             origin_aimed_departure_time = timezone.make_aware(
                 parse_datetime(journey_ref[-30:-11])
             )
-            journey_date = date.fromisoformat(journey_ref[-10:])
 
         if origin_aimed_departure_time:
             difference = origin_aimed_departure_time - datetime
@@ -513,7 +511,6 @@ class Command(ImportLiveVehiclesCommand):
 
                 journey.trip = journey.get_trip(
                     datetime=datetime,
-                    date=journey_date,
                     operator_ref=operator_ref,
                     origin_ref=monitored_vehicle_journey.get("OriginRef"),
                     destination_ref=destination_ref,

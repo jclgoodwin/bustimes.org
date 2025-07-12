@@ -295,6 +295,7 @@ def get_trip(
     if not date:
         date = (departure_time or datetime).date()
 
+    # TODO: get routes for previous day, in case journey starts after midnight
     routes = get_routes(journey.service.route_set.select_related("source"), date)
     if routes:
         trips = Trip.objects.filter(route__in=routes)
@@ -387,6 +388,8 @@ def get_trip(
 
     if trips:
         if len(trips) > 1 and trips[0].score == trips[1].score:
+            if trips[0].start >= timedelta(days=1):
+                date -= timedelta(days=1)
             filtered_trips = trips.filter(calendar__in=get_calendars(date))
             if filtered_trips:
                 trips = filtered_trips
