@@ -328,22 +328,22 @@ class BusTimesTest(TestCase):
 
         routes = [
             Route(
-                service_code="683",
-                code="86-683-_-y05-60196",
+                service_code="86-683-_-y05-60196",
+                code="tfl_86-683-_-y05-60196",
                 revision_number=3,
                 start_date=date(2023, 2, 11),
                 source=source,
             ),
             Route(
-                service_code="683",
-                code="86-683-_-y05-60197",  # highest Service Change Number in filename
+                service_code="86-683-_-y05-60197",
+                code="tfl_86-683-_-y05-60197",  # highest Service Change Number in filename
                 revision_number=3,
                 start_date=date(2023, 2, 11),
                 source=source,
             ),
             Route(
-                service_code="683",
-                code="86-683-_-y05-59862",
+                service_code="86-683-_-y05-59862",
+                code="tfl_86-683-_-y05-59862",
                 revision_number=3,
                 start_date=date(2023, 2, 11),
                 source=source,
@@ -353,7 +353,7 @@ class BusTimesTest(TestCase):
 
         gotten_routes = get_routes(routes, when=date(2023, 2, 12))
         self.assertEqual(len(gotten_routes), 1)
-        self.assertEqual(gotten_routes[0].code, "86-683-_-y05-60197")
+        self.assertEqual(gotten_routes[0].code, "tfl_86-683-_-y05-60197")
         self.assertEqual(gotten_routes[0], routes[1])
 
         self.assertFalse(get_routes([]), 2)
