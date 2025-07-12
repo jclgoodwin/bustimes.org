@@ -88,40 +88,27 @@ def get_routes(routes, when=None, from_date=None):
             Q(end_date=None) | Q(end_date__gte=when),
         )
 
+        # TfL: pick the file with the highest Service Change Number, if there are multiple
+        # https://techforum.tfl.gov.uk/t/duplicate-files-in-journey-planner-datastore-is-there-a-way-to-choose-the-right-one/2571
+        routes = routes.filter(
+            ~Q(code__contains="tfl_")
+            | ~Exists(
+                Route.objects.filter(
+                    service=OuterRef("service"),
+                    source=OuterRef("source"),
+                    service_code__gt=OuterRef("service_code"),
+                    start_date__gte=when,
+                    end_date__gte=when,
+                )
+            )
+        )
+
     if from_date:
         # just filter out previous versions
         routes = [
             route
             for route in routes
             if route.end_date is None or route.end_date >= from_date
-        ]
-
-    if len(routes) <= 1:
-        return routes
-
-    # TfL: parse Service Change Number from filename (like a revision number) and use the highest one
-    # https://techforum.tfl.gov.uk/t/duplicate-files-in-journey-planner-datastore-is-there-a-way-to-choose-the-right-one/2571
-    if when and any(route.source.name == "L" for route in routes):
-        routes = [
-            route
-            for route in routes
-            if route.source.name != "L"
-            or not any(
-                route.code[:-5] == r.code[:-5] and route.code < r.code for r in routes
-            )
-        ]
-
-    # remove duplicates
-    if len(set(route.source_id for route in routes)) > 1:
-        sources_by_sha1 = {
-            route.source.sha1: route.source_id for route in routes if route.source.sha1
-        }
-        # if multiple sources have the same sha1 hash, we're only interested in one
-        routes = [
-            route
-            for route in routes
-            if not route.source.sha1
-            or route.source_id == sources_by_sha1[route.source.sha1]
         ]
 
     return routes
