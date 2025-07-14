@@ -1447,13 +1447,17 @@ input:not(:checked) + label {
     gap: 1em;
     overflow-wrap: anywhere;
 
+    dt {
+        font-size: 12px;
+    }
+
     dd {
         margin: 0;
     }
 
     .livery {
         float: left;
-        margin-right: .5em;
+        margin-right: .25em;
     }
 }
 
