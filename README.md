@@ -65,7 +65,7 @@
 | bustimes/management/commands/import\_ni.py                      |       31 |        0 |    100% |           |
 | bustimes/management/commands/import\_passenger.py               |      116 |       34 |     71% |51-54, 56-58, 102, 112-116, 142-179 |
 | bustimes/management/commands/import\_tnds.py                    |       43 |        0 |    100% |           |
-| bustimes/management/commands/import\_transxchange.py            |      781 |       77 |     90% |84, 96, 142-143, 291, 370, 373-387, 416, 541, 583-584, 621-622, 624-625, 648-649, 659, 667-668, 726, 737, 773, 799, 803-805, 859-863, 924, 928, 930, 943-948, 985-986, 997, 1014, 1022, 1024-1027, 1050, 1077, 1116, 1147-1148, 1175-1177, 1184, 1189-1190, 1201, 1206, 1219, 1244, 1278-1279, 1315-1316, 1385 |
+| bustimes/management/commands/import\_transxchange.py            |      779 |       76 |     90% |84, 96, 142-143, 291, 373-387, 416, 541, 583-584, 621-622, 624-625, 648-649, 659, 667-668, 726, 737, 773, 799, 803-805, 859-863, 924, 928, 930, 943-948, 985-986, 997, 1014, 1022, 1024-1027, 1050, 1077, 1116, 1147-1148, 1175-1177, 1184, 1189-1190, 1201, 1206, 1219, 1244, 1278-1279, 1315-1316, 1385 |
 | bustimes/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | bustimes/management/tests/test\_bank\_holidays.py               |       20 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_atco\_cif.py            |       70 |        0 |    100% |           |
@@ -169,7 +169,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16220** | **1095** | **93%** |           |
+|                                                       **TOTAL** | **16218** | **1094** | **93%** |           |
 
 
 ## Setup coverage badge
