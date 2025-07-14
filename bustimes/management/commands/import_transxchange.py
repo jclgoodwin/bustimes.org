@@ -345,6 +345,8 @@ class Command(BaseCommand):
         return outbound, inbound
 
     def mark_old_services_as_not_current(self):
+        # delete old routes, if no longer in the dataset OR
+        # all the service's routes' end dates are in the past
         old_routes = self.source.route_set.filter(
             ~Q(id__in=self.route_ids)
             | Q(
@@ -364,10 +366,8 @@ class Command(BaseCommand):
             route.delete()
 
         old_services = self.source.service_set.filter(current=True, route=None)
-        old_services = old_services.filter(~Q(id__in=self.service_ids))
-        deleted = old_services.update(current=False)
-        if deleted:
-            logger.info(f"  old services: {deleted}")
+        if old_services.update(current=False):
+            logger.info(f"  {old_services=}")
 
     def handle_sub_archive(self, archive, sub_archive_name):
         if sub_archive_name.startswith("__MACOSX"):
