@@ -16,22 +16,11 @@
 
 <h1>{% firstof parent object %}</h1>
 
-<p>{{ object.get_a_mode }} operator
-    {% if operator.regions.all %}
-        in
-        {% for region in operator.regions.all %}{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}
-        <a href="{{ region.get_absolute_url }}">{{ region.the }}</a>{% endfor %}
-    {% elif operator.region %}in <a href="{{ object.region.get_absolute_url }}">{{ object.region.the }}</a>{% endif %}
-</p>
-
 {% if not parent %}
     <ul class="tabs">
         <li><a href="{{ object.get_absolute_url }}">Routes</a></li>
         {% if map %}
             <li><a href="{{ object.get_absolute_url }}/map">Map</a></li>
-        {% endif %}
-        {% if tickets_link %}
-            <li><a href="{{ tickets_link }}">Tickets</a></li>
         {% endif %}
         <li>{{ vehicles|length }} vehicle{{ vehicles|length|pluralize }}</li>
     </ul>
