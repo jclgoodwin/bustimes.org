@@ -833,6 +833,8 @@ table {
 .fleet {
     .livery-cell {
         position: relative;
+        padding-left: 3.5em;
+
 
         .livery {
             left: .5em;
@@ -1450,7 +1452,8 @@ input:not(:checked) + label {
     }
 
     .livery {
-        margin: .3em .5em 0 0;
+        float: left;
+        margin-right: .5em;
     }
 }
 
