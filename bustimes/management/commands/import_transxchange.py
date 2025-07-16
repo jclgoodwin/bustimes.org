@@ -354,6 +354,7 @@ class Command(BaseCommand):
                     Route.objects.filter(
                         Q(source=OuterRef("source")) | Q(service=OuterRef("service")),
                         Q(end_date=None) | Q(end_date__gte=self.source.datetime),
+                        revision_number__lt=OuterRef("revision_number"),
                         service_code=OuterRef("service_code"),
                     )
                 ),
