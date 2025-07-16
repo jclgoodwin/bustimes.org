@@ -1553,11 +1553,16 @@ body.has-overlay {
     }
 }
 
+@view-transition {
+    navigation: auto;
+}
+
 .tabs {
     border-bottom: 1px solid var(--brand-color-darker);
     display: flex;
     overflow: auto;
     margin: 1em -.75em;
+    view-transition-name: tabs;
 
     > li {
         box-shadow: inset 0 -4px var(--brand-color-darker);
