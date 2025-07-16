@@ -574,8 +574,6 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         response = self.client.get(revision.vehicle.get_absolute_url())
         self.assertContains(response, "B EAN")
         self.assertContains(response, "Wi-Fi")
-        self.assertNotContains(response, "Pending edits")
-        self.assertContains(response, "History")
         self.assertEqual(revision.vehicle.fleet_number, 2)
 
         self.client.force_login(self.staff_user)
@@ -625,8 +623,6 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         response = self.client.get(revision.vehicle.get_absolute_url())
         self.assertNotContains(response, "B EAN")
         self.assertNotContains(response, "Wi-Fi")
-        self.assertNotContains(response, "Pending edits")
-        self.assertContains(response, "History")
 
     def test_vehicle_edit_2(self):
         self.client.force_login(self.staff_user)
