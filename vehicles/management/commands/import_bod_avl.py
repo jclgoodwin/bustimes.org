@@ -87,6 +87,7 @@ def get_line_name_query(line_ref: str) -> Q:
 
 class Command(ImportLiveVehiclesCommand):
     source_name = "Bus Open Data"
+    vehicle_code_scheme = "BODS"
     services = (
         Service.objects.using(settings.READ_DATABASE)
         .filter(current=True)
@@ -648,6 +649,10 @@ class Command(ImportLiveVehiclesCommand):
         destination = monitored_vehicle_journey.get("DestinationName")
 
         return f"{line_ref} {line_name} {journey_ref} {departure} {direction} {destination}"
+
+    @staticmethod
+    def get_item_identity(item):
+        return item["RecordedAtTime"]
 
     def update(self):
         now = timezone.now()

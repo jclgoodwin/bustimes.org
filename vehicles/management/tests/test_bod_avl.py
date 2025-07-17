@@ -138,10 +138,6 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                     "vehicles.management.import_live_vehicles.redis_client",
                     redis_client,
                 ),
-                mock.patch(
-                    "vehicles.management.commands.import_bod_avl.redis_client",
-                    redis_client,
-                ),
                 use_cassette(str(self.vcr_path / "bod_avl.yaml")) as cassette,
             ):
                 command.update()
@@ -277,9 +273,6 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         with (
             mock.patch(
                 "vehicles.management.import_live_vehicles.redis_client", redis_client
-            ),
-            mock.patch(
-                "vehicles.management.commands.import_bod_avl.redis_client", redis_client
             ),
             mock.patch(
                 "vehicles.management.commands.import_bod_avl.Command.get_items",
