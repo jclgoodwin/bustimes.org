@@ -32,6 +32,21 @@
 {% endif %}
 {% endblock fuse %}
 
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-X2Z0KM7Z5C"></script>
+<script>
+window.gtag_enable_tcf_support = true;
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+
+gtag('config', 'G-X2Z0KM7Z5C', {
+{% if request.resolver_match.url_name %}
+  'view_name': '{{ request.resolver_match.url_name }}',
+{% endif %}
+});
+</script>
+
 </head>
 <body class="{% block bodyclass %}wide{% endblock %}{% if ad is False %} no-ads{% endif %}">
 <script>
