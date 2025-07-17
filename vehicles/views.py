@@ -1125,6 +1125,13 @@ def latest_journey_debug(request, **kwargs):
     vehicle = get_object_or_404(Vehicle, **kwargs)
     if not vehicle.latest_journey_data:
         raise Http404
+
+    # redact possible personal information
+    try:
+        del vehicle.latest_journey_data["Extensions"]["VehicleJourney"]["DriverRef"]
+    except (KeyError, TypeError):
+        pass
+
     return JsonResponse(vehicle.latest_journey_data, safe=False)
 
 
