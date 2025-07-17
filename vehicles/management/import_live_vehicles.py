@@ -19,7 +19,7 @@ from tenacity import before_sleep_log, retry, wait_exponential
 from busstops.models import DataSource
 from bustimes.models import Route, Trip
 
-from ..models import Vehicle, VehicleJourney
+from ..models import Vehicle, VehicleJourney, VehicleCode
 from ..utils import calculate_bearing, redis_client
 
 logger = logging.getLogger(__name__)
