@@ -123,7 +123,6 @@ class Command(ImportLiveVehiclesCommand):
         vehicle_ref = monitored_vehicle_journey["VehicleRef"] or ""
 
         vehicle_ref = vehicle_ref.removeprefix(f"{operator_ref}-")
-        vehicle_ref = vehicle_ref.removeprefix("nibs_").removeprefix("stephensons_")
 
         try:
             vehicle_unique_id = item["Extensions"]["VehicleJourney"]["VehicleUniqueId"]
@@ -464,10 +463,7 @@ class Command(ImportLiveVehiclesCommand):
                 journey.destination = get_destination_name(destination_ref)
             # use destination name string (often not very descriptive)
             if not journey.destination:
-                destination = monitored_vehicle_journey.get("DestinationName")
-                if destination:
-                    if route_name:
-                        destination = destination.removeprefix(f"{route_name} ")  # TGTC
+                if destination := monitored_vehicle_journey.get("DestinationName"):
                     journey.destination = destination
 
             # fall back to direction
@@ -525,7 +521,11 @@ class Command(ImportLiveVehiclesCommand):
                         not (destination_ref and journey.destination)
                         and trip.destination_id
                     ):
-                        journey.destination = get_destination_name(trip.destination_id)
+                        journey.destination = (
+                            trip.headsign
+                            or get_destination_name(trip.destination_id)
+                            or journey.destination
+                        )
 
                     update_fields = []
 

@@ -309,12 +309,11 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
         journey = journeys[1]
         self.assertEqual(journey.route_name, "843X")
-        self.assertEqual(journey.destination, "Soho Road")
+        self.assertEqual(journey.destination, "843X Soho Road")
         self.assertEqual(journey.vehicle.reg, "SN56AFE")
 
         journey = journeys[2]
         self.assertEqual(journey.vehicle.operator_id, "HAMS")
-        self.assertEqual(journey.vehicle.reg, "DW18HAM")
         self.assertEqual(journey.vehicle.reg, "DW18HAM")
 
         # test operator map
