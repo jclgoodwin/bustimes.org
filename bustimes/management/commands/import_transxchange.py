@@ -358,7 +358,7 @@ class Command(BaseCommand):
                         service_code=OuterRef("service_code"),
                     )
                 ),
-                end_date__lte=self.source.datetime,
+                end_date__lt=self.source.datetime,
             ),
         )
         # do this first to prevent IntegrityError (VehicleJourney trip field)
