@@ -3,7 +3,7 @@
 
 ## What's this?
 
-Source code for [the website bustimes.org](https://bustimes.org/).
+Source code for [the website bustimes.org](https://bustimes.org/). (The "the" is important – running your own "instance" is not recommended or supported.)
 
 It's a magnificent monolithic Django app that's evolved over time (since 2015). The structure doesn't make complete sense:
 
@@ -24,15 +24,19 @@ transxchange | code for parsing TransXChange XML files. Could be published as a 
 vehicles | tracking buses' locations and showing them on a map, and pointless details about vehicles' colours and features
 vosa     | the Great Britain Traffic Commissioners' bus service registration data. VOSA is the name of a defunct UK government agency.
 
-This documentation is incomplete and out of date.
-And that's OK (?) because I don't expect anyone to need to follow it.
-I will try to document some things for my own reference.
+I try to document things for "future me", but invariably this documentation will be incomplete and out of date in parts.
+
+## License note
+
+Some of the test data in this repository is public sector information licensed under the [Open Government Licence v3.0](https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/).
+
+This repository also contains some font files which are copyrighted and not covered by the main [licence](LICENSE).
 
 ## Installing
 
 ### Using Docker
 
-...
+I don't know. These days, I only use Docker for running the production site (see below).
 
 ### Using local install
 
@@ -46,7 +50,7 @@ These need to be available:
 - Redis 6.2+
 - [GDAL](https://gdal.org/)
 
-Useful commands:
+Useful commands that you might need to run from time to time:
 
 ```bash
 npm install  # install JavaScript dependencies
