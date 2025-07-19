@@ -513,6 +513,7 @@ class DataSourceAdmin(admin.ModelAdmin):
     search_fields = ("name", "url")
     list_display = (
         "name",
+        "description",
         "url",
         "sha1",
         "datetime",
