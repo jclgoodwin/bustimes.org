@@ -363,9 +363,6 @@ def get_trip(
     else:
         code = Q()
 
-    if operator_ref == "NT" and len(journey_code) > 30:
-        code = Q()
-
     score = 0
     if code:
         score += Case(When(code, then=1), default=0)
@@ -398,13 +395,17 @@ def get_trip(
 
 
 def contiguous_stoptimes_only(stoptimes, trip_id):
+    stoptimes_list = list(stoptimes)
     for a, b in pairwise(stoptimes):
         if a.trip_id != b.trip_id:
             if a.stop_id != b.stop_id:
                 # trips are not contiguous, return only the stops for trip_id
                 return [stop for stop in stoptimes if stop.trip_id == trip_id]
             else:
+                # merge a and b - they describe the same stop
                 a.departure_time = b.departure_time
+                a.pick_up = b.pick_up
+                stoptimes_list.remove(b)
 
     # trips were contiguous, return all stops
-    return stoptimes
+    return stoptimes_list
