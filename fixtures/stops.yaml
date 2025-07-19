@@ -1,3 +1,6 @@
+# This file contains overrides/corrections to NaPTAN StopPoints
+# See busstops/management/commands/naptan_new.py
+
 # relocate stops from The Street to Dereham Road - buses don't run through Briningham village
 # see https://www.flickr.com/photos/55355638@N05/9821099604/
 2900B482:

@@ -1,3 +1,6 @@
+# This file contains overrides/corrections to the Traveline NOC (national operator code) database
+# See busstops/management/commands/import_noc.py
+
 SNDR:
   email: sales@sanderscoaches.com
 PTSG:
