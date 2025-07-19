@@ -40,14 +40,14 @@ dependencies = [
     "tenacity>=9.0.0,<10",
     "lightningcss-cli>=1.29.2,<2",
     "websockets>=14.2",
-    "govuk-bank-holidays>=0.15",
     "django-multidb-router>=0.10",
-    "pyrosm>=0.6.2",
 ]
 
 [dependency-groups]
 test = [
     "lxml>=6.0.0,<7",
+    "pyrosm>=0.6.2",
+    "govuk-bank-holidays>=0.15",
     "asgiref>=3.4.1,<4",
     "gtfs-kit>=10.0.0,<11",
     "requests-toolbelt>=1.0.0,<2",
