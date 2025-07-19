@@ -7,7 +7,6 @@
     var uspTries = 0;
     var uspTriesLimit = 3;
     element.async = true;
-    element.type = 'text/javascript';
     element.src = url;
 
     firstScript.parentNode.insertBefore(element, firstScript);
