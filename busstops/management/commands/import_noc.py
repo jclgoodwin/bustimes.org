@@ -168,16 +168,11 @@ class Command(BaseCommand):
                 url = url.removesuffix("#")
                 url = url.split("#")[-1]
 
-            twitter = public_name.findtext("Twitter").removeprefix("@")
-
             if noc in overrides:
                 override = overrides[noc]
 
                 if "url" in override:
                     url = override["url"]
-
-                if "twitter" in override:
-                    twitter = override["twitter"]
 
                 if "name" in override:
                     if override["name"] == name:
@@ -253,9 +248,7 @@ class Command(BaseCommand):
                 "vehicle_mode",
             ),
         )
-        Operator.objects.bulk_update(
-            to_update, ("url", "twitter", "name", "vehicle_mode")
-        )
+        Operator.objects.bulk_update(to_update, ("url", "name", "vehicle_mode"))
 
         OperatorCode.objects.bulk_create(operator_codes)
         Operator.licences.through.objects.bulk_create(operator_licences)

@@ -8,7 +8,6 @@ IGOB:
   phone: ""
   email: ""
   address: ""
-  twitter: ""
 AVMT:
   name: Axe Valley Mini Travel (AVMT)
   url: https://avmtbustimes.wixsite.com/mysite/timetables
@@ -88,9 +87,6 @@ EBLY:
 HCMN:
   name: MacNeil Coaches
   phone: 075060 72309
-FALC:
-  twitter: FalconBusCoach
-  email: ""
 CBBH:
   name: Centrebus (South)
 CBNL:
@@ -133,13 +129,6 @@ YACT:
   url: https://www.transdevbus.co.uk/coastliner/
 FECS:
   name: First Eastern Counties
-  twitter: |
-    FirstNorwich
-    FirstIpswich
-    FirstYar_Low
-    First_Excel
-GECL:
-  twitter: GallowayLive
 TOTN:
   name: Totnes Community Bus
 SWDC:
@@ -150,7 +139,6 @@ SWDC:
     Devon
     EX7 9QH
 TRDU:
-  twitter: XploreDundee
   url: https://www.xploredundee.com/
   address: |
     Xplore Dundee Travel Centre
@@ -168,7 +156,6 @@ RYCA:
     Malton
     YO17 9NJ
   email: post@ryedalect.org
-  twitter: RyedaleCT
 NXHH:
   address: ""
   email: Comments-Hallmark@rotala.co.uk
@@ -176,7 +163,6 @@ NXHH:
 MAYC:
   name: Maynes Coaches
   url: http://www.maynes.co.uk
-  twitter: MaynesCoaches
   address: ""
   email: ""
   phone: ""
@@ -217,7 +203,6 @@ EDWC:
     Pontyclun
     CF72 8QZ
 WNCT:
-  twitter: GoToTown2016
   address: |
     Unit 7 & 8
     Merchants Close
@@ -226,8 +211,6 @@ WNCT:
   email: enquiries@wnct.co.uk
 HAIN:
   name: Phil Haines Coaches
-HCTY:
-  twitter: ""
 ULCO:
   address: ""
   email: ""
@@ -251,28 +234,20 @@ MDBC:
 TANV:
   email: contact@tanat.co.uk
   url: https://tanat.co.uk/
-  twitter: ""
 BZCO:
   url: https://www.beelinecoaches.co.uk/
 LNGS:
   url: https://www.lylescoaches.co.uk/
 YSTN:
   url: https://www.stationcoaches.co.uk/
-UNOE:
-  twitter: UnoHerts
-FCWL:
-  twitter: by_Kernow
 ALCG:
   url: https://www.alinenortheast.co.uk/
 FCYM:
   name: First Cymru
-FSMR:
-  twitter: FirstWorcester
 MCGL:
   name: McGill’s
 FSCE:
   name: McGill’s Scotland East
-  twitter: McGillsEast
   url: https://www.mcgillsscotlandeast.co.uk/
   phone: 03330 16 61 62
   email: enquiries@mcgillsscotlandeast.co.uk
@@ -281,7 +256,6 @@ TYSW:
   url: http://applegates.co.uk/
   phone: 01453 810314
   email: info@applegates.co.uk
-  twitter: ""
 YYTG:
   name: Yorkshire Buses
   url: https://www.yorkshirebuses.co.uk
@@ -289,12 +263,9 @@ YYTG:
   email: traffic@yorkshirebuses.co.uk
 WNGS:
   url: https://www.diamondbuses.com/
-MINS:
-  twitter: ""
 NYCC:
   name: North Yorkshire Council
   url: https://www.northyorks.gov.uk/public-transport
-  twitter: northyorksc
 BNVB:
   name: Bee Network - Vision Bus
 BNSM:
@@ -309,17 +280,11 @@ BNML:
   name: Bee Network - Metroline
 AJTX:
   url: http://taxi-one.co.uk/
-  twitter: AnthonyMullane
 HRBT:
   url: https://www.herbertstravel.co.uk/
 COEV:
   name: Coach Events Services
   url: http://www.coacheventsservices.co.uk/
-VECT:
-  twitter: |
-    CC_EssexHerts
-    CC_EastEngland
-    CC_EastMidlands
 NCRC:
   url: https://www.wilsonsbuses.co.uk/
 ABCF:
@@ -345,13 +310,8 @@ YTNB:
   url: https://www.yarrantons.com/
 RMCB:
   url: https://ramsburyflyer.org/
-SUNB:
-  twitter: ""
 SBLB:
   name: Stagecoach North Scotland
-  twitter: |
-    StagecoachHLand
-    StagecoachBBird
 RACB:
   url: https://www.racb.co.uk/
 FHUD:
@@ -367,8 +327,6 @@ SSSN:
 LCCO:
   name: South Derbyshire Coaches
   url: http://www.southderby.com/
-A2BR:
-  twitter: a2btravelgroup
 WEFC:
   url: https://www.westmorlandandfurness.gov.uk/parking-streets-and-transport/bus-services/find-bus
 ACAH:
