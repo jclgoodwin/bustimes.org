@@ -13,7 +13,7 @@ from vehicles.utils import calculate_bearing
 
 
 def get_stop_times(item):
-    trip = Trip.objects.get(pk=item["trip_id"])
+    trip = Trip.objects.select_related("calendar").get(pk=item["trip_id"])
     trips = trip.get_trips()
 
     stop_times = (

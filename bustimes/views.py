@@ -449,7 +449,7 @@ def stop_debug(request, atco_code: str):
 class TripDetailView(DetailView):
     model = Trip
     queryset = model.objects.select_related(
-        "route__service", "operator", "route__source"
+        "route__service", "operator", "route__source", "calendar"
     ).defer("route__service__search_vector")
 
     def get_context_data(self, **kwargs):
