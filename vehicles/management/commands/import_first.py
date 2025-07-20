@@ -32,7 +32,7 @@ class Command(ImportLiveVehiclesCommand):
             created = False
         else:
             fleet_number = int(vehicle_code) if vehicle_code.isdigit() else None
-            vehicle, _ = Vehicle.objects.get_or_create(
+            vehicle, created = Vehicle.objects.get_or_create(
                 {
                     "source": self.source,
                     "fleet_code": str(fleet_number or ""),
@@ -41,7 +41,6 @@ class Command(ImportLiveVehiclesCommand):
                 operator_id=item["operator"],
                 code=vehicle_code,
             )
-            created = True
 
         # origin aimed departure time
         departure_time = item["stops"][0]["date"] + " " + item["stops"][0]["time"]
@@ -49,16 +48,12 @@ class Command(ImportLiveVehiclesCommand):
             datetime.strptime(departure_time, "%Y-%m-%d %H:%M")
         )
 
-        if not created:
-            if (
-                vehicle.latest_journey
-                and vehicle.latest_journey.datetime == departure_time
-            ):
-                journey = vehicle.latest_journey
-            else:
-                journey = VehicleJourney.objects.filter(
-                    vehicle=vehicle, datetime=departure_time
-                ).first()
+        if vehicle.latest_journey and vehicle.latest_journey.datetime == departure_time:
+            journey = vehicle.latest_journey
+        elif not created:
+            journey = VehicleJourney.objects.filter(
+                vehicle=vehicle, datetime=departure_time
+            ).first()
         else:
             journey = None
 
