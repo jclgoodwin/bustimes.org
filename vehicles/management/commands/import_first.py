@@ -123,13 +123,20 @@ class Command(ImportLiveVehiclesCommand):
     def split_vehicle_id(item: dict) -> (str, str):
         prefix = f"{item['operator']}-{item['dir']}-"
         suffix = f"-{item['line_name']}"
-        vehicle = item["status"]["vehicle_id"].removesuffix(suffix).removeprefix(prefix)
+        vehicle = item["status"]["vehicle_id"]
+
+        assert vehicle.startswith(prefix)
+        assert vehicle.endswith(suffix)
+        vehicle = vehicle.removesuffix(suffix).removeprefix(prefix)
         journey, vehicle = vehicle[11:].split("-", 1)
         return journey, vehicle
 
     @sync_to_async
     def handle_data(self, data):
-        items = data["params"]["resource"]["member"]
+        if "params" in data:
+            items = data["params"]["resource"]["member"]
+        else:
+            items = data["member"]
 
         vehicle_codes = [self.split_vehicle_id(item)[1] for item in items]
         print(vehicle_codes)
