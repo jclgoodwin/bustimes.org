@@ -31,7 +31,7 @@ def get_point(element):
                 srid = 2157
             case "IrishOS":
                 srid = 29902
-            case "UKOS" | None:
+            case "UKOS" | "" | None:
                 srid = 27700
         return GEOSGeometry(f"SRID={srid};POINT({easting} {northing})")
 
