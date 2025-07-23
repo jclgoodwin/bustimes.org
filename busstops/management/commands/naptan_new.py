@@ -35,8 +35,8 @@ def get_point(element):
                 srid = 27700
         return GEOSGeometry(f"SRID={srid};POINT({easting} {northing})")
 
-    lon = element.findtext("Translation/Longitude")
-    lat = element.findtext("Translation/Latitude")
+    lon = element.findtext("Translation/Longitude") or element.findtext("Longitude")
+    lat = element.findtext("Translation/Latitude") or element.findtext("Latitude")
     if lat is not None and lon is not None:
         return GEOSGeometry(f"POINT({lon} {lat})")
 
@@ -73,7 +73,9 @@ nothings = {
 
 
 def get_stop(element, atco_code):
-    point = get_point(element.find("Place/Location"))
+    point = get_point(element.find("Place/Location")) or get_point(
+        element.find("Location")
+    )
 
     bearing = element.findtext(
         "StopClassification/OnStreet/Bus/MarkedPoint/Bearing/CompassPoint"
