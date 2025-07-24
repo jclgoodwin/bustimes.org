@@ -182,9 +182,11 @@ Disallow: /api/
 Disallow: /accounts/
 Disallow: /fares/
 Disallow: /vehicles/tfl/
+Disallow: /vehicles/*?date=*
 Disallow: /services/*/*
 Disallow: /sources
 Disallow: /*/debug
+Disallow: /*/edit
 
 User-Agent: ImagesiftBot
 Disallow: /
