@@ -37,10 +37,10 @@ const imagesByName: { [imageName: string]: string } = {
 };
 
 const mapStyles: { [key: string]: string } = {
-  positron: "Light",
-  // alidade_smooth: "Smooth",
+  // positron: "Light",
+  alidade_smooth: "Light",
   alidade_smooth_dark: "Dark",
-  alidade_satellite: "Satellite",
+  // alidade_satellite: "Satellite",
   osm_bright: "Bright",
   // bright: "Bright",
   // liberty: "Liberty",
@@ -157,7 +157,7 @@ export default function BusTimesMap(
       // ignore
     }
 
-    return darkModeQuery.matches ? "alidade_smooth_dark" : "positron";
+    return darkModeQuery.matches ? "alidade_smooth_dark" : "alidade_smooth";
   });
 
   useEffect(() => {
@@ -179,7 +179,7 @@ export default function BusTimesMap(
       const style = e.target.value;
       const defaultStyle = darkModeQuery.matches
         ? "alidade_smooth_dark"
-        : "positron";
+        : "alidade_smooth";
       setMapStyle(style);
       try {
         if (style === defaultStyle) {
