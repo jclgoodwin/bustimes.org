@@ -17,7 +17,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.db import IntegrityError, OperationalError, connection, transaction
 from django.db.models import Case, F, Max, OuterRef, Q, When
-from django.db.models.functions import Coalesce, Now
+from django.db.models.functions import Coalesce, Now, TruncDate
 from django.http import Http404, HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
@@ -507,37 +507,16 @@ def get_dates(vehicle=None, service=None):
         # the database query for a service is too slow
         return
 
-    key = f"vehicle:{vehicle.id}:dates"
     journeys = vehicle.vehiclejourney_set
 
-    dates = cache.get(key)
+    dates = (
+        journeys.annotate(date=TruncDate("datetime"))
+        .values_list("date", flat=True)
+        .order_by("date")
+        .distinct("date")
+    )
 
-    if dates and vehicle.latest_journey:
-        latest_date = timezone.localdate(vehicle.latest_journey.datetime)
-        if dates[-1] < latest_date:
-            dates.append(latest_date)
-            # we'll update the cache below
-        else:
-            return dates
-
-    if not dates:
-        try:
-            dates = list(journeys.dates("datetime", "day"))
-        except OperationalError:
-            return
-
-    if dates:
-        now = timezone.localtime()
-        time_to_midnight = datetime.timedelta(days=1) - datetime.timedelta(
-            hours=now.hour, minutes=now.minute, seconds=now.second
-        )
-        if dates[-1] == now.date():  # today
-            time_to_midnight += datetime.timedelta(days=1)
-        time_to_midnight = time_to_midnight.total_seconds()
-        if time_to_midnight > 0:
-            cache.set(key, dates, time_to_midnight)
-
-    return dates
+    return list(dates)
 
 
 def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
