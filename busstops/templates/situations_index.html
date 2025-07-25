@@ -2,8 +2,24 @@
 
 {% block content %}
 
-{% load urlise %}
-
 {% include "situations.html" %}
+
+{% if situation %}
+   <style>{{ css }}</style>
+
+    {% for aj in situation.affectedjourney_set.all %}
+
+        {{ situation.publication_window.lower }}–{{ situation.publication_window.upper|time }}
+
+        <p><a href="{{ aj.trip.get_absolute_url }}">{{ aj.trip }}</a> {{ aj.condition }}</p>
+
+        {{ aj.call_set.all }}
+        {% for call in aj.call_set.all %}
+            {{ call }}
+        {% endfor %}
+    {% endfor %}
+
+    <p><code>{{ xml }}</code></p>
+{% endif %}
 
 {% endblock content %}

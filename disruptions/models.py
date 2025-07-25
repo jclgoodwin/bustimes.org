@@ -142,6 +142,9 @@ class AffectedJourney(models.Model):
     origin_departure_time = models.DateTimeField(null=True, blank=True)
     condition = models.CharField()  # cancelled, altered, etc
 
+    def __str__(self):
+        return f"{self.origin_departure_time} {self.condition}"
+
 
 class Call(models.Model):
     journey = models.ForeignKey(AffectedJourney, models.CASCADE)
