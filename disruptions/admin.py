@@ -24,6 +24,12 @@ class AffectedJourneyInline(admin.TabularInline):
     raw_id_fields = ["trip"]
 
 
+@admin.register(AffectedJourney)
+class AffectedJourneyAdmin(admin.ModelAdmin):
+    raw_id_fields = ["trip", "situation"]
+    list_filter = ["condition", ("trip__operator", admin.RelatedOnlyFieldListFilter)]
+
+
 @admin.register(Situation)
 class SituationAdmin(admin.ModelAdmin):
     inlines = [
