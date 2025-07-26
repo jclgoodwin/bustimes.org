@@ -117,11 +117,7 @@ class Command(ImportLiveVehiclesCommand):
                 continue
             for route in data["routes"]:
                 for item in route["chronological_departures"]:
-                    if item["active_vehicle"] and not (
-                        item["tracking"]["is_future_trip"]
-                        or item["coachtracker"]["is_earlier_departure"]
-                        or item["coachtracker"]["is_later_departure"]
-                    ):
+                    if item["active_vehicle"]:
                         yield (item)
             self.save()
             sleep(self.sleep)
@@ -143,6 +139,10 @@ class Command(ImportLiveVehiclesCommand):
                 service = services.get(operator="MEGA")
             elif class_code == "C":
                 service = services.get(operator__in=["SCLK", "SCUL"])
+            elif class_code == "DE":
+                service = services.get(operator="ie-1178")
+            else:
+                return
         except Service.DoesNotExist:
             return
 
