@@ -1011,7 +1011,8 @@ class Command(BaseCommand):
 
         operators = self.get_operators(transxchange, txc_service)
 
-        if "NATX-National_Express_Ireland" in filename:
+        if "-Dublin_Express-" in filename:
+            # defer to Transport for Ireland open data
             return
 
         if self.source.is_tnds():
