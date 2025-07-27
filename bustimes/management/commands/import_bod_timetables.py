@@ -6,6 +6,7 @@ import xml.etree.cElementTree as ET
 import zipfile
 from pathlib import Path
 from time import sleep
+from urllib.parse import parse_qs
 
 import requests
 from ciso8601 import parse_datetime
@@ -118,10 +119,11 @@ def handle_file(command, path, qualify_filename=False):
 
 
 def get_bus_open_data_paramses(sources, api_key):
-    searches = [
-        source.search for source in sources if not is_noc(source.search)
-    ]  # e.g. 'TM Travel'
-    nocs = [source.search for source in sources if is_noc(source.search)]  # e.g. 'TMTL'
+    # e.g. 'noc=TMTL&adminArea=092'
+    searches = [s.search for s in sources if not is_noc(s.search)]
+
+    # e.g. 'TMTL'
+    nocs = [s.search for s in sources if is_noc(s.search)]
 
     # chunk – we will search for nocs 20 at a time
     nocses = [nocs[i : i + 20] for i in range(0, len(nocs), 20)]
@@ -132,15 +134,12 @@ def get_bus_open_data_paramses(sources, api_key):
         "limit": 100,
     }
 
-    # and search phrases one at a time
+    # and search paramses one at a time
     for search in searches:
-        yield {
-            **base_params,
-            "search": search,
-        }
+        yield base_params | parse_qs(search)
 
     for nocs in nocses:
-        yield {**base_params, "noc": ",".join(nocs)}
+        yield base_params | {"noc": ",".join(nocs)}
 
 
 def bus_open_data(api_key, specific_operator):
@@ -178,6 +177,7 @@ def bus_open_data(api_key, specific_operator):
                 logger.warning(f"no results: {response.url}")
             for dataset in results:
                 dataset["modified"] = parse_datetime(dataset["modified"])
+                dataset["params"] = params
                 datasets.append(dataset)
             url = json["next"]
             params = None
@@ -186,10 +186,9 @@ def bus_open_data(api_key, specific_operator):
 
     for source in timetable_data_sources:
         if not is_noc(source.search):
+            params = parse_qs(source.search)
             operator_datasets = [
-                item
-                for item in datasets
-                if source.search in item["name"] or source.search in item["description"]
+                item for item in datasets if (params | item["params"]) == item["params"]
             ]
         else:
             operator_datasets = [
