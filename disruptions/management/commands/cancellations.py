@@ -8,7 +8,7 @@ from ciso8601 import parse_datetime
 
 from busstops.models import Service, Trip, DataSource
 from ...siri_sx import get_period
-from ...models import Situation, AffectedJourney
+from ...models import Situation, AffectedJourney, Call
 
 
 def handle_situation(element, source, current_situations):
@@ -75,7 +75,9 @@ def handle_situation(element, source, current_situations):
     print("  ", service)
 
     if service:
-        journey_ref = avj.findtext("VehicleJourneyRef")
+        journey_ref = avj.findtext("DatedVehicleJourneyRef") or avj.findtext(
+            "VehicleJourneyRef"
+        )
         trips = Trip.objects.filter(
             operator=operator_ref,
             route__line_name=line_name,
@@ -84,7 +86,7 @@ def handle_situation(element, source, current_situations):
         print("  ", journey_ref, trips)
 
         if len(trips) == 1:
-            AffectedJourney.objects.update_or_create(
+            journey, created = AffectedJourney.objects.update_or_create(
                 {
                     "condition": element.findtext("Consequences/Consequence/Condition"),
                     "trip": trips[0],
@@ -92,6 +94,20 @@ def handle_situation(element, source, current_situations):
                 },
                 situation=situation,
             )
+            stop_times = journey.trip.stoptime_set.all()
+            calls = [
+                Call(
+                    journey=journey,
+                    stop_time=stop_times[i],
+                    arrival_time=call.findtext("AimedArrivalTime"),
+                    departure_time=call.findtext("AimedDepartureTime"),
+                    condition=call.findtext("CallCondition"),
+                    order=call.findtext("Order"),
+                )
+                for i, call in enumerate(avj.find("Calls"))
+            ]
+            Call.objects.bulk_create(calls)
+
     return situation
 
 
