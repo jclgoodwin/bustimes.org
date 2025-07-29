@@ -473,7 +473,7 @@ class StopPoint(models.Model):
             )
             if self.common_name and locality_name.endswith(self.common_name):
                 return locality_name.replace(self.common_name, name)  # Cardiff Airport
-            if slugify(locality_name) not in slugify(self.common_name):
+            if slugify(locality_name).split("-", 1)[0] not in slugify(self.common_name):
                 if self.indicator.lower() in self.prepositions:
                     indicator = self.indicator.lower()
                     if not short:
