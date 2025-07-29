@@ -12,6 +12,17 @@ from ...siri_sx import get_period
 from ...models import Situation, AffectedJourney, Call
 
 
+def get_trip(line_name, operator_ref, journey_ref):
+    trips = Trip.objects.filter(
+        route__service__current=True,
+        route__line_name=line_name,
+        operator=operator_ref,
+        ticket_machine_code=journey_ref,
+    )
+    print("  ", journey_ref, trips)
+    return trips
+
+
 def handle_situation(element, source, current_situations):
     situation_number = element.findtext("SituationNumber")
 
@@ -73,13 +84,7 @@ def handle_situation(element, source, current_situations):
     journey_ref = avj.findtext("DatedVehicleJourneyRef") or avj.findtext(
         "VehicleJourneyRef"
     )
-    trips = Trip.objects.filter(
-        route__service__current=True,
-        route__line_name=line_name,
-        operator=operator_ref,
-        ticket_machine_code=journey_ref,
-    )
-    print("  ", journey_ref, trips)
+    trips = get_trip(line_name, operator_ref, journey_ref)
 
     if len(trips) == 1:
         with atomic():
@@ -94,19 +99,23 @@ def handle_situation(element, source, current_situations):
                 situation=situation,
             )
             stop_times = journey.trip.stoptime_set.all()
-            calls = [
-                Call(
-                    journey=journey,
-                    stop_time=stop_times[i],
-                    arrival_time=call.findtext("AimedArrivalTime"),
-                    departure_time=call.findtext("AimedDepartureTime"),
-                    condition=call.findtext("CallCondition"),
-                    order=call.findtext("Order"),
-                )
-                for i, call in enumerate(avj.find("Calls"))
-                if stop_times[i].stop_id == call.findtext("StopPointRef")
-            ]
-            Call.objects.bulk_create(calls)
+            calls = avj.find("Calls")
+            if len(calls) == len(stop_times):
+                calls = [
+                    Call(
+                        journey=journey,
+                        stop_time=stop_times[i],
+                        arrival_time=call.findtext("AimedArrivalTime"),
+                        departure_time=call.findtext("AimedDepartureTime"),
+                        condition=call.findtext("CallCondition"),
+                        order=call.findtext("Order"),
+                    )
+                    for i, call in enumerate(calls)
+                    if stop_times[i].stop_id == call.findtext("StopPointRef")
+                ]
+                Call.objects.bulk_create(calls)
+            else:
+                print(f"  {len(calls)=} {len(stop_times)=}")
 
     if situation.id:
         return situation
