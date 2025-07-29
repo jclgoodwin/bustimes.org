@@ -9,11 +9,14 @@ import requests
 import xmltodict
 from django.conf import settings
 from django.core.cache import cache
+from django.db.models import Prefetch, prefetch_related_objects
+
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 
 from bustimes.utils import get_stop_times
-from vehicles.models import Vehicle
+from vehicles.models import Vehicle, VehicleJourney
+from disruptions.models import Call
 
 
 TIMEZONE = ZoneInfo("Europe/London")
@@ -309,6 +312,35 @@ class TimetableDepartures(Departures):
             today_times += all_today_times[self.per_page : self.per_page + 8]
 
         times = [self.get_row(stop_time) for stop_time in today_times]
+
+        # prefetch journeys to show which vehicle is operating journey
+        prefetch_related_objects(
+            [time["stop_time"].trip for time in times],
+            Prefetch(
+                "vehiclejourney_set",
+                VehicleJourney.objects.filter(datetime__date=date).select_related(
+                    "vehicle"
+                ),
+                to_attr="vehicle_journeys",
+            ),
+        )
+        for time in times:
+            if time["stop_time"].trip.vehicle_journeys:
+                time["vehicle"] = time["stop_time"].trip.vehicle_journeys[0].vehicle
+
+        # disruptions - cancellations, alterations, diversions
+        prefetch_related_objects(
+            [time["stop_time"] for time in times],
+            Prefetch(
+                "call_set",
+                Call.objects.filter(journey__situation__current=True),
+                to_attr="calls",
+            ),
+        )
+        for time in times:
+            for call in time["stop_time"].calls:
+                if call.condition == "notStopping":
+                    time["cancelled"] = True
 
         # # add tomorrow's times until there are 10, or the next day until there more than 0
         # i = 0

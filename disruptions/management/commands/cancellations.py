@@ -4,9 +4,10 @@ import requests
 
 from datetime import timezone
 from django.core.management.base import BaseCommand
+from django.db.transaction import atomic
 from ciso8601 import parse_datetime
 
-from busstops.models import Service, Trip, DataSource
+from busstops.models import Trip, DataSource
 from ...siri_sx import get_period
 from ...models import Situation, AffectedJourney, Call
 
@@ -60,32 +61,30 @@ def handle_situation(element, source, current_situations):
     assert len(vps) == 1
     situation.publication_window = get_period(vps[0])
 
-    situation.save()
-
     avjs = element.findall("Affects/VehicleJourneys/AffectedVehicleJourney")
     assert len(avjs) == 1
     avj = avjs[0]
 
     line_name = avj.findtext("PublishedLineName")
     operator_ref = avj.findtext("Operator/OperatorRef")
-    service = Service.objects.filter(
-        current=True, route__line_name=line_name, operator=operator_ref
-    ).distinct()
+
     print(operator_ref, line_name)
-    print("  ", service)
 
-    if service:
-        journey_ref = avj.findtext("DatedVehicleJourneyRef") or avj.findtext(
-            "VehicleJourneyRef"
-        )
-        trips = Trip.objects.filter(
-            operator=operator_ref,
-            route__line_name=line_name,
-            ticket_machine_code=journey_ref,
-        )
-        print("  ", journey_ref, trips)
+    journey_ref = avj.findtext("DatedVehicleJourneyRef") or avj.findtext(
+        "VehicleJourneyRef"
+    )
+    trips = Trip.objects.filter(
+        route__service__current=True,
+        route__line_name=line_name,
+        operator=operator_ref,
+        ticket_machine_code=journey_ref,
+    )
+    print("  ", journey_ref, trips)
 
-        if len(trips) == 1:
+    if len(trips) == 1:
+        with atomic():
+            situation.save()
+
             journey, created = AffectedJourney.objects.update_or_create(
                 {
                     "condition": element.findtext("Consequences/Consequence/Condition"),
@@ -105,10 +104,12 @@ def handle_situation(element, source, current_situations):
                     order=call.findtext("Order"),
                 )
                 for i, call in enumerate(avj.find("Calls"))
+                if stop_times[i].stop_id == call.findtext("StopPointRef")
             ]
             Call.objects.bulk_create(calls)
 
-    return situation
+    if situation.id:
+        return situation
 
 
 class Command(BaseCommand):
