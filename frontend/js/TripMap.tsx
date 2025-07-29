@@ -57,6 +57,9 @@ export const Route = React.memo(function Route({ times }: RouteProps) {
   let i = null;
 
   for (const time of times) {
+    if (time.call_condition === "notStopping") {
+      continue;
+    }
     if (time.track) {
       // wiggly line from previous stop to this one
       lineStrings.push(time.track);

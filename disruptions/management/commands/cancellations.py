@@ -2,22 +2,40 @@ import difflib
 import xml.etree.cElementTree as ET
 import requests
 
-from datetime import timezone
+from ciso8601 import parse_datetime
+from datetime import timedelta, timezone
 from django.core.management.base import BaseCommand
 from django.db.transaction import atomic
+from django.utils.timezone import localtime
 from ciso8601 import parse_datetime
 
 from busstops.models import Trip, DataSource
+from bustimes.utils import get_calendars
 from ...siri_sx import get_period
 from ...models import Situation, AffectedJourney, Call
 
 
-def get_trip(line_name, operator_ref, journey_ref):
+def get_trip(avj):
+    line_name = avj.findtext("PublishedLineName")
+    operator_ref = avj.findtext("Operator/OperatorRef")
+
+    print(operator_ref, line_name)
+
+    journey_ref = avj.findtext("DatedVehicleJourneyRef") or avj.findtext(
+        "VehicleJourneyRef"
+    )
+    departure_time = avj.findtext("OriginAimedDepartureTime")
+
+    departure_time = parse_datetime(departure_time)
+    departure_time = localtime(departure_time)
+
     trips = Trip.objects.filter(
         route__service__current=True,
         route__line_name=line_name,
         operator=operator_ref,
         ticket_machine_code=journey_ref,
+        start=timedelta(hours=departure_time.hour, minutes=departure_time.minute),
+        calendar__in=get_calendars(departure_time),
     )
     print("  ", journey_ref, trips)
     return trips
@@ -76,15 +94,7 @@ def handle_situation(element, source, current_situations):
     assert len(avjs) == 1
     avj = avjs[0]
 
-    line_name = avj.findtext("PublishedLineName")
-    operator_ref = avj.findtext("Operator/OperatorRef")
-
-    print(operator_ref, line_name)
-
-    journey_ref = avj.findtext("DatedVehicleJourneyRef") or avj.findtext(
-        "VehicleJourneyRef"
-    )
-    trips = get_trip(line_name, operator_ref, journey_ref)
+    trips = get_trip(avj)
 
     if len(trips) == 1:
         with atomic():
