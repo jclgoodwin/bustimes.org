@@ -9,9 +9,10 @@ import requests
 import xmltodict
 from django.conf import settings
 from django.core.cache import cache
-from django.db.models import Prefetch, prefetch_related_objects
+from django.db.models import Prefetch, prefetch_related_objects, IntegerField
 
 from django.db.models.functions import Coalesce
+from django.db.models import F, ExpressionWrapper
 from django.utils import timezone
 
 from bustimes.utils import get_stop_times
@@ -272,7 +273,7 @@ class TimetableDepartures(Departures):
             "stop_time": stop_time,
         }
 
-    def get_times(self, date, time=None, trips=None):
+    def get_times(self, date, time=None, trips=None, day_shift=0):
         return (
             get_stop_times(date, time, self.stop, self.routes, trips)
             .select_related("trip")
@@ -281,10 +282,12 @@ class TimetableDepartures(Departures):
                     "trip__destination__locality__name",
                     "trip__destination__common_name",
                     "trip__headsign",
-                )
+                ),
+                order=ExpressionWrapper(
+                    F("departure") + day_shift * 86400, output_field=IntegerField()
+                ),
             )
-            .order_by("departure")
-        )
+        ).order_by("departure")
 
     def get_departures(self):
         time_since_midnight = datetime.timedelta(
@@ -295,8 +298,10 @@ class TimetableDepartures(Departures):
         yesterday_date = (self.now - one_day).date()
         yesterday_time = time_since_midnight + one_day
 
-        all_today_times = self.get_times(yesterday_date, yesterday_time).union(
-            self.get_times(date, time_since_midnight), all=True
+        all_today_times = (
+            self.get_times(yesterday_date, yesterday_time)
+            .union(self.get_times(date, time_since_midnight, day_shift=1), all=True)
+            .order_by("order")
         )
         today_times = list(all_today_times[: self.per_page])
 
