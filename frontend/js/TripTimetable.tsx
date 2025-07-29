@@ -137,18 +137,35 @@ function Row({
     }
   }
 
+  let aimed: ReactElement = null;
+  if (aimedColumn) {
+    aimed = stop.aimed_arrival_time || stop.aimed_departure_time;
+    if (stop.call_condition === "notStopping") {
+      aimed = (
+        <td>
+          <del>
+            {aimed}
+            {caveat}
+          </del>
+        </td>
+      );
+    } else {
+      aimed = (
+        <td>
+          {aimed}
+          {caveat}
+        </td>
+      );
+    }
+  }
+
   return (
     <React.Fragment>
       <tr className={className} onMouseEnter={handleMouseEnter}>
         <td className="stop-name" rowSpan={rowSpan}>
           {stopName}
         </td>
-        {aimedColumn ? (
-          <td>
-            {stop.aimed_arrival_time || stop.aimed_departure_time}
-            {caveat}
-          </td>
-        ) : null}
+        {aimed}
         {actual}
       </tr>
       {rowSpan ? (
