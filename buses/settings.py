@@ -101,6 +101,7 @@ if DEBUG:
         "debug_toolbar_force.middleware.ForceDebugToolbarMiddleware",
     ]
     INTERNAL_IPS = os.environ.get("INTERNAL_IPS", "127.0.0.1").split()
+    SHOW_TOOLBAR_CALLBACK = "debug_toolbar.middleware.show_toolbar_with_docker"
     # DEBUG_TOOLBAR_PANELS = [
     #     "template_profiler_panel.panels.template.TemplateProfilerPanel",
     # ]
