@@ -341,7 +341,7 @@ class Note(models.Model):
 
 
 class Trip(models.Model):
-    route = models.ForeignKey(Route, models.CASCADE)
+    route = models.ForeignKey(Route, models.CASCADE, null=True, blank=True)
     inbound = models.BooleanField(default=False)
     journey_pattern = models.CharField(max_length=100, blank=True)
     vehicle_journey_code = models.CharField(max_length=100, blank=True, db_index=True)
