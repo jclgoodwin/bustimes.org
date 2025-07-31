@@ -114,6 +114,7 @@ class TripViewSet(viewsets.ReadOnlyModelViewSet):
                 call_condition=Subquery(
                     Call.objects.filter(
                         stop_time=OuterRef("id"),
+                        journey__trip=OuterRef("trip"),
                         journey__situation__current=True,
                     ).values("condition")[:1]
                 )
