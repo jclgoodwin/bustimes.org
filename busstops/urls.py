@@ -82,7 +82,7 @@ urlpatterns = [
     ),
     path("stations/<pk>", views.StopAreaDetailView.as_view(), name="stoparea_detail"),
     path(
-        "stops/<slug:atco_code>/departures",
+        "stops/<atco_code>/departures",
         views.stop_departures,
     ),
     re_path(r"^operators/(?P<pk>[A-Z]+)$", views.OperatorDetailView.as_view()),
