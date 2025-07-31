@@ -12,7 +12,7 @@ from django.core.cache import cache
 from django.db.models import Prefetch, prefetch_related_objects, IntegerField
 
 from django.db.models.functions import Coalesce
-from django.db.models import F, ExpressionWrapper
+from django.db.models import F, ExpressionWrapper, OuterRef, Exists
 from django.utils import timezone
 
 from bustimes.utils import get_stop_times
@@ -271,6 +271,7 @@ class TimetableDepartures(Departures):
             "destination": stop_time.destination,
             "link": trip.get_absolute_url(),
             "stop_time": stop_time,
+            "cancelled": stop_time.cancelled,
         }
 
     def get_times(self, date, time=None, trips=None, day_shift=0):
@@ -285,6 +286,14 @@ class TimetableDepartures(Departures):
                 ),
                 order=ExpressionWrapper(
                     F("departure") + day_shift * 86400, output_field=IntegerField()
+                ),
+                cancelled=Exists(
+                    Call.objects.filter(
+                        journey__situation__current=True,
+                        journey__trip=OuterRef("trip"),
+                        stop_time=OuterRef("id"),
+                        condition="notStopping",
+                    )
                 ),
             )
         ).order_by("departure")
@@ -332,20 +341,6 @@ class TimetableDepartures(Departures):
         for time in times:
             if time["stop_time"].trip.vehicle_journeys:
                 time["vehicle"] = time["stop_time"].trip.vehicle_journeys[0].vehicle
-
-        # disruptions - cancellations, alterations, diversions
-        prefetch_related_objects(
-            [time["stop_time"] for time in times],
-            Prefetch(
-                "call_set",
-                Call.objects.filter(journey__situation__current=True),
-                to_attr="calls",
-            ),
-        )
-        for time in times:
-            for call in time["stop_time"].calls:
-                if call.condition == "notStopping":
-                    time["cancelled"] = True
 
         # # add tomorrow's times until there are 10, or the next day until there more than 0
         # i = 0
