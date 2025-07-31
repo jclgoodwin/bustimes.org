@@ -633,7 +633,7 @@ def service_vehicles_history(request, slug):
         "vehicles/vehicle_detail.html",
         {
             **context,
-            "garages": Garage.objects.filter(trip__route__service=service),
+            "garages": Garage.objects.filter(trip__route__service=service).distinct(),
             "breadcrumb": [operator, service],
             "object": service,
         },
