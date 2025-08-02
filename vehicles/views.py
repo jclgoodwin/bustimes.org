@@ -193,7 +193,8 @@ def operator_vehicles(request, slug=None, parent=None):
         context = {"object": operator, "breadcrumb": [operator.region, operator]}
 
     vehicles = vehicles.annotate(
-        livery_name=Case(When(livery__show_name=True, then="livery__name")),
+        livery_name=F("livery__name"),
+        show_livery_name=F("livery__show_name"),
         vehicle_type_name=F("vehicle_type__name"),
         garage_name=Case(
             When(garage__name="", then="garage__code"),
