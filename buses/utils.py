@@ -31,7 +31,6 @@ def cdn_cache_control(max_age):
 
 
 def show_toolbar(request):
-    print(request.META, settings.INTERNAL_IPS)
     if request.META.get("REMOTE_ADDR") in settings.INTERNAL_IPS:
         return True
     if request.META.get("HTTP_DO_CONNECTING_IP") in settings.INTERNAL_IPS:
