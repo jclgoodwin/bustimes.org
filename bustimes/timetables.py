@@ -199,8 +199,8 @@ class Timetable:
                 else:
                     self.date = self.today
 
-            # consider revision numbers:
-            self.current_routes = get_routes(routes, when=self.date)
+        # consider revision numbers:
+        self.current_routes = get_routes(routes, when=self.date)
 
         if not self.calendar:
             if self.calendars:
@@ -361,6 +361,7 @@ class Timetable:
         )
         stops = (
             StopTime.stop.field.related_model.objects.select_related("locality")
+            .order_by()
             .defer("latlong", "locality__latlong")
             .in_bulk(stop_codes)
         )
