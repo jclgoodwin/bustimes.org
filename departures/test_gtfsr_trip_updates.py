@@ -101,16 +101,19 @@ class GTFSRTTest(TestCase):
         fakeredis.FakeStrictRedis(),
     )
     def test_nta_ie(self):
-        with override_settings(
-            NTA_API_KEY="poopants",
-            CACHES={
-                "default": {
-                    "BACKEND": "django.core.cache.backends.redis.RedisCache",
-                    "LOCATION": "redis://",
-                    "OPTIONS": {"connection_class": fakeredis.FakeConnection},
-                }
-            },
-        ), vcr.use_cassette("fixtures/vcr/nta_ie_trip_updates.yaml"):
+        with (
+            override_settings(
+                NTA_API_KEY="poopants",
+                CACHES={
+                    "default": {
+                        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+                        "LOCATION": "redis://",
+                        "OPTIONS": {"connection_class": fakeredis.FakeConnection},
+                    }
+                },
+            ),
+            vcr.use_cassette("fixtures/vcr/nta_ie_trip_updates.yaml"),
+        ):
             # trip with some delays
             with self.assertNumQueries(7):
                 response = self.client.get(self.trip.get_absolute_url())
@@ -125,7 +128,7 @@ class GTFSRTTest(TestCase):
             self.assertContains(response, "Sched&shy;uled")
             self.assertContains(response, "06:46")
             self.assertContains(
-                response, "<del>06:45</del>", html=True
+                response, "<s>06:45</s>", html=True
             )  # cancelled - struck through
 
             # cancelled trip:

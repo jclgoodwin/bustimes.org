@@ -29,17 +29,17 @@
     <h1>
         {% if vehicle.reg %}
             {% if vehicle.fleet_code or vehicle.fleet_number %}
-                {% if vehicle.withdrawn %}<del>{% endif %}
+                {% if vehicle.withdrawn %}<s>{% endif %}
                 {% firstof vehicle.fleet_code vehicle.fleet_number %}
-                {% if vehicle.withdrawn %}</del>{% endif %}
+                {% if vehicle.withdrawn %}</s>{% endif %}
             {% endif %}
             {% if vehicle.withdrawn %}
-                <del class="reg">{{ vehicle.get_reg }}</del>
+                <s class="reg">{{ vehicle.get_reg }}</s>
             {% else %}
                  <span class="reg">{{ vehicle.get_reg }}</span>
             {% endif %}
         {% elif vehicle.withdrawn %}
-            <del>{{ vehicle }}</del>
+            <s>{{ vehicle }}</s>
         {% else %}
             {{ vehicle }}
         {% endif %}

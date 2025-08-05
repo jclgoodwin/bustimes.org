@@ -44,7 +44,7 @@
 <ol class="history">
     {% for variation in variations %}
         <li value="{{ variation.variation_number }}">
-        {% if variation.registration_status == "Withdrawn" or variation.registration_status == "Expired" %}<del>{% endif %}
+        {% if variation.registration_status == "Withdrawn" or variation.registration_status == "Expired" %}<s>{% endif %}
             <ul>
                 {% if variation.date_received %}<li>
                     <strong>Received</strong>
@@ -74,7 +74,7 @@
 
             {{ variation.publication_text|linebreaks }}
         </li>
-        {% if variation.registration_status == "Withdrawn" or variation.registration_status == "Expired" %}</del>{% endif %}
+        {% if variation.registration_status == "Withdrawn" or variation.registration_status == "Expired" %}</s>{% endif %}
     {% endfor %}
 </ol>
 

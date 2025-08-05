@@ -9,9 +9,9 @@
 {% block content %}
 
     <h1>
-        {% if object.trusted is False %}<del>{% endif %}
+        {% if object.trusted is False %}<s>{% endif %}
         User {{ object }}
-        {% if object.trusted is False %}</del>{% endif %}
+        {% if object.trusted is False %}</s>{% endif %}
     </h1>
 
     {% if perms.accounts.change_user %}

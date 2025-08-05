@@ -144,10 +144,10 @@ function Row({
     if (stop.call_condition === "notStopping") {
       aimed = (
         <td>
-          <del>
+          <s>
             {aimed}
             {caveat}
-          </del>
+          </s>
         </td>
       );
     } else {
