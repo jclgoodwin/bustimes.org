@@ -91,7 +91,7 @@ SECURE_REDIRECT_EXEMPT = [r"^version$"]
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_URLS_REGEX = r"(^\/(api\/|(vehicles|stops)\.json)|.*\/journeys\/.*)"
 
-if DEBUG:
+if DEBUG and not TEST:
     INSTALLED_APPS += [
         "debug_toolbar",
         "template_profiler_panel",
