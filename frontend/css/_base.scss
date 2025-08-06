@@ -657,7 +657,7 @@ table {
     column-gap: 1em;
 
     a {
-        align-items: center;
+        align-items: stretch;
         display: flex;
         padding: .5em 0;
         white-space: normal;
@@ -667,6 +667,10 @@ table {
             white-space: nowrap;
             margin-left: 1em;
         }
+    }
+
+    .description {
+        align-content: center;
     }
 
     a:hover {
@@ -694,9 +698,9 @@ table {
     text-align: center;
     font-weight: normal;
     white-space: nowrap;
+    align-content: center;
 
     &.is-short {
-        height: 36px;
         line-height: 36px;
         font-size: 30px;
         padding: 6px 8px;
@@ -704,7 +708,6 @@ table {
 
     &.is-short + .name {
         white-space: normal;
-        height: 36px;
         align-content: center;
     }
 
