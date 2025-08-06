@@ -1485,13 +1485,11 @@ nav {
 .ad-wrapper {
     text-align: center;
     margin: 1em -1em 10px;
-
-    body & {
-        min-height: 120px;  // override AdFirst Media <style>
-    }
+    min-height: 120px;
 
     iframe {
         vertical-align: bottom;
+        background: var(--ad-placeholder-color);
     }
 }
 
@@ -1503,7 +1501,6 @@ nav {
         z-index: 9999;
 
         iframe {
-            background: var(--background-color);
             pointer-events: auto;
         }
     }
