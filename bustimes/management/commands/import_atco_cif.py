@@ -25,7 +25,7 @@ def get_operator(code, source):
     if code:
         try:
             return Operator.objects.get(noc=code)
-        except Operator.DoesNotExist as e:
+        except Operator.DoesNotExist:
             pass
         try:
             return Operator.objects.get(
@@ -46,9 +46,7 @@ def parse_date(string):
 
 @cache
 def get_note(note_code, note_text):
-    return Note.objects.get_or_create(
-        code=note_code or "", text=(note_text or "")[:255]
-    )[0]
+    return Note.objects.get_or_create(code=note_code or "", text=note_text[:255])[0]
 
 
 def parse_time(string):
@@ -56,6 +54,11 @@ def parse_time(string):
 
 
 class Command(BaseCommand):
+    """Imports timetable data in ATCO-CIF format.
+    Specifically, it's assumed that this is Northern Irish (Ulsterbus or Translink Metro) data.
+    See also import_ni.py
+    """
+
     @staticmethod
     def add_arguments(parser):
         parser.add_argument("filenames", nargs="+", type=str)

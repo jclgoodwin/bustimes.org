@@ -13,6 +13,10 @@ logger = logging.getLogger(__name__)
 WEEKDAYS = {day: i for i, day in enumerate(calendar.day_name)}  # {'Monday:' 0,
 
 
+"""This is intended to be a reusable thing for parsing TransXChange documents
+"""
+
+
 @cache
 def warn_once(msg, *args, **kwargs):
     return logger.warning(msg, *args, **kwargs)
