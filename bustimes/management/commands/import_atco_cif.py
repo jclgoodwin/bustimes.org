@@ -46,7 +46,9 @@ def parse_date(string):
 
 @cache
 def get_note(note_code, note_text):
-    return Note.objects.get_or_create(code=note_code or "", text=note_text[:255])[0]
+    return Note.objects.get_or_create(
+        code=note_code or "", text=(note_text or "")[:255]
+    )[0]
 
 
 def parse_time(string):
