@@ -7,6 +7,8 @@
     --border-color: var(--brand-color-darker);
     --border-color-darker: var(--brand-color-darker-darker);
 
+    --ad-placeholder-color: #f0f0f0;
+
     --black: #000;
     --white: #fff;
     --red: #f00;
@@ -26,6 +28,8 @@
     --brand-color: #444;
     --brand-color-darker: #555;
     --brand-color-darker-darker: #666;
+
+    --ad-placeholder-color: #3a3a3a;
 
     --border-color: #444;
     --border-color-darker: #555;
@@ -1503,6 +1507,12 @@ nav {
             pointer-events: auto;
         }
     }
+}
+
+.ad-wrapper:has(#AFM_inContentTop_ad:empty) {
+    background: linear-gradient(var(--ad-placeholder-color)) no-repeat center top;
+    background-size: 728px 90px;
+    position: static;
 }
 
 #content {
