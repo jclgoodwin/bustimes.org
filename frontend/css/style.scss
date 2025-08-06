@@ -21,6 +21,10 @@
     .narrow .ad-wrapper {
         margin: 1em -121px 10px; // 970px
     }
+
+    .ad-wrapper {
+        min-height: 100px;
+    }
 }
 
 @media (min-width: 1200px) {
