@@ -1,4 +1,8 @@
 (function() {
+    if (window.top !== window.self) {
+      return;
+    }
+
     var host = 'bustimes.org';
     var element = document.createElement('script');
     var firstScript = document.getElementsByTagName('script')[0];
