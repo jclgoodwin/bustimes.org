@@ -6,7 +6,7 @@ COPY package.json package-lock.json /app/
 RUN npm install
 
 COPY frontend /app/frontend
-COPY tsconfig.json /app/
+COPY .parcelrc tsconfig.json /app/
 RUN npm run lint && npm run build
 
 
