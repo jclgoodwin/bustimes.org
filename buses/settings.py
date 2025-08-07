@@ -37,7 +37,8 @@ if TEST:
     EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
 INSTALLED_APPS = [
-    # "daphne",
+    "daphne",
+    "channels",
     "accounts",
     "busstops",
     "django.contrib.admin",
