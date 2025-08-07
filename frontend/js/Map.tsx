@@ -21,6 +21,7 @@ import routeStopMarkerDark from "data-url:../route-stop-marker-dark.png";
 import routeStopMarker from "data-url:../route-stop-marker.png";
 import stopMarkerCircle from "data-url:../stop-marker-circle.png";
 import stopMarker from "data-url:../stop-marker.png";
+import osmBright from "url:../osm_bright.json";
 import type {
   Map as MapLibreMap,
   MapStyleImageMissingEvent,
@@ -217,8 +218,8 @@ export default function BusTimesMap(
     mapStyleURL = "https://tiles.bustimes.org.uk/styles/light/style.json";
   } else if (mapStyle === "os_dark") {
     mapStyleURL = "https://tiles.bustimes.org.uk/styles/night/style.json";
-  } else if (mapStyle.indexOf("_") === -1) {
-    mapStyleURL = `https://tiles.openfreemap.org/styles/${mapStyle}`;
+  } else if (mapStyle === "osm_bright") {
+    mapStyleURL = osmBright;
   }
 
   return (
