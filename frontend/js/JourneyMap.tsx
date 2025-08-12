@@ -361,25 +361,17 @@ function JourneyVehicle({
       return;
     }
 
-    let timeout: number;
-    let current = true;
+    const socket = new WebSocket(
+      `ws://${window.location.host}/vehicles/${vehicleId}`,
+    );
 
-    const loadVehicle = () => {
-      fetch(`/vehicles.json?id=${vehicleId}`).then((response) => {
-        response.json().then((data: Vehicle[]) => {
-          if (current && data && data.length) {
-            setVehicle(data[0]);
-            timeout = window.setTimeout(loadVehicle, 12000); // 12 seconds
-          }
-        });
-      });
+    socket.onMessage = (event) => {
+      const items = JSON.parse(event.data);
+      console.dir(items);
     };
 
-    loadVehicle();
-
     return () => {
-      current = false;
-      clearTimeout(timeout);
+      socket.close();
     };
   }, [vehicleId]);
 
