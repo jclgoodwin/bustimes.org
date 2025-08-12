@@ -108,8 +108,6 @@ AKSS:
   url: https://www.arrivabus.co.uk/kent-and-surrey
 ARHE:
   url: https://www.arrivabus.co.uk/herts-and-essex
-ADER:
-  url: https://www.arrivabus.co.uk/midlands/bus-travel-in-derby
 AMID:
   url: https://www.arrivabus.co.uk/midlands
 AMSY:
@@ -243,12 +241,8 @@ LNGS:
   url: https://www.lylescoaches.co.uk/
 YSTN:
   url: https://www.stationcoaches.co.uk/
-ALCG:
-  url: https://www.alinenortheast.co.uk/
 FCYM:
   name: First Cymru
-MCGL:
-  name: McGill’s
 FSCE:
   name: McGill’s Scotland East
   url: https://www.mcgillsscotlandeast.co.uk/
