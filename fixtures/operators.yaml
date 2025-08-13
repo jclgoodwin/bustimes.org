@@ -46,7 +46,7 @@ CRES:
 DJWA:
   name: Torbay Mini Buses
 ANRW:
-  name: Andrew’s (Shetland)
+  name: Andrew's (Shetland)
   address: ""
   email: info@andrewsshetland.com
   url: http://www.andrewsshetland.com
@@ -207,7 +207,7 @@ WNCT:
   address: |
     Unit 7 & 8
     Merchants Close
-    King’s Lynn
+    King's Lynn
     PE30 4JX
   email: enquiries@wnct.co.uk
 HAIN:
@@ -244,10 +244,7 @@ YSTN:
 FCYM:
   name: First Cymru
 FSCE:
-  name: McGill’s Scotland East
-  url: https://www.mcgillsscotlandeast.co.uk/
-  phone: 03330 16 61 62
-  email: enquiries@mcgillsscotlandeast.co.uk
+  name: Midland Bluebird
 TYSW:
   name: Applegates
   url: http://applegates.co.uk/
