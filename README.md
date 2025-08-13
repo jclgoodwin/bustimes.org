@@ -76,7 +76,7 @@
 | bustimes/management/tests/test\_import\_passenger.py            |       23 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_transxchange.py         |      742 |        0 |    100% |           |
 | bustimes/management/tests/test\_tnds.py                         |       19 |        0 |    100% |           |
-| bustimes/models.py                                              |      340 |        8 |     98% |111, 372, 375, 404, 449-452, 484 |
+| bustimes/models.py                                              |      340 |        9 |     97% |111, 214, 372, 375, 404, 449-452, 484 |
 | bustimes/test\_get\_trip.py                                     |       31 |        0 |    100% |           |
 | bustimes/tests.py                                               |      132 |        0 |    100% |           |
 | bustimes/timetables.py                                          |      637 |       53 |     92% |102-115, 144, 226-237, 268-269, 329, 341-344, 356, 370-375, 389, 408, 483, 486, 502-505, 507, 534, 643-658, 744-745, 816, 962-964 |
@@ -118,7 +118,7 @@
 | transxchange/test\_txc.py                                       |       23 |        0 |    100% |           |
 | transxchange/txc.py                                             |      482 |       18 |     96% |54, 125, 172, 232, 260, 306-313, 380, 382, 426, 447, 509, 542-543, 698, 729 |
 | vehicles/\_\_init\_\_.py                                        |        0 |        0 |    100% |           |
-| vehicles/admin.py                                               |      249 |       34 |     86% |32, 60, 87, 89, 182-183, 192, 205-206, 222, 251, 254, 277, 283, 285, 287, 290, 319, 335, 341, 404-419, 432, 445, 462, 505-507 |
+| vehicles/admin.py                                               |      251 |       34 |     86% |32, 60, 87, 89, 182-183, 192, 205-206, 222, 251, 254, 277, 283, 285, 287, 290, 319, 335, 341, 404-419, 432, 445, 462, 505-507 |
 | vehicles/apps.py                                                |        6 |        0 |    100% |           |
 | vehicles/context\_processors.py                                 |       14 |        0 |    100% |           |
 | vehicles/fields.py                                              |       23 |        0 |    100% |           |
@@ -150,7 +150,7 @@
 | vehicles/management/tests/test\_siri\_post.py                   |       40 |        0 |    100% |           |
 | vehicles/management/tests/test\_stagecoach\_avl.py              |       33 |        0 |    100% |           |
 | vehicles/management/tests/test\_stats.py                        |       24 |        0 |    100% |           |
-| vehicles/models.py                                              |      497 |       37 |     93% |75, 191, 216, 282, 301, 307, 379, 385, 436, 457, 572-573, 586, 594, 611-613, 621-622, 625-626, 631-632, 657, 678-682, 713, 720-723, 765, 778, 787, 798 |
+| vehicles/models.py                                              |      497 |       37 |     93% |75, 191, 216, 282, 301, 307, 379, 385, 436, 457, 572-573, 586, 594, 611-613, 621-622, 625-626, 631-632, 657, 678-682, 713, 720-723, 765, 778, 787, 803 |
 | vehicles/rtpi.py                                                |       76 |        1 |     99% |        28 |
 | vehicles/signals.py                                             |       11 |        0 |    100% |           |
 | vehicles/tasks.py                                               |      132 |       20 |     85% |80, 85, 95, 102-105, 108, 110, 119, 132, 136-137, 155, 169, 182-183, 237-238, 241 |
@@ -169,7 +169,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16257** | **1099** | **93%** |           |
+|                                                       **TOTAL** | **16259** | **1100** | **93%** |           |
 
 
 ## Setup coverage badge
