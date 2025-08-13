@@ -790,7 +790,12 @@ class VehicleLocation:
 
 
 class SiriSubscription(models.Model):
-    name = models.CharField(max_length=64, blank=True, unique=True)
+    name = models.CharField(
+        max_length=64,
+        blank=True,
+        unique=True,
+        help_text="There should be a DataSource with the same name as this",
+    )
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     sample = models.TextField(null=True, blank=True)
 
