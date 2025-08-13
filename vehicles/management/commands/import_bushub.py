@@ -115,13 +115,18 @@ class Command(ImportLiveVehiclesCommand):
             code=code or "",
             route_name=item["PublishedLineName"] or "",
             service=self.get_service(item),
-            destination=item["DestinationStopName"] or "",
+            destination=item["DestinationStopLocality"]
+            or item["DestinationStopName"]
+            or "",
+            direction=item["DirectionRef"],
         )
 
         if journey.service_id and not journey.id and datetime:
             journey.trip = journey.get_trip(
                 departure_time=datetime, destination_ref=item["DestinationRef"]
             )
+            if journey.trip and not journey.destination:
+                journey.destination = journey.trip.headsign
 
         return journey
 
