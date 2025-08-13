@@ -458,13 +458,13 @@ class Command(ImportLiveVehiclesCommand):
             destination_ref = get_destination_ref(destination_ref)
 
         if not journey.destination:
-            # use stop locality
-            if destination_ref:
+            if destination_ref and operator_ref != "TFLO":
+                # try getting the stop locality name - usually more descriptive than "Bus_Station"
                 journey.destination = get_destination_name(destination_ref)
-            # use destination name string (often not very descriptive)
+            # use the DestinationName provided
             if not journey.destination:
                 if destination := monitored_vehicle_journey.get("DestinationName"):
-                    journey.destination = destination
+                    journey.destination = destination.replace("_", " ")
 
             # fall back to direction
             if not journey.destination:
