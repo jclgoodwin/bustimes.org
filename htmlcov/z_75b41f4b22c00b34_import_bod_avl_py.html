@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_75b41f4b22c00b34_import_bushub_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.0">coverage.py v7.10.0</a>,
-            created at 2025-08-13 17:44 +0000
+            created at 2025-08-13 18:18 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -540,13 +540,13 @@
     <p class="run"><span class="n"><a id="t458" href="#t458">458</a></span><span class="t">            <span class="nam">destination_ref</span> <span class="op">=</span> <span class="nam">get_destination_ref</span><span class="op">(</span><span class="nam">destination_ref</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t459" href="#t459">459</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t460" href="#t460">460</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">journey</span><span class="op">.</span><span class="nam">destination</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t461" href="#t461">461</a></span><span class="t">            <span class="com"># use stop locality</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t462" href="#t462">462</a></span><span class="t">            <span class="key">if</span> <span class="nam">destination_ref</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t461" href="#t461">461</a></span><span class="t">            <span class="key">if</span> <span class="nam">destination_ref</span> <span class="key">and</span> <span class="nam">operator_ref</span> <span class="op">!=</span> <span class="str">"TFLO"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t462" href="#t462">462</a></span><span class="t">                <span class="com"># try getting the stop locality name - usually more descriptive than "Bus_Station"</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t463" href="#t463">463</a></span><span class="t">                <span class="nam">journey</span><span class="op">.</span><span class="nam">destination</span> <span class="op">=</span> <span class="nam">get_destination_name</span><span class="op">(</span><span class="nam">destination_ref</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t464" href="#t464">464</a></span><span class="t">            <span class="com"># use destination name string (often not very descriptive)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t464" href="#t464">464</a></span><span class="t">            <span class="com"># use the DestinationName provided</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t465" href="#t465">465</a></span><span class="t">            <span class="key">if</span> <span class="key">not</span> <span class="nam">journey</span><span class="op">.</span><span class="nam">destination</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t466" href="#t466">466</a></span><span class="t">                <span class="key">if</span> <span class="nam">destination</span> <span class="op">:=</span> <span class="nam">monitored_vehicle_journey</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"DestinationName"</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t467" href="#t467">467</a></span><span class="t">                    <span class="nam">journey</span><span class="op">.</span><span class="nam">destination</span> <span class="op">=</span> <span class="nam">destination</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t467" href="#t467">467</a></span><span class="t">                    <span class="nam">journey</span><span class="op">.</span><span class="nam">destination</span> <span class="op">=</span> <span class="nam">destination</span><span class="op">.</span><span class="nam">replace</span><span class="op">(</span><span class="str">"_"</span><span class="op">,</span> <span class="str">" "</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t468" href="#t468">468</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t469" href="#t469">469</a></span><span class="t">            <span class="com"># fall back to direction</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t470" href="#t470">470</a></span><span class="t">            <span class="key">if</span> <span class="key">not</span> <span class="nam">journey</span><span class="op">.</span><span class="nam">destination</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -904,7 +904,7 @@
             <a class="nav" href="z_75b41f4b22c00b34_import_bushub_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.0">coverage.py v7.10.0</a>,
-            created at 2025-08-13 17:44 +0000
+            created at 2025-08-13 18:18 +0000
         </p>
     </div>
 </footer>
