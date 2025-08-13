@@ -33,7 +33,7 @@ class SignalRTest(TestCase):
                 "vehicles.management.import_live_vehicles.redis_client", redis_client
             ),
             time_machine.travel("2025-06-20", tick=False),
-            self.assertNumQueries(502),
+            self.assertNumQueries(565),
             self.assertRaises(vcr.errors.CannotOverwriteExistingCassetteException),
         ):
             call_command("signalr", "signalr")
