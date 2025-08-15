@@ -29,7 +29,7 @@ occupancies = {
 
 class Command(ImportLiveVehiclesCommand):
     source_name = "Realtime Transport Operators"
-    previous_locations = {}
+    vehicle_code_scheme = "NTA"
 
     def do_source(self):
         self.tzinfo = ZoneInfo("Europe/Dublin")
@@ -37,12 +37,25 @@ class Command(ImportLiveVehiclesCommand):
         self.url = "https://api.nationaltransport.ie/gtfsr/v2/Vehicles"
         return self
 
-    def get_datetime(self, item):
+    @staticmethod
+    def get_datetime(item):
         return datetime.fromtimestamp(item.vehicle.timestamp, timezone.utc)
 
-    def prefetch_vehicles(self, vehicle_codes):
-        vehicles = self.vehicles.filter(source=self.source, code__in=vehicle_codes)
-        self.vehicle_cache = {vehicle.code: vehicle for vehicle in vehicles}
+    @staticmethod
+    def get_vehicle_identity(item):
+        return item.vehicle.vehicle.id
+
+    @staticmethod
+    def get_journey_identity(item):
+        return (
+            item.vehicle.trip.route_id,
+            item.vehicle.trip.trip_id,
+            item.vehicle.trip.start_date,
+        )
+
+    @staticmethod
+    def get_item_identity(item):
+        return item.vehicle.timestamp
 
     def get_items(self):
         assert settings.NTA_API_KEY
@@ -54,40 +67,13 @@ class Command(ImportLiveVehiclesCommand):
         feed = gtfs_realtime_pb2.FeedMessage()
         feed.ParseFromString(response.content)
 
-        items = []
-        vehicle_codes = []
-
-        # build list of vehicles that have moved
-        for item in feed.entity:
-            key = item.vehicle.vehicle.id
-            value = (
-                item.vehicle.trip.route_id,
-                item.vehicle.trip.trip_id,
-                item.vehicle.trip.start_date,
-                item.vehicle.position.latitude,
-                item.vehicle.position.longitude,
-            )
-            if self.previous_locations.get(key) != value:
-                items.append(item)
-                vehicle_codes.append(key)
-                self.previous_locations[key] = value
-
-        self.prefetch_vehicles(vehicle_codes)
-
-        return items
+        return feed.entity
 
     def get_vehicle(self, item):
         vehicle_code = item.vehicle.vehicle.id
-
-        if vehicle_code in self.vehicle_cache:
-            return self.vehicle_cache[vehicle_code], False
-
-        vehicle = Vehicle(
+        return Vehicle.objects.get_or_create(
             code=vehicle_code, source=self.source, slug=f"ie-{vehicle_code.lower()}"
         )
-        vehicle.save()
-
-        return vehicle, True
 
     def get_journey(self, item, vehicle):
         # GTFS spec for working out datetimes:
@@ -147,7 +133,6 @@ class Command(ImportLiveVehiclesCommand):
             except (Service.MultipleObjectsReturned, Service.DoesNotExist):
                 pass
 
-            code_suffix = journey.code.split("_", 1)[1]
             trips = Trip.objects.filter(
                 route__source=self.source,
                 start=start_time,

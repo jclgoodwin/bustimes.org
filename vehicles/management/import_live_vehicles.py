@@ -84,6 +84,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
         self.session = requests.Session()
         self.to_save = []
         self.vehicles_to_update = []
+        self.identifiers = {}
+        self.journeys_ids = {}
+        self.journeys_ids_ids = {}
 
     @staticmethod
     def get_datetime(self):
@@ -382,7 +385,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
     def handle_items(self, items, identities):
         vehicle_codes = VehicleCode.objects.filter(
-            code__in=identities, scheme="BODS"
+            code__in=identities, scheme=self.vehicle_code_scheme
         ).select_related("vehicle__latest_journey__trip")
 
         vehicles_by_identity = {code.code: code.vehicle for code in vehicle_codes}
@@ -490,38 +493,27 @@ class ImportLiveVehiclesCommand(BaseCommand):
         wait = self.wait
 
         try:
-            if items := self.get_items():
-                i = 0
-                for item in items:
-                    try:
-                        # use `self.source.datetime` instead of `now`,
-                        # so `get_items` can increment the time
-                        # if it involves multiple spread out requests
-                        self.handle_item(item, self.source.datetime)
-                    except IntegrityError as e:
-                        logger.exception(e)
-                    i += 1
-                    if i == 50:
-                        self.save()
-                        i = 0
-                self.save()
-            else:
-                wait = 120  # no items - wait 2 minutes
+            (
+                changed_items,
+                changed_journey_items,
+                changed_item_identities,
+                changed_journey_identities,
+                total_items,
+            ) = self.get_changed_items()
         except requests.exceptions.RequestException as e:
-            items = None
             logger.exception(e)
-            wait = 120
+            return 120
+
+        self.handle_items(changed_items, changed_item_identities)
+        self.handle_items(changed_journey_items, changed_journey_identities)
+
+        if not total_items:
+            return 120
 
         time_taken = (timezone.now() - now).total_seconds()
 
         if self.source_name:
-            self.status.append(
-                (
-                    self.source.datetime,
-                    time_taken,
-                    len(items) if type(items) is list else None,
-                )
-            )
+            self.status.append((self.source.datetime, time_taken, total_items))
             self.status = self.status[-50:]
             cache.set(self.status_key, self.status, None)
 

@@ -98,9 +98,6 @@ class Command(ImportLiveVehiclesCommand):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.hist = {}
-        self.identifiers = {}
-        self.journeys_ids = {}
-        self.journeys_ids_ids = {}
 
     @staticmethod
     def get_datetime(item):

@@ -169,9 +169,9 @@ class FlixbusTest(TestCase):
             ),
             vcr.use_cassette(str(FIXTURES_DIR / "ember_gtfsr.yml")),
         ):
-            with self.assertNumQueries(58):
+            with self.assertNumQueries(94):
                 command.update()
-            with self.assertNumQueries(25):
+            with self.assertNumQueries(37):
                 command.update()
 
         response = self.client.get(service.get_absolute_url())
