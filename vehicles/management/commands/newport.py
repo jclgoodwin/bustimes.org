@@ -5,7 +5,7 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
 class Command(ImportLiveVehiclesCommand):
-    source_name = "guernsey"
+    source_name = vehicle_code_scheme = "guernsey"
 
     def get_items(self):
         response = self.session.get(self.source.url, **self.source.settings)

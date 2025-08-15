@@ -22,8 +22,24 @@ class Command(ImportLiveVehiclesCommand):
         ImportLiveVehiclesCommand.add_arguments(parser)
 
     def handle(self, source_name, **options):
-        self.source_name = source_name
+        self.source_name = self.vehicle_code_scheme = source_name
         super().handle(**options)
+
+    @staticmethod
+    def get_vehicle_identity(item):
+        return f"{item['OperatorRef']}:{item['VehicleRef']}"
+
+    @staticmethod
+    def get_journey_identity(item):
+        return (
+            item["JourneyCode"],
+            item["PublishedLineName"],
+            item["DestinationRef"],
+        )
+
+    @staticmethod
+    def get_item_identity(item):
+        return item["RecordedAtTime"]
 
     @staticmethod
     def get_datetime(item):

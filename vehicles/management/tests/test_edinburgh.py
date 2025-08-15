@@ -45,18 +45,13 @@ class EdinburghImportTest(TestCase):
             with mock.patch(
                 "vehicles.management.import_live_vehicles.redis_client", redis_client
             ):
-                with self.assertNumQueries(28):
+                with self.assertNumQueries(268):
                     command.update()
-
-                self.assertEqual({}, command.vehicle_cache)
 
                 cassette.rewind()
-                del command.previous_locations["454"]
 
-                with self.assertNumQueries(1):
+                with self.assertNumQueries(0):
                     command.update()
-
-            self.assertEqual(1, len(command.vehicle_cache))
 
         journey = command.source.vehiclejourney_set.first()
 

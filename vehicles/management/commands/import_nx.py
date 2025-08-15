@@ -34,13 +34,28 @@ def get_trip_condition(date, time_since_midnight, calendar_ids=None):
 
 
 class Command(ImportLiveVehiclesCommand):
-    source_name = "National Express"
+    source_name = vehicle_code_scheme = "National Express"
     operators = [
         "NATX",
         "ie-1178",  # Dublin Express
     ]
     sleep = 3
     livery = 643
+
+    @staticmethod
+    def get_journey_identity(item):
+        return (
+            item["trip"]["route_id"],
+            item["trip"]["class_code"],
+            item["trip"]["departure_time_formatted_local"],
+            item["trip"]["arrival_location_name"],
+        )
+
+    get_vehicle_identity = get_journey_identity
+
+    @staticmethod
+    def get_item_identity(item):
+        return item["live"]["timestamp"]["dateTime"]
 
     @staticmethod
     def get_datetime(item):
