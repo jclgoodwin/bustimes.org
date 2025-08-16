@@ -50,7 +50,10 @@ class EdinburghImportTest(TestCase):
 
                 cassette.rewind()
 
-                with self.assertNumQueries(0):
+                # make it think 1 vehicle has moved
+                del command.identifiers["454"]
+
+                with self.assertNumQueries(1):
                     command.update()
 
         journey = command.source.vehiclejourney_set.first()

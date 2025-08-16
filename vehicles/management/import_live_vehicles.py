@@ -135,7 +135,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
         location = None
         if vehicle is None:
             try:
-                vehicle, vehicle_created = self.get_vehicle(item)
+                vehicle, _ = self.get_vehicle(item)
             except Vehicle.MultipleObjectsReturned as e:
                 logger.exception(e)
                 return
@@ -422,21 +422,22 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 if journey_identity_id == (journey_identity, vehicle.latest_journey_id):
                     keep_journey = True  # can dumbly keep same latest_journey
 
-            result = self.handle_item(
-                item,
-                self.source.datetime,
-                vehicle=vehicle,
-                latest=vehicle_locations.get(vehicle.id, False),
-                keep_journey=keep_journey,
-            )
-
-            if result:
-                location, vehicle = result
-
-                self.journeys_ids_ids[vehicle_identity] = (
-                    journey_identity,
-                    vehicle.latest_journey_id,
+            if vehicle:
+                result = self.handle_item(
+                    item,
+                    self.source.datetime,
+                    vehicle=vehicle,
+                    latest=vehicle_locations.get(vehicle.id, False),
+                    keep_journey=keep_journey,
                 )
+
+                if result:
+                    location, vehicle = result
+
+                    self.journeys_ids_ids[vehicle_identity] = (
+                        journey_identity,
+                        vehicle.latest_journey_id,
+                    )
 
             self.identifiers[vehicle_identity] = self.get_item_identity(item)
 
