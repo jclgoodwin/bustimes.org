@@ -33,7 +33,8 @@ def handle_siri_post(uuid, data):
 
     if "HeartbeatNotification" in data:
         timestamp = parse_datetime(data["HeartbeatNotification"]["RequestTimestamp"])
-        total_items = 0
+        total_items = None
+        changed_items = changed_journey_items = ()
         subscription_ref = None
     else:
         data = data["ServiceDelivery"]
