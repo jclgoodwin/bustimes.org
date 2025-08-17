@@ -215,6 +215,8 @@ class Command(ImportLiveVehiclesCommand):
             self.handle_item(item, self.source.datetime)
 
     def update(self):
+        self.source.datetime = timezone.localtime()
+
         self.handle_items(self.get_items())
 
     @functools.lru_cache
