@@ -22,6 +22,22 @@ class Command(ImportLiveVehiclesCommand):
             now_datetime -= datetime.timedelta(days=1)
         return datetime.datetime.combine(now_datetime, then_time)
 
+    @staticmethod
+    def get_vehicle_identity(item):
+        return item["bus"].split("-", 4)[-1]
+
+    @staticmethod
+    def get_journey_identity(item):
+        return (
+            item["bus"],
+            item["line"],
+            item["direction"],
+        )
+
+    @staticmethod
+    def get_item_identity(item):
+        return item["time"]
+
     def get_vehicle(self, item):
         parts = item["bus"].split("-", 4)
         vehicle_code = parts[-1]
