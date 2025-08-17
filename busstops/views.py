@@ -541,7 +541,16 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
             stops = [stop.pk for stop in context["stops"]]
             context["services"] = sorted(
                 Service.objects.filter(
-                    Exists(
+                    # has only one line_name, or filter by line_names that stop here
+                    ~Exists(
+                        Route.objects.filter(
+                            ~Q(line_name__iexact=OuterRef("line_name")),
+                            service=OuterRef("id"),
+                        )
+                        .only("id")
+                        .order_by()
+                    )
+                    | Exists(
                         StopTime.objects.filter(
                             trip__route=OuterRef("route"),
                             stop__in=stops,
