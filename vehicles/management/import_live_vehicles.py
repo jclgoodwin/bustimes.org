@@ -1,5 +1,6 @@
 import json
 import logging
+from collections import namedtuple
 from datetime import timedelta
 from time import sleep
 
@@ -19,12 +20,17 @@ from tenacity import before_sleep_log, retry, wait_exponential
 from busstops.models import DataSource
 from bustimes.models import Route, Trip
 
-from ..models import Vehicle, VehicleJourney
+from ..models import Vehicle, VehicleJourney, VehicleCode
 from ..utils import calculate_bearing, redis_client
 
 logger = logging.getLogger(__name__)
 fifteen_minutes = timedelta(minutes=15)
 twelve_hours = timedelta(hours=12)
+
+
+Status = namedtuple(
+    "Status", ("fetched_at", "timestamp", "total_items", "changed_items", "time_taken")
+)
 
 
 def same_journey(latest_journey, journey, latest_datetime, when):
@@ -84,6 +90,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
         self.session = requests.Session()
         self.to_save = []
         self.vehicles_to_update = []
+        self.identifiers = {}
+        self.journeys_ids = {}
+        self.journeys_ids_ids = {}
 
     @staticmethod
     def get_datetime(self):
@@ -132,7 +141,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
         location = None
         if vehicle is None:
             try:
-                vehicle, vehicle_created = self.get_vehicle(item)
+                vehicle, _ = self.get_vehicle(item)
             except Vehicle.MultipleObjectsReturned as e:
                 logger.exception(e)
                 return
@@ -380,6 +389,110 @@ class ImportLiveVehiclesCommand(BaseCommand):
             self.url = self.source.url
         return self
 
+    def handle_items(self, items, identities):
+        vehicle_codes = VehicleCode.objects.filter(
+            code__in=identities, scheme=self.vehicle_code_scheme
+        ).select_related("vehicle__latest_journey__trip")
+
+        vehicles_by_identity = {code.code: code.vehicle for code in vehicle_codes}
+
+        vehicle_locations = redis_client.mget(
+            [f"vehicle{vc.vehicle_id}" for vc in vehicle_codes]
+        )
+        vehicle_locations = {
+            vehicle_codes[i].vehicle_id: json.loads(item)
+            for i, item in enumerate(vehicle_locations)
+            if item
+        }
+
+        for i, item in enumerate(items):
+            vehicle_identity = identities[i]
+
+            journey_identity = self.journeys_ids[vehicle_identity]
+
+            if vehicle_identity in vehicles_by_identity:
+                vehicle = vehicles_by_identity[vehicle_identity]
+            else:
+                vehicle, created = self.get_vehicle(item)
+                # print(vehicle_identity, vehicle, created)
+                if vehicle:
+                    VehicleCode.objects.create(
+                        code=vehicle_identity,
+                        scheme=self.vehicle_code_scheme,
+                        vehicle=vehicle,
+                    )
+
+            keep_journey = False
+            if vehicle_identity in self.journeys_ids_ids:
+                journey_identity_id = self.journeys_ids_ids[vehicle_identity]
+                if journey_identity_id == (journey_identity, vehicle.latest_journey_id):
+                    keep_journey = True  # can dumbly keep same latest_journey
+
+            if vehicle:
+                result = self.handle_item(
+                    item,
+                    self.source.datetime,
+                    vehicle=vehicle,
+                    latest=vehicle_locations.get(vehicle.id, False),
+                    keep_journey=keep_journey,
+                )
+
+                if result:
+                    location, vehicle = result
+
+                    self.journeys_ids_ids[vehicle_identity] = (
+                        journey_identity,
+                        vehicle.latest_journey_id,
+                    )
+
+            self.identifiers[vehicle_identity] = self.get_item_identity(item)
+
+            if i and not i % 500:
+                self.save()
+
+        self.save()
+
+    def get_changed_items(self, items=None):
+        changed_items = []
+        changed_journey_items = []
+        changed_item_identities = []
+        changed_journey_identities = []
+        # (changed items and changed journey items are separate
+        # so we can do the quick ones first)
+
+        total_items = 0
+
+        for i, item in enumerate(items or self.get_items() or ()):
+            vehicle_identity = self.get_vehicle_identity(item)
+
+            journey_identity = self.get_journey_identity(item)
+
+            total_items += 1
+
+            if self.identifiers.get(vehicle_identity) == self.get_item_identity(item):
+                if journey_identity == self.journeys_ids[vehicle_identity]:
+                    continue
+                print(self.journeys_ids[vehicle_identity], item)
+            if (
+                vehicle_identity not in self.journeys_ids
+                or journey_identity != self.journeys_ids[vehicle_identity]
+            ):
+                changed_journey_items.append(item)
+                changed_journey_identities.append(vehicle_identity)
+            else:
+                changed_items.append(item)
+                changed_item_identities.append(vehicle_identity)
+
+            self.journeys_ids[vehicle_identity] = journey_identity
+
+        return (
+            changed_items,
+            changed_journey_items,
+            changed_item_identities,
+            changed_journey_identities,
+            total_items,
+        )
+
     def update(self):
         now = timezone.localtime()
         self.source.datetime = now
@@ -387,36 +500,33 @@ class ImportLiveVehiclesCommand(BaseCommand):
         wait = self.wait
 
         try:
-            if items := self.get_items():
-                i = 0
-                for item in items:
-                    try:
-                        # use `self.source.datetime` instead of `now`,
-                        # so `get_items` can increment the time
-                        # if it involves multiple spread out requests
-                        self.handle_item(item, self.source.datetime)
-                    except IntegrityError as e:
-                        logger.exception(e)
-                    i += 1
-                    if i == 50:
-                        self.save()
-                        i = 0
-                self.save()
-            else:
-                wait = 120  # no items - wait 2 minutes
+            (
+                changed_items,
+                changed_journey_items,
+                changed_item_identities,
+                changed_journey_identities,
+                total_items,
+            ) = self.get_changed_items()
         except requests.exceptions.RequestException as e:
-            items = None
             logger.exception(e)
-            wait = 120
+            return 120
+
+        self.handle_items(changed_items, changed_item_identities)
+        self.handle_items(changed_journey_items, changed_journey_identities)
+
+        if not total_items:
+            return 120
 
         time_taken = (timezone.now() - now).total_seconds()
 
         if self.source_name:
             self.status.append(
-                (
+                Status(
                     self.source.datetime,
+                    None,
+                    total_items,
+                    len(changed_items) + len(changed_journey_items),
                     time_taken,
-                    len(items) if type(items) is list else None,
                 )
             )
             self.status = self.status[-50:]
@@ -428,7 +538,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
     def handle(self, immediate=False, *args, **options):
         if self.source_name:
-            self.status_key = f'{self.source_name.replace(" ", "_")}_status'
+            self.status_key = f"{self.source_name.replace(' ', '_')}_status"
             self.status = cache.get(self.status_key, [])
 
         if not immediate:

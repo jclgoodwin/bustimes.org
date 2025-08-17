@@ -1,7 +1,5 @@
-from collections import namedtuple
 import functools
 import io
-import json
 import zipfile
 from datetime import timedelta
 
@@ -25,14 +23,10 @@ from busstops.models import (
 )
 from bustimes.models import Route, Trip
 
-from ...models import Vehicle, VehicleCode, VehicleJourney, VehicleLocation
-from ...utils import redis_client
-from ..import_live_vehicles import ImportLiveVehiclesCommand, logger
+from ...models import Vehicle, VehicleJourney, VehicleLocation
+from ..import_live_vehicles import ImportLiveVehiclesCommand, logger, Status
 
 
-Status = namedtuple(
-    "Status", ("fetched_at", "timestamp", "total_items", "changed_items")
-)
 occupancies = {
     "seatsAvailable": "Seats available",
     "standingAvailable": "Standing available",
@@ -89,6 +83,7 @@ def get_line_name_query(line_ref: str) -> Q:
 
 class Command(ImportLiveVehiclesCommand):
     source_name = "Bus Open Data"
+    vehicle_code_scheme = "BODS"
     services = (
         Service.objects.using(settings.READ_DATABASE)
         .filter(current=True)
@@ -99,9 +94,6 @@ class Command(ImportLiveVehiclesCommand):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.hist = {}
-        self.identifiers = {}
-        self.journeys_ids = {}
-        self.journeys_ids_ids = {}
 
     @staticmethod
     def get_datetime(item):
@@ -651,106 +643,9 @@ class Command(ImportLiveVehiclesCommand):
 
         return f"{line_ref} {line_name} {journey_ref} {departure} {direction} {destination}"
 
-    def handle_items(self, items, identities):
-        vehicle_codes = VehicleCode.objects.filter(
-            code__in=identities, scheme="BODS"
-        ).select_related("vehicle__latest_journey__trip")
-
-        vehicles_by_identity = {code.code: code.vehicle for code in vehicle_codes}
-
-        vehicle_locations = redis_client.mget(
-            [f"vehicle{vc.vehicle_id}" for vc in vehicle_codes]
-        )
-        vehicle_locations = {
-            vehicle_codes[i].vehicle_id: json.loads(item)
-            for i, item in enumerate(vehicle_locations)
-            if item
-        }
-
-        for i, item in enumerate(items):
-            vehicle_identity = identities[i]
-
-            journey_identity = self.journeys_ids[vehicle_identity]
-
-            if vehicle_identity in vehicles_by_identity:
-                vehicle = vehicles_by_identity[vehicle_identity]
-            else:
-                vehicle, created = self.get_vehicle(item)
-                # print(vehicle_identity, vehicle, created)
-                if vehicle:
-                    VehicleCode.objects.create(
-                        code=vehicle_identity, scheme="BODS", vehicle=vehicle
-                    )
-
-            keep_journey = False
-            if vehicle_identity in self.journeys_ids_ids:
-                journey_identity_id = self.journeys_ids_ids[vehicle_identity]
-                if journey_identity_id == (journey_identity, vehicle.latest_journey_id):
-                    keep_journey = True  # can dumbly keep same latest_journey
-
-            result = self.handle_item(
-                item,
-                self.source.datetime,
-                vehicle=vehicle,
-                latest=vehicle_locations.get(vehicle.id, False),
-                keep_journey=keep_journey,
-            )
-
-            if result:
-                location, vehicle = result
-
-                self.journeys_ids_ids[vehicle_identity] = (
-                    journey_identity,
-                    vehicle.latest_journey_id,
-                )
-
-            self.identifiers[vehicle_identity] = item["RecordedAtTime"]
-
-            if i and not i % 500:
-                self.save()
-
-        self.save()
-
-    def get_changed_items(self, items=None):
-        changed_items = []
-        changed_journey_items = []
-        changed_item_identities = []
-        changed_journey_identities = []
-        # (changed items and changed journey items are separate
-        # so we can do the quick ones first)
-
-        total_items = 0
-
-        for i, item in enumerate(items or self.get_items() or ()):
-            vehicle_identity = self.get_vehicle_identity(item)
-
-            journey_identity = self.get_journey_identity(item)
-
-            total_items += 1
-
-            if self.identifiers.get(vehicle_identity) == item["RecordedAtTime"]:
-                if journey_identity == self.journeys_ids[vehicle_identity]:
-                    continue
-                print(self.journeys_ids[vehicle_identity], item)
-            if (
-                vehicle_identity not in self.journeys_ids
-                or journey_identity != self.journeys_ids[vehicle_identity]
-            ):
-                changed_journey_items.append(item)
-                changed_journey_identities.append(vehicle_identity)
-            else:
-                changed_items.append(item)
-                changed_item_identities.append(vehicle_identity)
-
-            self.journeys_ids[vehicle_identity] = journey_identity
-
-        return (
-            changed_items,
-            changed_journey_items,
-            changed_item_identities,
-            changed_journey_identities,
-            total_items,
-        )
+    @staticmethod
+    def get_item_identity(item):
+        return item["RecordedAtTime"]
 
     def update(self):
         now = timezone.now()
@@ -773,20 +668,25 @@ class Command(ImportLiveVehiclesCommand):
         self.handle_items(changed_items, changed_item_identities)
         self.handle_items(changed_journey_items, changed_journey_identities)
 
+        time_taken = (timezone.now() - now).total_seconds()
+
         # stats for last 50 updates:
-        bod_status = cache.get("bod_avl_status", [])
+        try:
+            bod_status = cache.get("bod_avl_status", [])
+        except TypeError:
+            bod_status = []
         bod_status.append(
             Status(
                 now,
                 self.source.datetime,
                 total_items,
                 len(changed_items) + len(changed_journey_items),
+                time_taken,
             )
         )
         bod_status = bod_status[-50:]
         cache.set("bod_avl_status", bod_status, None)
 
-        time_taken = (timezone.now() - now).total_seconds()
         print(f"{time_taken=}")
 
         if self.fallback_mode:

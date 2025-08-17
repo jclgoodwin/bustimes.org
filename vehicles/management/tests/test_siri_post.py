@@ -102,9 +102,6 @@ class SiriPostTest(TestCase):
             mock.patch(
                 "vehicles.management.import_live_vehicles.redis_client", redis_client
             ),
-            mock.patch(
-                "vehicles.management.commands.import_bod_avl.redis_client", redis_client
-            ),
         ):
             response = self.client.post(
                 "/siri/475d1d1f-5708-4ee1-8f51-c63d948bc0b9",

@@ -5,7 +5,7 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
 class Command(ImportLiveVehiclesCommand):
-    source_name = "guernsey"
+    source_name = vehicle_code_scheme = "guernsey"
 
     def get_items(self):
         response = self.session.get(self.source.url, **self.source.settings)
@@ -14,6 +14,22 @@ class Command(ImportLiveVehiclesCommand):
     @staticmethod
     def get_datetime(item):
         return parse_datetime(item["reported"])
+
+    @staticmethod
+    def get_vehicle_identity(item):
+        return item["vehicleRef"]
+
+    @staticmethod
+    def get_journey_identity(item):
+        return (
+            item["scheduledTripStartTime"],
+            item["routeName"],
+            item.get("destination"),
+        )
+
+    @staticmethod
+    def get_item_identity(item):
+        return item["reported"]
 
     def get_vehicle(self, item):
         code = item["vehicleRef"]

@@ -98,16 +98,18 @@
             <th scope="col">Age</th>
             <th scope="col">Items</th>
             <th scope="col">Changed items</th>
+            <th scope="col">Time taken</th>
         </tr>
     </thead>
     <tbody>
         {% for item in items %}
             <tr>
-                <td>{{ item.fetched|date:'H:i:s' }}</td>
+                <td>{{ item.fetched_at|date:'H:i:s' }}</td>
                 <td>{{ item.timestamp|date:'H:i:s' }}</td>
-                <td>{{ item.age.total_seconds }}</td>
-                <td>{{ item.items }}</td>
-                <td>{{ item.changed }}</td>
+                <td></td>
+                <td>{{ item.total_items }}</td>
+                <td>{{ item.changed_items }}</td>
+                <td>{{ item.time_taken }}</td>
             </tr>
         {% endfor %}
     </tbody>
@@ -122,16 +124,18 @@
         <thead>
             <tr>
                 <th scope="col">Fetched</th>
-                <th scope="col">Time taken</th>
                 <th scope="col">Items</th>
+                <th scope="col">Changed items</th>
+                <th scope="col">Time taken</th>
             </tr>
         </thead>
         <tbody>
             {% for item in status %}
                 <tr>
-                    <td>{{ item.0|date:'H:i:s' }}</td>
-                    <td>{{ item.1 }}</td>
-                    <td>{{ item.2 }}</td>
+                    <td>{{ item.fetched_at|date:'H:i:s' }}</td>
+                    <td>{{ item.total_items }}</td>
+                    <td>{{ item.changed_items }}</td>
+                    <td>{{ item.time_taken }}</td>
                 </tr>
             {% endfor %}
         </tbody>

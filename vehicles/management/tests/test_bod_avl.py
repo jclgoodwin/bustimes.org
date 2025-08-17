@@ -138,10 +138,6 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                     "vehicles.management.import_live_vehicles.redis_client",
                     redis_client,
                 ),
-                mock.patch(
-                    "vehicles.management.commands.import_bod_avl.redis_client",
-                    redis_client,
-                ),
                 use_cassette(str(self.vcr_path / "bod_avl.yaml")) as cassette,
             ):
                 command.update()
@@ -163,9 +159,10 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             <tr>
                 <td>00:00:00</td>
                 <td>15:14:46</td>
-                <td>-7312486.261274</td>
+                <td></td>
                 <td>841</td>
                 <td>841</td>
+                <td>0.0</td>
             </tr>""",
         )
         self.assertContains(
@@ -174,9 +171,10 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             <tr>
                 <td>00:00:00</td>
                 <td>15:14:46</td>
-                <td>-7312486.261274</td>
+                <td></td>
                 <td>841</td>
                 <td>0</td>
+                <td>0.0</td>
             </tr>""",
         )
 
@@ -277,9 +275,6 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         with (
             mock.patch(
                 "vehicles.management.import_live_vehicles.redis_client", redis_client
-            ),
-            mock.patch(
-                "vehicles.management.commands.import_bod_avl.redis_client", redis_client
             ),
             mock.patch(
                 "vehicles.management.commands.import_bod_avl.Command.get_items",
