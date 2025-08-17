@@ -131,7 +131,7 @@
 | vehicles/management/commands/import\_bushub.py                  |       83 |       18 |     78% |16-17, 21-22, 25-26, 30, 34, 42, 53, 56, 72-73, 82, 92, 111, 119, 145 |
 | vehicles/management/commands/import\_edinburgh.py               |       60 |        5 |     92% |69, 76, 78-83 |
 | vehicles/management/commands/import\_gtfsr\_ember.py            |       68 |        3 |     96% | 69-70, 97 |
-| vehicles/management/commands/import\_gtfsr\_ie.py               |       97 |        5 |     95% |96, 142, 151, 158, 162 |
+| vehicles/management/commands/import\_gtfsr\_ie.py               |       97 |        5 |     95% |94, 140, 149, 156, 160 |
 | vehicles/management/commands/import\_live\_jersey.py            |       44 |        3 |     93% |27, 31, 39 |
 | vehicles/management/commands/import\_nx.py                      |      145 |       29 |     80% |92, 109-111, 113-114, 117-118, 131, 139-146, 150-153, 167-170, 173, 185-186, 196, 207 |
 | vehicles/management/commands/import\_polar.py                   |       84 |       28 |     67% |13-14, 25, 29, 33, 41, 44, 49-55, 61-63, 67, 77-78, 81, 95-98, 101, 114, 121 |
