@@ -70,13 +70,11 @@ class Command(ImportLiveVehiclesCommand):
                 vehicle.save(update_fields=["code"])
             return vehicle, False
 
-        vehicle = Vehicle.objects.create(
+        return Vehicle.objects.get_or_create(
+            {"fleet_code": fleet_code, "source": self.source},
             operator_id=operator_id,
-            source=self.source,
             code=vehicle_code,
-            fleet_code=fleet_code,
         )
-        return vehicle, True
 
     def get_journey(self, item, vehicle):
         journey = VehicleJourney(
