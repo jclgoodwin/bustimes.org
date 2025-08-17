@@ -47,8 +47,9 @@ class Command(ImportLiveVehiclesCommand):
         return super().get_items()["vehicles"]
 
     def get_vehicle(self, item):
-        # if item["longitude"] == -7.557172 and item["latitude"] == 49.7668:
-        #     return None, None
+        # somewhere in the Atlantic Ocean where real buses don't go
+        if item["longitude"] == -7.557172 and item["latitude"] == 49.7668:
+            return None, None
 
         vehicle_code = item["vehicle_id"].removeprefix("T")
 
