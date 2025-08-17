@@ -129,7 +129,7 @@
 | vehicles/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
 | vehicles/management/commands/import\_bod\_avl.py                |      402 |       56 |     86% |50, 125, 141, 151-152, 195-198, 201-204, 247, 263, 278-279, 301-319, 370, 372, 378, 409, 415, 430-431, 475-488, 516, 529-530, 549, 578, 608, 676-677, 709, 713 |
 | vehicles/management/commands/import\_bushub.py                  |       83 |       18 |     78% |16-17, 21-22, 25-26, 30, 34, 42, 53, 56, 72-73, 82, 92, 111, 119, 145 |
-| vehicles/management/commands/import\_edinburgh.py               |       60 |        5 |     92% |69, 76, 78-83 |
+| vehicles/management/commands/import\_edinburgh.py               |       60 |        5 |     92% |70, 77, 79-84 |
 | vehicles/management/commands/import\_gtfsr\_ember.py            |       68 |        3 |     96% | 69-70, 97 |
 | vehicles/management/commands/import\_gtfsr\_ie.py               |       97 |        5 |     95% |94, 140, 149, 156, 160 |
 | vehicles/management/commands/import\_live\_jersey.py            |       44 |        3 |     93% |27, 31, 39 |
