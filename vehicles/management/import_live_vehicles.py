@@ -1,5 +1,6 @@
 import json
 import logging
+from collections import namedtuple
 from datetime import timedelta
 from time import sleep
 
@@ -25,6 +26,11 @@ from ..utils import calculate_bearing, redis_client
 logger = logging.getLogger(__name__)
 fifteen_minutes = timedelta(minutes=15)
 twelve_hours = timedelta(hours=12)
+
+
+Status = namedtuple(
+    "Status", ("fetched_at", "timestamp", "total_items", "changed_items", "time_taken")
+)
 
 
 def same_journey(latest_journey, journey, latest_datetime, when):
@@ -514,7 +520,15 @@ class ImportLiveVehiclesCommand(BaseCommand):
         time_taken = (timezone.now() - now).total_seconds()
 
         if self.source_name:
-            self.status.append((self.source.datetime, time_taken, total_items))
+            self.status.append(
+                Status(
+                    self.source.datetime,
+                    None,
+                    total_items,
+                    len(changed_items) + len(changed_journey_items),
+                    time_taken,
+                )
+            )
             self.status = self.status[-50:]
             cache.set(self.status_key, self.status, None)
 

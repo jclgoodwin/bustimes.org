@@ -1,4 +1,3 @@
-from collections import namedtuple
 import functools
 import io
 import zipfile
@@ -25,12 +24,9 @@ from busstops.models import (
 from bustimes.models import Route, Trip
 
 from ...models import Vehicle, VehicleJourney, VehicleLocation
-from ..import_live_vehicles import ImportLiveVehiclesCommand, logger
+from ..import_live_vehicles import ImportLiveVehiclesCommand, logger, Status
 
 
-Status = namedtuple(
-    "Status", ("fetched_at", "timestamp", "total_items", "changed_items")
-)
 occupancies = {
     "seatsAvailable": "Seats available",
     "standingAvailable": "Standing available",
@@ -672,20 +668,25 @@ class Command(ImportLiveVehiclesCommand):
         self.handle_items(changed_items, changed_item_identities)
         self.handle_items(changed_journey_items, changed_journey_identities)
 
+        time_taken = (timezone.now() - now).total_seconds()
+
         # stats for last 50 updates:
-        bod_status = cache.get("bod_avl_status", [])
+        try:
+            bod_status = cache.get("bod_avl_status", [])
+        except TypeError:
+            bod_status = []
         bod_status.append(
             Status(
                 now,
                 self.source.datetime,
                 total_items,
                 len(changed_items) + len(changed_journey_items),
+                time_taken,
             )
         )
         bod_status = bod_status[-50:]
         cache.set("bod_avl_status", bod_status, None)
 
-        time_taken = (timezone.now() - now).total_seconds()
         print(f"{time_taken=}")
 
         if self.fallback_mode:
