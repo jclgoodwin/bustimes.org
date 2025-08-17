@@ -1490,20 +1490,6 @@ nav {
     }
 }
 
-@media (min-height: 480px) {
-    .ad-wrapper {
-        position: sticky;
-        top: 0;
-        pointer-events: none;
-        z-index: 9999;
-
-        iframe {
-            background: var(--background-color);
-            pointer-events: auto;
-        }
-    }
-}
-
 #content {
     margin-bottom: 1.5em;
 }
