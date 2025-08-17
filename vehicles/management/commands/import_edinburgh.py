@@ -52,10 +52,11 @@ class Command(ImportLiveVehiclesCommand):
 
         vehicle_code = item["vehicle_id"].removeprefix("T")
 
-        return Vehicle.objects.get_or_create(
-            operator_id="LOTH",
+        return Vehicle.objects.filter(
+            operator_in=self.operators,
+        ).get_or_create(
+            {"source": self.source, "operator_id": self.operators[0]},
             code=vehicle_code,
-            source=self.source,
         )
 
     def get_journey(self, item, vehicle):
