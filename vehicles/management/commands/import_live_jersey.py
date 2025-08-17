@@ -5,7 +5,7 @@ from ...models import VehicleLocation, VehicleJourney
 
 
 class Command(ImportLiveVehiclesCommand):
-    source_name = "jersey"
+    source_name = vehicle_code_scheme = "jersey"
     operator = "libertybus"
     url = "http://sojbuslivetimespublic.azurewebsites.net/api/Values/GetMin?secondsAgo=360"
 
