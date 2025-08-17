@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
 
+from django.db.models import Q
 from django.contrib.gis.geos import GEOSGeometry
 
 from busstops.models import Service
@@ -10,7 +11,7 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
 class Command(ImportLiveVehiclesCommand):
-    operators = ("LOTH", "EDTR", "ECBU", "NELB")
+    operators = ("LOTH", "EDTR", "ECBU", "NELB", "ETOR")
     source_name = vehicle_code_scheme = "TfE"
     wait = 39
     services = Service.objects.filter(operator__in=operators, current=True).defer(
@@ -54,7 +55,7 @@ class Command(ImportLiveVehiclesCommand):
         vehicle_code = item["vehicle_id"].removeprefix("T")
 
         return Vehicle.objects.filter(
-            operator__in=self.operators,
+            Q(operator__in=self.operators) | Q(source=self.source)
         ).get_or_create(
             {"source": self.source, "operator_id": self.operators[0]},
             code=vehicle_code,

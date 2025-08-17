@@ -11,7 +11,7 @@ from huey.contrib.djhuey import db_periodic_task, db_task
 
 from busstops.models import DataSource, Operator
 
-from .management.commands import import_bod_avl
+from .management.commands import import_bod_avl, Status
 from .models import SiriSubscription, Vehicle, VehicleJourney, VehicleRevision
 
 
@@ -62,10 +62,11 @@ def handle_siri_post(uuid, data):
     if subscription.name == "Transport for Wales":
         stats = cache.get("tfw_status", [])
         stats.append(
-            (
+            Status(
                 now,
                 timestamp,
                 total_items,
+                len(changed_items) + len(changed_journey_items),
                 subscription_ref,
             )
         )
