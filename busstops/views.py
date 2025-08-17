@@ -523,7 +523,9 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
         ).defer("latlong")
 
         context["stops"] = (
-            self.object.stoppoint_set.filter(operator_has_current_services)
+            self.object.stoppoint_set.filter(
+                Exists("service", filter=Q(service__current=True))
+            )
             .annotate(
                 line_names=ArraySubquery(
                     Route.objects.filter(
