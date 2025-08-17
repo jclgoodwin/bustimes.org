@@ -523,11 +523,31 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
         ).defer("latlong")
 
         context["stops"] = (
-            self.object.stoppoint_set.filter(
-                has_stop_times,
-                service__current=True,
+            self.object.stoppoint_set.filter(operator_has_current_services)
+            .annotate(
+                line_names=ArraySubquery(
+                    Route.objects.filter(
+                        ~Exists(
+                            Route.objects.filter(
+                                ~Q(
+                                    line_name=OuterRef("line_name"),
+                                    service=OuterRef("service"),
+                                )
+                            )
+                        )
+                        | Exists(
+                            Trip.objects.filter(
+                                route=OuterRef("id"),
+                                stoptime__stop=OuterRef(OuterRef("pk")),
+                            )
+                        ),
+                        service__current=True,
+                        service__stops=OuterRef("atco_code"),
+                    )
+                    .values("line_name")
+                    .distinct()
+                )
             )
-            .annotate(line_names=stop_line_names)
             .order_by("common_name", "indicator")
             .defer("latlong")
         )
@@ -626,8 +646,8 @@ def get_departures_context(stop, services, form_data) -> dict:
 
 has_stop_times = ~Exists(
     Route.objects.filter(
-        ~Q(line_name__iexact=OuterRef("service__line_name")),
-        service=OuterRef("service"),
+        Q(service=OuterRef("service"))
+        & ~Q(line_name__iexact=OuterRef("service__line_name")),
     )
     .only("id")
     .order_by()
