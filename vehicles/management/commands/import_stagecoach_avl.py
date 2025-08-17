@@ -57,6 +57,13 @@ def has_stop(stop):
     )
 
 
+occupancies = {
+   "R": "busy",
+   "A": "seats available",
+   "G": "many seats available"
+}
+
+
 class Command(ImportLiveVehiclesCommand):
     source_name = vehicle_code_scheme = "Stagecoach"
 
@@ -220,4 +227,5 @@ class Command(ImportLiveVehiclesCommand):
         return VehicleLocation(
             latlong=GEOSGeometry(f"POINT({item['lo']} {item['la']})"),
             heading=item.get("hg"),
+            # occupancy=occupancies.get(item.get("rg")),
         )

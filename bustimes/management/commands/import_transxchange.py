@@ -413,6 +413,9 @@ class Command(BaseCommand):
                     ]
 
                 for filename in filenames or namelist:
+                    if filename.startswith("__MACOSX"):
+                        continue
+
                     if filename.endswith(".zip"):
                         self.handle_sub_archive(archive, filename)
 
