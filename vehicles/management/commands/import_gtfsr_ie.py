@@ -71,9 +71,7 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_vehicle(self, item):
         vehicle_code = item.vehicle.vehicle.id
-        return Vehicle.objects.get_or_create(
-            code=vehicle_code, source=self.source, slug=f"ie-{vehicle_code.lower()}"
-        )
+        return Vehicle.objects.get_or_create(code=vehicle_code, source=self.source)
 
     def get_journey(self, item, vehicle):
         # GTFS spec for working out datetimes:
