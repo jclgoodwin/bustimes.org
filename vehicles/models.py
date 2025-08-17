@@ -640,7 +640,7 @@ class VehicleJourney(models.Model):
     vehicle = models.ForeignKey(Vehicle, models.CASCADE, null=True, blank=True)
     code = models.CharField(max_length=255, blank=True)
     destination = models.CharField(max_length=255, blank=True)
-    direction = models.CharField(max_length=8, blank=True)
+    direction = models.CharField(max_length=13, blank=True)
     trip = models.ForeignKey("bustimes.Trip", models.SET_NULL, null=True, blank=True)
     # trip_matched = models.BooleanField(default=True)
     # block = models.ForeignKey("bustimes.Block", models.SET_NULL, null=True, blank=True)

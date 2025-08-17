@@ -644,7 +644,7 @@ class StopUsage(models.Model):
 
     service = models.ForeignKey("Service", models.CASCADE)
     stop = models.ForeignKey(StopPoint, models.CASCADE)
-    direction = models.CharField(max_length=8)
+    direction = models.CharField(max_length=13)
     order = models.PositiveIntegerField()
     timing_status = models.CharField(max_length=3, choices=TIMING_STATUS_CHOICES)
 

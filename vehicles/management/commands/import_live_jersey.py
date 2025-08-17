@@ -42,7 +42,7 @@ class Command(ImportLiveVehiclesCommand):
         parts = item["bus"].split("-", 4)
         journey.code = parts[2]
         journey.route_name = item["line"]
-        journey.direction = item["direction"][:8]
+        journey.direction = item["direction"]
         return journey
 
     def create_vehicle_location(self, item):
