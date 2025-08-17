@@ -16,8 +16,7 @@ from bustimes.models import Calendar, Trip
 from bustimes.utils import get_calendars
 
 from ...models import VehicleJourney, VehicleLocation
-from ...utils import redis_client
-from ..import_live_vehicles import ImportLiveVehiclesCommand
+from ..import_live_vehicles import ImportLiveVehiclesCommand, redis_client
 
 
 def parse_datetime(string):
@@ -43,23 +42,10 @@ class Command(ImportLiveVehiclesCommand):
     livery = 643
 
     @staticmethod
-    def get_journey_identity(item):
-        return (
-            item["trip"]["route_id"],
-            item["trip"]["class_code"],
-            item["trip"]["departure_time_formatted_local"],
-            item["trip"]["arrival_location_name"],
-        )
-
-    get_vehicle_identity = get_journey_identity
-
-    @staticmethod
-    def get_item_identity(item):
-        return item["live"]["timestamp"]["dateTime"]
-
-    @staticmethod
     def get_datetime(item):
-        return parse_datetime(item["live"]["timestamp"]["dateTime"])
+        return parse_datetime(
+            item["active_vehicle"]["last_update_time_formatted_local"]
+        )
 
     def get_line_names(self):
         calendar_ids = list(
@@ -174,9 +160,7 @@ class Command(ImportLiveVehiclesCommand):
 
         journey = self.get_journey(route_name, service, departure_time, destination)
 
-        updated_at = parse_datetime(
-            item["active_vehicle"]["last_update_time_formatted_local"]
-        )
+        updated_at = self.get_datetime(item)
 
         latest = redis_client.get(f"vehicle{journey.id}")
         if latest:
@@ -225,6 +209,13 @@ class Command(ImportLiveVehiclesCommand):
         pipeline.set(f"vehicle{journey.id}", redis_json, ex=900)
 
         pipeline.execute()
+
+    def handle_items(self, items):
+        for item in items:
+            self.handle_item(item, self.source.datetime)
+
+    def update(self):
+        self.handle_items(self.get_items())
 
     @functools.lru_cache
     def get_journey(self, route_name, service, departure_time, destination):

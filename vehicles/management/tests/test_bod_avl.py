@@ -159,9 +159,10 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             <tr>
                 <td>00:00:00</td>
                 <td>15:14:46</td>
-                <td>-7312486.261274</td>
+                <td></td>
                 <td>841</td>
                 <td>841</td>
+                <td>0.0</td>
             </tr>""",
         )
         self.assertContains(
@@ -170,9 +171,10 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             <tr>
                 <td>00:00:00</td>
                 <td>15:14:46</td>
-                <td>-7312486.261274</td>
+                <td></td>
                 <td>841</td>
                 <td>0</td>
+                <td>0.0</td>
             </tr>""",
         )
 
