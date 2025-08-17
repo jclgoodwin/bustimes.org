@@ -214,10 +214,12 @@ class Command(ImportLiveVehiclesCommand):
         for item in items:
             self.handle_item(item, self.source.datetime)
 
-    def update(self):
+    def update(self) -> int:
         self.source.datetime = timezone.localtime()
 
         self.handle_items(self.get_items())
+
+        return self.sleep
 
     @functools.lru_cache
     def get_journey(self, route_name, service, departure_time, destination):

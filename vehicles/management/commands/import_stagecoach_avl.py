@@ -57,11 +57,7 @@ def has_stop(stop):
     )
 
 
-occupancies = {
-   "R": "busy",
-   "A": "seats available",
-   "G": "many seats available"
-}
+occupancies = {"R": "busy", "A": "seats available", "G": "many seats available"}
 
 
 class Command(ImportLiveVehiclesCommand):
@@ -104,35 +100,6 @@ class Command(ImportLiveVehiclesCommand):
 
         operator_id = item.get("oc")
 
-        # service_operator = item.get("so")
-        # if service_operator == "SMA" and operator_id == "SCLK":
-        #     operator_id = "SCMN"
-
-        # if vehicle_code in self.vehicle_cache:
-        #     vehicle = self.vehicle_cache[vehicle_code]
-
-        #     if (
-        #         vehicle.operator_id == "SCLK"
-        #         and operator_id != "SCLK"
-        #         or operator_id == "SCLK"
-        #         and vehicle.operator_id != "SCLK"
-        #     ):
-        #         vehicle = (
-        #             self.vehicles.filter(
-        #                 Q(code__iexact=vehicle_code)
-        #                 | Q(fleet_code__iexact=vehicle_code),
-        #                 operator__in=self.operators,
-        #             )
-        #             .exclude(id=vehicle.id)
-        #             .first()
-        #         )
-
-        #         if vehicle:
-        #             self.vehicle_cache[vehicle_code] = vehicle
-
-        #     if vehicle:
-        #         return vehicle, False
-
         if operator_id in self.operators:
             operator = self.operators[operator_id]
         else:
@@ -144,13 +111,12 @@ class Command(ImportLiveVehiclesCommand):
         if vehicle or item.get("hg") == "0":
             return vehicle, False
 
-        vehicle = Vehicle.objects.create(
-            operator=operator,
-            source=self.source,
+        return Vehicle.objects.filter(
+            Q(operator__in=self.operators) | Q(source=self.source)
+        ).get_or_create(
+            {"operator": operator, "source": self.source, "fleet_code": vehicle_code},
             code=vehicle_code,
-            fleet_code=vehicle_code,
         )
-        return vehicle, True
 
     def get_journey(self, item, vehicle):
         if item.get("ao"):  # aimedOriginStopDepartureTime
@@ -183,13 +149,6 @@ class Command(ImportLiveVehiclesCommand):
 
         if code := item.get("td", ""):  # trip id:
             journey.code = code
-        # elif (
-        #     not departure_time
-        #     and latest_journey
-        #     and journey.route_name == latest_journey.route_name
-        #     and latest_journey.datetime.date() == self.source.datetime.date()
-        # ):
-        #     journey = latest_journey
 
         if not journey.service_id and journey.route_name:
             services = Service.objects.filter(current=True, operator__in=self.operators)

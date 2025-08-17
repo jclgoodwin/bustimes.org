@@ -493,7 +493,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             total_items,
         )
 
-    def update(self):
+    def update(self) -> int:
         now = timezone.localtime()
         self.source.datetime = now
 
