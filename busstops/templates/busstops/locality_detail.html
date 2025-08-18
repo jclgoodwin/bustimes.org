@@ -10,10 +10,6 @@
     {% include 'list.html' with list=localities %}
 {% endif %}
 
-<div class="ad-wrapper">
-    <div id="AFM_inContentTop_ad"></div>
-</div>
-
 {% if stops %}
     <section>
         <header>
@@ -27,6 +23,10 @@
         {% include 'stops.html' with stops=stops class=' long' %}
     </section>
 {% endif %}
+
+<div class="ad-wrapper">
+    <div id="AFM_inContentTop_ad"></div>
+</div>
 
 {% if services %}
     <h2>{% include 'modes.html' with modes=modes noun='services' %}</h2>
