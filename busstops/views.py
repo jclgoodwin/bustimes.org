@@ -527,27 +527,35 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
                 Exists("service", filter=Q(service__current=True))
             )
             .annotate(
-                line_names=ArraySubquery(
-                    Route.objects.filter(
-                        ~Exists(
+                line_names=Case(
+                    When(
+                        Exists(
                             Route.objects.filter(
-                                ~Q(
-                                    line_name=OuterRef("line_name"),
-                                    service=OuterRef("service"),
-                                )
-                            )
-                        )
-                        | Exists(
-                            Trip.objects.filter(
-                                route=OuterRef("id"),
-                                stoptime__stop=OuterRef(OuterRef("pk")),
-                            )
+                                ~Q(line_name=F("service__line_name")),
+                                service__stops=OuterRef("pk"),
+                            ).only("id")
                         ),
-                        service__current=True,
-                        service__stops=OuterRef("atco_code"),
-                    )
-                    .values("line_name")
-                    .distinct()
+                        then=ArraySubquery(
+                            Route.objects.filter(
+                                Exists(
+                                    StopTime.objects.filter(
+                                        trip__route=OuterRef("id"),
+                                        stop=OuterRef(OuterRef("pk")),
+                                    )
+                                    .only("id")
+                                    .order_by()
+                                ),
+                                # service__stops=OuterRef("pk")
+                            )
+                            .values("line_name")
+                            .distinct()
+                        ),
+                    ),
+                    default=ArraySubquery(
+                        Route.objects.filter(service__stops=OuterRef("pk"))
+                        .values("line_name")
+                        .distinct()
+                    ),
                 )
             )
             .order_by("common_name", "indicator")
@@ -563,33 +571,41 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
             stops = [stop.pk for stop in context["stops"]]
             context["services"] = sorted(
                 Service.objects.filter(
-                    # has only one line_name, or filter by line_names that stop here
-                    ~Exists(
-                        Route.objects.filter(
-                            ~Q(line_name__iexact=OuterRef("line_name")),
-                            service=OuterRef("id"),
-                        )
-                        .only("id")
-                        .order_by()
-                    )
-                    | Exists(
-                        StopTime.objects.filter(
-                            trip__route=OuterRef("route"),
-                            stop__in=stops,
-                        )
-                        .only("id")
-                        .order_by()
-                    ),
                     stops__in=stops,
                     current=True,
                 )
                 .annotate(
-                    operators=ArrayAgg("operator__name", distinct=True, default=None),
-                    line_names=ArrayAgg(
-                        Coalesce("route__line_name", "line_name"),
-                        distinct=True,
-                        default=None,
+                    line_names=Case(
+                        When(
+                            Exists(
+                                Route.objects.filter(
+                                    ~Q(line_name=OuterRef("line_name")),
+                                    service=OuterRef("id"),
+                                )
+                            ),
+                            then=ArraySubquery(
+                                Route.objects.filter(
+                                    Exists(
+                                        StopTime.objects.filter(
+                                            trip__route=OuterRef("id"),
+                                            stop__in=stops,
+                                        )
+                                        .only("id")
+                                        .order_by()
+                                    ),
+                                    service=OuterRef("id"),
+                                )
+                                .values("line_name")
+                                .distinct()
+                            ),
+                        ),
+                        default=ArrayAgg(
+                            Coalesce("route__line_name", "line_name"),
+                            distinct=True,
+                            default=None,
+                        ),
                     ),
+                    operators=ArrayAgg("operator__name", distinct=True, default=None),
                 )
                 .defer("geometry", "search_vector"),
                 key=Service.get_order,
