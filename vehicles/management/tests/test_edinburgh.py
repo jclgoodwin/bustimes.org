@@ -45,7 +45,7 @@ class EdinburghImportTest(TestCase):
             with mock.patch(
                 "vehicles.management.import_live_vehicles.redis_client", redis_client
             ):
-                with self.assertNumQueries(268):
+                with self.assertNumQueries(44):
                     command.update()
 
                 cassette.rewind()
