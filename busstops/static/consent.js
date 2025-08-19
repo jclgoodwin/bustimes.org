@@ -4,6 +4,11 @@
     }
 
     var host = 'bustimes.org';
+
+    if (host !== window.location.host) {
+      return;
+    }
+
     var element = document.createElement('script');
     var firstScript = document.getElementsByTagName('script')[0];
     var url = 'https://cmp.inmobi.com'
