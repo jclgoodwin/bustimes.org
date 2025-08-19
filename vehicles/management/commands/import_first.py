@@ -19,7 +19,7 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand, logger
 
 
 class Command(ImportLiveVehiclesCommand):
-    def handle_item(self, item, vehicle):
+    async def handle_item(self, item, vehicle):
         journey_code, vehicle_code = self.split_vehicle_id(item)
 
         recorded_at_time = parse_datetime(item["status"]["recorded_at_time"])
@@ -32,7 +32,9 @@ class Command(ImportLiveVehiclesCommand):
             created = False
         else:
             fleet_number = int(vehicle_code) if vehicle_code.isdigit() else None
-            vehicle, created = Vehicle.objects.get_or_create(
+            vehicle, created = await Vehicle.objects.select_related(
+                "latest_journey"
+            ).aget_or_create(
                 {
                     "source": self.source,
                     "fleet_code": str(fleet_number or ""),
@@ -51,29 +53,29 @@ class Command(ImportLiveVehiclesCommand):
         if vehicle.latest_journey and vehicle.latest_journey.datetime == departure_time:
             journey = vehicle.latest_journey
         elif not created:
-            journey = VehicleJourney.objects.filter(
+            journey = await VehicleJourney.objects.filter(
                 vehicle=vehicle, datetime=departure_time
-            ).first()
+            ).afirst()
         else:
             journey = None
 
         if not journey:
             try:
-                service = (
+                service = await (
                     Service.objects.filter(
                         current=True,
                         operator=item["operator"],
                         route__line_name__iexact=item["line_name"],
                     )
                     .distinct()
-                    .get()
+                    .aget()
                 )
             except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
                 print(e, item["operator"], item["line_name"])
                 service = None
             if service and not service.tracking:
                 service.tracking = True
-                service.save(update_fields=["tracking"])
+                await service.asave(update_fields=["tracking"])
 
             destination = item["stops"][-1]
             if destination["locality"]:
@@ -89,16 +91,16 @@ class Command(ImportLiveVehiclesCommand):
                 vehicle=vehicle,
                 service=service,
             )
-            journey.trip = journey.get_trip(
+            journey.trip = await sync_to_async(journey.get_trip)(
                 departure_time=departure_time,
                 destination_ref=item["stops"][-1]["atcocode"],
             )
-            journey.save()
+            await journey.asave()
 
         if vehicle.latest_journey != journey:
             vehicle.latest_journey = journey
             vehicle.latest_journey_data = item
-            vehicle.save(update_fields=["latest_journey", "latest_journey_data"])
+            await vehicle.asave(update_fields=["latest_journey", "latest_journey_data"])
 
         heading = item["status"]["bearing"]
         if heading == -1:
@@ -138,8 +140,7 @@ class Command(ImportLiveVehiclesCommand):
             item["dir"] = parts[1]
             return parts[5], "-".join(parts[6:-1])
 
-    @sync_to_async
-    def handle_data(self, data):
+    async def handle_data(self, data):
         if "params" in data:
             items = data["params"]["resource"]["member"]
         else:
@@ -149,12 +150,12 @@ class Command(ImportLiveVehiclesCommand):
         print(vehicle_codes)
         vehicles = Vehicle.objects.filter(
             operator__parent="First", code__in=vehicle_codes
-        )
-        vehicles = vehicles.select_related("latest_journey")
-        vehicles = {vehicle.code: vehicle for vehicle in vehicles}
+        ).select_related("latest_journey")
+        vehicles = {vehicle.code: vehicle async for vehicle in vehicles}
         for i, item in enumerate(items):
-            self.handle_item(item, vehicles.get(vehicle_codes[i]))
-        self.save()
+            await self.handle_item(item, vehicles.get(vehicle_codes[i]))
+
+        await sync_to_async(self.save)()
 
     @staticmethod
     def get_extent(operator):
