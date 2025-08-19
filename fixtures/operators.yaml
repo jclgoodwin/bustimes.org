@@ -210,6 +210,9 @@ YSTN:
   url: https://www.stationcoaches.co.uk/
 FCYM:
   name: First Cymru
+FSCE:
+  # so it redirects to the other operator with the same name
+  name: Midland Bluebird
 TYSW:
   name: Applegates
   url: http://applegates.co.uk/
