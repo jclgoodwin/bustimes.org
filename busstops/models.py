@@ -21,7 +21,7 @@ from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 
-from bustimes.models import Route, StopTime, TimetableDataSource, Trip
+from bustimes.models import Route, TimetableDataSource, Trip
 from bustimes.timetables import Timetable, get_stop_usages
 from bustimes.utils import get_descriptions
 
@@ -652,13 +652,11 @@ class StopUsage(models.Model):
     timing_point = models.BooleanField(default=True)
     inbound = models.BooleanField(default=False)
     line_name = models.CharField()
-    direction = models.CharField(max_length=13)
+    direction = models.CharField(max_length=8)
     timing_status = models.CharField(max_length=3, choices=TIMING_STATUS_CHOICES)
 
     class Meta:
-        ordering = ("-direction", "order")  # outbound then inbound
-
-    is_minor = StopTime.is_minor
+        ordering = ("inbound", "order")
 
 
 class ServiceColour(models.Model):
