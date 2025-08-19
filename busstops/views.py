@@ -308,10 +308,9 @@ def stops_json(request):
 
     results = (
         StopPoint.objects.filter(
-            latlong__bboverlaps=bounding_box,
+            latlong__bboverlaps=bounding_box, service__current=True
         )
         .annotate(line_names=stop_line_names)
-        .filter(Exists("service", filter=Q(service__current=True)))
         .select_related("locality")
         .defer("locality__latlong")
     )
