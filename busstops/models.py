@@ -652,8 +652,6 @@ class StopUsage(models.Model):
     timing_point = models.BooleanField(default=True)
     inbound = models.BooleanField(default=False)
     line_name = models.CharField()
-    direction = models.CharField(max_length=8)
-    timing_status = models.CharField(max_length=3, choices=TIMING_STATUS_CHOICES)
 
     class Meta:
         ordering = ("inbound", "order")
@@ -757,13 +755,7 @@ class Service(models.Model):
 
     def __str__(self):
         line_name = self.get_line_name()
-        description = None
-        if hasattr(self, "direction") and hasattr(
-            self, f"{self.direction}_description"
-        ):
-            description = getattr(self, f"{self.direction}_description")
-        if not description or description.lower() == self.direction:
-            description = self.description
+        description = self.description
         if description == line_name:
             description = None
         elif (
@@ -1016,37 +1008,45 @@ class Service(models.Model):
         return timetable
 
     def do_stop_usages(self):
-        stop_usages = get_stop_usages(Trip.objects.filter(route__service=self))
+        proposed = get_stop_usages(Trip.objects.filter(route__service=self))
 
-        existing = self.stopusage_set.all()
+        existing = self.stopusage_set.order_by("id")
 
-        stop_usages = [
+        proposed = [
             StopUsage(
                 service=self,
                 stop_id=stop_time.stop_id,
-                timing_status=stop_time.timing_status,
                 timing_point=(stop_time.timing_status == "PTP"),
                 inbound=inbound,
-                direction="inbound" if inbound else "outbound",
                 order=i,
                 line_name=line_name,
             )
-            for line_name, groupings in stop_usages.items()
+            for line_name, groupings in proposed.items()
             for inbound, grouping in groupings.items()
             for i, stop_time in enumerate(grouping)
         ]
 
         existing_hash = [
-            (su.stop_id, su.timing_status, su.direction, su.order) for su in existing
+            (su.stop_id, su.timing_point, su.inbound, su.order, su.line_name)
+            for su in existing
         ]
         proposed_hash = [
-            (su.stop_id, su.timing_status, su.direction, su.order) for su in stop_usages
+            (su.stop_id, su.timing_point, su.inbound, su.order, su.line_name)
+            for su in proposed
         ]
 
         if existing_hash != proposed_hash:
-            if existing:
-                existing.delete()
-            StopUsage.objects.bulk_create(stop_usages)
+            if len(existing_hash) >= len(proposed_hash):  # reuse ids
+                for i, su in enumerate(proposed):
+                    su.id = existing[i].id
+                StopUsage.objects.bulk_update(
+                    proposed,
+                    ["stop_id", "timing_point", "inbound", "order", "line_name"],
+                )
+            else:
+                if existing_hash:
+                    existing.delete()
+                StopUsage.objects.bulk_create(proposed)
 
     def update_description(self):
         routes = self.route_set.all()
