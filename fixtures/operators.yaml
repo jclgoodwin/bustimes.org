@@ -3,8 +3,6 @@
 
 SNDR:
   email: sales@sanderscoaches.com
-PTSG:
-  name: Wrights Coaches
 IGOB:
   name: National Express Accessible Transport
   url: https://www.nationalexpress.com/en/neat
@@ -59,12 +57,8 @@ SBDR:
     LU6 1QQ
   url: http://www.sbdar.co.uk
   phone: 01525 220044
-PCLT:
-  name: Rural Link
 MEGA:
   url: https://www.megabus.co.uk
-NSLA:
-  url: http://www.gatwickairport.com/to-and-from/by-coach-or-bus/hotel-buses/
 DOCC:
   address: |
     Dorset Travel
@@ -87,9 +81,6 @@ JTMT:
   url: ""
 EBLY:
   url: http://www.ebleyexcursions.co.uk/school-timetables
-HCMN:
-  name: MacNeil Coaches
-  phone: 075060 72309
 CBBH:
   name: Centrebus (South)
 CBNL:
@@ -139,15 +130,6 @@ SWDC:
     Dawlish
     Devon
     EX7 9QH
-TRDU:
-  url: https://www.xploredundee.com/
-  address: |
-    Xplore Dundee Travel Centre
-    80-82 Commercial Street
-    Dundee
-    DD1 2AP
-  phone: 01382 221609
-  email: xploredundee@mcgillsbuses.co.uk
 RYCA:
   url: https://ryedalect.org/our-services/local-bus-services/
   address: |
@@ -176,8 +158,6 @@ CTCL:
     Coventry
     CV6 6HH
   phone: 024 7669 1433
-TEXP:
-  phone: 07545 164579
 STNE:
   url: https://stanley-travel.com/bus-timetables/
 RBTS:
@@ -197,12 +177,6 @@ CHAM:
   url: https://www.hedinghamandchambers.co.uk/
 BHBC:
   name: Brighton & Hove
-EDWC:
-  address: |
-    Edwards Busnes Parc
-    Llantrisant
-    Pontyclun
-    CF72 8QZ
 WNCT:
   address: |
     Unit 7 & 8
@@ -222,14 +196,7 @@ CAEL:
 NUTT:
   name: Transpora North West
   aka: Coastliner Buses
-  url: https://www.coastlinerbuses.co.uk/
-  email: blackpool@transporagroup.co.uk
-  phone: 01253 761739
-  address: |
-    Brinwell Road Bus Garage
-    Mereside
-    Blackpool
-    FY4 4QU
+  url: https://www.transporabus.uk
 MDBC:
   url: ""
 TANV:
@@ -244,6 +211,7 @@ YSTN:
 FCYM:
   name: First Cymru
 FSCE:
+  # so it redirects to the other operator with the same name
   name: Midland Bluebird
 WAEN:
   name: Macleod's Coaches
@@ -334,3 +302,5 @@ NTMY:
   name: Ashwood Travel
 SULV:
   url: https://www.sullivanbuses.com
+ARCT:
+  url: https://archwaytravel.co.uk/
