@@ -1,6 +1,6 @@
 <div class="groupings">
     {% for stopusage in stopusages %}
-        {% if not loop.previtem or stopusage.direction != loop.previtem.direction %}
+        {% if not loop.previtem or stopusage.inbound != loop.previtem.inbound %}
             {% if loop.previtem %}</ul></div>{% endif %}
             <div class="grouping">
             <h2>{% if stopusage.inbound %}In{% else %}Out{% endif %}bound</h2>
