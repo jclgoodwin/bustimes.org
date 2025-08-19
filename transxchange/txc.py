@@ -1,5 +1,6 @@
 import calendar
-import datetime
+from datetime import timedelta
+from datetime.datetime import fromisoformat
 import logging
 import xml.etree.cElementTree as ET
 from functools import cache
@@ -22,11 +23,9 @@ def warn_once(msg, *args, **kwargs):
     return logger.warning(msg, *args, **kwargs)
 
 
-def parse_time(string: str) -> datetime.timedelta:
+def parse_time(string: str) -> timedelta:
     hours, minutes, seconds = string.split(":")
-    return datetime.timedelta(
-        hours=int(hours), minutes=int(minutes), seconds=int(seconds)
-    )
+    return timedelta(hours=int(hours), minutes=int(minutes), seconds=int(seconds))
 
 
 class Stop:
@@ -304,13 +303,10 @@ class VehicleJourney:
         departure_day_shift = element.findtext("DepartureDayShift")
         if departure_day_shift:
             departure_day_shift = int(departure_day_shift)
-            if (
-                self.departure_time > datetime.timedelta(hours=12)
-                or departure_day_shift > 1
-            ):
+            if self.departure_time > timedelta(hours=12) or departure_day_shift > 1:
                 logger.error(f"{self.departure_time=}, ignoring {departure_day_shift=}")
             else:
-                self.departure_time += datetime.timedelta(days=departure_day_shift)
+                self.departure_time += timedelta(days=departure_day_shift)
 
         self.start_deadrun, self.end_deadrun = get_deadruns(element)
 
@@ -374,7 +370,7 @@ class VehicleJourney:
 
             if not deadrun:
                 if wait_time is None:
-                    wait_time = datetime.timedelta()
+                    wait_time = timedelta()
                 if journey_timinglink and journey_timinglink.from_wait_time is not None:
                     if journey_timinglink.from_wait_time != wait_time:
                         wait_time += journey_timinglink.from_wait_time
@@ -598,9 +594,9 @@ class DateRange:
         self.start = element.findtext("StartDate")
         self.end = element.findtext("EndDate")
         if self.start:
-            self.start = datetime.date.fromisoformat(self.start.strip())
+            self.start = fromisoformat(self.start.strip())
         if self.end:
-            self.end = datetime.date.fromisoformat(self.end.strip())
+            self.end = fromisoformat(self.end.strip())
         self.note = element.findtext("Note", "")
         self.description = element.findtext("Description", "")
 

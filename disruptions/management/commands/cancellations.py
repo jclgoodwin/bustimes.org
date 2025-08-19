@@ -7,7 +7,6 @@ from datetime import timedelta, timezone
 from django.core.management.base import BaseCommand
 from django.db.transaction import atomic
 from django.utils.timezone import localtime
-from ciso8601 import parse_datetime
 
 from busstops.models import Trip, DataSource
 from bustimes.utils import get_calendars
