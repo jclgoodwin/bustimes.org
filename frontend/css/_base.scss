@@ -652,7 +652,7 @@ table {
     column-gap: 1em;
 
     a {
-        align-items: stretch;
+        align-items: center;
         display: flex;
         padding: .5em 0;
         white-space: normal;
@@ -682,13 +682,17 @@ table {
     }
 }
 
+.names {
+    display: flex;
+    margin-right: 16px;
+}
+
 .name {
     border: 1px solid var(--border-color);
     color: var(--text-color);
     float: left;
     font-size: 16px;
     line-height: 18px;
-    margin-right: 16px;
     padding: 6px;
     text-align: center;
     font-weight: normal;
@@ -718,11 +722,11 @@ table {
 
     + .name {
         border-left: 0;
-        margin-left: -16px;
     }
 }
 
 .service-header {
+    align-items: flex-start;
     display: flex;
     flex-wrap: wrap;
     row-gap: 8px;
@@ -738,12 +742,10 @@ table {
     }
 }
 
-.has-smalls .name {
-    margin-right: .75em;
 
-    + .name {
-        margin-left: -.75em;
-    }
+.has-smalls .names {
+    float: left;
+    margin-right: .75em;
 }
 
 #hugemap {

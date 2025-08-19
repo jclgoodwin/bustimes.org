@@ -23,6 +23,7 @@
 {% block content %}
 
 <h1 class="service-header">
+    <span class="names">
     {% for line_name in object.get_line_names() %}
         {% if line_name and line_name not in object.line_brand %}
             {% if ' ' not in line_name or line_name not in object.description %}
@@ -35,6 +36,7 @@
     {% if object.line_brand %}
         <strong class="name{% if object.colour_id %} colour colour-{{ object.colour_id }}{% endif %}">{{ object.line_brand }}</strong>
     {% endif %}
+    </span>
     <span class="description">{{ object.description }}</span>
 </h1>
 
