@@ -696,6 +696,9 @@ class Command(ImportLiveVehiclesCommand):
             self.fallback_mode = True
             logger.warning("falling back")
 
+        if time_taken > 11:
+            return 0
+
         # bods updates "every 10 seconds",
         # it's usually worth waiting 0-9 seconds
         # before the next fetch
