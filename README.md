@@ -48,7 +48,7 @@
 | busstops/test\_views.py                                         |      270 |        0 |    100% |           |
 | busstops/urls.py                                                |       20 |        2 |     90% |   136-138 |
 | busstops/utils.py                                               |       11 |        0 |    100% |           |
-| busstops/views.py                                               |      638 |       49 |     92% |121, 162-171, 471, 497, 536, 722, 740, 804-807, 809, 942-947, 960, 1037, 1065-1066, 1071-1072, 1080-1089, 1240, 1261, 1263, 1289-1293, 1342, 1415, 1445-1446, 1449-1453, 1605, 1617-1618, 1623, 1635-1636 |
+| busstops/views.py                                               |      638 |       49 |     92% |121, 162-171, 471, 497, 558, 753, 771, 835-838, 840, 973-978, 991, 1068, 1096-1097, 1102-1103, 1111-1120, 1271, 1292, 1294, 1320-1324, 1373, 1446, 1476-1477, 1480-1484, 1636, 1648-1649, 1654, 1666-1667 |
 | bustimes/\_\_init\_\_.py                                        |        0 |        0 |    100% |           |
 | bustimes/admin.py                                               |      113 |       15 |     87% |64, 67-68, 74, 77-78, 81-82, 139-143, 166, 174, 187, 190, 201 |
 | bustimes/download\_utils.py                                     |       32 |        0 |    100% |           |
@@ -127,15 +127,15 @@
 | vehicles/forms.py                                               |       94 |        3 |     97% |130, 168, 206 |
 | vehicles/management/\_\_init\_\_.py                             |        0 |        0 |    100% |           |
 | vehicles/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
-| vehicles/management/commands/import\_bod\_avl.py                |      402 |       56 |     86% |50, 125, 141, 151-152, 195-198, 201-204, 247, 263, 278-279, 301-319, 370, 372, 378, 409, 415, 430-431, 475-488, 516, 529-530, 549, 578, 608, 676-677, 709, 713 |
+| vehicles/management/commands/import\_bod\_avl.py                |      404 |       57 |     86% |50, 125, 141, 151-152, 195-198, 201-204, 247, 263, 278-279, 301-319, 370, 372, 378, 409, 415, 430-431, 475-488, 516, 529-530, 549, 578, 608, 676-677, 700, 712, 716 |
 | vehicles/management/commands/import\_bushub.py                  |       83 |       18 |     78% |16-17, 21-22, 25-26, 30, 34, 42, 53, 56, 72-73, 82, 92, 111, 119, 145 |
-| vehicles/management/commands/import\_edinburgh.py               |       60 |        5 |     92% |70, 77, 79-84 |
+| vehicles/management/commands/import\_edinburgh.py               |       63 |        7 |     89% |44, 72, 76-79, 81-86 |
 | vehicles/management/commands/import\_gtfsr\_ember.py            |       68 |        3 |     96% | 69-70, 97 |
 | vehicles/management/commands/import\_gtfsr\_ie.py               |       97 |        5 |     95% |94, 140, 149, 156, 160 |
 | vehicles/management/commands/import\_live\_jersey.py            |       44 |        3 |     93% |27, 31, 39 |
-| vehicles/management/commands/import\_nx.py                      |      145 |       29 |     80% |92, 109-111, 113-114, 117-118, 131, 139-146, 150-153, 167-170, 173, 185-186, 196, 207 |
+| vehicles/management/commands/import\_nx.py                      |      146 |       29 |     80% |92, 109-111, 113-114, 117-118, 131, 139-146, 150-153, 167-170, 173, 185-186, 196, 207 |
 | vehicles/management/commands/import\_polar.py                   |       84 |       28 |     67% |13-14, 25, 29, 33, 41, 44, 49-55, 61-63, 67, 77-78, 81, 95-98, 101, 114, 121 |
-| vehicles/management/commands/import\_stagecoach\_avl.py         |       77 |        9 |     88% |159, 169, 174-175, 214-222 |
+| vehicles/management/commands/import\_stagecoach\_avl.py         |       76 |        9 |     88% |126, 136, 141-142, 174-182 |
 | vehicles/management/commands/signalr.py                         |       74 |        5 |     93% |59, 76-78, 93 |
 | vehicles/management/commands/siri\_vm\_subscribe.py             |       26 |        7 |     73% |     27-55 |
 | vehicles/management/import\_live\_vehicles.py                   |      327 |       55 |     83% |44, 57-73, 130, 139, 145-147, 149, 171, 190, 199-202, 211, 224, 232, 241-242, 244-245, 250-251, 265-271, 303-304, 345, 348-349, 363-364, 379-380, 384, 475, 510-512, 518, 537, 547-549 |
@@ -153,7 +153,7 @@
 | vehicles/models.py                                              |      497 |       37 |     93% |75, 191, 216, 282, 301, 307, 379, 385, 436, 457, 572-573, 586, 594, 611-613, 621-622, 625-626, 631-632, 657, 678-682, 713, 720-723, 765, 778, 787, 803 |
 | vehicles/rtpi.py                                                |       76 |        1 |     99% |        28 |
 | vehicles/signals.py                                             |       11 |        0 |    100% |           |
-| vehicles/tasks.py                                               |      132 |       20 |     85% |80, 85, 95, 102-105, 108, 110, 119, 132, 136-137, 155, 169, 182-183, 237-238, 241 |
+| vehicles/tasks.py                                               |      133 |       20 |     85% |82, 87, 97, 104-107, 110, 112, 121, 134, 138-139, 157, 171, 184-185, 239-240, 243 |
 | vehicles/test\_models.py                                        |       62 |        0 |    100% |           |
 | vehicles/test\_schedule\_adherence.py                           |       75 |        0 |    100% |           |
 | vehicles/tests.py                                               |      435 |        0 |    100% |           |
@@ -169,7 +169,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16235** | **1098** | **93%** |           |
+|                                                       **TOTAL** | **16241** | **1101** | **93%** |           |
 
 
 ## Setup coverage badge

@@ -54,9 +54,9 @@
             </div>
         </aside>
         <h2>
-            <span class="text">402 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">346<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">56<span class="text"> missing</span></button>
+            <span class="text">404 statements &nbsp;</span>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">347<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">57<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_75b41f4b22c00b34_import_bushub_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.3">coverage.py v7.10.3</a>,
-            created at 2025-08-17 11:00 +0000
+            created at 2025-08-19 08:59 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -778,23 +778,26 @@
     <p class="run"><span class="n"><a id="t696" href="#t696">696</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">fallback_mode</span> <span class="op">=</span> <span class="key">True</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t697" href="#t697">697</a></span><span class="t">            <span class="nam">logger</span><span class="op">.</span><span class="nam">warning</span><span class="op">(</span><span class="str">"falling back"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t698" href="#t698">698</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t699" href="#t699">699</a></span><span class="t">        <span class="com"># bods updates "every 10 seconds",</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t700" href="#t700">700</a></span><span class="t">        <span class="com"># it's usually worth waiting 0-9 seconds</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t701" href="#t701">701</a></span><span class="t">        <span class="com"># before the next fetch</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t702" href="#t702">702</a></span><span class="t">        <span class="com"># for maximum freshness:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t703" href="#t703">703</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t704" href="#t704">704</a></span><span class="t">        <span class="nam">witching_hour</span> <span class="op">=</span> <span class="nam">min</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">hist</span><span class="op">,</span> <span class="nam">key</span><span class="op">=</span><span class="nam">self</span><span class="op">.</span><span class="nam">hist</span><span class="op">.</span><span class="nam">get</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t705" href="#t705">705</a></span><span class="t">        <span class="nam">worst_hour</span> <span class="op">=</span> <span class="nam">max</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">hist</span><span class="op">,</span> <span class="nam">key</span><span class="op">=</span><span class="nam">self</span><span class="op">.</span><span class="nam">hist</span><span class="op">.</span><span class="nam">get</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t706" href="#t706">706</a></span><span class="t">        <span class="nam">now</span> <span class="op">=</span> <span class="nam">timezone</span><span class="op">.</span><span class="nam">now</span><span class="op">(</span><span class="op">)</span><span class="op">.</span><span class="nam">second</span> <span class="op">%</span> <span class="num">10</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t707" href="#t707">707</a></span><span class="t">        <span class="nam">wait</span> <span class="op">=</span> <span class="nam">witching_hour</span> <span class="op">-</span> <span class="nam">now</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t708" href="#t708">708</a></span><span class="t">        <span class="key">if</span> <span class="nam">wait</span> <span class="op">&lt;</span> <span class="num">0</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t709" href="#t709">709</a></span><span class="t">            <span class="nam">wait</span> <span class="op">+=</span> <span class="num">10</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t710" href="#t710">710</a></span><span class="t">        <span class="nam">diff</span> <span class="op">=</span> <span class="nam">worst_hour</span> <span class="op">-</span> <span class="nam">witching_hour</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t711" href="#t711">711</a></span><span class="t">        <span class="nam">print</span><span class="op">(</span><span class="fst">f"</span><span class="op">{</span><span class="nam">witching_hour</span><span class="op">=</span><span class="op">}</span><span class="fst"> </span><span class="op">{</span><span class="nam">worst_hour</span><span class="op">=</span><span class="op">}</span><span class="fst"> </span><span class="op">{</span><span class="nam">diff</span><span class="op">=</span><span class="op">}</span><span class="fst"> </span><span class="op">{</span><span class="nam">now</span><span class="op">=</span><span class="op">}</span><span class="fst"> </span><span class="op">{</span><span class="nam">wait</span><span class="op">=</span><span class="op">}</span><span class="fst">\n</span><span class="fst">"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t712" href="#t712">712</a></span><span class="t">        <span class="key">if</span> <span class="nam">diff</span> <span class="op">%</span> <span class="num">10</span> <span class="op">==</span> <span class="num">9</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t713" href="#t713">713</a></span><span class="t">            <span class="key">return</span> <span class="nam">wait</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t714" href="#t714">714</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t715" href="#t715">715</a></span><span class="t">        <span class="key">return</span> <span class="nam">max</span><span class="op">(</span><span class="num">11</span> <span class="op">-</span> <span class="nam">time_taken</span><span class="op">,</span> <span class="num">0</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t699" href="#t699">699</a></span><span class="t">        <span class="key">if</span> <span class="nam">time_taken</span> <span class="op">></span> <span class="num">11</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t700" href="#t700">700</a></span><span class="t">            <span class="key">return</span> <span class="num">0</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t701" href="#t701">701</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t702" href="#t702">702</a></span><span class="t">        <span class="com"># bods updates "every 10 seconds",</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t703" href="#t703">703</a></span><span class="t">        <span class="com"># it's usually worth waiting 0-9 seconds</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t704" href="#t704">704</a></span><span class="t">        <span class="com"># before the next fetch</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t705" href="#t705">705</a></span><span class="t">        <span class="com"># for maximum freshness:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t706" href="#t706">706</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t707" href="#t707">707</a></span><span class="t">        <span class="nam">witching_hour</span> <span class="op">=</span> <span class="nam">min</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">hist</span><span class="op">,</span> <span class="nam">key</span><span class="op">=</span><span class="nam">self</span><span class="op">.</span><span class="nam">hist</span><span class="op">.</span><span class="nam">get</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t708" href="#t708">708</a></span><span class="t">        <span class="nam">worst_hour</span> <span class="op">=</span> <span class="nam">max</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">hist</span><span class="op">,</span> <span class="nam">key</span><span class="op">=</span><span class="nam">self</span><span class="op">.</span><span class="nam">hist</span><span class="op">.</span><span class="nam">get</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t709" href="#t709">709</a></span><span class="t">        <span class="nam">now</span> <span class="op">=</span> <span class="nam">timezone</span><span class="op">.</span><span class="nam">now</span><span class="op">(</span><span class="op">)</span><span class="op">.</span><span class="nam">second</span> <span class="op">%</span> <span class="num">10</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t710" href="#t710">710</a></span><span class="t">        <span class="nam">wait</span> <span class="op">=</span> <span class="nam">witching_hour</span> <span class="op">-</span> <span class="nam">now</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t711" href="#t711">711</a></span><span class="t">        <span class="key">if</span> <span class="nam">wait</span> <span class="op">&lt;</span> <span class="num">0</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t712" href="#t712">712</a></span><span class="t">            <span class="nam">wait</span> <span class="op">+=</span> <span class="num">10</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t713" href="#t713">713</a></span><span class="t">        <span class="nam">diff</span> <span class="op">=</span> <span class="nam">worst_hour</span> <span class="op">-</span> <span class="nam">witching_hour</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t714" href="#t714">714</a></span><span class="t">        <span class="nam">print</span><span class="op">(</span><span class="fst">f"</span><span class="op">{</span><span class="nam">witching_hour</span><span class="op">=</span><span class="op">}</span><span class="fst"> </span><span class="op">{</span><span class="nam">worst_hour</span><span class="op">=</span><span class="op">}</span><span class="fst"> </span><span class="op">{</span><span class="nam">diff</span><span class="op">=</span><span class="op">}</span><span class="fst"> </span><span class="op">{</span><span class="nam">now</span><span class="op">=</span><span class="op">}</span><span class="fst"> </span><span class="op">{</span><span class="nam">wait</span><span class="op">=</span><span class="op">}</span><span class="fst">\n</span><span class="fst">"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t715" href="#t715">715</a></span><span class="t">        <span class="key">if</span> <span class="nam">diff</span> <span class="op">%</span> <span class="num">10</span> <span class="op">==</span> <span class="num">9</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t716" href="#t716">716</a></span><span class="t">            <span class="key">return</span> <span class="nam">wait</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t717" href="#t717">717</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t718" href="#t718">718</a></span><span class="t">        <span class="key">return</span> <span class="nam">max</span><span class="op">(</span><span class="num">11</span> <span class="op">-</span> <span class="nam">time_taken</span><span class="op">,</span> <span class="num">0</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
 </main>
 <footer>
     <div class="content">
@@ -804,7 +807,7 @@
             <a class="nav" href="z_75b41f4b22c00b34_import_bushub_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.3">coverage.py v7.10.3</a>,
-            created at 2025-08-17 11:00 +0000
+            created at 2025-08-19 08:59 +0000
         </p>
     </div>
 </footer>
