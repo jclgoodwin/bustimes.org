@@ -4,18 +4,20 @@ from django.db import migrations, models
 
 
 def add_inbound(apps, schema_editor):
-    StopUsage = apps.get_model("busstops", "StopUsage")
-    StopUsage.objects.filter(direction="outbound").update(inbound=True)
+    Service = apps.get_model("busstops", "Service")
+    for service in Service.objects.filter(current=True):
+        service.stopusage_set.filter(direction="outbound").update(inbound=True)
 
 
 def add_timing_point(apps, schema_editor):
-    StopUsage = apps.get_model("busstops", "StopUsage")
-    StopUsage.objects.filter(~models.Q(timing_status="PTP")).update(timing_point=True)
+    Service = apps.get_model("busstops", "Service")
+    for service in Service.objects.filter(current=True):
+        service.stopusage_set.filter(~models.Q(timing_status="PTP")).update(timing_point=True)
 
 
 def add_line_names(apps, schema_editor):
     Service = apps.get_model("busstops", "Service")
-    for service in Service.objects.all():
+    for service in Service.objects.filter(current=True):
         service.stopusage_set.update(line_name=service.line_name)
         # for services with more than one line_name,
         # we need to run some code manually outside of this migration
