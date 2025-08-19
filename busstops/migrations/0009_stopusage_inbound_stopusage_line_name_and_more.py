@@ -8,6 +8,11 @@ def add_inbound(apps, schema_editor):
     StopUsage.objects.filter(direction="outbound").update(inbound=True)
 
 
+def add_timing_point(apps, schema_editor):
+    StopUsage = apps.get_model("busstops", "StopUsage")
+    StopUsage.objects.filter(~models.Q(timing_status="PTP")).update(timing_point=True)
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -20,7 +25,7 @@ class Migration(migrations.Migration):
             name='inbound',
             field=models.BooleanField(default=False),
         ),
-        migrations.RunPython(add_inbound),
+        migrations.RunPython(add_inbound, migrations.RunPython.noop),
         migrations.AddField(
             model_name='stopusage',
             name='line_name',
@@ -32,6 +37,7 @@ class Migration(migrations.Migration):
             name='timing_point',
             field=models.BooleanField(default=True),
         ),
+        migrations.RunPython(add_timing_point, migrations.RunPython.noop),
         migrations.AlterField(
             model_name='adminarea',
             name='atco_code',
@@ -46,11 +52,6 @@ class Migration(migrations.Migration):
             model_name='stoppoint',
             name='naptan_code',
             field=models.CharField(blank=True, max_length=16, null=True, verbose_name='NaPTAN code'),
-        ),
-        migrations.AlterField(
-            model_name='stopusage',
-            name='direction',
-            field=models.CharField(max_length=13),
         ),
         migrations.AlterField(
             model_name='stopusage',

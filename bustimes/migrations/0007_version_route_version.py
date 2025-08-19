@@ -28,10 +28,6 @@ def create_versions(apps, schema_editor):
                 data_source.route_set.filter(code__startswith=version.name).update(version=version)
 
 
-def remove_versions(apps, schema_editor):
-    pass
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -56,5 +52,5 @@ class Migration(migrations.Migration):
             name='version',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='bustimes.version'),
         ),
-        migrations.RunPython(create_versions, remove_versions)
+        migrations.RunPython(create_versions, migrations.RunPython.noop)
     ]
