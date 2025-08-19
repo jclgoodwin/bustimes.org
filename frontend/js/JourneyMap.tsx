@@ -365,7 +365,7 @@ function JourneyVehicle({
       `ws://${window.location.host}/vehicles/${vehicleId}`,
     );
 
-    socket.onMessage = (event) => {
+    socket.onmessage = (event) => {
       const items = JSON.parse(event.data);
       console.dir(items);
     };
