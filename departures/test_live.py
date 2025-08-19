@@ -126,7 +126,9 @@ class LiveDeparturesTest(TestCase):
             line_name="8",
             region_id="W",
         )
-        StopUsage.objects.create(stop=self.london_stop, service=service, order=1)
+        StopUsage.objects.create(
+            stop=self.london_stop, service=service, order=1, line_name="8"
+        )
         route = Route.objects.create(source=self.source, service=service, line_name="8")
         trip = Trip.objects.create(route=route, start="0", end="1")
         StopTime.objects.create(trip=trip, stop=self.london_stop)

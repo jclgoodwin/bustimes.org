@@ -13,6 +13,14 @@ def add_timing_point(apps, schema_editor):
     StopUsage.objects.filter(~models.Q(timing_status="PTP")).update(timing_point=True)
 
 
+def add_line_names(apps, schema_editor):
+    Service = apps.get_model("busstops", "Service")
+    for service in Service.objects.all():
+        service.stopusage_set.update(line_name=service.line_name)
+        # for services with more than one line_name,
+        # we need to run some code manually outside of this migration
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -25,7 +33,6 @@ class Migration(migrations.Migration):
             name='inbound',
             field=models.BooleanField(default=False),
         ),
-        migrations.RunPython(add_inbound, migrations.RunPython.noop),
         migrations.AddField(
             model_name='stopusage',
             name='line_name',
@@ -37,7 +44,11 @@ class Migration(migrations.Migration):
             name='timing_point',
             field=models.BooleanField(default=True),
         ),
-        migrations.RunPython(add_timing_point, migrations.RunPython.noop),
+        migrations.AlterField(
+            model_name='stopusage',
+            name='order',
+            field=models.PositiveSmallIntegerField(),
+        ),
         migrations.AlterField(
             model_name='adminarea',
             name='atco_code',
@@ -53,9 +64,7 @@ class Migration(migrations.Migration):
             name='naptan_code',
             field=models.CharField(blank=True, max_length=16, null=True, verbose_name='NaPTAN code'),
         ),
-        migrations.AlterField(
-            model_name='stopusage',
-            name='order',
-            field=models.PositiveSmallIntegerField(),
-        ),
+        migrations.RunPython(add_inbound, migrations.RunPython.noop),
+        migrations.RunPython(add_timing_point, migrations.RunPython.noop),
+        migrations.RunPython(add_line_names, migrations.RunPython.noop),
     ]

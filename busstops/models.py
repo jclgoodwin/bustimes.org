@@ -1016,7 +1016,7 @@ class Service(models.Model):
         return timetable
 
     def do_stop_usages(self):
-        outbound, inbound = get_stop_usages(Trip.objects.filter(route__service=self))
+        stop_usages = get_stop_usages(Trip.objects.filter(route__service=self))
 
         existing = self.stopusage_set.all()
 
@@ -1026,21 +1026,14 @@ class Service(models.Model):
                 stop_id=stop_time.stop_id,
                 timing_status=stop_time.timing_status,
                 timing_point=(stop_time.timing_status == "PTP"),
-                direction="outbound",
+                inbound=inbound,
+                direction="inbound" if inbound else "outbound",
                 order=i,
+                line_name=line_name,
             )
-            for i, stop_time in enumerate(outbound)
-        ] + [
-            StopUsage(
-                service=self,
-                stop_id=stop_time.stop_id,
-                timing_status=stop_time.timing_status,
-                timing_point=(stop_time.timing_status == "PTP"),
-                direction="inbound",
-                inbound=True,
-                order=i,
-            )
-            for i, stop_time in enumerate(inbound)
+            for line_name, groupings in stop_usages.items()
+            for inbound, grouping in groupings.items()
+            for i, stop_time in enumerate(grouping)
         ]
 
         existing_hash = [
@@ -1054,8 +1047,6 @@ class Service(models.Model):
             if existing:
                 existing.delete()
             StopUsage.objects.bulk_create(stop_usages)
-
-        return stop_usages
 
     def update_description(self):
         routes = self.route_set.all()

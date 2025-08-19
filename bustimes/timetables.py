@@ -6,7 +6,7 @@ from functools import cached_property, cmp_to_key, partial
 
 from django.conf import settings
 from django.contrib.postgres.aggregates import ArrayAgg
-from django.db.models import Prefetch, Q
+from django.db.models import Prefetch, Q, F
 from django.utils.html import format_html
 from django.utils.timezone import localdate
 from sql_util.utils import Exists
@@ -19,7 +19,7 @@ differ = Differ(charjunk=lambda _: True)
 
 
 def get_stop_usages(trips):
-    groupings = [[], []]
+    groupings = {}
 
     trips = trips.prefetch_related(
         Prefetch(
@@ -28,14 +28,13 @@ def get_stop_usages(trips):
                 "trip_id", "id"
             ),
         )
-    )
+    ).annotate(line_name=F("route__line_name"))
 
     for trip in trips:
-        if trip.inbound:
-            grouping_id = 1
-        else:
-            grouping_id = 0
-        grouping = groupings[grouping_id]
+        if trip.line_name not in groupings:
+            groupings[trip.line_name] = {False: [], True: []}
+
+        grouping = groupings[trip.line_name][trip.inbound]
 
         stop_times = trip.stoptime_set.all()
 
@@ -76,7 +75,7 @@ def get_stop_usages(trips):
 
             y += 1
 
-        groupings[grouping_id] = grouping
+        groupings[trip.line_name][trip.inbound] = grouping
 
     return groupings
 

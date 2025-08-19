@@ -43,7 +43,7 @@ from sql_util.utils import Exists, SubqueryMax, SubqueryMin
 from ukpostcodeutils import validation
 
 from buses.utils import cdn_cache_control
-from bustimes.models import Route, StopTime, Trip
+from bustimes.models import StopTime, Trip
 from departures import live
 from disruptions.models import Consequence, Situation
 from fares.models import FareTable
@@ -262,12 +262,19 @@ def status(request):
 
     for key in ("bod_avl_status", "tfw_status"):
         status = cache.get(key, [])
-        key = key.split("_")[0]
-        context["bod_avl_status"][key] = status
+        context["bod_avl_status"][key.split("_")[0]] = [
+            {
+                "fetched": fetched,
+                "timestamp": timestamp,
+                "age": fetched - timestamp,
+                "items": items,
+                "changed": changed,
+            }
+            for fetched, timestamp, items, changed in status
+        ]
 
     context["statuses"] = cache.get_many(
         [
-            "Sarge_status",
             "Realtime_Transport_Operators_status",
             "Irish_Citylink_status",
             "Translink_status",
@@ -311,11 +318,7 @@ def stops_json(request):
         StopPoint.objects.filter(
             latlong__bboverlaps=bounding_box,
         )
-        .annotate(
-            line_names=ArrayAgg(
-                "service__route__line_name", distinct=True, default=None
-            )
-        )
+        .annotate(line_names=stop_line_names)
         .filter(Exists("service", filter=Q(service__current=True)))
         .select_related("locality")
         .defer("locality__latlong")
@@ -524,40 +527,9 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
 
         context["stops"] = (
             self.object.stoppoint_set.filter(
-                Exists("service", filter=Q(service__current=True))
+                service__current=True,
             )
-            .annotate(
-                line_names=Case(
-                    When(
-                        Exists(
-                            Route.objects.filter(
-                                ~Q(line_name=F("service__line_name")),
-                                service__stops=OuterRef("pk"),
-                            ).only("id")
-                        ),
-                        then=ArraySubquery(
-                            Route.objects.filter(
-                                Exists(
-                                    StopTime.objects.filter(
-                                        trip__route=OuterRef("id"),
-                                        stop=OuterRef(OuterRef("pk")),
-                                    )
-                                    .only("id")
-                                    .order_by()
-                                ),
-                                # service__stops=OuterRef("pk")
-                            )
-                            .values("line_name")
-                            .distinct()
-                        ),
-                    ),
-                    default=ArraySubquery(
-                        Route.objects.filter(service__stops=OuterRef("pk"))
-                        .values("line_name")
-                        .distinct()
-                    ),
-                )
-            )
+            .annotate(line_names=stop_line_names)
             .order_by("common_name", "indicator")
             .defer("latlong")
         )
@@ -574,39 +546,7 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
                     stops__in=stops,
                     current=True,
                 )
-                .annotate(
-                    line_names=Case(
-                        When(
-                            Exists(
-                                Route.objects.filter(
-                                    ~Q(line_name=OuterRef("line_name")),
-                                    service=OuterRef("id"),
-                                )
-                            ),
-                            then=ArraySubquery(
-                                Route.objects.filter(
-                                    Exists(
-                                        StopTime.objects.filter(
-                                            trip__route=OuterRef("id"),
-                                            stop__in=stops,
-                                        )
-                                        .only("id")
-                                        .order_by()
-                                    ),
-                                    service=OuterRef("id"),
-                                )
-                                .values("line_name")
-                                .distinct()
-                            ),
-                        ),
-                        default=ArrayAgg(
-                            Coalesce("route__line_name", "line_name"),
-                            distinct=True,
-                            default=None,
-                        ),
-                    ),
-                    operators=ArrayAgg("operator__name", distinct=True, default=None),
-                )
+                .annotate(operators=operator_names, line_names=stop_line_names)
                 .defer("geometry", "search_vector"),
                 key=Service.get_order,
             )
@@ -662,22 +602,8 @@ def get_departures_context(stop, services, form_data) -> dict:
     return context
 
 
-has_stop_times = ~Exists(
-    Route.objects.filter(
-        Q(service=OuterRef("service"))
-        & ~Q(line_name__iexact=OuterRef("service__line_name")),
-    )
-    .only("id")
-    .order_by()
-) | Exists(
-    StopTime.objects.filter(
-        trip__route=OuterRef("service__route"),
-        stop=OuterRef("pk"),
-    )
-    .only("id")
-    .order_by()
-)
-stop_line_names = ArrayAgg("service__route__line_name", distinct=True, default=None)
+stop_line_names = ArrayAgg("stopusage__line_name", distinct=True, default=None)
+operator_names = ArrayAgg("operator__name", distinct=True, default=None)
 
 
 class StopPointDetailView(DetailView):
@@ -703,21 +629,9 @@ class StopPointDetailView(DetailView):
         context = super().get_context_data(**kwargs)
 
         services = (
-            self.object.service_set.filter(
-                Q(route__trip=None) | Q(route__trip__stoptime__stop=self.object),
-                current=True,
-            )
-            .annotate(
-                line_names=ArrayAgg(
-                    Coalesce("route__line_name", "line_name"),
-                    distinct=True,
-                    default=None,
-                )
-            )
+            self.object.service_set.filter(current=True)
+            .annotate(line_names=stop_line_names, operators=operator_names)
             .defer("geometry", "search_vector")
-        )
-        services = services.annotate(
-            operators=ArrayAgg("operator__name", distinct=True, default=None)
         )
         context["services"] = sorted(services, key=Service.get_order)
 
@@ -773,7 +687,7 @@ class StopPointDetailView(DetailView):
         if nearby is not None:
             context["nearby"] = (
                 nearby.exclude(pk=self.object.pk)
-                .filter(has_stop_times, service__current=True)
+                .filter(service__current=True)
                 .annotate(line_names=stop_line_names)
                 .defer("latlong")
             )
@@ -824,11 +738,7 @@ class StopAreaDetailView(DetailView):
         context = super().get_context_data(**kwargs)
 
         stops = (
-            self.object.stoppoint_set.annotate(
-                line_names=ArrayAgg(
-                    "service__route__line_name", distinct=True, default=None
-                )
-            )
+            self.object.stoppoint_set.annotate(line_names=stop_line_names)
             .filter(service__current=True)
             .order_by("common_name", "indicator")
         )
@@ -836,7 +746,7 @@ class StopAreaDetailView(DetailView):
 
         services = Service.objects.filter(
             current=True, stops__stop_area=self.object
-        ).annotate(operators=ArrayAgg("operator__name", distinct=True, default=None))
+        ).annotate(line_names=stop_line_names, operators=operator_names)
         context.update(get_departures_context(self.object, services, self.request.GET))
 
         context["breadcrumb"] = [
@@ -866,9 +776,7 @@ class StopAreaDetailView(DetailView):
 def stop_departures(request, atco_code):
     stop = get_object_or_404(StopPoint, atco_code=atco_code)
 
-    services = stop.service_set.filter(current=True).annotate(
-        operators=ArrayAgg("operator__name", distinct=True, default=None)
-    )
+    services = stop.service_set.filter(current=True).annotate(operators=operator_names)
 
     context = get_departures_context(stop, services, request.GET)
 
@@ -1599,9 +1507,7 @@ def search(request):
             )
             services = Service.objects.with_line_names().filter(current=True)
 
-            services = services.annotate(
-                operators=ArrayAgg("operator__name", distinct=True, default=None)
-            )
+            services = services.annotate(operators=operator_names)
 
             for key, queryset in (
                 ("localities", localities),
