@@ -76,7 +76,7 @@ class AdminArea(models.Model):
     """
 
     id = models.PositiveSmallIntegerField(primary_key=True)
-    atco_code = models.CharField(max_length=3)
+    atco_code = models.CharField(verbose_name="ATCO code", max_length=3)
     name = models.CharField(max_length=48)
     short_name = models.CharField(max_length=48, blank=True)
     country = models.CharField(max_length=3, blank=True)
@@ -327,8 +327,12 @@ class StopPoint(models.Model):
 
     source = models.ForeignKey(DataSource, models.DO_NOTHING, null=True, blank=True)
 
-    atco_code = models.CharField(max_length=36, primary_key=True)
-    naptan_code = models.CharField(max_length=16, null=True, blank=True)
+    atco_code = models.CharField(
+        verbose_name="ATCO code", max_length=36, primary_key=True
+    )
+    naptan_code = models.CharField(
+        verbose_name="NaPTAN code", max_length=16, null=True, blank=True
+    )
 
     common_name = models.CharField(max_length=48)
     short_common_name = models.CharField(max_length=48, blank=True)
@@ -644,8 +648,11 @@ class StopUsage(models.Model):
 
     service = models.ForeignKey("Service", models.CASCADE)
     stop = models.ForeignKey(StopPoint, models.CASCADE)
-    direction = models.CharField(max_length=8)
-    order = models.PositiveIntegerField()
+    order = models.PositiveSmallIntegerField()
+    timing_point = models.BooleanField(default=True)
+    inbound = models.BooleanField(default=False)
+    line_name = models.CharField()
+    direction = models.CharField(max_length=13)
     timing_status = models.CharField(max_length=3, choices=TIMING_STATUS_CHOICES)
 
     class Meta:
@@ -1020,6 +1027,7 @@ class Service(models.Model):
                 service=self,
                 stop_id=stop_time.stop_id,
                 timing_status=stop_time.timing_status,
+                timing_point=(stop_time.timing_status == "PTP"),
                 direction="outbound",
                 order=i,
             )
@@ -1029,7 +1037,9 @@ class Service(models.Model):
                 service=self,
                 stop_id=stop_time.stop_id,
                 timing_status=stop_time.timing_status,
+                timing_point=(stop_time.timing_status == "PTP"),
                 direction="inbound",
+                inbound=True,
                 order=i,
             )
             for i, stop_time in enumerate(inbound)
