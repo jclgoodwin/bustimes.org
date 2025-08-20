@@ -385,11 +385,15 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
     def handle_items(self, items, identities):
         with sentry_sdk.start_span(name="get vehicle codes"):
-            vehicle_codes = VehicleCode.objects.filter(
-                code__in=identities, scheme=self.vehicle_code_scheme
-            ).select_related("vehicle__latest_journey__trip")
+            vehicle_codes = (
+                VehicleCode.objects.filter(
+                    code__in=identities, scheme=self.vehicle_code_scheme
+                )
+                .select_related("vehicle__latest_journey__trip")
+                .defer("vehicle__latest_journey_data", "vehicle__data")
+            )
 
-        vehicles_by_identity = {code.code: code.vehicle for code in vehicle_codes}
+            vehicles_by_identity = {code.code: code.vehicle for code in vehicle_codes}
 
         vehicle_locations = redis_client.mget(
             [f"vehicle{vc.vehicle_id}" for vc in vehicle_codes]
