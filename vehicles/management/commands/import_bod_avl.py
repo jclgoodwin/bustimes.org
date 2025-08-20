@@ -585,7 +585,10 @@ class Command(ImportLiveVehiclesCommand):
             return []
 
         if response.headers["content-type"] == "application/zip":
-            with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
+            with (
+                sentry_sdk.start_span(name="unzip"),
+                zipfile.ZipFile(io.BytesIO(response.content)) as archive,
+            ):
                 namelist = archive.namelist()
                 assert len(namelist) == 1
                 with archive.open(namelist[0]) as open_file:

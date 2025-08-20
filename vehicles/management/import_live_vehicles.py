@@ -383,9 +383,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
         return self
 
     def handle_items(self, items, identities):
-        vehicle_codes = VehicleCode.objects.filter(
-            code__in=identities, scheme=self.vehicle_code_scheme
-        ).select_related("vehicle__latest_journey__trip")
+        with sentry_sdk.start_span(name="get vehicle codes"):
+            vehicle_codes = VehicleCode.objects.filter(
+                code__in=identities, scheme=self.vehicle_code_scheme
+            ).select_related("vehicle__latest_journey__trip")
 
         vehicles_by_identity = {code.code: code.vehicle for code in vehicle_codes}
 
