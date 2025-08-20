@@ -399,14 +399,12 @@ class ImportLiveVehiclesCommand(BaseCommand):
             [f"vehicle{vc.vehicle_id}" for vc in vehicle_codes]
         )
         vehicle_locations = {
-            vehicle_codes[i].vehicle_id: json.loads(item)
-            for i, item in enumerate(vehicle_locations)
+            vehicle_code.vehicle_id: json.loads(item)
+            for vehicle_code, item in zip(vehicle_codes, vehicle_locations)
             if item
         }
 
-        for i, item in enumerate(items):
-            vehicle_identity = identities[i]
-
+        for item, vehicle_identity in zip(items, identities):
             journey_identity = self.journeys_ids[vehicle_identity]
 
             if vehicle_identity in vehicles_by_identity:
@@ -445,9 +443,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
                     )
 
             self.identifiers[vehicle_identity] = self.get_item_identity(item)
-
-            if i and not i % 500:
-                self.save()
 
         self.save()
 

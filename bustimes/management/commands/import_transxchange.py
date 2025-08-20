@@ -851,13 +851,11 @@ class Command(BaseCommand):
             existing_trips = route.trip_set.order_by("id")
             try:
                 if len(existing_trips) == len(trips):
-                    for i, old_trip in enumerate(existing_trips):
-                        if old_trip.start == trips[i].start:
-                            trips[i].id = old_trip.id
+                    for trip, old_trip in zip(trips, existing_trips):
+                        if old_trip.start == trips.start:
+                            trip.id = old_trip.id
                         else:
-                            logger.info(
-                                f"{route.code} {old_trip.start} {trips[i].start}"
-                            )
+                            logger.info(f"{route.code} {old_trip.start} {trip.start}")
                             existing_trips.delete()
                             existing_trips = None
                             break

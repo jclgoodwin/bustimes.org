@@ -113,14 +113,14 @@ def handle_situation(element, source, current_situations):
                 calls = [
                     Call(
                         journey=journey,
-                        stop_time=stop_times[i],
+                        stop_time=stop_time,
                         arrival_time=call.findtext("AimedArrivalTime"),
                         departure_time=call.findtext("AimedDepartureTime"),
                         condition=call.findtext("CallCondition"),
                         order=call.findtext("Order"),
                     )
-                    for i, call in enumerate(calls)
-                    if stop_times[i].stop_id == call.findtext("StopPointRef")
+                    for stop_time, call in zip(stop_times, calls)
+                    if stop_time.stop_id == call.findtext("StopPointRef")
                 ]
                 Call.objects.bulk_create(calls)
             else:

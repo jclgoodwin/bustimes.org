@@ -1037,8 +1037,8 @@ class Service(models.Model):
 
         if existing_hash != proposed_hash:
             if len(existing_hash) >= len(proposed_hash):  # reuse ids
-                for i, su in enumerate(proposed):
-                    su.id = existing[i].id
+                for proposed_su, existing_su in zip(proposed, existing):
+                    proposed_su.id = existing_su.id
                 StopUsage.objects.bulk_update(
                     proposed,
                     ["stop_id", "timing_point", "inbound", "order", "line_name"],

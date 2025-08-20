@@ -530,7 +530,6 @@ class Command(ImportLiveVehiclesCommand):
                         vehicle.operator_id = trip.operator_id
                         update_fields.append("operator")
 
-                    update_fields.append("operator")
                     if update_fields:
                         vehicle.save(update_fields=update_fields)
 
