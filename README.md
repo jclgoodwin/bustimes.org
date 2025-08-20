@@ -127,7 +127,7 @@
 | vehicles/forms.py                                               |       94 |        3 |     97% |130, 168, 206 |
 | vehicles/management/\_\_init\_\_.py                             |        0 |        0 |    100% |           |
 | vehicles/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
-| vehicles/management/commands/import\_bod\_avl.py                |      406 |       57 |     86% |51, 126, 142, 152-153, 196-199, 202-205, 248, 264, 279-280, 302-320, 371, 373, 379, 410, 416, 431-432, 476-489, 517, 530-531, 550, 579, 609, 678-679, 702, 714, 718 |
+| vehicles/management/commands/import\_bod\_avl.py                |      410 |       57 |     86% |51, 126, 142, 152-153, 196-199, 202-205, 248, 264, 279-280, 302-320, 371, 373, 379, 410, 416, 431-432, 476-489, 517, 530-531, 550, 579, 610, 682-683, 706, 718, 722 |
 | vehicles/management/commands/import\_bushub.py                  |       83 |       18 |     78% |16-17, 21-22, 25-26, 30, 34, 42, 53, 56, 72-73, 82, 92, 111, 119, 145 |
 | vehicles/management/commands/import\_edinburgh.py               |       63 |        7 |     89% |44, 72, 76-79, 81-86 |
 | vehicles/management/commands/import\_gtfsr\_ember.py            |       68 |        3 |     96% | 69-70, 97 |
@@ -138,7 +138,7 @@
 | vehicles/management/commands/import\_stagecoach\_avl.py         |       76 |        9 |     88% |126, 136, 141-142, 174-182 |
 | vehicles/management/commands/signalr.py                         |       74 |        5 |     93% |59, 76-78, 93 |
 | vehicles/management/commands/siri\_vm\_subscribe.py             |       26 |        7 |     73% |     27-55 |
-| vehicles/management/import\_live\_vehicles.py                   |      327 |       55 |     83% |44, 57-73, 130, 139, 145-147, 149, 171, 190, 199-202, 211, 224, 232, 241-242, 244-245, 250-251, 265-271, 303-304, 345, 348-349, 363-364, 379-380, 384, 475, 510-512, 518, 537, 547-549 |
+| vehicles/management/import\_live\_vehicles.py                   |      322 |       53 |     84% |44, 57-73, 130, 139, 145-147, 149, 171, 190, 199-202, 211, 224, 232, 241-242, 244-245, 250-251, 265-271, 303-304, 345, 348-349, 370-371, 377, 468, 503-505, 511, 530, 540-542 |
 | vehicles/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | vehicles/management/tests/test\_bod\_avl.py                     |      294 |        0 |    100% |           |
 | vehicles/management/tests/test\_bushub.py                       |       48 |        0 |    100% |           |
@@ -169,7 +169,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16240** | **1102** | **93%** |           |
+|                                                       **TOTAL** | **16239** | **1100** | **93%** |           |
 
 
 ## Setup coverage badge
