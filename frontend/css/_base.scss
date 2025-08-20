@@ -1492,6 +1492,11 @@ nav {
     }
 }
 
+#AFM_inContentTop_ad {
+    top: 0;
+    position: sticky;
+}
+
 #content {
     margin-bottom: 1.5em;
 }
@@ -1507,7 +1512,6 @@ body.has-overlay {
     // services_header
     #AFM_inContentTop_ad {
         position: fixed;
-        top: 0;
         left: 0;
         width: 100%;
         z-index: 9999;
