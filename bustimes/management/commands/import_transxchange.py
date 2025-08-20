@@ -852,7 +852,7 @@ class Command(BaseCommand):
             try:
                 if len(existing_trips) == len(trips):
                     for trip, old_trip in zip(trips, existing_trips):
-                        if old_trip.start == trips.start:
+                        if old_trip.start == trip.start:
                             trip.id = old_trip.id
                         else:
                             logger.info(f"{route.code} {old_trip.start} {trip.start}")
