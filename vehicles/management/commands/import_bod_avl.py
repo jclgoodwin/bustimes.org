@@ -4,6 +4,7 @@ import zipfile
 from datetime import timedelta
 
 import xmltodict
+import sentry_sdk
 from ciso8601 import parse_datetime
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
@@ -648,71 +649,72 @@ class Command(ImportLiveVehiclesCommand):
         return item["RecordedAtTime"]
 
     def update(self):
-        now = timezone.now()
+        with sentry_sdk.start_transaction(name="bod_avl_update"):
+            now = timezone.now()
 
-        (
-            changed_items,
-            changed_journey_items,
-            changed_item_identities,
-            changed_journey_identities,
-            total_items,
-        ) = self.get_changed_items()
-
-        age = int((now - self.source.datetime).total_seconds())
-        self.hist[now.second % 10] = age
-        print(self.hist)
-        print(
-            f"{now.second=} {age=}  {total_items=}  {len(changed_items)=}  {len(changed_journey_items)=}"
-        )
-
-        self.handle_items(changed_items, changed_item_identities)
-        self.handle_items(changed_journey_items, changed_journey_identities)
-
-        time_taken = (timezone.now() - now).total_seconds()
-
-        # stats for last 50 updates:
-        try:
-            bod_status = cache.get("bod_avl_status", [])
-        except TypeError:
-            bod_status = []
-        bod_status.append(
-            Status(
-                now,
-                self.source.datetime,
+            (
+                changed_items,
+                changed_journey_items,
+                changed_item_identities,
+                changed_journey_identities,
                 total_items,
-                len(changed_items) + len(changed_journey_items),
-                time_taken,
+            ) = self.get_changed_items()
+
+            age = int((now - self.source.datetime).total_seconds())
+            self.hist[now.second % 10] = age
+            print(self.hist)
+            print(
+                f"{now.second=} {age=}  {total_items=}  {len(changed_items)=}  {len(changed_journey_items)=}"
             )
-        )
-        bod_status = bod_status[-50:]
-        cache.set("bod_avl_status", bod_status, None)
 
-        print(f"{time_taken=}")
+            self.handle_items(changed_items, changed_item_identities)
+            self.handle_items(changed_journey_items, changed_journey_identities)
 
-        if self.fallback_mode:
-            self.fallback_mode = False
-            return 30  # wait
-        elif age > 150 and not changed_items:
-            self.fallback_mode = True
-            logger.warning("falling back")
+            time_taken = (timezone.now() - now).total_seconds()
 
-        if time_taken > 11:
-            return 0
+            # stats for last 50 updates:
+            try:
+                bod_status = cache.get("bod_avl_status", [])
+            except TypeError:
+                bod_status = []
+            bod_status.append(
+                Status(
+                    now,
+                    self.source.datetime,
+                    total_items,
+                    len(changed_items) + len(changed_journey_items),
+                    time_taken,
+                )
+            )
+            bod_status = bod_status[-50:]
+            cache.set("bod_avl_status", bod_status, None)
 
-        # bods updates "every 10 seconds",
-        # it's usually worth waiting 0-9 seconds
-        # before the next fetch
-        # for maximum freshness:
+            print(f"{time_taken=}")
 
-        witching_hour = min(self.hist, key=self.hist.get)
-        worst_hour = max(self.hist, key=self.hist.get)
-        now = timezone.now().second % 10
-        wait = witching_hour - now
-        if wait < 0:
-            wait += 10
-        diff = worst_hour - witching_hour
-        print(f"{witching_hour=} {worst_hour=} {diff=} {now=} {wait=}\n")
-        if diff % 10 == 9:
-            return wait
+            if self.fallback_mode:
+                self.fallback_mode = False
+                return 30  # wait
+            elif age > 150 and not changed_items:
+                self.fallback_mode = True
+                logger.warning("falling back")
 
-        return max(11 - time_taken, 0)
+            if time_taken > 11:
+                return 0
+
+            # bods updates "every 10 seconds",
+            # it's usually worth waiting 0-9 seconds
+            # before the next fetch
+            # for maximum freshness:
+
+            witching_hour = min(self.hist, key=self.hist.get)
+            worst_hour = max(self.hist, key=self.hist.get)
+            now = timezone.now().second % 10
+            wait = witching_hour - now
+            if wait < 0:
+                wait += 10
+            diff = worst_hour - witching_hour
+            print(f"{witching_hour=} {worst_hour=} {diff=} {now=} {wait=}\n")
+            if diff % 10 == 9:
+                return wait
+
+            return max(11 - time_taken, 0)
