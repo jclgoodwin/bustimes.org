@@ -138,7 +138,7 @@
 | vehicles/management/commands/import\_stagecoach\_avl.py         |       76 |        9 |     88% |126, 136, 141-142, 174-182 |
 | vehicles/management/commands/signalr.py                         |       74 |        5 |     93% |59, 76-78, 93 |
 | vehicles/management/commands/siri\_vm\_subscribe.py             |       26 |        7 |     73% |     27-55 |
-| vehicles/management/import\_live\_vehicles.py                   |      324 |       53 |     84% |45, 58-74, 131, 140, 146-148, 150, 172, 191, 200-203, 212, 225, 233, 242-243, 245-246, 251-252, 266-272, 304-305, 346, 349-350, 371-372, 378, 470, 505-507, 513, 532, 542-544 |
+| vehicles/management/import\_live\_vehicles.py                   |      324 |       53 |     84% |45, 58-74, 131, 140, 146-148, 150, 172, 191, 200-203, 212, 225, 233, 242-243, 245-246, 251-252, 266-272, 304-305, 346, 349-350, 371-372, 378, 474, 509-511, 517, 536, 546-548 |
 | vehicles/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | vehicles/management/tests/test\_bod\_avl.py                     |      294 |        0 |    100% |           |
 | vehicles/management/tests/test\_bushub.py                       |       48 |        0 |    100% |           |
