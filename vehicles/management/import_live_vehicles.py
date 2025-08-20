@@ -371,7 +371,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         if self.history:
             # add locations to journey history
-
             for location, vehicle in self.to_save:
                 if location.latlong:
                     pipeline.rpush(*location.get_appendage())
