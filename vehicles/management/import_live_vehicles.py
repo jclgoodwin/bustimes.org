@@ -5,6 +5,7 @@ from datetime import timedelta
 from time import sleep
 
 import requests
+import sentry_sdk
 from ciso8601 import parse_datetime
 from django.contrib.gis.geos import Point
 from django.core.cache import cache
