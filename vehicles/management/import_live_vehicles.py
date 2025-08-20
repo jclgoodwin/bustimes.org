@@ -361,8 +361,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
         if self.history:
             # add locations to journey history
 
-            pipeline = redis_client.pipeline(transaction=False)
-
             for location, vehicle in self.to_save:
                 if location.latlong:
                     pipeline.rpush(*location.get_appendage())
