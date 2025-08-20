@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_b8e363a838fda594_date_range_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.3">coverage.py v7.10.3</a>,
-            created at 2025-08-20 18:13 +0000
+            created at 2025-08-20 20:09 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -1119,8 +1119,8 @@
     <p class="pln"><span class="n"><a id="t1037" href="#t1037">1037</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1038" href="#t1038">1038</a></span><span class="t">        <span class="key">if</span> <span class="nam">existing_hash</span> <span class="op">!=</span> <span class="nam">proposed_hash</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1039" href="#t1039">1039</a></span><span class="t">            <span class="key">if</span> <span class="nam">len</span><span class="op">(</span><span class="nam">existing_hash</span><span class="op">)</span> <span class="op">>=</span> <span class="nam">len</span><span class="op">(</span><span class="nam">proposed_hash</span><span class="op">)</span><span class="op">:</span>  <span class="com"># reuse ids</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t1040" href="#t1040">1040</a></span><span class="t">                <span class="key">for</span> <span class="nam">i</span><span class="op">,</span> <span class="nam">su</span> <span class="key">in</span> <span class="nam">enumerate</span><span class="op">(</span><span class="nam">proposed</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t1041" href="#t1041">1041</a></span><span class="t">                    <span class="nam">su</span><span class="op">.</span><span class="nam">id</span> <span class="op">=</span> <span class="nam">existing</span><span class="op">[</span><span class="nam">i</span><span class="op">]</span><span class="op">.</span><span class="nam">id</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t1040" href="#t1040">1040</a></span><span class="t">                <span class="key">for</span> <span class="nam">proposed_su</span><span class="op">,</span> <span class="nam">existing_su</span> <span class="key">in</span> <span class="nam">zip</span><span class="op">(</span><span class="nam">proposed</span><span class="op">,</span> <span class="nam">existing</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t1041" href="#t1041">1041</a></span><span class="t">                    <span class="nam">proposed_su</span><span class="op">.</span><span class="nam">id</span> <span class="op">=</span> <span class="nam">existing_su</span><span class="op">.</span><span class="nam">id</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1042" href="#t1042">1042</a></span><span class="t">                <span class="nam">StopUsage</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">bulk_update</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t1043" href="#t1043">1043</a></span><span class="t">                    <span class="nam">proposed</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t1044" href="#t1044">1044</a></span><span class="t">                    <span class="op">[</span><span class="str">"stop_id"</span><span class="op">,</span> <span class="str">"timing_point"</span><span class="op">,</span> <span class="str">"inbound"</span><span class="op">,</span> <span class="str">"order"</span><span class="op">,</span> <span class="str">"line_name"</span><span class="op">]</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
@@ -1235,7 +1235,7 @@
             <a class="nav" href="z_b8e363a838fda594_date_range_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.3">coverage.py v7.10.3</a>,
-            created at 2025-08-20 18:13 +0000
+            created at 2025-08-20 20:09 +0000
         </p>
     </div>
 </footer>
