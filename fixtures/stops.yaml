@@ -34,6 +34,12 @@
 4200F177502:
     common_name: Atherstone Surgery
 
+# doctor's surgery isn't there any more
+2900B656:
+    common_name: Church Walk
+2900B655:
+    common_name: Church Walk
+
 # clarify that the church isn't the main church in Wells-next-the-Sea
 2900W5712:
     landmark: Congregational church
