@@ -5,6 +5,7 @@ from uuid import uuid4
 
 import requests
 from asgiref.sync import sync_to_async
+from channels.layers import get_channel_layer
 from ciso8601 import parse_datetime
 from django.db.models import Q
 from django.contrib.gis.db.models import Extent
@@ -15,7 +16,12 @@ from websockets.asyncio.client import connect
 from busstops.models import DataSource, Operator, Service
 
 from ...models import Vehicle, VehicleJourney, VehicleLocation
-from ..import_live_vehicles import ImportLiveVehiclesCommand, logger
+from ..import_live_vehicles import (
+    ImportLiveVehiclesCommand,
+    logger,
+    redis_client,
+    DjangoJSONEncoder,
+)
 
 
 class Command(ImportLiveVehiclesCommand):
@@ -155,7 +161,37 @@ class Command(ImportLiveVehiclesCommand):
         for i, item in enumerate(items):
             await self.handle_item(item, vehicles.get(vehicle_codes[i]))
 
-        await sync_to_async(self.save)()
+        await self.save()
+
+    async def save(self):
+        channel_layer = get_channel_layer()
+
+        pipeline = redis_client.pipeline(transaction=False)
+        geoadds = []
+
+        for location, vehicle in self.to_save:
+            redis_json = location.get_redis_json()
+
+            redis_json_string = json.dumps(redis_json, cls=DjangoJSONEncoder)
+            pipeline.set(f"vehicle{vehicle.id}", redis_json_string, ex=900)
+
+            geoadds += [location.latlong.x, location.latlong.y, vehicle.id]
+
+            await channel_layer.group_send(
+                f"vehicle{vehicle.id}",
+                {"type": "move_vehicle", "item": redis_json_string},
+            )
+
+        pipeline.geoadd("vehicle_location_locations", geoadds)
+
+        # add locations to journey history
+        for location, vehicle in self.to_save:
+            if location.latlong:
+                pipeline.rpush(*location.get_appendage())
+
+        pipeline.execute()
+
+        self.to_save = []
 
     @staticmethod
     def get_extent(operator):

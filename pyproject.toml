@@ -45,6 +45,7 @@ dependencies = [
     "django-debug-toolbar-force>=0.2,<0.3",
     "django-debug-toolbar-template-profiler>=2.1.0,<3",
     "channels[daphne]>=4.3.1",
+    "channels-redis>=4.3.0",
 ]
 
 [dependency-groups]

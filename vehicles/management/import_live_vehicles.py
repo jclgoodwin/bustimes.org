@@ -372,12 +372,12 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 if location.latlong:
                     pipeline.rpush(*location.get_appendage())
 
-            self.to_save = []
-
             try:
                 pipeline.execute()
             except ConnectionError:
                 pass
+
+        self.to_save = []
 
     def do_source(self):
         if self.url:
