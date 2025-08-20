@@ -1544,6 +1544,11 @@ body.has-overlay {
     }
 }
 
+li[title="NaPTAN code"],
+li[title="ATCO code"] {
+    font-variant-numeric: slashed-zero;
+}
+
 .tabs {
     border-bottom: 1px solid var(--brand-color-darker);
     display: flex;
