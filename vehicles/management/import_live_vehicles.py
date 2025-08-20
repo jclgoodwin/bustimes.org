@@ -358,11 +358,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
         for key in sadd:
             pipeline.sadd(key, *sadd[key])
 
-        try:
-            pipeline.execute()
-        except ConnectionError:
-            pass
-
         if self.history:
             # add locations to journey history
 
@@ -372,12 +367,12 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 if location.latlong:
                     pipeline.rpush(*location.get_appendage())
 
-            self.to_save = []
+        try:
+            pipeline.execute()
+        except ConnectionError as e:
+            logger.exception(e)
 
-            try:
-                pipeline.execute()
-            except ConnectionError:
-                pass
+        self.to_save = []
 
     def do_source(self):
         if self.url:

@@ -593,7 +593,8 @@ class Command(ImportLiveVehiclesCommand):
         else:
             data = response.content
 
-        data = xmltodict.parse(data, force_list=["VehicleActivity"])
+        with sentry_sdk.start_span(name="parse XML"):
+            data = xmltodict.parse(data, force_list=["VehicleActivity"])
 
         previous_time = self.source.datetime
 
@@ -652,13 +653,14 @@ class Command(ImportLiveVehiclesCommand):
         with sentry_sdk.start_transaction(name="bod_avl_update"):
             now = timezone.now()
 
-            (
-                changed_items,
-                changed_journey_items,
-                changed_item_identities,
-                changed_journey_identities,
-                total_items,
-            ) = self.get_changed_items()
+            with sentry_sdk.start_span(name="get changed items"):
+                (
+                    changed_items,
+                    changed_journey_items,
+                    changed_item_identities,
+                    changed_journey_identities,
+                    total_items,
+                ) = self.get_changed_items()
 
             age = int((now - self.source.datetime).total_seconds())
             self.hist[now.second % 10] = age
@@ -667,8 +669,10 @@ class Command(ImportLiveVehiclesCommand):
                 f"{now.second=} {age=}  {total_items=}  {len(changed_items)=}  {len(changed_journey_items)=}"
             )
 
-            self.handle_items(changed_items, changed_item_identities)
-            self.handle_items(changed_journey_items, changed_journey_identities)
+            with sentry_sdk.start_span(name="handle quick items"):
+                self.handle_items(changed_items, changed_item_identities)
+            with sentry_sdk.start_span(name="handle changed journey items"):
+                self.handle_items(changed_journey_items, changed_journey_identities)
 
             time_taken = (timezone.now() - now).total_seconds()
 
