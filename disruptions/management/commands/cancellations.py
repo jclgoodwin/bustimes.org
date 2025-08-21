@@ -1,5 +1,5 @@
 import difflib
-import xml.etree.cElementTree as ET
+import xml.etree.ElementTree as ET
 import requests
 
 from ciso8601 import parse_datetime

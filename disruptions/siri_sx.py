@@ -1,5 +1,5 @@
 import logging
-import xml.etree.cElementTree as ET
+import xml.etree.ElementTree as ET
 from ciso8601 import parse_datetime
 from django.db.backends.postgresql.psycopg_any import DateTimeTZRange
 from django.db.models import Q

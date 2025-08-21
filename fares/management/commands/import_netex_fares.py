@@ -1,6 +1,6 @@
 import io
 import logging
-import xml.etree.cElementTree as ET
+import xml.etree.ElementTree as ET
 import zipfile
 from datetime import datetime, timezone
 from functools import cache

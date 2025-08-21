@@ -2,7 +2,7 @@
 
 import hashlib
 import logging
-import xml.etree.cElementTree as ET
+import xml.etree.ElementTree as ET
 import zipfile
 from pathlib import Path
 from time import sleep

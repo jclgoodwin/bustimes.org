@@ -1,7 +1,7 @@
 import calendar
 import datetime
 import logging
-import xml.etree.cElementTree as ET
+import xml.etree.ElementTree as ET
 from functools import cache
 
 from django.contrib.gis.geos import GEOSGeometry, LineString
