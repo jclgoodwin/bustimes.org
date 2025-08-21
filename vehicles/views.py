@@ -2,7 +2,7 @@ import datetime
 from http import HTTPStatus
 import json
 import logging
-from itertools import pairwise
+from itertools import pairwise, groupby
 from urllib.parse import unquote
 
 import subprocess
@@ -113,9 +113,9 @@ def vehicles(request):
 @cache_control(max_age=3600)
 def liveries_css(request, version=0):
     styles = []
-    liveries = Livery.objects.filter(published=True).order_by("id")
-    for livery in liveries:
-        styles += livery.get_styles()
+    liveries = Livery.objects.filter(published=True).order_by("left_css")
+    for _, liveries in groupby(liveries, lambda livery: livery.right_css):
+        styles += next(liveries).get_styles([livery.id for livery in liveries])
     styles = "".join(styles)
     completed_process = subprocess.run(
         ["lightningcss", "--minify"], input=styles.encode(), capture_output=True

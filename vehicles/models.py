@@ -211,10 +211,10 @@ class Livery(models.Model):
                 self.left_css = self.minify(self.left_css)
         super().save(*args, update_fields=update_fields, **kwargs)
 
-    def get_styles(self):
+    def get_styles(self, ids=None):
         if not self.left_css:
             return []
-        selector = f".livery-{self.id}"
+        selector = ",".join(f".livery-{livery_id}" for livery_id in ids or (self.id,))
         css = f"background: {self.left_css}"
         if self.text_colour:
             css = f"{css};\n  color:{self.text_colour};fill:{self.text_colour}"
