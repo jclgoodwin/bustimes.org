@@ -64,8 +64,8 @@
             <a id="indexLink" class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a id="nextFileLink" class="nav" href="z_6a478a4b3744fc7a_rtpi_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.10.3">coverage.py v7.10.3</a>,
-            created at 2025-08-20 20:09 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.10.4">coverage.py v7.10.4</a>,
+            created at 2025-08-21 12:34 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -293,10 +293,10 @@
     <p class="run"><span class="n"><a id="t211" href="#t211">211</a></span><span class="t">                <span class="nam">self</span><span class="op">.</span><span class="nam">left_css</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">minify</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">left_css</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t212" href="#t212">212</a></span><span class="t">        <span class="nam">super</span><span class="op">(</span><span class="op">)</span><span class="op">.</span><span class="nam">save</span><span class="op">(</span><span class="op">*</span><span class="nam">args</span><span class="op">,</span> <span class="nam">update_fields</span><span class="op">=</span><span class="nam">update_fields</span><span class="op">,</span> <span class="op">**</span><span class="nam">kwargs</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t213" href="#t213">213</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t214" href="#t214">214</a></span><span class="t">    <span class="key">def</span> <span class="nam">get_styles</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t214" href="#t214">214</a></span><span class="t">    <span class="key">def</span> <span class="nam">get_styles</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">ids</span><span class="op">=</span><span class="key">None</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t215" href="#t215">215</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">self</span><span class="op">.</span><span class="nam">left_css</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t216" href="#t216">216</a></span><span class="t">            <span class="key">return</span> <span class="op">[</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t217" href="#t217">217</a></span><span class="t">        <span class="nam">selector</span> <span class="op">=</span> <span class="fst">f"</span><span class="fst">.livery-</span><span class="op">{</span><span class="nam">self</span><span class="op">.</span><span class="nam">id</span><span class="op">}</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t217" href="#t217">217</a></span><span class="t">        <span class="nam">selector</span> <span class="op">=</span> <span class="str">","</span><span class="op">.</span><span class="nam">join</span><span class="op">(</span><span class="fst">f"</span><span class="fst">.livery-</span><span class="op">{</span><span class="nam">livery_id</span><span class="op">}</span><span class="fst">"</span> <span class="key">for</span> <span class="nam">livery_id</span> <span class="key">in</span> <span class="nam">ids</span> <span class="key">or</span> <span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">id</span><span class="op">,</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t218" href="#t218">218</a></span><span class="t">        <span class="nam">css</span> <span class="op">=</span> <span class="fst">f"</span><span class="fst">background: </span><span class="op">{</span><span class="nam">self</span><span class="op">.</span><span class="nam">left_css</span><span class="op">}</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t219" href="#t219">219</a></span><span class="t">        <span class="key">if</span> <span class="nam">self</span><span class="op">.</span><span class="nam">text_colour</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t220" href="#t220">220</a></span><span class="t">            <span class="nam">css</span> <span class="op">=</span> <span class="fst">f"</span><span class="op">{</span><span class="nam">css</span><span class="op">}</span><span class="fst">;\n  color:</span><span class="op">{</span><span class="nam">self</span><span class="op">.</span><span class="nam">text_colour</span><span class="op">}</span><span class="fst">;fill:</span><span class="op">{</span><span class="nam">self</span><span class="op">.</span><span class="nam">text_colour</span><span class="op">}</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
@@ -891,8 +891,8 @@
             <a class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a class="nav" href="z_6a478a4b3744fc7a_rtpi_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.10.3">coverage.py v7.10.3</a>,
-            created at 2025-08-20 20:09 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.10.4">coverage.py v7.10.4</a>,
+            created at 2025-08-21 12:34 +0000
         </p>
     </div>
 </footer>
