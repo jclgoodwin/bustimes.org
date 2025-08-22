@@ -211,10 +211,12 @@ class Livery(models.Model):
                 self.left_css = self.minify(self.left_css)
         super().save(*args, update_fields=update_fields, **kwargs)
 
-    def get_styles(self, ids=None):
+    def get_styles(self, livery_ids=None):
         if not self.left_css:
             return []
-        selector = ",".join(f".livery-{livery_id}" for livery_id in ids or (self.id,))
+        if not livery_ids:
+            livery_ids = (self.id,)
+        selector = ",".join(f".livery-{livery_id}" for livery_id in livery_ids)
         css = f"background: {self.left_css}"
         if self.text_colour:
             css = f"{css};\n  color:{self.text_colour}"
@@ -224,7 +226,10 @@ class Livery(models.Model):
             css = f"{css};stroke:{self.stroke_colour}"
         styles = [f"{selector} {{\n  {css}\n}}\n"]
         if self.right_css != self.left_css:
-            styles.append(f"{selector}.right {{\n  background: {self.right_css}\n}}\n")
+            selector = ",".join(
+                f".livery-{livery_id}.right" for livery_id in livery_ids
+            )
+            styles.append(f"{selector} {{\n  background: {self.right_css}\n}}\n")
         return styles
 
 
