@@ -520,18 +520,9 @@ class Command(ImportLiveVehiclesCommand):
                             or journey.destination
                         )
 
-                    update_fields = []
-
-                    if trip.garage_id != vehicle.garage_id:
-                        vehicle.garage_id = trip.garage_id
-                        update_fields.append("garage")
-
                     if not vehicle.operator_id and trip.operator_id:
                         vehicle.operator_id = trip.operator_id
-                        update_fields.append("operator")
-
-                    if update_fields:
-                        vehicle.save(update_fields=update_fields)
+                        vehicle.save(update_fields=["operator"])
 
         return journey
 

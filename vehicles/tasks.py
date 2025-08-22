@@ -185,9 +185,15 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
         return
 
     if not vehicle.latest_journey or vehicle.latest_journey.datetime < journey.datetime:
+        if (
+            journey.trip
+            and journey.trip.garage_id
+            and journey.trip.garage_id != vehicle.garage_id
+        ):
+            vehicle.garage_id = journey.trip.garage_id
         vehicle.latest_journey = journey
         vehicle.latest_journey_data = data
-        vehicle.save(update_fields=["latest_journey", "latest_journey_data"])
+        vehicle.save(update_fields=["garage", "latest_journey", "latest_journey_data"])
 
 
 @db_periodic_task(crontab(minute="*/5"))

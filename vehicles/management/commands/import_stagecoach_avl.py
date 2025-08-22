@@ -112,9 +112,7 @@ class Command(ImportLiveVehiclesCommand):
         if vehicle or item.get("hg") == "0":
             return vehicle, False
 
-        return Vehicle.objects.filter(
-            operator__in=self.operators
-        ).get_or_create(
+        return Vehicle.objects.filter(operator__in=self.operators).get_or_create(
             {"operator": operator, "source": self.source, "fleet_code": vehicle_code},
             code=vehicle_code,
         )
@@ -174,12 +172,6 @@ class Command(ImportLiveVehiclesCommand):
             journey.trip = journey.get_trip(
                 destination_ref=item.get("fr"), departure_time=departure_time
             )
-
-            # update vehicle garage
-            if trip := journey.trip:
-                if trip.garage_id != vehicle.garage_id:
-                    vehicle.garage_id = trip.garage_id
-                    vehicle.save(update_fields=["garage"])
 
         return journey
 

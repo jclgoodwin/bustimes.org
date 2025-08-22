@@ -187,6 +187,16 @@ class ImportLiveVehiclesCommand(BaseCommand):
             journey = latest_journey
         else:
             journey = self.get_journey(item, vehicle)
+
+            if (
+                journey
+                and journey.trip
+                and journey.trip.garage_id
+                and journey.trip.garage_id != vehicle.garage_id
+            ):
+                vehicle.garage_id = journey.trip.garage_id
+                vehicle.save(update_fields=["garage"])
+
         if not journey:
             return
         journey.vehicle = vehicle
