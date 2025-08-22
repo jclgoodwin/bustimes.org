@@ -170,17 +170,23 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
     ):
         return
 
-    try:
-        journey = VehicleJourney.objects.create(
-            vehicle=vehicle,
-            service_id=service,
-            route_name=route_name,
-            code=journey_ref,
-            datetime=time,
-            source=data_source,
-            destination=destination,
-            trip_id=trip_id,
+    journey = VehicleJourney(
+        vehicle=vehicle,
+        service_id=service,
+        route_name=route_name,
+        code=journey_ref,
+        datetime=time,
+        source=data_source,
+        destination=destination,
+        trip_id=trip_id,
+    )
+    if not trip_id:
+        journey.trip = journey.get_trip(
+            departure_time=time, destination_ref=data.get("DestinationRef")
         )
+
+    try:
+        journey.save()
     except IntegrityError:
         return
 

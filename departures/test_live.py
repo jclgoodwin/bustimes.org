@@ -401,7 +401,7 @@ class LiveDeparturesTest(TestCase):
         self.assertEqual(0, VehicleJourney.objects.count())
 
         # test the actual task
-        with self.assertNumQueries(14):
+        with self.assertNumQueries(15):
             log_vehicle_journey(*args[:-1], self.trip.id)
 
         with self.assertNumQueries(3):
