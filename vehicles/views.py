@@ -115,7 +115,8 @@ def liveries_css(request, version=0):
     styles = []
     liveries = Livery.objects.filter(published=True).order_by("left_css")
     for _, liveries in groupby(liveries, lambda livery: livery.right_css):
-        styles += next(liveries).get_styles([livery.id for livery in liveries])
+        liveries = list(liveries)
+        styles += liveries[0].get_styles([livery.id for livery in liveries])
     styles = "".join(styles)
     completed_process = subprocess.run(
         ["lightningcss", "--minify"], input=styles.encode(), capture_output=True
