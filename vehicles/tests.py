@@ -464,7 +464,7 @@ class VehiclesTests(TestCase):
 
         self.assertEqual(
             response.text,
-            f""".livery-{self.livery.id}{{color:#fff;fill:#fff;background:linear-gradient(90deg,red 50%,#00f 50%)}}\
+            f""".livery-{self.livery.id}{{color:#fff;background:linear-gradient(90deg,red 50%,#00f 50%)}}\
 .livery-{self.livery.id}.right{{background:linear-gradient(270deg,red 50%,#00f 50%)}}
 """,
         )
