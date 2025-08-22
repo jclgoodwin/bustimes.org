@@ -217,9 +217,9 @@ class Livery(models.Model):
         selector = ",".join(f".livery-{livery_id}" for livery_id in ids or (self.id,))
         css = f"background: {self.left_css}"
         if self.text_colour:
-            css = f"{css};\n  color:{self.text_colour};fill:{self.text_colour}"
+            css = f"{css};\n  color:{self.text_colour}"
         elif self.white_text:
-            css = f"{css};\n  color:#fff;fill:#fff"
+            css = f"{css};\n  color:#fff"
         if self.stroke_colour:
             css = f"{css};stroke:{self.stroke_colour}"
         styles = [f"{selector} {{\n  {css}\n}}\n"]

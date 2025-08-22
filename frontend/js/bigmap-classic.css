@@ -4,7 +4,7 @@
   height: 16px;
   line-height: 16px;
   overflow: hidden;
-  fill: #000;
+  fill: currentColor;
   paint-order: stroke;
 }
 
@@ -16,7 +16,6 @@
 
 .white-text {
   color: #fff;
-  fill: #fff;
 }
 
 .leaflet-div-icon {

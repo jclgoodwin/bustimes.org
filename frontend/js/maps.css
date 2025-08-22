@@ -23,6 +23,7 @@
   overflow: hidden;
   line-height: 16px;
   color: #000;
+  fill: currentColor;
   text-anchor: middle;
   paint-order: stroke;
   stroke-width: 2px;
