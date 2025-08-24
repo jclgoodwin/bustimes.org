@@ -202,11 +202,7 @@ def get_stop_times(date: date, time: timedelta | None, stop, routes, trip_ids=No
     else:
         routes = get_routes(routes, date)
 
-        scotland = (
-            stop.atco_code[:1] == "6"
-            and ":" not in stop.atco_code
-            and stop.atco_code[:4].isdigit()
-        )
+        scotland = stop.pk[:1] == "6" and ":" not in stop.pk and stop.pk[:4].isdigit()
 
         if not routes:
             times = times.none()
