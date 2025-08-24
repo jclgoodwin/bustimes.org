@@ -144,6 +144,8 @@ class Timetable:
 
         four_weeks_time = self.today + datetime.timedelta(days=28)
 
+        scotland = any(route.source.name == "S" for route in routes)
+
         self.calendars = list(
             Calendar.objects.filter(Exists("trip", filter=Q(route__in=self.routes)))
             .annotate(
@@ -205,7 +207,9 @@ class Timetable:
             if self.calendars:
                 calendar_ids = [calendar.id for calendar in self.calendars]
                 self.calendar_ids = list(
-                    get_calendars(self.date, calendar_ids).values_list("id", flat=True)
+                    get_calendars(
+                        self.date, calendar_ids, scotland=scotland
+                    ).values_list("id", flat=True)
                 )
 
     def correct_directions(self, trips):

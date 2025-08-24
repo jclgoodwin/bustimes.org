@@ -127,7 +127,7 @@ def get_routes(routes, when=None, from_date=None):
     return routes
 
 
-def get_calendars(when: date | datetime, calendar_ids=None):
+def get_calendars(when: date | datetime, calendar_ids=None, scotland=None):
     between_dates = Q(start_date__lte=when) & (Q(end_date__gte=when) | Q(end_date=None))
 
     calendars = Calendar.objects.filter(between_dates)
@@ -145,10 +145,19 @@ def get_calendars(when: date | datetime, calendar_ids=None):
         calendar_calendar_dates.filter(special=False, operation=True)
     )
 
-    calendar_bank_holidays = CalendarBankHoliday.objects.filter(
-        bank_holiday__bankholidaydate__date=when,
-        calendar=OuterRef("id"),
-    )
+    if scotland is None:
+        calendar_bank_holidays = CalendarBankHoliday.objects.filter(
+            bank_holiday__bankholidaydate__date=when,
+            calendar=OuterRef("id"),
+        )
+    else:
+        calendar_bank_holidays = CalendarBankHoliday.objects.filter(
+            Q(bank_holiday__bankholidaydate__scotland=None)
+            | Q(bank_holiday__bankholidaydate__scotland=scotland),
+            bank_holiday__bankholidaydate__date=when,
+            calendar=OuterRef("id"),
+        )
+
     bank_holiday_inclusions = Exists(calendar_bank_holidays.filter(operation=True))
 
     return calendars.annotate(
@@ -193,12 +202,18 @@ def get_stop_times(date: date, time: timedelta | None, stop, routes, trip_ids=No
     else:
         routes = get_routes(routes, date)
 
+        scotland = (
+            stop.atco_code[:1] == "6"
+            and ":" not in stop.atco_code
+            and stop.atco_code[:4].isdigit()
+        )
+
         if not routes:
             times = times.none()
 
         trips = Trip.objects.filter(
             route__in=routes,
-            calendar__in=get_calendars(date),
+            calendar__in=get_calendars(date, scotland=scotland),
         )
 
         if time is not None:
