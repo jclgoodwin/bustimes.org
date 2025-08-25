@@ -5,6 +5,7 @@ import yaml
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.management.base import BaseCommand
+from django.db.models.functions import Now
 
 from busstops.models import AdminArea, DataSource, Locality, StopArea, StopPoint
 from busstops.utils import get_datetime
@@ -131,6 +132,7 @@ class Command(BaseCommand):
         stop = get_stop(element, atco_code)
 
         stop.source = self.source
+        stop.modified_at = Now()
 
         # a stop can be in multiple stop areas
         # we assume (dubiously) that it has no more than 1 active one
@@ -157,7 +159,7 @@ class Command(BaseCommand):
                 setattr(stop, key, value)
 
         if existing := self.existing_stops.get(atco_code):
-            for key in self.bulk_update_fields[2:]:
+            for key in self.bulk_update_fields[1:]:
                 if getattr(stop, key) != getattr(existing, key):
                     if key == "latlong":
                         distance = stop.latlong.transform(4326, clone=True).distance(
@@ -174,10 +176,10 @@ class Command(BaseCommand):
                         self.stops_to_update.append(stop)
                         break
         else:
+            stop.created_at = stop.modified_at
             self.stops_to_create.append(stop)
 
     bulk_update_fields = [
-        "created_at",
         "modified_at",
         "naptan_code",
         "latlong",
