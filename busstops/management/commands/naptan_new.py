@@ -17,6 +17,11 @@ def get_point(element):
     if element is None:
         return
 
+    lon = element.findtext("Translation/Longitude") or element.findtext("Longitude")
+    lat = element.findtext("Translation/Latitude") or element.findtext("Latitude")
+    if lat is not None and lon is not None:
+        return GEOSGeometry(f"POINT({lon} {lat})")
+
     easting = element.findtext("Easting")
     northing = element.findtext("Northing")
     grid_type = element.findtext("GridType")
@@ -34,11 +39,6 @@ def get_point(element):
             case "UKOS" | "" | None:
                 srid = 27700
         return GEOSGeometry(f"SRID={srid};POINT({easting} {northing})")
-
-    lon = element.findtext("Translation/Longitude") or element.findtext("Longitude")
-    lat = element.findtext("Translation/Latitude") or element.findtext("Latitude")
-    if lat is not None and lon is not None:
-        return GEOSGeometry(f"POINT({lon} {lat})")
 
 
 mapping = (
@@ -126,28 +126,8 @@ class Command(BaseCommand):
     def handle_stop(self, element):
         atco_code = element.findtext("AtcoCode")
 
-        modified_at = get_datetime(element.attrib.get("ModificationDateTime"))
-
-        for stop_area_ref in element.findall("StopAreas/StopAreaRef"):
-            stop_area_modified_at = get_datetime(
-                stop_area_ref.attrib.get("ModificationDateTime")
-            )
-            if not modified_at or (
-                stop_area_modified_at and stop_area_modified_at > modified_at
-            ):
-                modified_at = stop_area_modified_at
-
-        if (existing_stop := self.existing_stops.get(atco_code)) and (
-            modified_at == existing_stop.modified_at
-            and atco_code not in self.overrides
-            and existing_stop.source_id == self.source.id
-        ):
-            return
-
         stop = get_stop(element, atco_code)
 
-        stop.created_at = get_datetime(element.attrib["CreationDateTime"])
-        stop.modified_at = modified_at
         stop.source = self.source
 
         # a stop can be in multiple stop areas
@@ -165,6 +145,8 @@ class Command(BaseCommand):
         stop.admin_area_id = element.findtext("AdministrativeAreaRef")
         if atco_code.startswith(stop.admin_area_id):
             stop.admin_area = self.admin_areas.get(stop.admin_area_id)
+        else:
+            stop.admin_area_id = int(stop.admin_area_id)
 
         if atco_code in self.overrides:
             for key, value in self.overrides[atco_code].items():
@@ -172,8 +154,21 @@ class Command(BaseCommand):
                     value = GEOSGeometry(value)
                 setattr(stop, key, value)
 
-        if atco_code in self.existing_stops:
-            self.stops_to_update.append(stop)
+        if existing := self.existing_stops.get(atco_code):
+            for key in self.bulk_update_fields[2:]:
+                if getattr(stop, key) != getattr(existing, key):
+                    if key == "latlong":
+                        distance = stop.latlong.transform(4326, clone=True).distance(
+                            existing.latlong
+                        )
+                        if distance < 0.00005:
+                            pass
+                        else:
+                            print(distance, stop.latlong, existing.latlong)
+                    else:
+                        print(atco_code, key)
+                        self.stops_to_update.append(stop)
+                        break
         else:
             self.stops_to_create.append(stop)
 
@@ -190,9 +185,9 @@ class Command(BaseCommand):
         "stop_type",
         "bus_stop_type",
         "timing_status",
-        "locality",
-        "admin_area",
-        "stop_area",
+        "locality_id",
+        "admin_area_id",
+        "stop_area_id",
         "indicator",
         "suburb",
         "town",
@@ -214,7 +209,7 @@ class Command(BaseCommand):
             else:
                 stop_areas_to_create.append(stop_area)
 
-        StopArea.objects.bulk_create(stop_areas_to_create, batch_size=100)
+        StopArea.objects.bulk_create(stop_areas_to_create, batch_size=1000)
         StopArea.objects.bulk_update(
             stop_areas_to_update,
             ["name", "latlong", "active", "admin_area", "stop_area_type"],
@@ -231,15 +226,19 @@ class Command(BaseCommand):
             for stop in stops
             if stop.stop_area_id not in existing_stop_areas
         )
-        StopArea.objects.bulk_create(stop_areas_to_create, batch_size=100)
+        StopArea.objects.bulk_create(stop_areas_to_create, batch_size=1000)
+
+        print(
+            f"{len(stop_areas_to_update)=} {len(stop_areas_to_create)=} {len(self.stops_to_create)=} {len(self.stops_to_update)=}"
+        )
 
         # create new stops
-        StopPoint.objects.bulk_create(self.stops_to_create, batch_size=100)
+        StopPoint.objects.bulk_create(self.stops_to_create, batch_size=1000)
         self.stops_to_create = []
 
         # update updated stops
         StopPoint.objects.bulk_update(
-            self.stops_to_update, self.bulk_update_fields, batch_size=100
+            self.stops_to_update, self.bulk_update_fields, batch_size=1000
         )
         self.stops_to_update = []
 
@@ -256,6 +255,17 @@ class Command(BaseCommand):
 
         if not modified:
             return
+
+        for event, element in ET.iterparse(path, ["start"]):
+            assert (
+                event == "start" and element.tag == "{http://www.naptan.org.uk/}NaPTAN"
+            )
+            modified_at = get_datetime(element.attrib["ModificationDateTime"])
+            if modified_at == source.datetime:
+                return
+
+            source.datetime = modified_at
+            break
 
         # set up overrides/corrections
         overrides_path = settings.BASE_DIR / "fixtures" / "stops.yaml"
@@ -275,31 +285,23 @@ class Command(BaseCommand):
 
         self.stop_areas = {}
 
-        iterator = ET.iterparse(path, events=["start", "end"])
-        for event, element in iterator:
-            if event == "start":
-                if element.tag == "{http://www.naptan.org.uk/}NaPTAN":
-                    modified_at = get_datetime(element.attrib["ModificationDateTime"])
-                    if modified_at == source.datetime:
-                        return
-
-                    source.datetime = modified_at
-
-                continue
-
+        for event, element in ET.iterparse(path):
             element.tag = element.tag.removeprefix("{http://www.naptan.org.uk/}")
+
             if element.tag == "StopPoint":
                 atco_code = element.findtext("AtcoCode")
                 if atco_code[:3] != atco_code_prefix:
+                    print(f"{atco_code_prefix=}")
+
                     if atco_code_prefix:
                         self.update_and_create()
 
                     atco_code_prefix = atco_code[:3]
 
                     self.existing_stops = (
-                        StopPoint.objects.only("atco_code", "modified_at", "source_id")
-                        .filter(atco_code__startswith=atco_code_prefix)
+                        StopPoint.objects.filter(atco_code__startswith=atco_code_prefix)
                         .order_by()
+                        .defer("search_vector", "modified_at", "created_at")
                         .in_bulk()
                     )
 
