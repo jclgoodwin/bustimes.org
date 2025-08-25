@@ -397,11 +397,6 @@ class Command(BaseCommand):
         )
         old_routes.update(service=None)
 
-        StopPoint.objects.filter(active=False, service__current=True).update(
-            active=True
-        )
-        StopPoint.objects.filter(active=True, service__isnull=True).update(active=False)
-
     def handle(self, *args, **options):
         collections = DataSource.objects.filter(
             url__startswith="https://www.transportforireland.ie/transitData/Data/GTFS_"

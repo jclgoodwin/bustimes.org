@@ -436,13 +436,6 @@ class Command(BaseCommand):
 
         self.source.save(update_fields=["datetime"])
 
-        StopPoint.objects.filter(
-            ~Exists(
-                StopUsage.objects.filter(stop=OuterRef("pk"), service__current=True)
-            ),
-            active=False,
-        ).update(active=True)
-
         if basename in ("NCSD.zip", "L.zip"):
             import boto3
 
