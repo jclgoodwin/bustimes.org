@@ -20,7 +20,9 @@ def get_point(element):
     lon = element.findtext("Translation/Longitude") or element.findtext("Longitude")
     lat = element.findtext("Translation/Latitude") or element.findtext("Latitude")
     if lat is not None and lon is not None:
-        return GEOSGeometry(f"POINT({lon} {lat})")
+        point = GEOSGeometry(f"POINT({lon} {lat})")
+        if point.x or point.y:
+            return point
 
     easting = element.findtext("Easting")
     northing = element.findtext("Northing")
@@ -259,6 +261,8 @@ class Command(BaseCommand):
             return
 
         for event, element in ET.iterparse(path, ["start"]):
+            # the ModificationDateTime attribute of the root element
+            # seems to be a reliable way of telling if the data has changed
             assert (
                 event == "start" and element.tag == "{http://www.naptan.org.uk/}NaPTAN"
             )
