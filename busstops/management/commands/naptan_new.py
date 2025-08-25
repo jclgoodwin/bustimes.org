@@ -164,7 +164,9 @@ class Command(BaseCommand):
                         if distance < 0.00005:
                             pass
                         else:
-                            print(distance, stop.latlong, existing.latlong)
+                            print(atco_code, existing.latlong, stop.latlong)
+                            self.stops_to_update.append(stop)
+                            break
                     else:
                         print(atco_code, key)
                         self.stops_to_update.append(stop)
