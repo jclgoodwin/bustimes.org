@@ -138,7 +138,7 @@
 | vehicles/management/commands/import\_stagecoach\_avl.py         |       72 |        5 |     93% |124, 134, 139-140, 172 |
 | vehicles/management/commands/signalr.py                         |       74 |        5 |     93% |59, 76-78, 93 |
 | vehicles/management/commands/siri\_vm\_subscribe.py             |       26 |        7 |     73% |     27-55 |
-| vehicles/management/import\_live\_vehicles.py                   |      324 |       53 |     84% |45, 58-74, 131, 140, 146-148, 150, 172, 201, 210-213, 222, 235, 243, 252-253, 255-256, 261-262, 276-282, 314-315, 356, 359-360, 381-382, 388, 479, 514-516, 522, 541, 551-553 |
+| vehicles/management/import\_live\_vehicles.py                   |      328 |       53 |     84% |45, 58-74, 131, 140, 146-148, 150, 172, 201, 210-213, 222, 235, 243, 252-253, 255-256, 261-262, 276-282, 314-315, 356, 359-360, 381-382, 388, 479, 516-518, 526, 545, 555-557 |
 | vehicles/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | vehicles/management/tests/test\_bod\_avl.py                     |      294 |        0 |    100% |           |
 | vehicles/management/tests/test\_bushub.py                       |       48 |        0 |    100% |           |
@@ -169,7 +169,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16249** | **1105** | **93%** |           |
+|                                                       **TOTAL** | **16253** | **1105** | **93%** |           |
 
 
 ## Setup coverage badge
