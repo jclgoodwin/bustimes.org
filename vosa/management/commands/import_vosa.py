@@ -129,8 +129,8 @@ class Command(BaseCommand):
             else:
                 licence.traffic_area = line["Current Traffic Area"]
 
-            licence.discs = line["Discs in Possession"] or 0
-            licence.authorised_discs = line["AUTHDISCS"] or 0
+            licence.discs = line["Discs in Possession"] or None
+            licence.authorised_discs = line["AUTHDISCS"] or None
             licence.description = line["Description"]
             licence.granted_date = parse_date(line["Granted_Date"])
             licence.expiry_date = parse_date(line["Exp_Date"])

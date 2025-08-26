@@ -86,6 +86,14 @@ class Command(BaseCommand):
                     assert row["OTC Status"] == "Registered"
 
                     if not lic:
+                        lic = Licence(
+                            licence_number=row["OTC:Licence Number"],
+                            name=row["OTC:Operator Name"],
+                            address=row["OTC:Address"],
+                            licence_status=row["OTC:Licence Status"],
+                        )
+                        lics_to_create.append(lic)
+                        lics[lic.licence_number] = lic
                         print(f"unknown licence {row}")
                         continue
 
