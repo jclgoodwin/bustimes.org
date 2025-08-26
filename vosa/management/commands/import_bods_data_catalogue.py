@@ -150,7 +150,11 @@ class Command(BaseCommand):
 
         Licence.objects.bulk_create(lics_to_create)
         Registration.objects.bulk_create(regs_to_create)
-        Registration.objects.bulk_update(regs_to_update, [a for a, _ in reg_mapping])
+        Registration.objects.bulk_update(
+            regs_to_update, [a for a, _ in reg_mapping], batch_size=500
+        )
 
         Variation.objects.bulk_create(vars_to_create)
-        Variation.objects.bulk_update(vars_to_update, [a for a, _ in var_mapping])
+        Variation.objects.bulk_update(
+            vars_to_update, [a for a, _ in var_mapping], batch_size=500
+        )
