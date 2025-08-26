@@ -517,9 +517,11 @@ class ImportLiveVehiclesCommand(BaseCommand):
                     logger.exception(e)
                     return 120
 
-            with sentry_sdk.start_span(name="handle quick items"):
+            with sentry_sdk.start_span(name="handle quick items") as span:
+                span.set_attribute(count=len(changed_items))
                 self.handle_items(changed_items, changed_item_identities)
-            with sentry_sdk.start_span(name="handle changed journey items"):
+            with sentry_sdk.start_span(name="handle changed journey items") as span:
+                span.set_attribute(count=len(changed_journey_items))
                 self.handle_items(changed_journey_items, changed_journey_identities)
 
         if not total_items:
