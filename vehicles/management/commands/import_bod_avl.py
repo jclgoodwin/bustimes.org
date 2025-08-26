@@ -663,10 +663,10 @@ class Command(ImportLiveVehiclesCommand):
             )
 
             with sentry_sdk.start_span(name="handle quick items") as span:
-                span.set_attribute(count=len(changed_items))
+                span.set_data("count", len(changed_items))
                 self.handle_items(changed_items, changed_item_identities)
             with sentry_sdk.start_span(name="handle changed journey items") as span:
-                span.set_attribute(count=len(changed_journey_items))
+                span.set_data("count", len(changed_journey_items))
                 self.handle_items(changed_journey_items, changed_journey_identities)
 
             time_taken = (timezone.now() - now).total_seconds()
