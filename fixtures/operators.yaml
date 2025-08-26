@@ -1,8 +1,6 @@
 # This file contains overrides/corrections to the Traveline NOC (national operator code) database
 # See busstops/management/commands/import_noc.py
 
-SNDR:
-  email: sales@sanderscoaches.com
 IGOB:
   name: National Express Accessible Transport
   url: https://www.nationalexpress.com/en/neat
@@ -57,8 +55,6 @@ SBDR:
     LU6 1QQ
   url: http://www.sbdar.co.uk
   phone: 01525 220044
-MEGA:
-  url: https://www.megabus.co.uk
 DOCC:
   address: |
     Dorset Travel
@@ -132,13 +128,6 @@ SWDC:
     EX7 9QH
 RYCA:
   url: https://ryedalect.org/our-services/local-bus-services/
-  address: |
-    2 Minster Court
-    Hugden Way
-    Norton
-    Malton
-    YO17 9NJ
-  email: post@ryedalect.org
 NXHH:
   address: ""
   email: Comments-Hallmark@rotala.co.uk
@@ -160,8 +149,6 @@ CTCL:
   phone: 024 7669 1433
 STNE:
   url: https://stanley-travel.com/bus-timetables/
-RBTS:
-  name: Roberts Travel
 KCTB:
   # name: Konectbus (Norfolk)
   phone: 03300 539358
@@ -257,8 +244,6 @@ FACT:
   url: https://fact-cambs.co.uk/
 YTNB:
   url: https://www.yarrantons.com/
-RMCB:
-  url: https://ramsburyflyer.org/
 SBLB:
   name: Stagecoach North Scotland
 RACB:
