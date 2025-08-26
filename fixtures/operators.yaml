@@ -190,18 +190,12 @@ ULCO:
   address: ""
   email: ""
   url: ""
-CAEL:
-  name: Caelloi
-  url: https://www.caelloi.co.uk/
 NUTT:
   name: Transpora North West
   aka: Coastliner Buses
   url: https://www.transporabus.uk
 MDBC:
   url: ""
-TANV:
-  email: contact@tanat.co.uk
-  url: https://tanat.co.uk/
 BZCO:
   url: https://www.beelinecoaches.co.uk/
 LNGS:
@@ -216,21 +210,11 @@ FSCE:
 WAEN:
   name: Macleod's Coaches
   url: http://macleodscoaches.com/
-TYSW:
-  name: Applegates
-  url: http://applegates.co.uk/
-  phone: 01453 810314
-  email: info@applegates.co.uk
 YYTG:
   name: Yorkshire Buses
   url: https://www.yorkshirebuses.co.uk
   phone: 0113 246 4914
   email: traffic@yorkshirebuses.co.uk
-WNGS:
-  url: https://www.diamondbuses.com/
-NYCC:
-  name: North Yorkshire Council
-  url: https://www.northyorks.gov.uk/public-transport
 BNVB:
   name: Bee Network - Vision Bus
 BNSM:
