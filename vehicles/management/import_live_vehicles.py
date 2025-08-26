@@ -498,25 +498,29 @@ class ImportLiveVehiclesCommand(BaseCommand):
         )
 
     def update(self) -> int:
-        now = timezone.localtime()
-        self.source.datetime = now
+        with sentry_sdk.start_transaction(name=f"{self.source.name} update"):
+            now = timezone.localtime()
+            self.source.datetime = now
 
-        wait = self.wait
+            wait = self.wait
 
-        try:
-            (
-                changed_items,
-                changed_journey_items,
-                changed_item_identities,
-                changed_journey_identities,
-                total_items,
-            ) = self.get_changed_items()
-        except requests.exceptions.RequestException as e:
-            logger.exception(e)
-            return 120
+            with sentry_sdk.start_span(name="get changed itemms"):
+                try:
+                    (
+                        changed_items,
+                        changed_journey_items,
+                        changed_item_identities,
+                        changed_journey_identities,
+                        total_items,
+                    ) = self.get_changed_items()
+                except requests.exceptions.RequestException as e:
+                    logger.exception(e)
+                    return 120
 
-        self.handle_items(changed_items, changed_item_identities)
-        self.handle_items(changed_journey_items, changed_journey_identities)
+            with sentry_sdk.start_span(name="handle quick items"):
+                self.handle_items(changed_items, changed_item_identities)
+            with sentry_sdk.start_span(name="handle changed journey items"):
+                self.handle_items(changed_journey_items, changed_journey_identities)
 
         if not total_items:
             return 120
