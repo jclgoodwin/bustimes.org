@@ -1,20 +1,27 @@
 import logging
+from functools import cache
 from datetime import datetime, timezone
 from pathlib import Path
 from zipfile import ZipFile
 
 import gtfs_kit
+import requests
+from google.transit import gtfs_realtime_pb2
 from django.conf import settings
-
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from busstops.models import DataSource, Operator, Service, StopPoint
 
 from ...download_utils import download_if_modified
-from ...models import Calendar, CalendarDate, Route, StopTime, Trip
+from ...models import Calendar, CalendarDate, Route, StopTime, Trip, Note
 
 logger = logging.getLogger(__name__)
+
+
+@cache
+def get_note(note_code, note_text):
+    return Note.objects.get_or_create(code=note_code or "", text=note_text[:255])[0]
 
 
 def get_calendars(feed, source) -> dict:
@@ -188,6 +195,29 @@ class Command(BaseCommand):
 
             stop_times.append(stop_time)
 
+        # get TripUpdates from the GTFS-RT feed - to mark some stops as "pre-book only":
+
+        realtime_url = "https://api.ember.to/v1/gtfs/realtime/"
+        response = requests.get(realtime_url, timeout=10)
+        response.raise_for_status()
+
+        feed = gtfs_realtime_pb2.FeedMessage()
+        feed.ParseFromString(response.content)
+
+        stop_notes = {}  # map of notes to lists of stop ids
+
+        for item in feed.entity:
+            if item.HasField("alert"):
+                header = item.alert.header_text.translation[0].text
+                description = item.alert.description_text.translation[0].text
+                if header == "Pre-booking":
+                    stop_id = item.alert.informed_entity[0].stop_id
+                    note = get_note("b", description)
+                    if note in stop_notes:
+                        stop_notes[note].append(stop_id)
+                    else:
+                        stop_notes[note] = [stop_id]
+
         with transaction.atomic():
             Trip.objects.bulk_create([trip for trip in trips.values() if not trip.id])
             existing_trips = [trip for trip in trips.values() if trip.id]
@@ -208,6 +238,25 @@ class Command(BaseCommand):
 
             StopTime.objects.filter(trip__in=existing_trips).delete()
             StopTime.objects.bulk_create(stop_times)
+
+            existing_notes = {
+                (note.code, note.text): note
+                for note in Note.objects.filter(trip__operator="EMBR")
+            }
+            for note, stop_ids in stop_notes.items():
+                note_stop_times = [
+                    stop_time
+                    for stop_time in stop_times
+                    if stop_time.stop_id in stop_ids
+                ]
+                note_trips = [stop_time.trip_id for stop_time in stop_times]
+                note.stoptime_set.set(note_stop_times)
+                note.trip_set.set(note_trips)
+
+            # remove old notes
+            for note in existing_notes.values():
+                if note not in stop_notes:
+                    note.trip_set.clear()
 
             for service in source.service_set.filter(current=True):
                 service.do_stop_usages()
