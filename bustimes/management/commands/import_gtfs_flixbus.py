@@ -203,6 +203,8 @@ class Command(BaseCommand):
                 departure=departure_time,
                 sequence=row.stop_sequence,
                 trip=trip,
+                pick_up=(row.pickup_type != 1),
+                set_down=(row.drop_off_type != 1),
             )
             if pd.notna(row.timepoint) and row.timepoint == 1:
                 stop_time.timing_status = "PTP"

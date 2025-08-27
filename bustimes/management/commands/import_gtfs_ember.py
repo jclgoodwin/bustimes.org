@@ -180,6 +180,8 @@ class Command(BaseCommand):
                 sequence=row.stop_sequence,
                 trip=trip,
                 timing_status="PTP" if row.timepoint else "OTH",
+                pick_up=(row.pickup_type != 1),
+                set_down=(row.drop_off_type != 1),
             )
 
             stop_time.stop = trip.destination = stops[row.stop_id]

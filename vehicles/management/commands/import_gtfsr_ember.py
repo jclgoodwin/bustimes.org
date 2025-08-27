@@ -39,8 +39,6 @@ class Command(GTFSRCommand):
         feed = gtfs_realtime_pb2.FeedMessage()
         feed.ParseFromString(response.content)
 
-        items = []
-
         self.existing_notes = {
             (note.code, note.text): note
             for note in Note.objects.filter(trip__operator="EMBR")
@@ -50,7 +48,7 @@ class Command(GTFSRCommand):
         # the feed contains both vehicle positions and alerts (and possibly other entities)
         for item in feed.entity:
             if item.HasField("vehicle"):
-                items.append(item)
+                yield item
             elif item.HasField("alert"):
                 header = item.alert.header_text.translation[0].text
                 if header == "Pre-booking":
@@ -76,8 +74,6 @@ class Command(GTFSRCommand):
             trips = Trip.objects.filter(stoptime__in=stop_times, operator="EMBR")
             note.stoptime_set.set(stop_times)
             note.trip_set.set(trips)
-
-        return items
 
     def get_vehicle(self, item):
         vehicle_code = item.vehicle.vehicle.id
