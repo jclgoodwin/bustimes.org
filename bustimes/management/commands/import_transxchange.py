@@ -706,6 +706,7 @@ class Command(BaseCommand):
         journeys,
         txc_service,
         operators: dict,
+        operator_notes: dict,
     ):
         default_calendar = None
 
@@ -735,6 +736,8 @@ class Command(BaseCommand):
             else:
                 calendar = None
 
+            operator_ref = journey.operator or txc_service.operator
+
             trip = Trip(
                 inbound=journey.journey_pattern.is_inbound(),
                 calendar=calendar,
@@ -743,7 +746,7 @@ class Command(BaseCommand):
                 vehicle_journey_code=journey.code or "",
                 ticket_machine_code=journey.ticket_machine_journey_code or "",
                 sequence=journey.sequencenumber,
-                operator=operators.get(journey.operator or txc_service.operator),
+                operator=operators.get(operator_ref),
             )
 
             if journey.block and journey.block.code:
@@ -811,6 +814,10 @@ class Command(BaseCommand):
                     any(tn.trip is trip and tn.note is note for tn in trip_notes)
                 ):
                     trip_notes.append(Trip.notes.through(trip=trip, note=note))
+
+            if operator_ref in operator_notes:
+                note = self.get_note(operator_ref, operator_notes[operator_ref])
+                trip_notes.append(Trip.notes.through(trip=trip, note=note))
 
             if journey.frequency_interval:
                 if len(journeys) > i + 1:
@@ -1006,6 +1013,12 @@ class Command(BaseCommand):
             skip_journeys = True
 
         operators = self.get_operators(transxchange, txc_service)
+
+        operator_notes = {
+            element.get("id"): element.findtext("Note")
+            for element in transxchange.operators
+            if element.findtext("Note")
+        }
 
         if "-Dublin_Express-" in filename:
             # defer to Transport for Ireland open data
@@ -1392,7 +1405,13 @@ class Command(BaseCommand):
 
             if not skip_journeys:
                 self.handle_journeys(
-                    route, route_created, stops, journeys, txc_service, operators
+                    route,
+                    route_created,
+                    stops,
+                    journeys,
+                    txc_service,
+                    operators,
+                    operator_notes,
                 )
 
     def do_stops(self, transxchange_stops: dict) -> dict:
