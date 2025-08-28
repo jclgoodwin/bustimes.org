@@ -89,42 +89,43 @@ def handle_situation(element, source, current_situations):
     assert len(vps) == 1
     situation.publication_window = get_period(vps[0])
 
-    avjs = element.findall("Affects/VehicleJourneys/AffectedVehicleJourney")
-    assert len(avjs) == 1
-    avj = avjs[0]
+    for avj in element.findall("Affects/VehicleJourneys/AffectedVehicleJourney"):
+        trips = get_trip(avj)
 
-    trips = get_trip(avj)
+        if len(trips) == 1:
+            with atomic():
+                situation.save()
 
-    if len(trips) == 1:
-        with atomic():
-            situation.save()
-
-            journey, created = AffectedJourney.objects.update_or_create(
-                {
-                    "condition": element.findtext("Consequences/Consequence/Condition"),
-                    "trip": trips[0],
-                    "origin_departure_time": avj.findtext("OriginAimedDepartureTime"),
-                },
-                situation=situation,
-            )
-            stop_times = journey.trip.stoptime_set.all()
-            calls = avj.find("Calls")
-            if len(calls) == len(stop_times):
-                calls = [
-                    Call(
-                        journey=journey,
-                        stop_time=stop_time,
-                        arrival_time=call.findtext("AimedArrivalTime"),
-                        departure_time=call.findtext("AimedDepartureTime"),
-                        condition=call.findtext("CallCondition"),
-                        order=call.findtext("Order"),
-                    )
-                    for stop_time, call in zip(stop_times, calls)
-                    if stop_time.stop_id == call.findtext("StopPointRef")
-                ]
-                Call.objects.bulk_create(calls)
-            else:
-                print(f"  {len(calls)=} {len(stop_times)=}")
+                journey, created = AffectedJourney.objects.update_or_create(
+                    {
+                        "condition": element.findtext(
+                            "Consequences/Consequence/Condition"
+                        ),
+                        "trip": trips[0],
+                        "origin_departure_time": avj.findtext(
+                            "OriginAimedDepartureTime"
+                        ),
+                    },
+                    situation=situation,
+                )
+                stop_times = journey.trip.stoptime_set.all()
+                calls = avj.find("Calls")
+                if len(calls) == len(stop_times):
+                    calls = [
+                        Call(
+                            journey=journey,
+                            stop_time=stop_time,
+                            arrival_time=call.findtext("AimedArrivalTime"),
+                            departure_time=call.findtext("AimedDepartureTime"),
+                            condition=call.findtext("CallCondition"),
+                            order=call.findtext("Order"),
+                        )
+                        for stop_time, call in zip(stop_times, calls)
+                        if stop_time.stop_id == call.findtext("StopPointRef")
+                    ]
+                    Call.objects.bulk_create(calls)
+                else:
+                    print(f"  {len(calls)=} {len(stop_times)=}")
 
     if situation.id:
         return situation
