@@ -50,7 +50,7 @@
 {% block header %}
 <header class="site-header">
     <div>
-        <a href="/" class="site-name{% if object.mode == 'ferry' %} ferry{% endif %}">{% if object.mode == 'ferry' %}Ferry Times{% else %}bustimes.org{% endif %}</a>
+        <a href="/" class="site-name">bustimes.org</a>
         <ul>
             <li><a href="/map{% if object.latlong %}#16/{{ object.latlong.y|floatformat:4 }}/{{ object.latlong.x|floatformat:4 }}{% endif %}">Map</a></li>
         </ul>
