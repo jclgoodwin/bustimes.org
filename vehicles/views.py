@@ -1040,6 +1040,10 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
                 }
             )
     elif journey.service_id:
+        stop_usages = StopUsage.objects.filter(service_id=journey.service_id)
+        if journey.direction:
+            is_inbound = journey.direction in ("inbound", "anticloc", "anticlockwise")
+            stop_usages = stop_usages.filter(inbound=is_inbound)
         data["stops"] = [
             {
                 "id": su.id,
@@ -1049,11 +1053,7 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
                 "coordinates": su.stop.latlong and su.stop.latlong.coords,
                 "minor": not su.timing_point,
             }
-            for i, su in enumerate(
-                StopUsage.objects.filter(service_id=journey.service_id).select_related(
-                    "stop"
-                )
-            )
+            for i, su in enumerate(stop_usages.select_related("stop"))
         ]
 
     if "stops" in data and "locations" in data:
