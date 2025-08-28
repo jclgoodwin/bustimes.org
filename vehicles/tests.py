@@ -255,7 +255,7 @@ class VehiclesTests(TestCase):
         # can't connect to redis - no drama
         with (
             override_settings(REDIS_URL="redis://localhose:69"),
-            self.assertNumQueries(3),
+            self.assertNumQueries(4),
         ):
             response = self.client.get(
                 f"/vehicles/{self.vehicle_1.id}/journeys/{self.journey.id}.json"
@@ -276,6 +276,7 @@ class VehiclesTests(TestCase):
                 "service_id": self.journey.service_id,
                 "trip_id": None,
                 "vehicle_id": self.journey.vehicle_id,
+                "stops": [],
             },
             response.json(),
         )

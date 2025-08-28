@@ -33,7 +33,7 @@ from sql_util.utils import Exists, SubqueryMax, SubqueryMin
 
 from accounts.models import User
 from buses.utils import cdn_cache_control
-from busstops.models import SERVICE_ORDER_REGEX, Operator, Service
+from busstops.models import SERVICE_ORDER_REGEX, Operator, Service, StopUsage
 from busstops.utils import get_bounding_box
 from bustimes.models import Garage, Route, StopTime
 from bustimes.utils import contiguous_stoptimes_only, get_other_trips_in_block
@@ -1039,6 +1039,22 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
                     "coordinates": stop and stop.latlong and stop.latlong.coords,
                 }
             )
+    elif journey.service_id:
+        data["stops"] = [
+            {
+                "id": su.id,
+                "atco_code": su.stop_id,
+                "name": su.stop.get_name_for_timetable(),
+                "heading": su.stop.get_heading(),
+                "coordinates": su.stop.latlong and su.stop.latlong.coords,
+                "minor": not su.timing_point,
+            }
+            for i, su in enumerate(
+                StopUsage.objects.filter(service_id=journey.service_id).select_related(
+                    "stop"
+                )
+            )
+        ]
 
     if "stops" in data and "locations" in data:
         # only stops with coordinates
