@@ -1,9 +1,10 @@
 import functools
+import io
+import zipfile
 from datetime import timedelta
 
 import xmltodict
 import sentry_sdk
-
 from ciso8601 import parse_datetime
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
@@ -12,7 +13,6 @@ from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
 from django.utils.dateparse import parse_duration
-from stream_unzip import stream_unzip
 
 from busstops.models import (
     Locality,
@@ -568,7 +568,7 @@ class Command(ImportLiveVehiclesCommand):
         if self.fallback_mode:
             url = self.source.settings.get("fallback_url") or url
 
-        response = self.session.get(url, timeout=61, stream=True)
+        response = self.session.get(url, timeout=61)
 
         if not response.ok:
             print(response.headers, response.content, response)
@@ -577,11 +577,12 @@ class Command(ImportLiveVehiclesCommand):
         if response.headers["content-type"] == "application/zip":
             with (
                 sentry_sdk.start_span(name="unzip"),
+                zipfile.ZipFile(io.BytesIO(response.content)) as archive,
             ):
-                data = b""
-                for file_name, file_size, unzipped_chunks in stream_unzip(response.raw):
-                    for chunk in unzipped_chunks:
-                        data += chunk
+                namelist = archive.namelist()
+                assert len(namelist) == 1
+                with archive.open(namelist[0]) as open_file:
+                    data = open_file.read()
         else:
             data = response.content
 
