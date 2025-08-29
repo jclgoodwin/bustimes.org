@@ -44,6 +44,7 @@ dependencies = [
     "django-debug-toolbar>=6.0.0,<7",
     "django-debug-toolbar-force>=0.2,<0.3",
     "django-debug-toolbar-template-profiler>=2.1.0,<3",
+    "stream-unzip>=0.0.99",
 ]
 
 [dependency-groups]
