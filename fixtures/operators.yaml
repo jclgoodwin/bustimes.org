@@ -73,8 +73,6 @@ MULB:
   url: http://www.mullanyscoaches.com
 HOGG:
   url: https://roadhoggs.co.uk/timetables/
-JTMT:
-  url: ""
 EBLY:
   url: http://www.ebleyexcursions.co.uk/school-timetables
 CBBH:
@@ -128,16 +126,6 @@ SWDC:
     EX7 9QH
 RYCA:
   url: https://ryedalect.org/our-services/local-bus-services/
-NXHH:
-  address: ""
-  email: Comments-Hallmark@rotala.co.uk
-  phone: ""
-MAYC:
-  name: Maynes Coaches
-  url: http://www.maynes.co.uk
-  address: ""
-  email: ""
-  phone: ""
 CTCL:
   name: CT Passenger
   url: http://www.ctpassenger.org/
@@ -216,8 +204,6 @@ BNML:
   name: Bee Network - Metroline
 AJTX:
   url: http://taxi-one.co.uk/
-HRBT:
-  url: https://www.herbertstravel.co.uk/
 COEV:
   name: Coach Events Services
   url: http://www.coacheventsservices.co.uk/
@@ -258,7 +244,7 @@ HOWT:
   url: https://www.omegabusways.uk/
 SSSN:
   url: https://www.shorelinetravel.co.uk/
-LCCO:
+LCCO: #NOC deleted, data should soon move to Evolve
   name: South Derbyshire Coaches
   url: http://www.southderby.com/
 WEFC:
@@ -275,3 +261,5 @@ ARCT:
   url: https://archwaytravel.co.uk/
 TXCO:
   url: https://www.facebook.com/AimeesTravel
+AMGR: 
+  url: https://flexi-bus.co.uk/
