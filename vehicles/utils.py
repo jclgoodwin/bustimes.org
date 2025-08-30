@@ -38,44 +38,38 @@ def get_revision(vehicle, data):
     # create a VehicleRevision record
 
     if "spare_ticket_machine" in data:
-        data["notes"] = "Spare ticket machine" if data["spare_ticket_machine"] else ""
-        del data["spare_ticket_machine"]
+        data["notes"] = (
+            "Spare ticket machine" if data.pop("spare_ticket_machine") else ""
+        )
 
     if "withdrawn" in data:
         from_value = "Yes" if revision.vehicle.withdrawn else "No"
-        to_value = "Yes" if data["withdrawn"] else "No"
+        to_value = "Yes" if data.pop("withdrawn") else "No"
         revision.changes["withdrawn"] = f"-{from_value}\n+{to_value}"
-        del data["withdrawn"]
 
     if "vehicle_type" in data:
-        vehicle_type = data["vehicle_type"]
+        vehicle_type = data.pop("vehicle_type")
         revision.from_type = revision.vehicle.vehicle_type
         revision.to_type = vehicle_type
-        del data["vehicle_type"]
 
     # operator has its own ForeignKey fields:
     if "operator" in data:
         revision.from_operator = revision.vehicle.operator
-        revision.to_operator = data["operator"]
-        del data["operator"]
+        revision.to_operator = data.pop("operator")
 
     if "colours" in data:
-        livery = data["colours"]
+        livery = data.pop("colours")
         if revision.vehicle.livery_id != (livery and livery.id):
             revision.from_livery = revision.vehicle.livery
             revision.to_livery = livery
             if revision.vehicle.colours:
                 revision.changes["colours"] = f"-{revision.vehicle.colours}\n+"
-        del data["colours"]
 
     if "other_colour" in data:
-        to_colour = data["other_colour"]
+        to_colour = data.pop("other_colour")
         revision.from_livery = revision.vehicle.livery
         if revision.vehicle.colours != to_colour:
             revision.changes["colours"] = f"-{revision.vehicle.colours}\n+{to_colour}"
-
-        if "other_colour" in data:
-            del data["other_colour"]
 
     if "features" in data:
         for feature in revision.vehicle.features.all():
@@ -85,33 +79,28 @@ def get_revision(vehicle, data):
                         revision=revision, feature=feature, add=False
                     )
                 )
-        for feature in data["features"]:
+        for feature in data.pop("features"):
             if feature not in revision.vehicle.features.all():
                 features.append(
                     VehicleRevisionFeature(revision=revision, feature=feature, add=True)
                 )
-        del data["features"]
 
     if "summary" in data:
-        revision.message = data["summary"]
-        del data["summary"]
+        revision.message = data.pop("summary")
 
     if "fleet_number" in data:
         revision.changes["fleet number"] = (
-            f"-{vehicle.fleet_code or vehicle.fleet_number or ''}\n+{data['fleet_number'] or ''}"
+            f"-{vehicle.fleet_code or vehicle.fleet_number or ''}\n+{data.pop('fleet_number') or ''}"
         )
-        del data["fleet_number"]
 
     if "previous_reg" in data:
-        revision.changes["previous reg"] = f"-\n+{data['previous_reg']}"
-        del data["previous_reg"]
+        revision.changes["previous reg"] = f"-\n+{data.pop('previous_reg')}"
 
     for field in ("reg", "notes", "branding", "name"):
         if field in data:
             from_value = getattr(vehicle, field)
-            to_value = data[field]
+            to_value = data.pop(field)
             revision.changes[field] = f"-{from_value}\n+{to_value}"
-            del data[field]
 
     assert not data
 
