@@ -200,7 +200,7 @@ def get_stop_times(date: date, time: timedelta | None, stop, routes, trip_ids=No
         trips = Trip.objects.filter(id__in=trip_ids, start__lt=time)
         times = times.filter(departure__lt=time)
     else:
-        routes = get_routes(routes, date)
+        routes = list(get_routes(routes, date))
 
         scotland = stop.pk[:1] == "6" and ":" not in stop.pk and stop.pk[:4].isdigit()
 
