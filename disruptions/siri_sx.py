@@ -29,7 +29,7 @@ def get_operators(operator_ref):
     )
 
 
-def handle_item(item, source: DataSource, current_situations: dict):
+def handle_item(item: ET.Element, source: DataSource, current_situations: dict):
     situation_number = item.findtext("SituationNumber")
 
     item.find("Source/TimeOfCommunication").text = None
@@ -37,10 +37,6 @@ def handle_item(item, source: DataSource, current_situations: dict):
     xml = ET.tostring(item, encoding="unicode")
 
     situation = current_situations.get(situation_number)
-    if not situation:
-        situation = source.situation_set.filter(
-            situation_number=situation_number
-        ).first()
 
     if situation:
         if situation.data == xml:
@@ -152,6 +148,15 @@ def handle_item(item, source: DataSource, current_situations: dict):
     return situation.id
 
 
+def get_situation_elements(open_file):
+    for _, element in ET.iterparse(open_file):
+        if element.tag[:29] == "{http://www.siri.org.uk/siri}":
+            element.tag = element.tag[29:]
+
+        if element.tag.endswith("PtSituationElement"):
+            yield element
+
+
 def bods_disruptions():
     url = "https://data.bus-data.dft.gov.uk/disruptions/download/bulk_archive"
 
@@ -167,17 +172,17 @@ def bods_disruptions():
     assert len(namelist) == 1
     open_file = archive.open(namelist[0])
 
+    elements = list(get_situation_elements(open_file))
+
+    situation_numbers = (element.findtext("SituationNumber") for element in elements)
+
     current_situations = {
-        s.situation_number: s for s in source.situation_set.filter(current=True)
+        s.situation_number: s
+        for s in source.situation_set.filter(situation_number__in=situation_numbers)
     }
 
-    for _, element in ET.iterparse(open_file):
-        if element.tag[:29] == "{http://www.siri.org.uk/siri}":
-            element.tag = element.tag[29:]
-
-        if element.tag.endswith("PtSituationElement"):
-            situations.append(handle_item(element, source, current_situations))
-            element.clear()
+    for element in elements:
+        situations.append(handle_item(element, source, current_situations))
 
     source.situation_set.filter(current=True).exclude(id__in=situations).update(
         current=False
