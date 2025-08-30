@@ -4,7 +4,7 @@ import json
 import logging
 from itertools import pairwise, groupby
 from urllib.parse import unquote
-
+from functools import partial
 import subprocess
 import xmltodict
 from django.conf import settings
@@ -523,7 +523,15 @@ def get_dates(vehicle=None, service=None):
 def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
     """list of VehicleJourneys (and dates) for a service or vehicle"""
 
-    dates = get_dates(service=service, vehicle=vehicle)
+    if vehicle and vehicle.latest_journey:
+        last_date = timezone.localdate(vehicle.latest_journey.datetime)
+        dates = cache.get_or_set(
+            f"vehicle{vehicle.id}dates{last_date}",
+            partial(get_dates, vehicle=vehicle),
+            timeout=86400,
+        )
+    else:
+        dates = get_dates(vehicle=vehicle, service=service)
 
     context = {}
 
@@ -535,7 +543,7 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
 
     if not date and dates is None:
         if vehicle and vehicle.latest_journey:
-            date = timezone.localdate(vehicle.latest_journey.datetime)
+            date = last_date
         else:
             date = journeys.aggregate(max_date=Max("datetime__date"))["max_date"]
 
@@ -555,8 +563,6 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
             if date not in dates:
                 dates.append(date)
                 dates.sort()
-            elif not journeys:
-                cache.delete(f"vehicle:{vehicle.id}:dates")
 
         context["journeys"] = journeys
 
