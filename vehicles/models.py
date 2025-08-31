@@ -217,20 +217,16 @@ class Livery(models.Model):
         if not livery_ids:
             livery_ids = (self.id,)
         selector = ",".join(f".livery-{livery_id}" for livery_id in livery_ids)
-        css = f"background: {self.left_css}"
+        css = f"  background: {self.left_css}"
         if self.text_colour:
-            css = f"{css};\n  color:{self.text_colour}"
+            css = f"{css};\n  color: {self.text_colour}"
         elif self.white_text:
-            css = f"{css};\n  color:#fff"
+            css = f"{css};\n  color: #fff"
         if self.stroke_colour:
-            css = f"{css};stroke:{self.stroke_colour}"
-        styles = [f"{selector} {{\n  {css}\n}}\n"]
+            css = f"{css};\n  stroke: {self.stroke_colour}"
         if self.right_css != self.left_css:
-            selector = ",".join(
-                f".livery-{livery_id}.right" for livery_id in livery_ids
-            )
-            styles.append(f"{selector} {{\n  background: {self.right_css}\n}}\n")
-        return styles
+            css += f";\n  &.right{{\n    background:{self.right_css}\n  }}"
+        return [f"{selector}{{\n{css}\n}}\n"]
 
 
 class VehicleFeature(models.Model):
