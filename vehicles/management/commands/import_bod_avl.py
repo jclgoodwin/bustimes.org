@@ -1,9 +1,10 @@
 import functools
 import io
 import zipfile
+import xml.etree.ElementTree as ET
 from datetime import timedelta
 
-import xmltodict
+# import xmltodict
 import sentry_sdk
 from ciso8601 import parse_datetime
 from django.conf import settings
@@ -12,7 +13,7 @@ from django.core.cache import cache
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
-from django.utils.dateparse import parse_duration
+# from django.utils.dateparse import parse_duration
 
 from busstops.models import (
     Locality,
@@ -98,7 +99,7 @@ class Command(ImportLiveVehiclesCommand):
 
     @staticmethod
     def get_datetime(item):
-        return parse_datetime(item["RecordedAtTime"])
+        return parse_datetime(item.findtext("RecordedAtTime"))
 
     @functools.cache
     def get_operator(self, operator_ref):
@@ -110,17 +111,14 @@ class Command(ImportLiveVehiclesCommand):
             | Q(noc=operator_ref) & ~Exists(operator_codes)
         )
 
-    def get_vehicle(self, item):
-        monitored_vehicle_journey = item["MonitoredVehicleJourney"]
-        operator_ref = monitored_vehicle_journey["OperatorRef"]
-        vehicle_ref = monitored_vehicle_journey["VehicleRef"] or ""
+    def get_vehicle(self, item: ET.Element):
+        monitored_vehicle_journey = item.find("MonitoredVehicleJourney")
+        operator_ref = monitored_vehicle_journey.findtext("OperatorRef")
+        vehicle_ref = monitored_vehicle_journey.findtext("VehicleRef") or ""
 
         vehicle_ref = vehicle_ref.removeprefix(f"{operator_ref}-")
 
-        try:
-            vehicle_unique_id = item["Extensions"]["VehicleJourney"]["VehicleUniqueId"]
-        except (KeyError, TypeError):
-            vehicle_unique_id = None
+        vehicle_unique_id = item.findtext("Extensions/VehicleJourney/VehicleUniqueId")
 
         if not vehicle_ref and vehicle_unique_id:
             vehicle_ref = vehicle_unique_id
@@ -206,27 +204,26 @@ class Command(ImportLiveVehiclesCommand):
 
         return vehicle, created
 
-    def get_service(self, operators, item, line_ref, vehicle_operator_id):
-        monitored_vehicle_journey = item["MonitoredVehicleJourney"]
+    def get_service(self, operators, item: ET.Element, line_ref, vehicle_operator_id):
+        monitored_vehicle_journey = item.find("MonitoredVehicleJourney")
 
-        if destination_ref := monitored_vehicle_journey.get("DestinationRef"):
+        if destination_ref := monitored_vehicle_journey.findtext("DestinationRef"):
             destination_ref = get_destination_ref(destination_ref)
 
         # filter by LineRef or (if present and different) TicketMachineServiceCode
         line_name_query = get_line_name_query(line_ref)
-        try:
-            ticket_machine_service_code = item["Extensions"]["VehicleJourney"][
-                "Operational"
-            ]["TicketMachine"]["TicketMachineServiceCode"]
-        except (KeyError, TypeError):
-            pass
-        else:
-            if ticket_machine_service_code.lower() != line_ref.lower():
-                line_name_query |= get_line_name_query(ticket_machine_service_code)
+        ticket_machine_service_code = item.findtext(
+            "Extensions/VehicleJourney/Operational/TicketMachine/TicketMachineServiceCode"
+        )
+        if (
+            ticket_machine_service_code
+            and ticket_machine_service_code.lower() != line_ref.lower()
+        ):
+            line_name_query |= get_line_name_query(ticket_machine_service_code)
 
         services = self.services.filter(line_name_query).defer("geometry")
 
-        if item["MonitoredVehicleJourney"]["OperatorRef"] == "TFLO":
+        if monitored_vehicle_journey.findtext("OperatorRef") == "TFLO":
             return services.filter(source__name="L").first()
 
         if not operators:
@@ -305,8 +302,7 @@ class Command(ImportLiveVehiclesCommand):
                         service=OuterRef("pk"), atco_code=destination_ref
                     )
                 )
-                origin_ref = monitored_vehicle_journey.get("OriginRef")
-                if origin_ref:
+                if origin_ref := monitored_vehicle_journey.findtext("OriginRef"):
                     condition &= Exists(
                         StopPoint.objects.filter(
                             service=OuterRef("pk"), atco_code=origin_ref
@@ -342,43 +338,42 @@ class Command(ImportLiveVehiclesCommand):
         except (Service.DoesNotExist, Service.MultipleObjectsReturned):
             pass
 
-    def get_journey(self, item, vehicle):
-        monitored_vehicle_journey = item["MonitoredVehicleJourney"]
+    def get_journey(self, item: ET.Element, vehicle):
+        monitored_vehicle_journey = item.find("MonitoredVehicleJourney")
 
-        journey_ref = monitored_vehicle_journey.get("VehicleJourneyRef")
-
-        if not journey_ref:
-            try:
-                journey_ref = monitored_vehicle_journey["FramedVehicleJourneyRef"][
-                    "DatedVehicleJourneyRef"
-                ]
-            except (KeyError, ValueError):
-                pass
+        journey_ref = monitored_vehicle_journey.findtext(
+            "VehicleJourneyRef"
+        ) or monitored_vehicle_journey.findtext(
+            "FramedVehicleJourneyRef/DatedVehicleJourneyRef"
+        )
 
         if journey_ref == "UNKNOWN":
             journey_ref = None
 
-        try:
-            ticket_machine = item["Extensions"]["VehicleJourney"]["Operational"][
-                "TicketMachine"
-            ]
-            journey_code = ticket_machine["JourneyCode"]
-        except (KeyError, TypeError):
-            journey_code = journey_ref
-            ticket_machine = None
+        if ticket_machine := item.find(
+            "Extensions/VehicleJourney/Operational/TicketMachine"
+        ):
+            journey_code = ticket_machine.findtext("JourneyCode")
+
+            if journey_code:
+                if journey_code == "0000":
+                    journey_code = journey_ref
+                elif not journey_ref:
+                    journey_ref = (
+                        journey_code  # what we will use for finding matching trip
+                    )
         else:
-            if journey_code == "0000":
-                journey_code = journey_ref
-            elif not journey_ref:
-                journey_ref = journey_code  # what we will use for finding matching trip
+            journey_code = journey_ref
 
-        route_name = monitored_vehicle_journey.get(
-            "PublishedLineName"
-        ) or monitored_vehicle_journey.get("LineRef", "")
+        route_name = (
+            monitored_vehicle_journey.findtext("PublishedLineName")
+            or monitored_vehicle_journey.findtext("LineRef")
+            or ""
+        )
         if not route_name and ticket_machine:
-            route_name = ticket_machine.get("TicketMachineServiceCode", "")
+            route_name = ticket_machine.findtext("TicketMachineServiceCode") or ""
 
-        if origin_aimed_departure_time := monitored_vehicle_journey.get(
+        if origin_aimed_departure_time := monitored_vehicle_journey.findtext(
             "OriginAimedDepartureTime"
         ):
             origin_aimed_departure_time = parse_datetime(origin_aimed_departure_time)
@@ -389,7 +384,7 @@ class Command(ImportLiveVehiclesCommand):
 
         datetime = self.get_datetime(item)
 
-        operator_ref = monitored_vehicle_journey["OperatorRef"]
+        operator_ref = monitored_vehicle_journey.findtext("OperatorRef")
 
         # treat the weird Nottingham City Transport data specially
         if (
@@ -446,8 +441,7 @@ class Command(ImportLiveVehiclesCommand):
         if journey_ref:
             journey.code = journey_ref
 
-        destination_ref = monitored_vehicle_journey.get("DestinationRef")
-        if destination_ref:
+        if destination_ref := monitored_vehicle_journey.findtext("DestinationRef"):
             destination_ref = get_destination_ref(destination_ref)
 
         if not journey.destination:
@@ -456,14 +450,14 @@ class Command(ImportLiveVehiclesCommand):
                 journey.destination = get_destination_name(destination_ref)
             # use the DestinationName provided
             if not journey.destination:
-                if destination := monitored_vehicle_journey.get("DestinationName"):
+                if destination := monitored_vehicle_journey.findtext("DestinationName"):
                     journey.destination = destination.replace("_", " ")
 
             # fall back to direction
             if not journey.destination:
-                journey.direction = monitored_vehicle_journey.get("DirectionRef", "")[
-                    :8
-                ]
+                journey.direction = (
+                    monitored_vehicle_journey.findtext("DirectionRef") or ""
+                )
 
         if not journey.service_id and route_name:
             operators = self.get_operator(operator_ref)
@@ -490,7 +484,7 @@ class Command(ImportLiveVehiclesCommand):
 
             # match trip (timetable) to journey:
             if journey.service and (origin_aimed_departure_time or journey_ref):
-                block_ref = monitored_vehicle_journey.get("BlockRef")
+                block_ref = monitored_vehicle_journey.findtext("BlockRef")
 
                 arrival_time = monitored_vehicle_journey.get(
                     "DestinationAimedArrivalTime"
@@ -501,7 +495,7 @@ class Command(ImportLiveVehiclesCommand):
                 journey.trip = journey.get_trip(
                     datetime=datetime,
                     operator_ref=operator_ref,
-                    origin_ref=monitored_vehicle_journey.get("OriginRef"),
+                    origin_ref=monitored_vehicle_journey.findtext("OriginRef"),
                     destination_ref=destination_ref,
                     departure_time=origin_aimed_departure_time,
                     arrival_time=arrival_time,
@@ -527,40 +521,40 @@ class Command(ImportLiveVehiclesCommand):
         return journey
 
     @staticmethod
-    def create_vehicle_location(item):
-        monitored_vehicle_journey = item["MonitoredVehicleJourney"]
-        location = monitored_vehicle_journey["VehicleLocation"]
-        latlong = GEOSGeometry(f"POINT({location['Longitude']} {location['Latitude']})")
-        bearing = monitored_vehicle_journey.get("Bearing")
-        if bearing:
+    def create_vehicle_location(item: ET.Element):
+        monitored_vehicle_journey = item.find("MonitoredVehicleJourney")
+        location = monitored_vehicle_journey.find("VehicleLocation")
+        latlong = GEOSGeometry(
+            f"POINT({location.findtext('Longitude')} {location.findtext('Latitude')})"
+        )
+        if bearing := monitored_vehicle_journey.findtext("Bearing"):
             # Assume '0' means None. There's only a 1/360 chance the bus is actually facing exactly north
             bearing = float(bearing) or None
-        delay = monitored_vehicle_journey.get("Delay")
-        if delay:
-            delay = parse_duration(delay)
+        # if delay := monitored_vehicle_journey.findtext("Delay"):
+        #     delay = parse_duration(delay)
         location = VehicleLocation(
             latlong=latlong,
             heading=bearing,
-            occupancy=occupancies.get(monitored_vehicle_journey.get("Occupancy")),
-            block=monitored_vehicle_journey.get("BlockRef"),
+            occupancy=occupancies.get(monitored_vehicle_journey.findtext("Occupancy")),
+            block=monitored_vehicle_journey.findtext("BlockRef"),
         )
-        if monitored_vehicle_journey["OperatorRef"] == "TFLO":
-            location.tfl_code = monitored_vehicle_journey["VehicleRef"]
-        extensions = item.get("Extensions")
-        if extensions:
-            extensions = extensions.get("VehicleJourney") or extensions.get(
-                "VehicleJourneyExtensions"
-            )
-        if extensions:
-            location.occupancy_thresholds = extensions.get("OccupancyThresholds")
-            if "SeatedOccupancy" in extensions:
-                location.seated_occupancy = int(extensions["SeatedOccupancy"])
-            if "SeatedCapacity" in extensions:
-                location.seated_capacity = int(extensions["SeatedCapacity"])
-            if "WheelchairOccupancy" in extensions:
-                location.wheelchair_occupancy = int(extensions["WheelchairOccupancy"])
-            if "WheelchairCapacity" in extensions:
-                location.wheelchair_capacity = int(extensions["WheelchairCapacity"])
+        if monitored_vehicle_journey.findtext("OperatorRef") == "TFLO":
+            location.tfl_code = monitored_vehicle_journey.findtext("VehicleRef")
+        # extensions = item.get("Extensions")
+        # if extensions:
+        #     extensions = extensions.find("VehicleJourney") or extensions.find(
+        #         "VehicleJourneyExtensions"
+        #     )
+        # if extensions:
+        # location.occupancy_thresholds = extensions.find("OccupancyThresholds")
+        # if "SeatedOccupancy" in extensions:
+        #     location.seated_occupancy = int(extensions.findtext("SeatedOccupancy")
+        # if "SeatedCapacity" in extensions:
+        #     location.seated_capacity = int(extensions.findtext("SeatedCapacity"))
+        # if "WheelchairOccupancy" in extensions:
+        #     location.wheelchair_occupancy = int(extensions["WheelchairOccupancy"])
+        # if "WheelchairCapacity" in extensions:
+        #     location.wheelchair_capacity = int(extensions["WheelchairCapacity"])
         return location
 
     def get_items(self):
@@ -582,65 +576,62 @@ class Command(ImportLiveVehiclesCommand):
                 namelist = archive.namelist()
                 assert len(namelist) == 1
                 with archive.open(namelist[0]) as open_file:
-                    data = open_file.read()
+                    data = io.BytesIO(open_file.read())
         else:
-            data = response.content
-
-        with sentry_sdk.start_span(name="parse XML"):
-            data = xmltodict.parse(data, force_list=["VehicleActivity"])
+            data = io.StringIO(response.text)
 
         previous_time = self.source.datetime
 
-        self.source.datetime = parse_datetime(
-            data["Siri"]["ServiceDelivery"]["ResponseTimestamp"]
-        )
+        with sentry_sdk.start_span(name="parse XML"):
+            for _, element in ET.iterparse(data):
+                if element.tag[:29] == "{http://www.siri.org.uk/siri}":
+                    element.tag = element.tag[29:]
 
-        if (
-            self.source.datetime
-            and previous_time
-            and self.source.datetime < previous_time
-        ):
-            return  # don't return old data
+                if element.tag == "ResponseTimestamp":
+                    self.source.datetime = parse_datetime(element.text)
 
-        return data["Siri"]["ServiceDelivery"]["VehicleMonitoringDelivery"].get(
-            "VehicleActivity"
-        )
+                    if (
+                        self.source.datetime
+                        and previous_time
+                        and self.source.datetime < previous_time
+                    ):
+                        return  # don't return old data
+
+                elif element.tag == "VehicleActivity":
+                    yield element
 
     @staticmethod
-    def get_vehicle_identity(item):
-        monitored_vehicle_journey = item["MonitoredVehicleJourney"]
-        operator_ref = monitored_vehicle_journey["OperatorRef"]
-        vehicle_ref = monitored_vehicle_journey["VehicleRef"]
+    def get_vehicle_identity(item) -> str:
+        monitored_vehicle_journey = item.find("MonitoredVehicleJourney")
+        operator_ref = monitored_vehicle_journey.findtext("OperatorRef")
+        vehicle_ref = monitored_vehicle_journey.findtext("VehicleRef")
 
-        try:
-            vehicle_unique_id = item["Extensions"]["VehicleJourney"]["VehicleUniqueId"]
-        except (KeyError, TypeError):
-            pass
-        else:
+        if vehicle_unique_id := item.findtext(
+            "Extensions/VehicleJourney/VehicleUniqueId"
+        ):
             vehicle_ref = f"{vehicle_ref}:{vehicle_unique_id}"
 
         return f"{operator_ref}:{vehicle_ref}"
 
     @staticmethod
     def get_journey_identity(item):
-        monitored_vehicle_journey = item["MonitoredVehicleJourney"]
-        line_ref = monitored_vehicle_journey.get("LineRef")
-        line_name = monitored_vehicle_journey.get("PublishedLineName")
+        monitored_vehicle_journey = item.find("MonitoredVehicleJourney")
+        line_ref = monitored_vehicle_journey.findtext("LineRef")
+        line_name = monitored_vehicle_journey.findtext("PublishedLineName")
 
-        try:
-            journey_ref = monitored_vehicle_journey["FramedVehicleJourneyRef"]
-        except (KeyError, ValueError):
-            journey_ref = monitored_vehicle_journey.get("VehicleJourneyRef")
+        journey_ref = monitored_vehicle_journey.findtext(
+            "FramedVehicleJourneyRef"
+        ) or monitored_vehicle_journey.findtext("VehicleJourneyRef")
 
-        departure = monitored_vehicle_journey.get("OriginAimedDepartureTime")
-        direction = monitored_vehicle_journey.get("DirectionRef")
-        destination = monitored_vehicle_journey.get("DestinationName")
+        departure = monitored_vehicle_journey.findtext("OriginAimedDepartureTime")
+        direction = monitored_vehicle_journey.findtext("DirectionRef")
+        destination = monitored_vehicle_journey.findtext("DestinationName")
 
-        return f"{line_ref} {line_name} {journey_ref} {departure} {direction} {destination}"
+        return (line_ref, line_name, journey_ref, departure, direction, destination)
 
     @staticmethod
     def get_item_identity(item):
-        return item["RecordedAtTime"]
+        return item.findtext("RecordedAtTime")
 
     def update(self):
         with sentry_sdk.start_transaction(name="bod_avl_update"):

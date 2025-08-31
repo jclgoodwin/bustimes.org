@@ -1,4 +1,6 @@
 import functools
+import xml.etree.ElementTree as ET
+from io import StringIO
 from datetime import timedelta
 
 from ciso8601 import parse_datetime
@@ -27,37 +29,39 @@ def get_bod_avl_command(source_name):
 def handle_siri_post(uuid, data):
     now = timezone.now()
 
-    data = data["Siri"]
-
     subscription = SiriSubscription.objects.get(uuid=uuid)
 
-    if "HeartbeatNotification" in data:
-        timestamp = parse_datetime(data["HeartbeatNotification"]["RequestTimestamp"])
-        total_items = None
-        changed_items = changed_journey_items = ()
-        subscription_ref = None
-    else:
-        data = data["ServiceDelivery"]
+    for _, element in ET.iterparse(StringIO(data)):
+        if element.tag[:29] == "{http://www.siri.org.uk/siri}":
+            element.tag = element.tag[29:]
 
-        command = get_bod_avl_command(subscription.name)
+        if element.tag == "HeartbeatNotification":
+            timestamp = parse_datetime(element.findtext("RequestTimestamp"))
+            total_items = None
+            changed_items = changed_journey_items = ()
+            subscription_ref = None
+        elif element.tag == "ServiceDelivery":
+            items = element.findall("VehicleMonitoringDelivery/VehicleActivity")
 
-        items = data["VehicleMonitoringDelivery"]["VehicleActivity"]
+            command = get_bod_avl_command(subscription.name)
 
-        timestamp = parse_datetime(data["ResponseTimestamp"])
-        command.source.datetime = timestamp
+            timestamp = parse_datetime(element.findtext("ResponseTimestamp"))
+            command.source.datetime = timestamp
 
-        (
-            changed_items,
-            changed_journey_items,
-            changed_item_identities,
-            changed_journey_identities,
-            total_items,
-        ) = command.get_changed_items(items)
+            (
+                changed_items,
+                changed_journey_items,
+                changed_item_identities,
+                changed_journey_identities,
+                total_items,
+            ) = command.get_changed_items(items)
 
-        command.handle_items(changed_items, changed_item_identities)
-        command.handle_items(changed_journey_items, changed_journey_identities)
+            command.handle_items(changed_items, changed_item_identities)
+            command.handle_items(changed_journey_items, changed_journey_identities)
 
-        subscription_ref = data["VehicleMonitoringDelivery"].get("SubscriptionRef")
+            subscription_ref = element.findtext(
+                "VehicleMonitoringDelivery/SubscriptionRef"
+            )
 
     # stats for last 50 updates:
     if subscription.name == "Transport for Wales":
