@@ -1180,9 +1180,8 @@ def siri_post(request, uuid):
         )
 
     body = request.body.decode()
-    data = xmltodict.parse(body, force_list=["VehicleActivity"])
 
-    handle_siri_post(uuid, data)
+    handle_siri_post(uuid, body)
 
     cache.set("last_siri_post", {"headers": request.headers, "body": body})
 
@@ -1217,16 +1216,18 @@ def overland(request, uuid):
 
         handle_siri_post(
             uuid,
-            {
-                "Siri": {
-                    "ServiceDelivery": {
-                        "ResponseTimestamp": when,
-                        "VehicleMonitoringDelivery": {
-                            "VehicleActivity": [activity],
-                        },
+            xmltodict.unparse(
+                {
+                    "Siri": {
+                        "ServiceDelivery": {
+                            "ResponseTimestamp": when,
+                            "VehicleMonitoringDelivery": {
+                                "VehicleActivity": [activity],
+                            },
+                        }
                     }
                 }
-            },
+            ),
         )
 
     # https://github.com/aaronpk/Overland-iOS#api
