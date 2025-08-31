@@ -234,6 +234,7 @@ class TripSerializer(serializers.ModelSerializer):
                 "aimed_departure_time": stop_time.departure_time(),
                 "track": route_link and route_link.geometry.coords,
                 "timing_status": stop_time.timing_status,
+                "timing_point": stop_time.timing_point,
                 "pick_up": stop_time.pick_up,
                 "set_down": stop_time.set_down,
                 "expected_arrival_time": getattr(stop_time, "expected_arrival", None),

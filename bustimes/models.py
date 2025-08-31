@@ -458,13 +458,13 @@ class Trip(models.Model):
 class StopTime(models.Model):
     id = models.BigAutoField(primary_key=True)
     trip = models.ForeignKey(Trip, models.CASCADE)
-    stop_code = models.CharField(max_length=255, blank=True)
     stop = models.ForeignKey(
         "busstops.StopPoint", models.DO_NOTHING, null=True, blank=True
     )
     arrival = SecondsField(null=True, blank=True)
     departure = SecondsField(null=True, blank=True)
     sequence = models.PositiveSmallIntegerField(null=True, blank=True)
+    timing_point = models.CharField(db_default=False)
     timing_status = models.CharField(max_length=3, blank=True)
     pick_up = models.BooleanField(default=True)
     set_down = models.BooleanField(default=True)

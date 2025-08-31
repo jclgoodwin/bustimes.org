@@ -648,6 +648,7 @@ class Command(BaseCommand):
         stop_time = StopTime(
             trip=trip,
             sequence=cell.stopusage.sequencenumber,
+            timing_point=(timing_status == "PTP"),
             timing_status=timing_status,
         )
         if (
