@@ -12,6 +12,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from busstops.models import DataSource, Operator, Service, StopPoint
+from vosa.models import Registration
 
 from ...download_utils import download_if_modified
 from ...models import Calendar, CalendarDate, Route, StopTime, Trip, Note
@@ -146,6 +147,12 @@ class Command(BaseCommand):
             service.colour_id = operator.colour_id
             if row.geometry:
                 service.geometry = row.geometry.wkt
+
+            registrations = Registration.objects.filter(
+                licence__licence_number="PM2025892", service_number=row.route_id
+            )
+            if len(registrations) == 1:
+                route.registration = registrations[0]
 
             service.save()
             service.operator.add(operator)
