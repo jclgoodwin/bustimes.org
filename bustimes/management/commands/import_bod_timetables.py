@@ -16,10 +16,10 @@ from django.db import DataError
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
 
-from busstops.models import DataSource, Operator, Service
+from busstops.models import DataSource, Service
 
 from ...download_utils import download, download_if_modified
-from ...models import Route, TimetableDataSource
+from ...models import Route, TimetableDataSource, Trip
 from ...utils import log_time_taken
 from .import_transxchange import Command as TransXChangeCommand
 
@@ -67,9 +67,11 @@ def is_noc(search_term: str) -> bool:
 
 def get_operator_ids(source) -> list:
     operators = (
-        Operator.objects.filter(service__route__source=source).distinct().values("noc")
+        Trip.objects.filter(route__source=source, route__service__isnull=False)
+        .values("operator_id")
+        .distinct()
     )
-    return [operator["noc"] for operator in operators]
+    return [operator["operator_id"] for operator in operators]
 
 
 def get_command():
