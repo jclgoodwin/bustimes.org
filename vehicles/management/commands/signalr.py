@@ -65,9 +65,10 @@ class Command(ImportLiveVehiclesCommand):
                         current=True,
                         operator=self.operator_id,
                         source=self.timetable_source,
-                        route__line_name__iexact=route,
+                        line_name__iexact=route,
+                        # route__line_name__iexact=route,
                     )
-                    .distinct()
+                    # .distinct()
                     .get()
                 )
             except (Service.DoesNotExist, Service.MultipleObjectsReturned):
