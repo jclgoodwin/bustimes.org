@@ -76,7 +76,7 @@
 | bustimes/management/tests/test\_import\_passenger.py            |       23 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_transxchange.py         |      742 |        0 |    100% |           |
 | bustimes/management/tests/test\_tnds.py                         |       19 |        0 |    100% |           |
-| bustimes/models.py                                              |      340 |        8 |     98% |111, 372, 375, 404, 449-452, 484 |
+| bustimes/models.py                                              |      340 |        9 |     97% |111, 214, 372, 375, 404, 449-452, 484 |
 | bustimes/test\_get\_trip.py                                     |       31 |        0 |    100% |           |
 | bustimes/tests.py                                               |      132 |        0 |    100% |           |
 | bustimes/timetables.py                                          |      637 |       53 |     92% |101-114, 143, 229-240, 271-272, 332, 344-347, 359, 373-378, 392, 411, 486, 489, 505-508, 510, 537, 646-661, 747-748, 819, 965-967 |
@@ -136,7 +136,7 @@
 | vehicles/management/commands/import\_nx.py                      |      146 |       29 |     80% |92, 109-111, 113-114, 117-118, 131, 139-146, 150-153, 167-170, 173, 185-186, 196, 207 |
 | vehicles/management/commands/import\_polar.py                   |       84 |       28 |     67% |13-14, 25, 29, 33, 41, 44, 49-55, 61-63, 67, 77-78, 81, 95-98, 101, 114, 121 |
 | vehicles/management/commands/import\_stagecoach\_avl.py         |       72 |        5 |     93% |124, 134, 139-140, 172 |
-| vehicles/management/commands/signalr.py                         |       74 |        5 |     93% |59, 76-78, 93 |
+| vehicles/management/commands/signalr.py                         |       74 |        5 |     93% |59, 77-79, 94 |
 | vehicles/management/commands/siri\_vm\_subscribe.py             |       26 |        7 |     73% |     27-55 |
 | vehicles/management/import\_live\_vehicles.py                   |      330 |       53 |     84% |45, 58-74, 131, 140, 146-148, 150, 172, 201, 210-213, 222, 235, 243, 252-253, 255-256, 261-262, 276-282, 314-315, 356, 359-360, 381-382, 388, 479, 516-518, 528, 547, 557-559 |
 | vehicles/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
@@ -169,7 +169,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16269** | **1109** | **93%** |           |
+|                                                       **TOTAL** | **16269** | **1110** | **93%** |           |
 
 
 ## Setup coverage badge
