@@ -60,10 +60,12 @@ def get_versions(session, source):
     soup = bs4.BeautifulSoup(response.text, "lxml")
 
     for heading in soup.find_all("h3"):
-        text = heading.text
-        assert " to " in text
+        if " to " not in heading.text:
+            continue
 
-        dates = text.removeprefix("Current Data (").removesuffix(")").split(" to ")
+        dates = (
+            heading.text.removeprefix("Current Data (").removesuffix(")").split(" to ")
+        )
         assert len(dates) == 2
 
         for element in heading.next_siblings:
@@ -92,11 +94,10 @@ class Command(BaseCommand):
         session = Session()
 
         prefix = "https://data.discoverpassenger.com/operator"
-
-        sources = DataSource.objects.filter(url__startswith=prefix)
+        suffix = "/open-data"
 
         timetable_data_sources = TimetableDataSource.objects.filter(
-            active=True, url__startswith=prefix
+            Q(url__startswith=prefix) | Q(url__endswith=suffix), active=True
         )
         if operator_name:
             timetable_data_sources = timetable_data_sources.filter(name=operator_name)
@@ -139,7 +140,7 @@ class Command(BaseCommand):
                         command.version = version
                         handle_file(command, version.name, qualify_filename=True)
 
-                clean_up(source, sources)
+                clean_up(source, [command.source])
 
                 operator_ids = get_operator_ids(command.source)
                 logger.info(f"  {operator_ids}")
