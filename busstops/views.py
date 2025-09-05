@@ -260,9 +260,8 @@ def status(request):
         "bod_avl_status": {},
     }
 
-    for key in ("bod_avl_status", "tfw_status"):
+    for key in ("bod_avl_status", "Transport for Wales_status", "Bus Open Data_status"):
         status = cache.get(key, [])
-        key = key.split("_")[0]
         context["bod_avl_status"][key] = status
 
     context["statuses"] = cache.get_many(

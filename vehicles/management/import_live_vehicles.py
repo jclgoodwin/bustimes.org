@@ -30,7 +30,8 @@ twelve_hours = timedelta(hours=12)
 
 
 Status = namedtuple(
-    "Status", ("fetched_at", "timestamp", "total_items", "changed_items", "time_taken")
+    "Status",
+    ("fetched_at", "timestamp", "age", "total_items", "changed_items", "time_taken"),
 )
 
 
@@ -533,6 +534,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             self.status.append(
                 Status(
                     self.source.datetime,
+                    None,
                     None,
                     total_items,
                     len(changed_items) + len(changed_journey_items),

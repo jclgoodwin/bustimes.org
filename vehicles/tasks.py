@@ -60,19 +60,19 @@ def handle_siri_post(uuid, data):
         subscription_ref = data["VehicleMonitoringDelivery"].get("SubscriptionRef")
 
     # stats for last 50 updates:
-    if subscription.name == "Transport for Wales":
-        stats = cache.get("tfw_status", [])
-        stats.append(
-            import_bod_avl.Status(
-                now,
-                timestamp,
-                total_items,
-                len(changed_items) + len(changed_journey_items),
-                subscription_ref,
-            )
+    stats = cache.get(f"{subscription.name}_status", [])
+    stats.append(
+        import_bod_avl.Status(
+            now,
+            timestamp,
+            now - timestamp,
+            total_items,
+            len(changed_items) + len(changed_journey_items),
+            subscription_ref,
         )
-        stats = stats[-50:]
-        cache.set("tfw_status", stats, None)
+    )
+    stats = stats[-50:]
+    cache.set(f"{subscription.name}_status", stats, None)
 
 
 @db_task()

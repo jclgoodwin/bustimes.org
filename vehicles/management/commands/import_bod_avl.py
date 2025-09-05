@@ -680,6 +680,7 @@ class Command(ImportLiveVehiclesCommand):
                 Status(
                     now,
                     self.source.datetime,
+                    now - self.source.datetime,
                     total_items,
                     len(changed_items) + len(changed_journey_items),
                     time_taken,
