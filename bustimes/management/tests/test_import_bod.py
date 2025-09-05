@@ -485,7 +485,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
                 "bustimes.management.commands.import_bod_timetables.download_if_modified",
                 return_value=(True, parse_datetime("2020-06-10T12:00:00+01:00")),
             ) as download_if_modified:
-                with self.assertNumQueries(112):
+                with self.assertNumQueries(116):
                     call_command("import_bod_timetables", "stagecoach")
                 download_if_modified.assert_called_with(
                     path, DataSource.objects.get(name="Stagecoach East"), ANY
@@ -505,7 +505,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
                 with self.assertNumQueries(1):
                     call_command("import_bod_timetables", "stagecoach", "SCOX")
 
-                with self.assertNumQueries(120):
+                with self.assertNumQueries(124):
                     call_command("import_bod_timetables", "stagecoach", "SCCM")
 
                 route_link.refresh_from_db()
@@ -545,7 +545,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
         response = self.client.get(f"/api/trips/{trip.id}/")
         self.assertTrue(response.json()["times"][8]["track"])
 
-        with self.assertNumQueries(18):
+        with self.assertNumQueries(19):
             response = self.client.get("/services/904-huntingdon-peterborough")
         self.assertContains(response, "Possibly similar services")
         self.assertContains(
@@ -563,7 +563,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
         BankHolidayDate.objects.create(
             bank_holiday=BankHoliday.objects.get(name="ChristmasDay"), date="2020-12-25"
         )
-        with self.assertNumQueries(16):
+        with self.assertNumQueries(17):
             response = self.client.get(
                 "/services/904-huntingdon-peterborough?date=2020-12-25"
             )

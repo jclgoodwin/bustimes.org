@@ -14,6 +14,7 @@ import zipfile
 from functools import cache
 
 from django.core.management.base import BaseCommand
+from django.contrib.gis.geos import Point
 from django.db import IntegrityError
 from django.db.models import Count, Exists, OuterRef, Q
 from django.db.models.functions import Now, Upper
@@ -1362,6 +1363,8 @@ class Command(BaseCommand):
 
                 # we're not interested in straight lines between stops
                 if any(len(link.track) > 2 for link in route_links):
+                    stops_to_update = []
+
                     route_links_to_create = {}  # or update
 
                     for route_link in route_links:
@@ -1377,12 +1380,22 @@ class Command(BaseCommand):
                                 service=service,
                             )
 
+                            # deduce stop location from start or end of track
+                            if from_stop.latlong is None:
+                                from_stop.latlong = Point(route_link.track[0])
+                                stops_to_update.append(from_stop)
+                            elif to_stop.latlong is None:
+                                to_stop.latlong = Point(route_link.track[-1])
+                                stops_to_update.append(to_stop)
+
                     RouteLink.objects.bulk_create(
                         route_links_to_create.values(),
                         update_conflicts=True,
                         update_fields=["geometry"],
                         unique_fields=["from_stop", "to_stop", "service"],
                     )
+
+                    StopPoint.objects.bulk_update(stops_to_update, ["latlong"])
 
             route_code = filename
             if len(transxchange.services) > 1:
@@ -1431,7 +1444,7 @@ class Command(BaseCommand):
         stops = (
             StopPoint.objects.annotate(atco_code_upper=Upper("atco_code"))
             .filter(atco_code_upper__in=stops)
-            .only("atco_code")
+            .only("atco_code", "latlong")
             .order_by()
         )
         stops = {stop.atco_code_upper: stop for stop in stops}
