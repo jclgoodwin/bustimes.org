@@ -1180,6 +1180,9 @@ class Command(BaseCommand):
                 or "Origin - " not in description
                 and " - Destination" not in description
             ):
+                if line.line_brand:
+                    description = description.removesuffix(f" [{line.line_brand}]")
+
                 service.description = description
 
             if line.colour:
