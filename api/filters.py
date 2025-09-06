@@ -1,5 +1,6 @@
 from django.db.models import Q, F
 from django.contrib.postgres.search import SearchQuery, SearchRank
+from django.forms import DateInput
 from django.forms.widgets import NumberInput, TextInput
 from django_filters.rest_framework import (
     ModelChoiceFilter,
@@ -7,6 +8,7 @@ from django_filters.rest_framework import (
     DateTimeFilter,
     FilterSet,
     OrderingFilter,
+    DateFilter,
 )
 
 from busstops.models import Operator, Service, StopPoint
@@ -84,10 +86,18 @@ class TripFilter(FilterSet):
     service = ModelChoiceFilter(
         queryset=Service.objects, field_name="route__service", widget=NumberInput
     )
+    date = DateFilter(
+        method="filter_by_date", label="Date", widget=DateInput(attrs={"type": "date"})
+    )
 
     class Meta:
         model = Trip
-        fields = ["ticket_machine_code", "vehicle_journey_code", "block", "service"]
+        fields = ["ticket_machine_code", "vehicle_journey_code", "block"]
+
+    def filter_by_date(self, queryset, name, value):
+        return queryset.filter(
+            calendar__start_date__lte=value, calendar__end_date__gte=value
+        )
 
 
 class LiveryFilter(FilterSet):
