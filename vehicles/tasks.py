@@ -35,7 +35,6 @@ def handle_siri_post(uuid, data):
         timestamp = parse_datetime(data["HeartbeatNotification"]["RequestTimestamp"])
         total_items = None
         changed_items = changed_journey_items = ()
-        subscription_ref = None
     else:
         data = data["ServiceDelivery"]
 
@@ -57,10 +56,9 @@ def handle_siri_post(uuid, data):
         command.handle_items(changed_items, changed_item_identities)
         command.handle_items(changed_journey_items, changed_journey_identities)
 
-        subscription_ref = data["VehicleMonitoringDelivery"].get("SubscriptionRef")
-
     # stats for last 50 updates:
-    stats = cache.get(f"{subscription.name}_status", [])
+    key = f"{subscription.name.replace(' ', ' ')}"
+    stats = cache.get(key, [])
     stats.append(
         import_bod_avl.Status(
             now,
@@ -68,11 +66,11 @@ def handle_siri_post(uuid, data):
             now - timestamp,
             total_items,
             len(changed_items) + len(changed_journey_items),
-            subscription_ref,
+            timezone.now() - now,
         )
     )
     stats = stats[-50:]
-    cache.set(f"{subscription.name}_status", stats, None)
+    cache.set(key, stats, None)
 
 
 @db_task()

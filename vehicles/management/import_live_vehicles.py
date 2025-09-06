@@ -551,7 +551,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
     def handle(self, immediate=False, *args, **options):
         if self.source_name:
             self.status_key = f"{self.source_name.replace(' ', '_')}_status"
-            self.status = cache.get(self.status_key, [])
+            try:
+                self.status = cache.get(self.status_key, [])
+            except TypeError:
+                self.status = []
 
         if not immediate:
             sleep(self.wait)
