@@ -286,15 +286,17 @@ class BusTimesTest(TestCase):
         )
 
         # Ticketer filename - treat '5B' and '5BH' despite having the same service_code
-        self.assertEqual(get_routes(routes[5:7]), routes[5:7])
+        self.assertEqual(
+            list(get_routes(routes[5:7], when=date(2022, 4, 4))), routes[5:7]
+        )
 
-        # from_date - include future versions
-        self.assertEqual(
-            get_routes(routes[2:4], from_date=date(2022, 4, 3)), routes[2:4]
-        )
-        self.assertEqual(
-            get_routes(routes[2:4], from_date=date(2022, 4, 4)), routes[2:4]
-        )
+        # # from_date - include future versions
+        # self.assertEqual(
+        #     get_routes(routes[2:4], from_date=date(2022, 4, 3)), routes[2:4]
+        # )
+        # self.assertEqual(
+        #     get_routes(routes[2:4], from_date=date(2022, 4, 4)), routes[2:4]
+        # )
         # # ignore old versions:
         # self.assertEqual(
         #     get_routes(routes[2:4], from_date=date(2022, 4, 5)), routes[3:4]
@@ -363,8 +365,6 @@ class BusTimesTest(TestCase):
         self.assertEqual(len(gotten_routes), 1)
         self.assertEqual(gotten_routes[0].code, "tfl_86-683-_-y05-60197")
         self.assertEqual(gotten_routes[0], routes[1])
-
-        self.assertFalse(get_routes([]), 2)
 
     def test_get_routes_passenger(self):
         tds = TimetableDataSource.objects.create()

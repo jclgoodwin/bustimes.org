@@ -42,75 +42,66 @@ class log_time_taken:
         self.logger.info(f"  ⏱️ {datetime.now() - self.start}")
 
 
-def get_routes(routes, when=None, from_date=None):
-    if when:
-        filter_by_revision_number = True
-        if type(routes) is list:
-            filter_by_revision_number = any(route.revision_number for route in routes)
+def get_routes(routes, when):
+    filter_by_revision_number = True
+    if type(routes) is list:
+        filter_by_revision_number = any(route.revision_number for route in routes)
 
-            routes = Route.objects.filter(
-                id__in=[route.id for route in routes]
-            ).select_related("source")
+        routes = Route.objects.filter(
+            id__in=[route.id for route in routes]
+        ).select_related("source")
 
-        if filter_by_revision_number:
-            routes = routes.filter(
-                Q(start_date=None) | Q(start_date__lte=when),
-                ~Exists(
-                    Route.objects.filter(
-                        source=OuterRef("source"),
-                        service_code=OuterRef("service_code"),
-                        revision_number_context=OuterRef("revision_number_context"),
-                        start_date__lte=when,
-                        revision_number__gt=OuterRef("revision_number"),
-                    )
-                ),
-            ).order_by("id")
-
-        # complicated way of working out which Passenger .zip applies
-        routes = routes.filter(
-            Q(version=None)
-            | Q(
-                ~Exists(
-                    Version.objects.filter(
-                        source=OuterRef("version__source"),
-                        start_date__lte=when,
-                        end_date__gte=when,
-                        start_date__gt=OuterRef("version__start_date"),
-                    )
-                ),
-                version__start_date__lte=when,
-                version__end_date__gte=when,
-            )
-        )
-
+    if filter_by_revision_number:
         routes = routes.filter(
             Q(start_date=None) | Q(start_date__lte=when),
-            Q(end_date=None) | Q(end_date__gte=when),
-        )
-
-        # TfL: try to pick the file with the highest Service Change Number, if there are multiple
-        # https://techforum.tfl.gov.uk/t/duplicate-files-in-journey-planner-datastore-is-there-a-way-to-choose-the-right-one/2571
-        # (actually using service_code order, which assumes that the SCNs have the same number of digits)
-        routes = routes.filter(
-            ~Q(code__contains="tfl_")
-            | ~Exists(
+            ~Exists(
                 Route.objects.filter(
-                    Q(end_date__gte=when) | Q(end_date__isnull=True),
-                    service=OuterRef("service"),
                     source=OuterRef("source"),
-                    service_code__gt=OuterRef("service_code"),
+                    service_code=OuterRef("service_code"),
+                    revision_number_context=OuterRef("revision_number_context"),
                     start_date__lte=when,
+                    revision_number__gt=OuterRef("revision_number"),
                 )
+            ),
+        ).order_by("id")
+
+    # complicated way of working out which Passenger .zip applies
+    routes = routes.filter(
+        Q(version=None)
+        | Q(
+            ~Exists(
+                Version.objects.filter(
+                    source=OuterRef("version__source"),
+                    start_date__lte=when,
+                    end_date__gte=when,
+                    start_date__gt=OuterRef("version__start_date"),
+                )
+            ),
+            version__start_date__lte=when,
+            version__end_date__gte=when,
+        )
+    )
+
+    routes = routes.filter(
+        Q(start_date=None) | Q(start_date__lte=when),
+        Q(end_date=None) | Q(end_date__gte=when),
+    )
+
+    # TfL: try to pick the file with the highest Service Change Number, if there are multiple
+    # https://techforum.tfl.gov.uk/t/duplicate-files-in-journey-planner-datastore-is-there-a-way-to-choose-the-right-one/2571
+    # (actually using service_code order, which assumes that the SCNs have the same number of digits)
+    routes = routes.filter(
+        ~Q(code__contains="tfl_")
+        | ~Exists(
+            Route.objects.filter(
+                Q(end_date__gte=when) | Q(end_date__isnull=True),
+                service=OuterRef("service"),
+                source=OuterRef("source"),
+                service_code__gt=OuterRef("service_code"),
+                start_date__lte=when,
             )
         )
-
-    if from_date:
-        # just filter out previous versions
-        routes = [
-            route
-            for route in routes
-            if route.end_date is None or route.end_date >= from_date
-        ]
+    )
 
     return routes
 
