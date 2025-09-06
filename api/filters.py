@@ -13,6 +13,7 @@ from django_filters.rest_framework import (
 
 from busstops.models import Operator, Service, StopPoint
 from bustimes.models import Trip
+from bustimes.utils import get_calendars
 from vehicles.models import Livery, Vehicle, VehicleType, DataSource
 
 
@@ -81,7 +82,6 @@ class OperatorFilter(FilterSet):
 
 
 class TripFilter(FilterSet):
-    route = ModelChoiceFilter(queryset=Trip.objects, widget=NumberInput)
     operator = ModelChoiceFilter(queryset=Operator.objects, widget=TextInput)
     service = ModelChoiceFilter(
         queryset=Service.objects, field_name="route__service", widget=NumberInput
@@ -95,9 +95,7 @@ class TripFilter(FilterSet):
         fields = ["ticket_machine_code", "vehicle_journey_code", "block"]
 
     def filter_by_date(self, queryset, name, value):
-        return queryset.filter(
-            calendar__start_date__lte=value, calendar__end_date__gte=value
-        )
+        return queryset.filter(calendar__in=get_calendars(value))
 
 
 class LiveryFilter(FilterSet):
