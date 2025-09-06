@@ -1,7 +1,7 @@
 import calendar
 import datetime
 import logging
-import xml.etree.cElementTree as ET
+import xml.etree.ElementTree as ET
 from functools import cache
 
 from django.contrib.gis.geos import GEOSGeometry, LineString
@@ -11,6 +11,10 @@ logger = logging.getLogger(__name__)
 
 
 WEEKDAYS = {day: i for i, day in enumerate(calendar.day_name)}  # {'Monday:' 0,
+
+
+"""This is intended to be a reusable thing for parsing TransXChange documents
+"""
 
 
 @cache
@@ -41,6 +45,8 @@ class Stop:
         self.indicator = element.findtext("Indicator")
 
         self.locality = element.findtext("LocalityName")
+
+        self.element = element
 
     def __str__(self):
         name = self.common_name

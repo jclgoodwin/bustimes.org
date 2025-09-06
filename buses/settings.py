@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "django.contrib.postgres",
     "django.contrib.staticfiles",
     "django.contrib.gis",
     "django.contrib.sitemaps",
@@ -91,7 +92,7 @@ SECURE_REDIRECT_EXEMPT = [r"^version$"]
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_URLS_REGEX = r"(^\/(api\/|(vehicles|stops)\.json)|.*\/journeys\/.*)"
 
-if DEBUG and "runserver" in sys.argv:
+if DEBUG and not TEST:
     INSTALLED_APPS += [
         "debug_toolbar",
         "template_profiler_panel",
@@ -100,10 +101,8 @@ if DEBUG and "runserver" in sys.argv:
         "debug_toolbar.middleware.DebugToolbarMiddleware",
         "debug_toolbar_force.middleware.ForceDebugToolbarMiddleware",
     ]
-    INTERNAL_IPS = ["127.0.0.1"]
-    # DEBUG_TOOLBAR_PANELS = [
-    #     "template_profiler_panel.panels.template.TemplateProfilerPanel",
-    # ]
+    INTERNAL_IPS = os.environ.get("INTERNAL_IPS", "127.0.0.1").split()
+    DEBUG_TOOLBAR_CONFIG = {"SHOW_TOOLBAR_CALLBACK": "buses.utils.show_toolbar"}
 
 ROOT_URLCONF = "buses.urls"
 

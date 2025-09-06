@@ -2,10 +2,11 @@
 
 import hashlib
 import logging
-import xml.etree.cElementTree as ET
+import xml.etree.ElementTree as ET
 import zipfile
 from pathlib import Path
 from time import sleep
+from urllib.parse import parse_qs
 
 import requests
 from ciso8601 import parse_datetime
@@ -15,10 +16,10 @@ from django.db import DataError
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
 
-from busstops.models import DataSource, Operator, Service
+from busstops.models import DataSource, Service
 
 from ...download_utils import download, download_if_modified
-from ...models import Route, TimetableDataSource
+from ...models import Route, TimetableDataSource, Trip
 from ...utils import log_time_taken
 from .import_transxchange import Command as TransXChangeCommand
 
@@ -35,7 +36,8 @@ def clean_up(timetable_data_source, sources, incomplete=False):
         ~Q(source__in=sources),
         Q(source__source=timetable_data_source)
         | Q(
-            ~Q(source__name__in=("L", "bustimes.org")),
+            ~Q(source__name="L"),
+            ~Q(source__url=""),
             Exists(service_operators.filter(operator__in=operators)),
             ~Exists(
                 service_operators.filter(~Q(operator__in=operators))
@@ -51,7 +53,7 @@ def clean_up(timetable_data_source, sources, incomplete=False):
     routes.update(service=None)
     # routes.delete()
     Service.objects.filter(
-        ~Q(source__name="bustimes.org"),
+        ~Q(source__url=""),
         operator__in=operators,
         current=True,
         route=None,
@@ -65,9 +67,11 @@ def is_noc(search_term: str) -> bool:
 
 def get_operator_ids(source) -> list:
     operators = (
-        Operator.objects.filter(service__route__source=source).distinct().values("noc")
+        Trip.objects.filter(route__source=source, route__service__isnull=False)
+        .values("operator_id")
+        .distinct()
     )
-    return [operator["noc"] for operator in operators]
+    return [operator["operator_id"] for operator in operators]
 
 
 def get_command():
@@ -117,10 +121,11 @@ def handle_file(command, path, qualify_filename=False):
 
 
 def get_bus_open_data_paramses(sources, api_key):
-    searches = [
-        source.search for source in sources if not is_noc(source.search)
-    ]  # e.g. 'TM Travel'
-    nocs = [source.search for source in sources if is_noc(source.search)]  # e.g. 'TMTL'
+    # e.g. 'noc=TMTL&adminArea=092'
+    searches = [s.search for s in sources if not is_noc(s.search)]
+
+    # e.g. 'TMTL'
+    nocs = [s.search for s in sources if is_noc(s.search)]
 
     # chunk – we will search for nocs 20 at a time
     nocses = [nocs[i : i + 20] for i in range(0, len(nocs), 20)]
@@ -131,15 +136,12 @@ def get_bus_open_data_paramses(sources, api_key):
         "limit": 100,
     }
 
-    # and search phrases one at a time
+    # and search paramses one at a time
     for search in searches:
-        yield {
-            **base_params,
-            "search": search,
-        }
+        yield base_params | parse_qs(search)
 
     for nocs in nocses:
-        yield {**base_params, "noc": ",".join(nocs)}
+        yield base_params | {"noc": ",".join(nocs)}
 
 
 def bus_open_data(api_key, specific_operator):
@@ -170,13 +172,14 @@ def bus_open_data(api_key, specific_operator):
         url = f"{url_prefix}/api/v1/dataset/"
         while url:
             response = session.get(url, params=params)
-            assert response.ok
+            response.raise_for_status()
             json = response.json()
             results = json["results"]
             if not results:
                 logger.warning(f"no results: {response.url}")
             for dataset in results:
                 dataset["modified"] = parse_datetime(dataset["modified"])
+                dataset["params"] = params
                 datasets.append(dataset)
             url = json["next"]
             params = None
@@ -185,10 +188,9 @@ def bus_open_data(api_key, specific_operator):
 
     for source in timetable_data_sources:
         if not is_noc(source.search):
+            params = parse_qs(source.search)
             operator_datasets = [
-                item
-                for item in datasets
-                if source.search in item["name"] or source.search in item["description"]
+                item for item in datasets if (params | item["params"]) == item["params"]
             ]
         else:
             operator_datasets = [

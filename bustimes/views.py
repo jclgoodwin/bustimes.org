@@ -39,6 +39,7 @@ from pygments.lexers import JsonLexer, XmlLexer
 from rest_framework.renderers import JSONRenderer
 
 from api.serializers import TripSerializer
+from api.views import TripViewSet
 from busstops.models import (
     DataSource,
     Operator,
@@ -53,7 +54,7 @@ from vehicles.rtpi import add_progress_and_delay
 
 from .download_utils import download
 from .models import Route, StopTime, Trip
-from .utils import contiguous_stoptimes_only, get_other_trips_in_block
+from .utils import get_other_trips_in_block
 
 
 class ServiceDebugView(DetailView):
@@ -449,7 +450,7 @@ def stop_debug(request, atco_code: str):
 class TripDetailView(DetailView):
     model = Trip
     queryset = model.objects.select_related(
-        "route__service", "operator", "route__source"
+        "route__service", "operator", "route__source", "calendar"
     ).defer("route__service__search_vector")
 
     def get_context_data(self, **kwargs):
@@ -467,21 +468,7 @@ class TripDetailView(DetailView):
 
         context["breadcrumb"] = operators + [self.object.route.service]
 
-        trips = self.object.get_trips()
-
-        stops = (
-            StopTime.objects.filter(trip__in=trips)
-            .select_related("stop__locality")
-            .defer(
-                "stop__search_vector",
-                "stop__locality__search_vector",
-                "stop__locality__latlong",
-            )
-            .order_by("trip__start", "id")
-        )
-        stops = list(stops)
-        if len(trips) > 1:
-            stops = contiguous_stoptimes_only(stops, self.object.id)
+        stops = list(TripViewSet.get_stops(self.object))
 
         if stops:
             if stops[0].stop:

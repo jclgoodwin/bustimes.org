@@ -2,6 +2,7 @@ import re
 from functools import wraps
 
 from django.contrib.auth.models import AnonymousUser
+from django.conf import settings
 
 
 def minify(template_source):
@@ -27,3 +28,10 @@ def cdn_cache_control(max_age):
         return _cache_controlled
 
     return _cache_controller
+
+
+def show_toolbar(request):
+    if request.META.get("REMOTE_ADDR") in settings.INTERNAL_IPS:
+        return True
+    if request.META.get("HTTP_DO_CONNECTING_IP") in settings.INTERNAL_IPS:
+        return True

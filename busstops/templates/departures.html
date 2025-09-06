@@ -2,7 +2,7 @@
 <div class="aside" id="departures">
     {% if when %}
         <form autocomplete="off">
-            <input type="date" name="date" min="{{ today.isoformat }}" value="{{ when.date.isoformat }}" required>
+            <input type="date" name="date" value="{{ when.date.isoformat }}" required>
             <input type="time" name="time" value="{{ when.time|time:'H:i' }}">
             {% if has_live or when == now %}
                 <input type="submit" value="↻" aria-label="Reload" title="Reload">
@@ -29,8 +29,8 @@
                         <tr>
                             <td></td>
                             <th scope="col">To</th>
-                            {% if has_scheduled %}<th scope="col">Sched&shy;uled</th>{% endif %}
-                            {% if has_live %}<th scope="col">Ex&shy;pected</th>{% endif %}
+                            {% if has_scheduled %}<th scope="col">Sched{% if has_live %}&shy;{% endif %}uled</th>{% endif %}
+                            {% if has_live %}<th scope="col">Ex{% if has_scheduled %}&shy;{% endif %}pected</th>{% endif %}
                             {% if indicator_prefix %}
                                 <th scope="col">{{ indicator_prefix }}</th>
                             {% endif %}
@@ -50,9 +50,9 @@
             </td>
             {% if has_scheduled %}
                 <td>{% if item.link %}<a href="{{ item.link }}">{% endif %}
-                    {% if item.cancelled %}<del>{% endif %}
+                    {% if item.cancelled %}<s>{% endif %}
                         {{ item.time|time:"H:i" }}
-                    {% if item.cancelled %}</del>{% endif %}
+                    {% if item.cancelled %}</s>{% endif %}
                     {% if item.link %}</a>{% endif %}
                 </td>
             {% endif %}

@@ -6,7 +6,7 @@ from functools import cached_property, cmp_to_key, partial
 
 from django.conf import settings
 from django.contrib.postgres.aggregates import ArrayAgg
-from django.db.models import Prefetch, Q
+from django.db.models import Prefetch, Q, F
 from django.utils.html import format_html
 from django.utils.timezone import localdate
 from sql_util.utils import Exists
@@ -19,7 +19,7 @@ differ = Differ(charjunk=lambda _: True)
 
 
 def get_stop_usages(trips):
-    groupings = [[], []]
+    groupings = {}
 
     trips = trips.prefetch_related(
         Prefetch(
@@ -28,14 +28,13 @@ def get_stop_usages(trips):
                 "trip_id", "id"
             ),
         )
-    )
+    ).annotate(line_name=F("route__line_name"))
 
     for trip in trips:
-        if trip.inbound:
-            grouping_id = 1
-        else:
-            grouping_id = 0
-        grouping = groupings[grouping_id]
+        if trip.line_name not in groupings:
+            groupings[trip.line_name] = {False: [], True: []}
+
+        grouping = groupings[trip.line_name][trip.inbound]
 
         stop_times = trip.stoptime_set.all()
 
@@ -76,7 +75,7 @@ def get_stop_usages(trips):
 
             y += 1
 
-        groupings[grouping_id] = grouping
+        groupings[trip.line_name][trip.inbound] = grouping
 
     return groupings
 
@@ -145,6 +144,8 @@ class Timetable:
 
         four_weeks_time = self.today + datetime.timedelta(days=28)
 
+        scotland = any(route.source.name == "S" for route in routes)
+
         self.calendars = list(
             Calendar.objects.filter(Exists("trip", filter=Q(route__in=self.routes)))
             .annotate(
@@ -199,14 +200,16 @@ class Timetable:
                 else:
                     self.date = self.today
 
-            # consider revision numbers:
-            self.current_routes = get_routes(routes, when=self.date)
+        # consider revision numbers:
+        self.current_routes = get_routes(routes, when=self.date)
 
         if not self.calendar:
             if self.calendars:
                 calendar_ids = [calendar.id for calendar in self.calendars]
                 self.calendar_ids = list(
-                    get_calendars(self.date, calendar_ids).values_list("id", flat=True)
+                    get_calendars(
+                        self.date, calendar_ids, scotland=scotland
+                    ).values_list("id", flat=True)
                 )
 
     def correct_directions(self, trips):
@@ -361,6 +364,7 @@ class Timetable:
         )
         stops = (
             StopTime.stop.field.related_model.objects.select_related("locality")
+            .order_by()
             .defer("latlong", "locality__latlong")
             .in_bulk(stop_codes)
         )

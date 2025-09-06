@@ -160,13 +160,13 @@ day_keys = (
 
 
 class Calendar(models.Model):
-    mon = models.BooleanField()
-    tue = models.BooleanField()
-    wed = models.BooleanField()
-    thu = models.BooleanField()
-    fri = models.BooleanField()
-    sat = models.BooleanField()
-    sun = models.BooleanField()
+    mon = models.BooleanField(default=False)
+    tue = models.BooleanField(default=False)
+    wed = models.BooleanField(default=False)
+    thu = models.BooleanField(default=False)
+    fri = models.BooleanField(default=False)
+    sat = models.BooleanField(default=False)
+    sun = models.BooleanField(default=False)
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
     summary = models.CharField(max_length=255, blank=True)
@@ -341,7 +341,7 @@ class Note(models.Model):
 
 
 class Trip(models.Model):
-    route = models.ForeignKey(Route, models.CASCADE)
+    route = models.ForeignKey(Route, models.CASCADE, null=True, blank=True)
     inbound = models.BooleanField(default=False)
     journey_pattern = models.CharField(max_length=100, blank=True)
     vehicle_journey_code = models.CharField(max_length=100, blank=True, db_index=True)
@@ -409,15 +409,24 @@ class Trip(models.Model):
     def get_trips(self):
         if self.ticket_machine_code and self.route.service_id:
             # get other parts of this trip (if the service has been split into parts)
-            # see also get_split_trips
+            # see also: merge_split_trips
+
             code_filter = Q(ticket_machine_code=self.ticket_machine_code)
             if self.vehicle_journey_code:
                 code_filter |= Q(vehicle_journey_code=self.vehicle_journey_code)
+
+            calendar_filter = Q(calendar=self.calendar)
+            if self.calendar:
+                for day in ("mon", "tue", "wed", "thu", "fri", "sat", "sun"):
+                    if getattr(self.calendar, day):
+                        calendar_filter |= Q(**{f"calendar__{day}": True})
+
             trips = (
                 Trip.objects.filter(
                     Q(id=self.id)
                     | Q(
                         code_filter,
+                        calendar_filter,
                         Q(start__gte=self.end) | Q(end__lte=self.start),
                         ~Q(destination_id=self.destination_id),
                         block=self.block,

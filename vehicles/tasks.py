@@ -33,8 +33,8 @@ def handle_siri_post(uuid, data):
 
     if "HeartbeatNotification" in data:
         timestamp = parse_datetime(data["HeartbeatNotification"]["RequestTimestamp"])
-        total_items = 0
-        subscription_ref = None
+        total_items = None
+        changed_items = changed_journey_items = ()
     else:
         data = data["ServiceDelivery"]
 
@@ -56,21 +56,21 @@ def handle_siri_post(uuid, data):
         command.handle_items(changed_items, changed_item_identities)
         command.handle_items(changed_journey_items, changed_journey_identities)
 
-        subscription_ref = data["VehicleMonitoringDelivery"].get("SubscriptionRef")
-
     # stats for last 50 updates:
-    if subscription.name == "Transport for Wales":
-        stats = cache.get("tfw_status", [])
-        stats.append(
-            (
-                now,
-                timestamp,
-                total_items,
-                subscription_ref,
-            )
+    key = f"{subscription.name.replace(' ', '_')}"
+    stats = cache.get(key, [])
+    stats.append(
+        import_bod_avl.Status(
+            now,
+            timestamp,
+            now - timestamp,
+            total_items,
+            len(changed_items) + len(changed_journey_items),
+            timezone.now() - now,
         )
-        stats = stats[-50:]
-        cache.set("tfw_status", stats, None)
+    )
+    stats = stats[-50:]
+    cache.set(key, stats, None)
 
 
 @db_task()
@@ -168,24 +168,36 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
     ):
         return
 
-    try:
-        journey = VehicleJourney.objects.create(
-            vehicle=vehicle,
-            service_id=service,
-            route_name=route_name,
-            code=journey_ref,
-            datetime=time,
-            source=data_source,
-            destination=destination,
-            trip_id=trip_id,
+    journey = VehicleJourney(
+        vehicle=vehicle,
+        service_id=service,
+        route_name=route_name,
+        code=journey_ref,
+        datetime=time,
+        source=data_source,
+        destination=destination,
+        trip_id=trip_id,
+    )
+    if not trip_id:
+        journey.trip = journey.get_trip(
+            departure_time=time, destination_ref=data.get("DestinationRef")
         )
+
+    try:
+        journey.save()
     except IntegrityError:
         return
 
     if not vehicle.latest_journey or vehicle.latest_journey.datetime < journey.datetime:
+        if (
+            journey.trip
+            and journey.trip.garage_id
+            and journey.trip.garage_id != vehicle.garage_id
+        ):
+            vehicle.garage_id = journey.trip.garage_id
         vehicle.latest_journey = journey
         vehicle.latest_journey_data = data
-        vehicle.save(update_fields=["latest_journey", "latest_journey_data"])
+        vehicle.save(update_fields=["garage", "latest_journey", "latest_journey_data"])
 
 
 @db_periodic_task(crontab(minute="*/5"))

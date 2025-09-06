@@ -1,5 +1,14 @@
 (function() {
+    if (window.top !== window.self) {
+      return;
+    }
+
     var host = 'bustimes.org';
+
+    if (host !== window.location.host) {
+      return;
+    }
+
     var element = document.createElement('script');
     var firstScript = document.getElementsByTagName('script')[0];
     var url = 'https://cmp.inmobi.com'
@@ -7,7 +16,6 @@
     var uspTries = 0;
     var uspTriesLimit = 3;
     element.async = true;
-    element.type = 'text/javascript';
     element.src = url;
 
     firstScript.parentNode.insertBefore(element, firstScript);

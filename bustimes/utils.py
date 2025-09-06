@@ -57,8 +57,6 @@ def get_routes(routes, when=None, from_date=None):
                 Q(start_date=None) | Q(start_date__lte=when),
                 ~Exists(
                     Route.objects.filter(
-                        Q(start_date__gt=OuterRef("start_date"))
-                        | ~Q(end_date=OuterRef("end_date")),  # for bad data
                         source=OuterRef("source"),
                         service_code=OuterRef("service_code"),
                         revision_number_context=OuterRef("revision_number_context"),
@@ -129,7 +127,7 @@ def get_routes(routes, when=None, from_date=None):
     return routes
 
 
-def get_calendars(when: date | datetime, calendar_ids=None):
+def get_calendars(when: date | datetime, calendar_ids=None, scotland=None):
     between_dates = Q(start_date__lte=when) & (Q(end_date__gte=when) | Q(end_date=None))
 
     calendars = Calendar.objects.filter(between_dates)
@@ -147,10 +145,19 @@ def get_calendars(when: date | datetime, calendar_ids=None):
         calendar_calendar_dates.filter(special=False, operation=True)
     )
 
-    calendar_bank_holidays = CalendarBankHoliday.objects.filter(
-        bank_holiday__bankholidaydate__date=when,
-        calendar=OuterRef("id"),
-    )
+    if scotland is None:
+        calendar_bank_holidays = CalendarBankHoliday.objects.filter(
+            bank_holiday__bankholidaydate__date=when,
+            calendar=OuterRef("id"),
+        )
+    else:
+        calendar_bank_holidays = CalendarBankHoliday.objects.filter(
+            Q(bank_holiday__bankholidaydate__scotland=None)
+            | Q(bank_holiday__bankholidaydate__scotland=scotland),
+            bank_holiday__bankholidaydate__date=when,
+            calendar=OuterRef("id"),
+        )
+
     bank_holiday_inclusions = Exists(calendar_bank_holidays.filter(operation=True))
 
     return calendars.annotate(
@@ -193,14 +200,16 @@ def get_stop_times(date: date, time: timedelta | None, stop, routes, trip_ids=No
         trips = Trip.objects.filter(id__in=trip_ids, start__lt=time)
         times = times.filter(departure__lt=time)
     else:
-        routes = get_routes(routes, date)
+        routes = list(get_routes(routes, date))
+
+        scotland = stop.pk[:1] == "6" and ":" not in stop.pk and stop.pk[:4].isdigit()
 
         if not routes:
             times = times.none()
 
         trips = Trip.objects.filter(
             route__in=routes,
-            calendar__in=get_calendars(date),
+            calendar__in=get_calendars(date, scotland=scotland),
         )
 
         if time is not None:
@@ -295,6 +304,7 @@ def get_trip(
     if not date:
         date = (departure_time or datetime).date()
 
+    # TODO: get routes for previous day, in case journey starts after midnight
     routes = get_routes(journey.service.route_set.select_related("source"), date)
     if routes:
         trips = Trip.objects.filter(route__in=routes)
@@ -362,9 +372,6 @@ def get_trip(
     else:
         code = Q()
 
-    if operator_ref == "NT" and len(journey_code) > 30:
-        code = Q()
-
     score = 0
     if code:
         score += Case(When(code, then=1), default=0)
@@ -387,6 +394,8 @@ def get_trip(
 
     if trips:
         if len(trips) > 1 and trips[0].score == trips[1].score:
+            if trips[0].start >= timedelta(days=1):
+                date -= timedelta(days=1)
             filtered_trips = trips.filter(calendar__in=get_calendars(date))
             if filtered_trips:
                 trips = filtered_trips
@@ -395,13 +404,17 @@ def get_trip(
 
 
 def contiguous_stoptimes_only(stoptimes, trip_id):
+    stoptimes_list = list(stoptimes)
     for a, b in pairwise(stoptimes):
         if a.trip_id != b.trip_id:
             if a.stop_id != b.stop_id:
                 # trips are not contiguous, return only the stops for trip_id
                 return [stop for stop in stoptimes if stop.trip_id == trip_id]
             else:
+                # merge a and b - they describe the same stop
                 a.departure_time = b.departure_time
+                a.pick_up = b.pick_up
+                stoptimes_list.remove(b)
 
     # trips were contiguous, return all stops
-    return stoptimes
+    return stoptimes_list

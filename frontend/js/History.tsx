@@ -4,8 +4,6 @@ import LoadingSorry from "./LoadingSorry";
 
 const JourneyMap = lazy(() => import("./JourneyMap"));
 
-const apiRoot = process.env.API_ROOT as string;
-
 export default function History() {
   const [journeyId, setJourneyId] = React.useState(() => {
     if (window.location.hash.indexOf("#journeys/") === 0) {
@@ -68,7 +66,7 @@ export default function History() {
 
       setLoading(true);
 
-      let url = apiRoot;
+      let url = "/";
       if (window.SERVICE_ID) {
         url += `services/${window.SERVICE_ID}/`;
       } else if (window.VEHICLE_ID) {

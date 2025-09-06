@@ -3,10 +3,9 @@
 import csv
 import datetime
 import os
-import sys
-import traceback
 import logging
 from http import HTTPStatus
+from urllib.parse import urlencode
 
 import requests
 from django.conf import settings
@@ -44,7 +43,7 @@ from sql_util.utils import Exists, SubqueryMax, SubqueryMin
 from ukpostcodeutils import validation
 
 from buses.utils import cdn_cache_control
-from bustimes.models import Route, StopTime, Trip
+from bustimes.models import StopTime, Trip
 from departures import live
 from disruptions.models import Consequence, Situation
 from fares.models import FareTable
@@ -88,6 +87,11 @@ def version(request):
     return HttpResponse(
         os.environ.get("KAMAL_CONTAINER_NAME"), content_type="text/plain"
     )
+
+
+def flixbus_affiliate_link(**kwargs) -> str:
+    query = {"awinmid": 110896, "awinaffid": 242611, **kwargs}
+    return f"https://www.awin1.com/cread.php?{urlencode(query)}"
 
 
 def not_found(request, exception):
@@ -154,17 +158,6 @@ def not_found(request, exception):
     return response
 
 
-def error(request):
-    context = {}
-    _, exception, tb = sys.exc_info()
-    context["exception"] = exception
-    if request.user.is_superuser:
-        context["traceback"] = traceback.format_tb(tb)
-    response = render(None, "500.html", context)
-    response.status_code = 500
-    return response
-
-
 def csrf_failure(request, reason=""):
     logging.warning("CSRF failure: %s", reason)
     if (
@@ -189,9 +182,11 @@ Disallow: /api/
 Disallow: /accounts/
 Disallow: /fares/
 Disallow: /vehicles/tfl/
+Disallow: /vehicles/*?date=*
 Disallow: /services/*/*
 Disallow: /sources
 Disallow: /*/debug
+Disallow: /*/edit
 
 User-Agent: ImagesiftBot
 Disallow: /
@@ -265,18 +260,9 @@ def status(request):
         "bod_avl_status": {},
     }
 
-    for key in ("bod_avl_status", "tfw_status"):
+    for key in ("bod_avl_status", "Transport_for_Wales_status", "Bus_Open_Data_status"):
         status = cache.get(key, [])
-        context["bod_avl_status"][key.split("_")[0]] = [
-            {
-                "fetched": fetched,
-                "timestamp": timestamp,
-                "age": fetched - timestamp,
-                "items": items,
-                "changed": changed,
-            }
-            for fetched, timestamp, items, changed in status
-        ]
+        context["bod_avl_status"][key] = status
 
     context["statuses"] = cache.get_many(
         [
@@ -321,14 +307,9 @@ def stops_json(request):
 
     results = (
         StopPoint.objects.filter(
-            latlong__bboverlaps=bounding_box,
+            latlong__bboverlaps=bounding_box, service__current=True
         )
-        .annotate(
-            line_names=ArrayAgg(
-                "service__route__line_name", distinct=True, default=None
-            )
-        )
-        .filter(Exists("service", filter=Q(service__current=True)))
+        .annotate(line_names=stop_line_names)
         .select_related("locality")
         .defer("locality__latlong")
     )
@@ -536,7 +517,6 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
 
         context["stops"] = (
             self.object.stoppoint_set.filter(
-                has_stop_times,
                 service__current=True,
             )
             .annotate(line_names=stop_line_names)
@@ -553,25 +533,10 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
             stops = [stop.pk for stop in context["stops"]]
             context["services"] = sorted(
                 Service.objects.filter(
-                    Exists(
-                        StopTime.objects.filter(
-                            trip__route=OuterRef("route"),
-                            stop__in=stops,
-                        )
-                        .only("id")
-                        .order_by()
-                    ),
                     stops__in=stops,
                     current=True,
                 )
-                .annotate(
-                    operators=ArrayAgg("operator__name", distinct=True, default=None),
-                    line_names=ArrayAgg(
-                        Coalesce("route__line_name", "line_name"),
-                        distinct=True,
-                        default=None,
-                    ),
-                )
+                .annotate(operators=operator_names, line_names=stop_line_names)
                 .defer("geometry", "search_vector"),
                 key=Service.get_order,
             )
@@ -627,22 +592,8 @@ def get_departures_context(stop, services, form_data) -> dict:
     return context
 
 
-has_stop_times = ~Exists(
-    Route.objects.filter(
-        ~Q(line_name__iexact=OuterRef("service__line_name")),
-        service=OuterRef("service"),
-    )
-    .only("id")
-    .order_by()
-) | Exists(
-    StopTime.objects.filter(
-        trip__route=OuterRef("service__route"),
-        stop=OuterRef("pk"),
-    )
-    .only("id")
-    .order_by()
-)
-stop_line_names = ArrayAgg("service__route__line_name", distinct=True, default=None)
+stop_line_names = ArrayAgg("stopusage__line_name", distinct=True, default=None)
+operator_names = ArrayAgg("operator__name", distinct=True, default=None)
 
 
 class StopPointDetailView(DetailView):
@@ -668,21 +619,9 @@ class StopPointDetailView(DetailView):
         context = super().get_context_data(**kwargs)
 
         services = (
-            self.object.service_set.filter(
-                Q(route__trip=None) | Q(route__trip__stoptime__stop=self.object),
-                current=True,
-            )
-            .annotate(
-                line_names=ArrayAgg(
-                    Coalesce("route__line_name", "line_name"),
-                    distinct=True,
-                    default=None,
-                )
-            )
+            self.object.service_set.filter(current=True)
+            .annotate(line_names=stop_line_names, operators=operator_names)
             .defer("geometry", "search_vector")
-        )
-        services = services.annotate(
-            operators=ArrayAgg("operator__name", distinct=True, default=None)
         )
         context["services"] = sorted(services, key=Service.get_order)
 
@@ -738,7 +677,7 @@ class StopPointDetailView(DetailView):
         if nearby is not None:
             context["nearby"] = (
                 nearby.exclude(pk=self.object.pk)
-                .filter(has_stop_times, service__current=True)
+                .filter(service__current=True)
                 .annotate(line_names=stop_line_names)
                 .defer("latlong")
             )
@@ -789,11 +728,7 @@ class StopAreaDetailView(DetailView):
         context = super().get_context_data(**kwargs)
 
         stops = (
-            self.object.stoppoint_set.annotate(
-                line_names=ArrayAgg(
-                    "service__route__line_name", distinct=True, default=None
-                )
-            )
+            self.object.stoppoint_set.annotate(line_names=stop_line_names)
             .filter(service__current=True)
             .order_by("common_name", "indicator")
         )
@@ -801,7 +736,7 @@ class StopAreaDetailView(DetailView):
 
         services = Service.objects.filter(
             current=True, stops__stop_area=self.object
-        ).annotate(operators=ArrayAgg("operator__name", distinct=True, default=None))
+        ).annotate(line_names=stop_line_names, operators=operator_names)
         context.update(get_departures_context(self.object, services, self.request.GET))
 
         context["breadcrumb"] = [
@@ -831,9 +766,7 @@ class StopAreaDetailView(DetailView):
 def stop_departures(request, atco_code):
     stop = get_object_or_404(StopPoint, atco_code=atco_code)
 
-    services = stop.service_set.filter(current=True).annotate(
-        operators=ArrayAgg("operator__name", distinct=True, default=None)
-    )
+    services = stop.service_set.filter(current=True).annotate(operators=operator_names)
 
     context = get_departures_context(stop, services, request.GET)
 
@@ -928,8 +861,9 @@ class OperatorDetailView(DetailView):
                 "operator_tickets", kwargs={"slug": self.object.slug}
             )
         elif self.object.name == "FlixBus":
-            context["tickets_link"] = (
-                "https://www.awin1.com/cread.php?awinmid=110896&awinaffid=242611&clickref=ot"
+            context["tickets_link"] = flixbus_affiliate_link(
+                clickref="ot",
+                ued="https://www.flixbus.co.uk/bus-routes/london-london-stansted-airport",
             )
         elif self.object.name == "National Express":
             context["tickets_link"] = (
@@ -1190,7 +1124,9 @@ class ServiceDetailView(DetailView):
             "stop__locality"
         ).defer("stop__latlong", "stop__locality__latlong")
         context["has_minor_stops"] = SimpleLazyObject(
-            lambda: any(stop_usage.is_minor() for stop_usage in context["stopusages"])
+            lambda: not all(
+                stop_usage.timing_point for stop_usage in context["stopusages"]
+            )
         )
 
         #     if len(stop_situations) < len(context["stopusages"]):
@@ -1263,10 +1199,18 @@ class ServiceDetailView(DetailView):
                         }
                     )
                     break
-                elif operator.name == "FlixBus":
-                    context["tickets_link"] = (
-                        f"https://www.awin1.com/cread.php?awinmid=110896&awinaffid=242611&clickref={self.object.line_name}"
-                    )
+                elif (
+                    operator.name == "FlixBus"
+                    or self.object.service_code == "PF0000508:488"
+                ):
+                    query = {"clickref": self.object.line_name}
+                    if context["breadcrumb"][0].name == "Scotland":
+                        query["ued"] = "https://www.flixbus.co.uk/scotland"
+                    elif self.object.service_code == "PF0000508:488":  # Green Line 757
+                        query["ued"] = (
+                            "https://www.flixbus.co.uk/coach/london-luton-airport"
+                        )
+                    context["tickets_link"] = flixbus_affiliate_link(**query)
                     context["links"].append(
                         {
                             "url": context["tickets_link"],
@@ -1553,9 +1497,7 @@ def search(request):
             )
             services = Service.objects.with_line_names().filter(current=True)
 
-            services = services.annotate(
-                operators=ArrayAgg("operator__name", distinct=True, default=None)
-            )
+            services = services.annotate(operators=operator_names)
 
             for key, queryset in (
                 ("localities", localities),

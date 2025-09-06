@@ -31,14 +31,11 @@ servers:
         - NTA_API_KEY
         - AWS_ACCESS_KEY_ID
         - AWS_SECRET_ACCESS_KEY
-  tileserver:
-    hosts:
-      - 138.68.161.218
 
 accessories:
   tileserver:
     image: maptiler/tileserver-gl-light
-    role: tileserver
+    host: 138.68.161.218
     port: 80:8080
     volumes:
       - /root/data:/data

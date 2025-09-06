@@ -138,10 +138,6 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                     "vehicles.management.import_live_vehicles.redis_client",
                     redis_client,
                 ),
-                mock.patch(
-                    "vehicles.management.commands.import_bod_avl.redis_client",
-                    redis_client,
-                ),
                 use_cassette(str(self.vcr_path / "bod_avl.yaml")) as cassette,
             ):
                 command.update()
@@ -163,20 +159,21 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             <tr>
                 <td>00:00:00</td>
                 <td>15:14:46</td>
-                <td>-7312486.261274</td>
+                <td>-85 days, 8:45:13.738726</td>
                 <td>841</td>
                 <td>841</td>
-            </tr>""",
-        )
-        self.assertContains(
-            response,
-            """
+                <td>0.0</td>
+            </tr>
+"""
+            + "        "
+            + """
             <tr>
                 <td>00:00:00</td>
                 <td>15:14:46</td>
-                <td>-7312486.261274</td>
+                <td>-85 days, 8:45:13.738726</td>
                 <td>841</td>
                 <td>0</td>
+                <td>0.0</td>
             </tr>""",
         )
 
@@ -279,9 +276,6 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 "vehicles.management.import_live_vehicles.redis_client", redis_client
             ),
             mock.patch(
-                "vehicles.management.commands.import_bod_avl.redis_client", redis_client
-            ),
-            mock.patch(
                 "vehicles.management.commands.import_bod_avl.Command.get_items",
                 return_value=items,
             ),
@@ -309,12 +303,11 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
         journey = journeys[1]
         self.assertEqual(journey.route_name, "843X")
-        self.assertEqual(journey.destination, "Soho Road")
+        self.assertEqual(journey.destination, "843X Soho Road")
         self.assertEqual(journey.vehicle.reg, "SN56AFE")
 
         journey = journeys[2]
         self.assertEqual(journey.vehicle.operator_id, "HAMS")
-        self.assertEqual(journey.vehicle.reg, "DW18HAM")
         self.assertEqual(journey.vehicle.reg, "DW18HAM")
 
         # test operator map
@@ -861,8 +854,6 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             wed=True,
             thu=True,
             fri=True,
-            sat=False,
-            sun=False,
             start_date="2024-07-04",
         )
         stop = StopPoint.objects.create(atco_code="3390BU05", active=True)

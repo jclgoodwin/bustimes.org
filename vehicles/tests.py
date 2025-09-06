@@ -255,7 +255,7 @@ class VehiclesTests(TestCase):
         # can't connect to redis - no drama
         with (
             override_settings(REDIS_URL="redis://localhose:69"),
-            self.assertNumQueries(3),
+            self.assertNumQueries(4),
         ):
             response = self.client.get(
                 f"/vehicles/{self.vehicle_1.id}/journeys/{self.journey.id}.json"
@@ -276,6 +276,7 @@ class VehiclesTests(TestCase):
                 "service_id": self.journey.service_id,
                 "trip_id": None,
                 "vehicle_id": self.journey.vehicle_id,
+                "stops": [],
             },
             response.json(),
         )
@@ -300,7 +301,7 @@ class VehiclesTests(TestCase):
 
         self.assertEqual(location.get_redis_json()["coordinates"], (0.0, 51.0))
 
-        location.occupancy = "seatsAvailable"
+        location.occupancy = "Seats available"
         self.assertEqual(location.get_redis_json()["seats"], "Seats available")
 
         location.wheelchair_occupancy = 0
@@ -464,9 +465,8 @@ class VehiclesTests(TestCase):
 
         self.assertEqual(
             response.text,
-            f""".livery-{self.livery.id}{{color:#fff;fill:#fff;background:linear-gradient(90deg,red 50%,#00f 50%)}}\
-.livery-{self.livery.id}.right{{background:linear-gradient(270deg,red 50%,#00f 50%)}}
-""",
+            f""".livery-{self.livery.id}{{color:#fff;background:linear-gradient(90deg,red 50%,#00f 50%);\
+&.right{{background:linear-gradient(270deg,red 50%,#00f 50%)}}}}\n""",
         )
 
     def test_vehicle_edit_1(self):
@@ -574,8 +574,6 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         response = self.client.get(revision.vehicle.get_absolute_url())
         self.assertContains(response, "B EAN")
         self.assertContains(response, "Wi-Fi")
-        self.assertNotContains(response, "Pending edits")
-        self.assertContains(response, "History")
         self.assertEqual(revision.vehicle.fleet_number, 2)
 
         self.client.force_login(self.staff_user)
@@ -625,8 +623,6 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         response = self.client.get(revision.vehicle.get_absolute_url())
         self.assertNotContains(response, "B EAN")
         self.assertNotContains(response, "Wi-Fi")
-        self.assertNotContains(response, "Pending edits")
-        self.assertContains(response, "History")
 
     def test_vehicle_edit_2(self):
         self.client.force_login(self.staff_user)

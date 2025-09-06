@@ -126,6 +126,7 @@ def get_departures(stop, services, when) -> dict:
                 ).get_departures()
 
                 if by_trip:
+                    # prefetch stoptimes, for calculating delay
                     prefetch_related_objects(
                         [
                             departure["stop_time"].trip

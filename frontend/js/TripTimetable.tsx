@@ -21,6 +21,7 @@ export type TripTime = {
   timing_status: string;
   pick_up?: boolean;
   set_down?: boolean;
+  call_condition?: string | null;
 };
 
 type Note = {
@@ -137,18 +138,35 @@ function Row({
     }
   }
 
+  let aimed: ReactElement | null | string = null;
+  if (aimedColumn) {
+    aimed = stop.aimed_arrival_time || stop.aimed_departure_time;
+    if (stop.call_condition === "notStopping") {
+      aimed = (
+        <td>
+          <s>
+            {aimed}
+            {caveat}
+          </s>
+        </td>
+      );
+    } else {
+      aimed = (
+        <td>
+          {aimed}
+          {caveat}
+        </td>
+      );
+    }
+  }
+
   return (
     <React.Fragment>
       <tr className={className} onMouseEnter={handleMouseEnter}>
         <td className="stop-name" rowSpan={rowSpan}>
           {stopName}
         </td>
-        {aimedColumn ? (
-          <td>
-            {stop.aimed_arrival_time || stop.aimed_departure_time}
-            {caveat}
-          </td>
-        ) : null}
+        {aimed}
         {actual}
       </tr>
       {rowSpan ? (

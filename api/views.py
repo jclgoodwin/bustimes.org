@@ -4,13 +4,14 @@ from rest_framework import pagination, viewsets
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 from django.contrib.postgres.aggregates import ArrayAgg
-from django.db.models import Q
+from django.db.models import Q, Subquery, OuterRef
 
 from vehicles.time_aware_polyline import encode_time_aware_polyline
 
 from busstops.models import Operator, Service, StopPoint
 from bustimes.models import StopTime, Trip
 from bustimes.utils import contiguous_stoptimes_only
+from disruptions.models import Call
 from vehicles.models import Livery, Vehicle, VehicleJourney, VehicleType
 from vehicles.utils import redis_client
 
@@ -109,6 +110,15 @@ class TripViewSet(viewsets.ReadOnlyModelViewSet):
                 "stop__locality__latlong",
             )
             .order_by("trip__start", "id")
+            .annotate(
+                call_condition=Subquery(
+                    Call.objects.filter(
+                        stop_time=OuterRef("id"),
+                        journey__trip=OuterRef("trip"),
+                        journey__situation__current=True,
+                    ).values("condition")[:1]
+                )
+            )
         )
         if len(trips) > 1:
             stops = contiguous_stoptimes_only(stops, obj.id)

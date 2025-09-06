@@ -5,7 +5,7 @@ from ...models import VehicleLocation, VehicleJourney
 
 
 class Command(ImportLiveVehiclesCommand):
-    source_name = "jersey"
+    source_name = vehicle_code_scheme = "jersey"
     operator = "libertybus"
     url = "http://sojbuslivetimespublic.azurewebsites.net/api/Values/GetMin?secondsAgo=360"
 
@@ -21,6 +21,22 @@ class Command(ImportLiveVehiclesCommand):
             # yesterday
             now_datetime -= datetime.timedelta(days=1)
         return datetime.datetime.combine(now_datetime, then_time)
+
+    @staticmethod
+    def get_vehicle_identity(item):
+        return item["bus"].split("-", 4)[-1]
+
+    @staticmethod
+    def get_journey_identity(item):
+        return (
+            item["bus"],
+            item["line"],
+            item["direction"],
+        )
+
+    @staticmethod
+    def get_item_identity(item):
+        return item["time"]
 
     def get_vehicle(self, item):
         parts = item["bus"].split("-", 4)
@@ -42,7 +58,7 @@ class Command(ImportLiveVehiclesCommand):
         parts = item["bus"].split("-", 4)
         journey.code = parts[2]
         journey.route_name = item["line"]
-        journey.direction = item["direction"][:8]
+        journey.direction = item["direction"]
         return journey
 
     def create_vehicle_location(self, item):

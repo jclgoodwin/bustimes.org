@@ -1,6 +1,6 @@
 import io
 import logging
-import xml.etree.cElementTree as ET
+import xml.etree.ElementTree as ET
 import zipfile
 from datetime import datetime, timezone
 from functools import cache
@@ -603,7 +603,7 @@ class Command(BaseCommand):
             headers["if-modified-since"] = http_date(dataset.datetime.timestamp())
 
         response = self.session.get(download_url, headers=headers, stream=True)
-        assert response.ok
+        response.raise_for_status()
 
         if response.status_code == 304:
             return dataset

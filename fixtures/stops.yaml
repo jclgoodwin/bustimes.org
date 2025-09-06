@@ -1,3 +1,6 @@
+# This file contains overrides/corrections to NaPTAN StopPoints
+# See busstops/management/commands/naptan_new.py
+
 # relocate stops from The Street to Dereham Road - buses don't run through Briningham village
 # see https://www.flickr.com/photos/55355638@N05/9821099604/
 2900B482:
@@ -31,6 +34,12 @@
 4200F177502:
     common_name: Atherstone Surgery
 
+# doctor's surgery isn't there any more
+2900B656:
+    common_name: Church Walk
+2900B655:
+    common_name: Church Walk
+
 # clarify that the church isn't the main church in Wells-next-the-Sea
 2900W5712:
     landmark: Congregational church
@@ -55,10 +64,6 @@
     locality_id: E0040542
 0500FWHIY901:
     locality_id: E0040542
-
-# Inverness Airport
-'6700713414':
-    latlong: POINT(-4.064315804540854 57.54041278738674)
 
 #Oadby Coppice Hall
 '260016604':

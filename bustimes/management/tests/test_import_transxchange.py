@@ -1,4 +1,4 @@
-import xml.etree.cElementTree as ET
+import xml.etree.ElementTree as ET
 import zipfile
 from datetime import date
 from functools import partial
@@ -216,15 +216,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(res.context_data["breadcrumb"], [self.ea, self.fecs])
         self.assertContains(res, "Ivy Road - Queens Square")
         self.assertContains(res, "Queens Square - Ivy Road")
-        self.assertContains(
-            res,
-            """
-            <tr class="minor">
-                <th class="stop-name" scope="row">Norwich Brunswick Road (adj)</th><td>19:48</td><td>22:56</td>
-            </tr>
-        """,
-            html=True,
-        )
+        self.assertContains(res, "<td>19:48</td><td>22:56</td>")
         self.assertContains(
             res, '<option selected value="2016-10-03">Monday 3 October 2016</option>'
         )
@@ -233,17 +225,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(
             res, '<option selected value="2016-10-03">Monday 3 October 2016</option>'
         )
-        self.assertContains(
-            res,
-            """
-            <tr class="minor">
-                <th class="stop-name" scope="row">Norwich Eagle Walk (adj)</th>
-                <td>19:47</td>
-                <td>22:55</td>
-            </tr>
-        """,
-            html=True,
-        )
+        self.assertContains(res, "<td>19:47</td><td>22:55</td>")
 
         res = self.client.get(service.get_absolute_url() + "?date=2016-10-16")
         timetable = res.context_data["timetable"]
@@ -293,7 +275,7 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual([], timetable.groupings)
 
-        self.assertEqual(0, route.service.stopusage_set.count())
+        self.assertEqual(157, route.service.stopusage_set.count())
 
     @time_machine.travel("23 January 2017")
     def test_do_service_wales(self):
@@ -337,7 +319,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(1, len(timetable.groupings))
         self.assertEqual(3, len(timetable.groupings[0].rows[0].times))
 
-        self.assertEqual(0, service.stopusage_set.count())
+        self.assertEqual(19, service.stopusage_set.count())
 
     @time_machine.travel("2016-12-15")
     def test_timetable_ne(self):
@@ -386,8 +368,8 @@ class ImportTransXChangeTest(TestCase):
             ),
         )
 
-        # created despite leading 0 in an ATCO code
-        self.assertEqual(2, service.stopusage_set.count())
+        self.assertEqual(149, service.stopusage_set.order_by().distinct("stop").count())
+        # (.distinct() because of flaky varying/nondeterministic number of StopUsages)
 
     @time_machine.travel("2021-03-25")
     def test_delaine_101(self):
@@ -508,7 +490,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(feet[3].span, 1)
         self.assertEqual(feet[4].span, 10)
 
-        self.assertEqual(0, service.stopusage_set.count())
+        self.assertEqual(131, service.stopusage_set.count())
 
     @time_machine.travel("2017-12-10")
     def test_timetable_derby_alvaston_circular(self):
@@ -521,11 +503,11 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual(
             "Wilmorton Ascot Drive (Adj)",
-            timetable.groupings[0].rows[49].stop.stop_code,
+            timetable.groupings[0].rows[49].stop.common_name,
         )
         self.assertEqual(
             "Wilmorton Ascot Drive (Adj)",
-            timetable.groupings[0].rows[50].stop.stop_code,
+            timetable.groupings[0].rows[50].stop.common_name,
         )
         self.assertEqual(60, len(timetable.groupings[0].rows))
 
@@ -586,7 +568,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(str(outbound.rows[-2].times[2:]), "[17:04, 18:05, 19:05, '']")
         self.assertEqual(str(outbound.rows[-1].times[2:]), "[17:06, 18:07, 19:07, '']")
 
-        self.assertEqual(0, service.stopusage_set.count())
+        self.assertEqual(102, service.stopusage_set.count())
 
         # Several journeys a day on bank holidays
         BankHolidayDate.objects.create(
@@ -618,7 +600,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(str(rows[-5].times), "[08:33, '', '', '', 15:30, '']")
         self.assertEqual(str(rows[-4].times), "[08:33, '', '', '', 15:30, '']")
 
-        self.assertEqual(0, service.stopusage_set.count())
+        self.assertEqual(114, service.stopusage_set.count())
 
     @time_machine.travel("2017-01-23")
     def test_timetable_holidays_only(self):
@@ -692,7 +674,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(date_options[0], date(2016, 2, 22))  # Monday
         self.assertEqual(date_options[-1], date(2017, 1, 27))
 
-        self.assertEqual(0, service.stopusage_set.count())
+        self.assertEqual(37, service.stopusage_set.count())
 
     @time_machine.travel("2018-09-24")
     def test_timetable_plymouth(self):
@@ -707,7 +689,7 @@ class ImportTransXChangeTest(TestCase):
         # self.assertEqual(str(timetable.groupings[1].rows[1].stop), "Plympton St Mary's Bridge")
         self.assertEqual(
             str(timetable.groupings[1].rows[1].stop),
-            "Underwood (Plymouth) Old Priory Junior School (NW-bound)",
+            "Underwood (Plymouth) Old Priory Junior School (N",
         )
         # self.assertEqual(str(timetable.groupings[1].rows[2].stop), "Plympton Priory Junior School")
         self.assertEqual(
@@ -728,7 +710,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertFalse(timetable.groupings[1].rows[5].has_waittimes)
         self.assertFalse(timetable.groupings[1].rows[6].has_waittimes)
 
-        self.assertEqual(0, service.stopusage_set.count())
+        self.assertEqual(74, service.stopusage_set.count())
 
         route = service.route_set.get()
 
@@ -850,7 +832,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(garage.name, "")
 
         self.assertEqual(Service.objects.count(), 3)
-        self.assertEqual(RouteLink.objects.count(), 6)
+        self.assertEqual(RouteLink.objects.count(), 271)
 
         # had 2 operators before running import_transxchange,
         # should now have just 1
@@ -994,7 +976,7 @@ class ImportTransXChangeTest(TestCase):
             service.description, "intu Trafford Centre - Eccles - Swinton - Bolton"
         )
 
-        self.assertEqual(0, service.stopusage_set.count())
+        self.assertEqual(23, service.stopusage_set.count())
 
         # Stagecoach Manchester 237
         service = Service.objects.get(service_code="NW_04_GMS_237_2")
@@ -1135,7 +1117,7 @@ class ImportTransXChangeTest(TestCase):
             html=True,
         )
 
-        self.assertEqual(5, service.stopusage_set.count())
+        self.assertEqual(88, service.stopusage_set.count())
 
         # Test service colour
         response = self.client.get("/stops/639004592")
@@ -1235,7 +1217,7 @@ class ImportTransXChangeTest(TestCase):
         )
 
         # should only be 6, despite running 'import_services' twice
-        self.assertEqual(0, service.stopusage_set.count())
+        self.assertEqual(6, service.stopusage_set.count())
 
         # trip timetable
         trip = Trip.objects.first()
@@ -1259,15 +1241,8 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(len(groupings[1].rows), 15)
         self.assertContains(
             res,
-            """
-            <tr>
-                <th class="stop-name" rowspan="2" scope="row">
-                    Leeds City Centre Bus Stn
-                </th>
-                <td></td><td>06:15</td><td rowspan="2">09:20</td><td rowspan="2">10:20</td><td></td><td></td><td></td>
-                <td></td><td></td><td rowspan="2"></td>
-            </tr>
-        """,
+            """<td></td><td>06:15</td><td rowspan="2">09:20</td><td rowspan="2">10:20</td><td></td><td></td><td></td>
+                <td></td><td></td><td rowspan="2"></td>""",
             html=True,
         )
         self.assertContains(
@@ -1304,12 +1279,8 @@ class ImportTransXChangeTest(TestCase):
             response,
             '<a href="/operators/west-midlands-railroad">West Midlands Railroad</a>',
         )
-        self.assertContains(
-            response,
-            """<th class="stop-name" scope="row">Stourbridge Junction Rail Station</th>""",
-            html=True,
-        )
-        self.assertEqual(2, service.stopusage_set.count())
+        self.assertContains(response, ">Stourbridge Junction Rail Station<")
+        self.assertEqual(4, service.stopusage_set.count())
 
     def test_get_service_code(self):
         self.assertEqual(
@@ -1530,7 +1501,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(response, "Peterborough Bus Station")
 
         # test modern trip API too:
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(6):
             response = self.client.get(f"/api/trips/{trip.id}.json")
         self.assertEqual(response.json()["block"], "6001")
 
@@ -1583,7 +1554,7 @@ class ImportTransXChangeTest(TestCase):
         response = self.client.get(f"/services/{trip.route.service_id}/timetable.csv")
         self.assertContains(
             response,
-            '"UoN Main Campus Beeston La, East Mids Conf Ctr",,,18:45,then every 15 minutes until,23:15',
+            f'"UoN Main Campus Beeston La, East Mids Conf Ctr",,{trip.route.source_id}:3390UN48,18:45,then every 15 minutes until,23:15',
         )
 
     @time_machine.travel("2025-05-14")

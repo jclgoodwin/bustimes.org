@@ -8,8 +8,6 @@ import type { Vehicle } from "./VehicleMarker";
 
 const ServiceMapMap = lazy(() => import("./ServiceMapMap"));
 
-const apiRoot = process.env.API_ROOT;
-
 let hasCss = false;
 
 declare global {
@@ -143,7 +141,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
         return;
       }
 
-      const url = `${apiRoot}vehicles.json?service=${Array.from(selectedServices).join(",")}`;
+      const url = `/vehicles.json?service=${Array.from(selectedServices).join(",")}`;
       fetch(url).then(
         (response) => {
           response.json().then((items) => {

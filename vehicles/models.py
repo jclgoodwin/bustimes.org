@@ -211,21 +211,22 @@ class Livery(models.Model):
                 self.left_css = self.minify(self.left_css)
         super().save(*args, update_fields=update_fields, **kwargs)
 
-    def get_styles(self):
+    def get_styles(self, livery_ids=None):
         if not self.left_css:
             return []
-        selector = f".livery-{self.id}"
-        css = f"background: {self.left_css}"
+        if not livery_ids:
+            livery_ids = (self.id,)
+        selector = ",".join(f".livery-{livery_id}" for livery_id in livery_ids)
+        css = f"  background: {self.left_css}"
         if self.text_colour:
-            css = f"{css};\n  color:{self.text_colour};fill:{self.text_colour}"
+            css = f"{css};\n  color: {self.text_colour}"
         elif self.white_text:
-            css = f"{css};\n  color:#fff;fill:#fff"
+            css = f"{css};\n  color: #fff"
         if self.stroke_colour:
-            css = f"{css};stroke:{self.stroke_colour}"
-        styles = [f"{selector} {{\n  {css}\n}}\n"]
+            css = f"{css};\n  stroke: {self.stroke_colour}"
         if self.right_css != self.left_css:
-            styles.append(f"{selector}.right {{\n  background: {self.right_css}\n}}\n")
-        return styles
+            css += f";\n  &.right{{\n    background:{self.right_css}\n  }}"
+        return [f"{selector}{{\n{css}\n}}\n"]
 
 
 class VehicleFeature(models.Model):
@@ -640,7 +641,7 @@ class VehicleJourney(models.Model):
     vehicle = models.ForeignKey(Vehicle, models.CASCADE, null=True, blank=True)
     code = models.CharField(max_length=255, blank=True)
     destination = models.CharField(max_length=255, blank=True)
-    direction = models.CharField(max_length=8, blank=True)
+    direction = models.CharField(max_length=13, blank=True)
     trip = models.ForeignKey("bustimes.Trip", models.SET_NULL, null=True, blank=True)
     # trip_matched = models.BooleanField(default=True)
     # block = models.ForeignKey("bustimes.Block", models.SET_NULL, null=True, blank=True)
@@ -682,16 +683,6 @@ class VehicleJourney(models.Model):
         return f"{url}?date={date}"
 
 
-# class VehiclePosition:
-#     journey = models.ForeignKey(VehicleJourney, on_delete)
-
-
-class Occupancy(models.TextChoices):
-    SEATS_AVAILABLE = "seatsAvailable", "Seats available"
-    STANDING_AVAILABLE = "standingAvailable", "Standing available"
-    FULL = "full", "Full"
-
-
 class VehicleLocation:
     """This used to be a model,
     is no longer stored in the database
@@ -710,9 +701,6 @@ class VehicleLocation:
         self.occupancy_thresholds = None
         self.block = block
         self.tfl_code = None
-
-    def get_occupancy_display(self):
-        return Occupancy(self.occupancy).label
 
     def __str__(self):
         return f"{self.datetime:%-d %b %Y %H:%M:%S}"
@@ -787,12 +775,12 @@ class VehicleLocation:
             json["service"] = {"line_name": journey.route_name}
 
         if self.seated_occupancy is not None and self.seated_capacity is not None:
-            if self.occupancy == "full":
+            if self.occupancy == "Full":
                 json["seats"] = self.occupancy
             else:
                 json["seats"] = f"{self.seated_capacity - self.seated_occupancy} free"
         elif self.occupancy:
-            json["seats"] = self.get_occupancy_display()
+            json["seats"] = self.occupancy
         if self.wheelchair_occupancy is not None and self.wheelchair_capacity:
             if self.wheelchair_occupancy < self.wheelchair_capacity:
                 json["wheelchair"] = "free"
@@ -803,7 +791,12 @@ class VehicleLocation:
 
 
 class SiriSubscription(models.Model):
-    name = models.CharField(max_length=64, blank=True, unique=True)
+    name = models.CharField(
+        max_length=64,
+        blank=True,
+        unique=True,
+        help_text="There should be a DataSource with the same name as this",
+    )
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     sample = models.TextField(null=True, blank=True)
 

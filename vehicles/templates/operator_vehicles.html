@@ -16,6 +16,10 @@
 
 <h1>{% firstof parent object %}</h1>
 
+<div class="ad-wrapper">
+    <div id="AFM_inContentTop_ad"></div>
+</div>
+
 {% if not parent %}
     <ul class="tabs">
         <li><a href="{{ object.get_absolute_url }}">Routes</a></li>
@@ -50,8 +54,10 @@ ticket machines, a byproduct of the live bus tracking.</p>
 {% if not parent %}
     <ul class="horizontal">
         <li><a href="/vehicles/edits?operator={{ object.noc }}&status=approved">Recent changes</a></li>
-        {% if request.user.is_superuser %}
+        {% if request.user.trusted %}
             <li><a href="/vehicles/edits?operator={{ object.noc }}&status=pending">Pending vehicle edits</a></li>
+        {% endif %}
+        {% if request.user.is_superuser %}
             <li><a href="{% url 'admin:vehicles_vehicle_changelist' %}?operator={{ object.noc }}">✎</a></li>
         {% endif %}
     </ul>
@@ -64,6 +70,7 @@ ticket machines, a byproduct of the live bus tracking.</p>
             <th scope="col" colspan="2"></th>
             {% if not parent %}<th scope="col" colspan="2">Last tracked</th>{% endif %}
             <th scope="col">Livery</th>
+            {% if branding_column %}<th scope="col">Branding</th>{% endif %}
             <th scope="col">Type</th>
             {% if name_column %}<th scope="col" class="trivia">Name</th>{% endif %}
             {% if notes_column %}<th scope="col" class="trivia">Notes</th>{% endif %}
@@ -104,9 +111,11 @@ ticket machines, a byproduct of the live bus tracking.</p>
                         {{ vehicle.last_seen.when|date:"j M Y" }}
                     {% endif %}
                 </td>{% endif %}
-                <td{% if vehicle.colours or vehicle.livery_id %} class="livery-cell"{% endif %}>
-                    {% if vehicle.colours or vehicle.livery_id %}<div class="livery{% if vehicle.livery_id %} livery-{{ vehicle.livery_id }}{% else %}" style="background:{{ vehicle.get_livery }}{% endif %}"{% if vehicle.livery_name %} title="{{ vehicle.livery_name }}"{% endif %}></div>{% endif %}
+                <td{% if vehicle.colours or vehicle.livery_id %} class="livery-cell"{% endif %}{% if branding_column %}{% if not vehicle.branding or not vehicle.livery_name %} colspan="2"{% endif %}{% endif %}>
+                    {% if vehicle.colours or vehicle.livery_id %}<div class="livery{% if vehicle.livery_id %} livery-{{ vehicle.livery_id }}{% else %}" style="background:{{ vehicle.get_livery }}{% endif %}"></div>{% endif %}
+                    {% if vehicle.livery_name %}{{ vehicle.livery_name }}{% else %}{{ vehicle.branding }}{% endif %}
                 </td>
+                {% if vehicle.branding and vehicle.livery_name %}<td>{{ vehicle.branding }}</td>{% endif %}
                 <td>{% if vehicle.is_spare_ticket_machine %}{{ vehicle.notes }}{% else %}{{ vehicle.vehicle_type_name|default:"" }}{% endif %}</td>
                 {% if name_column %}<td class="trivia">{{ vehicle.name }}</td>{% endif %}
                 {% if notes_column %}<td class="trivia">{% if not vehicle.is_spare_ticket_machine %}{{ vehicle.notes }}{% endif %}</td>{% endif %}

@@ -15,7 +15,7 @@ from websockets.asyncio.client import connect
 from busstops.models import DataSource, Operator, Service
 
 from ...models import Vehicle, VehicleJourney, VehicleLocation
-from ..import_live_vehicles import ImportLiveVehiclesCommand
+from ..import_live_vehicles import ImportLiveVehiclesCommand, logger
 
 
 class Command(ImportLiveVehiclesCommand):
@@ -32,7 +32,7 @@ class Command(ImportLiveVehiclesCommand):
             created = False
         else:
             fleet_number = int(vehicle_code) if vehicle_code.isdigit() else None
-            vehicle, _ = Vehicle.objects.get_or_create(
+            vehicle, created = Vehicle.objects.get_or_create(
                 {
                     "source": self.source,
                     "fleet_code": str(fleet_number or ""),
@@ -41,7 +41,6 @@ class Command(ImportLiveVehiclesCommand):
                 operator_id=item["operator"],
                 code=vehicle_code,
             )
-            created = True
 
         # origin aimed departure time
         departure_time = item["stops"][0]["date"] + " " + item["stops"][0]["time"]
@@ -49,16 +48,12 @@ class Command(ImportLiveVehiclesCommand):
             datetime.strptime(departure_time, "%Y-%m-%d %H:%M")
         )
 
-        if not created:
-            if (
-                vehicle.latest_journey
-                and vehicle.latest_journey.datetime == departure_time
-            ):
-                journey = vehicle.latest_journey
-            else:
-                journey = VehicleJourney.objects.filter(
-                    vehicle=vehicle, datetime=departure_time
-                ).first()
+        if vehicle.latest_journey and vehicle.latest_journey.datetime == departure_time:
+            journey = vehicle.latest_journey
+        elif not created:
+            journey = VehicleJourney.objects.filter(
+                vehicle=vehicle, datetime=departure_time
+            ).first()
         else:
             journey = None
 
@@ -120,16 +115,35 @@ class Command(ImportLiveVehiclesCommand):
         self.to_save.append((location, vehicle))
 
     @staticmethod
-    def split_vehicle_id(item: dict) -> (str, str):
+    def split_vehicle_id(item: dict):
         prefix = f"{item['operator']}-{item['dir']}-"
         suffix = f"-{item['line_name']}"
-        vehicle = item["status"]["vehicle_id"].removesuffix(suffix).removeprefix(prefix)
-        journey, vehicle = vehicle[11:].split("-", 1)
-        return journey, vehicle
+        vehicle = item["status"]["vehicle_id"]
+
+        if vehicle.startswith(prefix) and vehicle.endswith(suffix):
+            vehicle = vehicle.removesuffix(suffix).removeprefix(prefix)
+            return vehicle[11:].split("-", 1)
+        else:
+            logger.warning(
+                "vehicle %s doesn't have prefix %s and/or suffix %s",
+                vehicle,
+                prefix,
+                suffix,
+                exc_info=True,
+            )
+            parts = vehicle.split("-")
+            assert len(parts) >= 8
+            item["line_name"] = parts[-1]
+            item["operator"] = parts[0]
+            item["dir"] = parts[1]
+            return parts[5], "-".join(parts[6:-1])
 
     @sync_to_async
     def handle_data(self, data):
-        items = data["params"]["resource"]["member"]
+        if "params" in data:
+            items = data["params"]["resource"]["member"]
+        else:
+            items = data["member"]
 
         vehicle_codes = [self.split_vehicle_id(item)[1] for item in items]
         print(vehicle_codes)

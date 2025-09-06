@@ -2,15 +2,12 @@
 <html lang="en-GB">
 <head>
 <meta charset="utf-8">
-<title>{% block title %}{% if object %}{{ object.get_long_name or object.get_qualified_name or object }} – {% endif %}Bus Times{% endblock %}</title>
+<title>{% block title %}{{ object }} – Bus Times{% endblock %}</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#ffff9e" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
-<meta name="color-scheme" content="dark light">
 {% block canonical %}
-    {% if object.get_absolute_url %}
-        <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url() }}">
-    {% endif %}
+    <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url() }}">
 {% endblock canonical %}
 <script type="application/ld+json">{"@context":"http://schema.org","@type":"WebSite","url":"https://bustimes.org","name":"bustimes.org","potentialAction":{"@type":"SearchAction","target":"https://bustimes.org/search?q={q}","query-input":"required name=q"}}</script>
 <link rel="icon" sizes="48x48" type="image/png" href="/favicon.ico">
@@ -26,9 +23,11 @@
 {% block fuse %}
 {% if ad %}
 <script src="{{ static('consent.js') }}"></script>
-<script>if(typeof Array.prototype.includes!=="undefined"){s=document.getElementsByTagName('script')[0];var sc=document.createElement('script');sc.type='text/javascript';sc.async=true;sc.src='https://cdn.adfirst.media/hb/bustimes.js?v'+Math.floor(new Date().getTime()/600000);s.parentNode.insertBefore(sc,s);}</script>
+<script>if(window.top===window.self&&window.location.host==="bustimes.org"&&typeof Array.prototype.includes!=="undefined"){s=document.getElementsByTagName('script')[0];var sc=document.createElement('script');sc.async=true;sc.src='https://cdn.adfirst.media/hb/bustimes.js?v'+Math.floor(new Date().getTime()/600000);s.parentNode.insertBefore(sc,s);}</script>
 {% endif %}
 {% endblock fuse %}
+
+<script async data-domain="bustimes.org" src="https://plausible.bustimes.org.uk/js/script.js"></script>
 
 </head>
 <body class="{% block bodyclass %}wide{% endblock %}{% if ad is false %} no-ads{% endif %}">
@@ -45,9 +44,9 @@
 {% block header %}
 <header class="site-header">
     <div>
-        <a href="/" class="site-name{% if object.mode == 'ferry' %} ferry{% endif %}">{% if object.mode == 'ferry' %}Ferry Times{% else %}bustimes.org{% endif %}</a>
+        <a href="/" class="site-name">bustimes.org</a>
         <ul>
-            <li><a href="/map{% if object.latlong %}#16/{{ object.latlong.y }}/{{ object.latlong.x }}{% endif %}">Map</a></li>
+            <li><a href="/map">Map</a></li>
         </ul>
         <form method="GET" action="/search" class="search">
             <label>

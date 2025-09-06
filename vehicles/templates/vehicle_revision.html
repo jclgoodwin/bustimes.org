@@ -14,9 +14,9 @@
         &centerdot;
             <a href="/contact?message=I%20wish%20to%20report%20this%20content:%0A%0Ahttps://bustimes.org{% url 'admin:vehicles_vehiclerevision_change' revision.pk %}%0A%0A">Report</a>
     <p>
-        {% if revision.disapproved %}<del>{% endif %}
+        {% if revision.disapproved %}<s>{% endif %}
         {% include "vehicle_revision_changes.html" %}
-        {% if revision.disapproved %}</del>{% endif %}
+        {% if revision.disapproved %}</s>{% endif %}
 
     {% if revision.disapproved or revision.approved_at or revision.approved_by_id %}
         <p>

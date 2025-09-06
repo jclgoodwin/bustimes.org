@@ -370,6 +370,7 @@ class LiveryAdmin(SimpleHistoryAdmin):
     ]
     list_filter = [
         "published",
+        "show_name",
         "updated_at",
         ("vehicle__operator", admin.RelatedOnlyFieldListFilter),
     ]
@@ -379,6 +380,7 @@ class LiveryAdmin(SimpleHistoryAdmin):
     # specify order:
     fields = [
         "name",
+        "show_name",
         "colour",
         "blob",
         "colours",
@@ -512,5 +514,9 @@ class VehicleCodeAdmin(admin.ModelAdmin):
     list_filter = ["scheme"]
 
 
+@admin.register(models.SiriSubscription)
+class SiriSubscriptionAdmin(admin.ModelAdmin):
+    readonly_fields = ["uuid", "sample"]
+
+
 admin.site.register(models.VehicleFeature)
-admin.site.register(models.SiriSubscription)

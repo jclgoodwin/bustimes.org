@@ -19,6 +19,10 @@ class Situation(models.Model):
             "name__in": (
                 "bustimes.org",
                 "TfL",
+                "TfL disruptions",
+                "TfL statuses",
+                "BODS disruptions",
+                "BODS cancellations",
                 "Bus Open Data",
             )
         },
@@ -37,7 +41,7 @@ class Situation(models.Model):
     current = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.summary or self.text or super().__str__()
+        return self.summary or self.text or self.situation_number or super().__str__()
 
     def nice_reason(self):
         return camel_case_to_spaces(self.reason)
@@ -130,3 +134,22 @@ class Consequence(models.Model):
         if service:
             return service.get_absolute_url()
         return ""
+
+
+class AffectedJourney(models.Model):
+    situation = models.ForeignKey(Situation, models.CASCADE)
+    trip = models.ForeignKey("bustimes.Trip", models.CASCADE)
+    origin_departure_time = models.DateTimeField(null=True, blank=True)
+    condition = models.CharField()  # cancelled, altered, etc
+
+    def __str__(self):
+        return f"{self.origin_departure_time} {self.condition}"
+
+
+class Call(models.Model):
+    journey = models.ForeignKey(AffectedJourney, models.CASCADE)
+    stop_time = models.ForeignKey("bustimes.StopTime", models.CASCADE)
+    arrival_time = models.DateTimeField(null=True, blank=True)
+    departure_time = models.DateTimeField(null=True, blank=True)
+    condition = models.CharField()
+    order = models.PositiveSmallIntegerField()

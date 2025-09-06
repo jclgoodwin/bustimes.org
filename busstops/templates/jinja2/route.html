@@ -1,11 +1,9 @@
 <div class="groupings">
     {% for stopusage in stopusages %}
-        {% if not loop.previtem or stopusage.direction != loop.previtem.direction %}
+        {% if not loop.previtem or stopusage.inbound != loop.previtem.inbound %}
             {% if loop.previtem %}</ul></div>{% endif %}
             <div class="grouping">
-            <h2>
-                {{ stopusage.direction.capitalize() }}
-            </h2>
+            <h2>{% if stopusage.inbound %}In{% else %}Out{% endif %}bound</h2>
             {% if has_minor_stops %}
                 <input type="radio" name="show-all-stops-{{ loop.index }}" id="timing-points-{{ loop.index }}" checked>
                 <label for="timing-points-{{ loop.index }}">Timing points</label>
@@ -15,7 +13,7 @@
             <ul class="route">
         {% endif %}
         {% if not loop.previtem or stopusage != loop.previtem %}{% if not stopusage.suspended %}
-            <li{% if stopusage.is_minor() %} class="minor"{% endif %}>
+            <li{% if not stopusage.timing_point %} class="minor"{% endif %}>
                 <a href="{{ stopusage.stop.get_absolute_url() }}">{% if stopusage.situation %}⚠️&#xfe0f; {% endif %}{{ stopusage.stop.get_qualified_name() }}</a>
             </li>
         {% endif %}{% endif %}

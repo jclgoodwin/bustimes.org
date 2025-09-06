@@ -51,8 +51,11 @@ class NaptanTest(TestCase):
             with override_settings(DATA_DIR=temp_dir_path):
                 self.assertFalse((temp_dir_path / "NaPTAN.xml").exists())
 
-                with self.assertNumQueries(24), self.assertLogs(
-                    "busstops.management.commands.naptan_new", "WARNING"
+                with (
+                    self.assertNumQueries(24),
+                    self.assertLogs(
+                        "busstops.management.commands.naptan_new", "WARNING"
+                    ),
                 ):
                     call_command("naptan_new")
 
@@ -63,12 +66,13 @@ class NaptanTest(TestCase):
 
                 cassette.rewind()
 
-                with self.assertNumQueries(4):
+                # data hasn't changed
+                with self.assertNumQueries(2):
                     call_command("naptan_new")
 
                 cassette.rewind()
 
-                with self.assertNumQueries(4):
+                with self.assertNumQueries(2):
                     call_command("naptan_new")
 
                 source = DataSource.objects.get(name="NaPTAN")
@@ -95,8 +99,8 @@ class NaptanTest(TestCase):
         stop = response.context_data["object"]
         self.assertEqual(stop.admin_area.name, "Darlington")
         self.assertEqual(stop.stop_area_id, "076G5394")
-        self.assertAlmostEqual(stop.latlong.x, -1.538062647801621)
-        self.assertAlmostEqual(stop.latlong.y, 54.511514214023784)
+        self.assertAlmostEqual(stop.latlong.x, -1.538063)
+        self.assertAlmostEqual(stop.latlong.y, 54.511525)
 
         stop = StopPoint.objects.get(atco_code="3200GTAYTON0")
         self.assertAlmostEqual(stop.latlong.x, -1.117418697321657)
@@ -109,5 +113,5 @@ class NaptanTest(TestCase):
 
         # stop area
         stop = StopArea.objects.get(id="701GA00001")
-        self.assertAlmostEqual(stop.latlong.x, -6.96706899058396)
-        self.assertAlmostEqual(stop.latlong.y, 55.19115290579295)
+        self.assertAlmostEqual(stop.latlong.x, -6.966171)
+        self.assertAlmostEqual(stop.latlong.y, 55.1911494)

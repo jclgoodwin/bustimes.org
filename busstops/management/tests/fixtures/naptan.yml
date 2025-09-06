@@ -63,7 +63,7 @@ interactions:
         <NptgLocalityRef>E0017763</NptgLocalityRef>
         <LocalityCentre>0</LocalityCentre>
         <Location>
-          <GridType>UKOS</GridType>
+          <GridType/>
           <Easting>623870</Easting>
           <Northing>312780</Northing>
         </Location>

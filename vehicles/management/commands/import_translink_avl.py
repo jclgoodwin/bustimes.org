@@ -15,7 +15,7 @@ def parse_date(date):
 
 
 class Command(ImportLiveVehiclesCommand):
-    source_name = "Translink"
+    source_name = vehicle_code_scheme = "Translink"
     url = "https://vpos.translinkniplanner.co.uk/velocmap/vmi/VMI"
     previous_locations = {}
 
@@ -30,28 +30,21 @@ class Command(ImportLiveVehiclesCommand):
     def get_datetime(item):
         return parse_datetime(item["Timestamp"])
 
-    def prefetch_vehicles(self, vehicle_codes):
-        vehicles = self.vehicles.filter(
-            operator__in=self.operators, code__in=vehicle_codes
+    @staticmethod
+    def get_vehicle_identity(item):
+        return item["VehicleIdentifier"]
+
+    @staticmethod
+    def get_journey_identity(item):
+        return (
+            item["JourneyIdentifier"],
+            item["DirectionText"],
+            item["LineText"],
         )
-        self.vehicle_cache = {vehicle.code: vehicle for vehicle in vehicles}
 
-    def get_items(self):
-        items = []
-        vehicle_codes = []
-
-        # build list of vehicles that have moved
-        for item in super().get_items():
-            key = item["VehicleIdentifier"]
-            value = item["Timestamp"]
-            if self.previous_locations.get(key) != value:
-                items.append(item)
-                vehicle_codes.append(key)
-                self.previous_locations[key] = value
-
-        self.prefetch_vehicles(vehicle_codes)
-
-        return items
+    @staticmethod
+    def get_item_identity(item):
+        return item["Timestamp"]
 
     def get_vehicle(self, item) -> tuple[Vehicle, bool]:
         vehicle_code = item["VehicleIdentifier"]
@@ -60,10 +53,6 @@ class Command(ImportLiveVehiclesCommand):
 
         if operator_id == "TM":
             operator_id = "MET"
-
-        if vehicle_code in self.vehicle_cache:
-            vehicle = self.vehicle_cache[vehicle_code]
-            return vehicle, False
 
         vehicle = self.vehicles.filter(
             fleet_code__iexact=fleet_code,
@@ -81,13 +70,11 @@ class Command(ImportLiveVehiclesCommand):
                 vehicle.save(update_fields=["code"])
             return vehicle, False
 
-        vehicle = Vehicle.objects.create(
+        return Vehicle.objects.get_or_create(
+            {"fleet_code": fleet_code, "source": self.source},
             operator_id=operator_id,
-            source=self.source,
             code=vehicle_code,
-            fleet_code=fleet_code,
         )
-        return vehicle, True
 
     def get_journey(self, item, vehicle):
         journey = VehicleJourney(

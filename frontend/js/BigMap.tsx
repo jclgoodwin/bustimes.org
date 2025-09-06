@@ -228,7 +228,7 @@ function Stops({
 }
 
 function fetchJson(url: string) {
-  return fetch(apiRoot + url, {
+  return fetch(`/${url}`, {
     credentials: "omit",
   }).then(
     (response) => {
@@ -596,7 +596,7 @@ export default function BigMap(
 
       vehiclesAbortController.current = new AbortController();
 
-      return fetch(`${apiRoot}vehicles.json${url}`, {
+      return fetch(`/vehicles.json${url}`, {
         credentials: "omit",
         signal: vehiclesAbortController.current.signal,
       })

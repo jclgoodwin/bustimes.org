@@ -5,7 +5,7 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
 class Command(ImportLiveVehiclesCommand):
-    source_name = "guernsey"
+    source_name = vehicle_code_scheme = "guernsey"
 
     def get_items(self):
         response = self.session.get(self.source.url, **self.source.settings)
@@ -15,8 +15,23 @@ class Command(ImportLiveVehiclesCommand):
     def get_datetime(item):
         return parse_datetime(item["reported"])
 
+    @staticmethod
+    def get_vehicle_identity(item):
+        return item["vehicleRef"]
+
+    @staticmethod
+    def get_journey_identity(item):
+        return (
+            item["scheduledTripStartTime"],
+            item["routeName"],
+            item.get("destination"),
+        )
+
+    @staticmethod
+    def get_item_identity(item):
+        return item["reported"]
+
     def get_vehicle(self, item):
-        print(item)
         code = item["vehicleRef"]
         defaults = {"reg": code}
 
@@ -27,10 +42,10 @@ class Command(ImportLiveVehiclesCommand):
 
         latest_journey = vehicle.latest_journey
         if latest_journey and latest_journey.datetime == datetime:
-            return latest_journey
+            journey = latest_journey
         else:
             try:
-                return vehicle.vehiclejourney_set.get(datetime=datetime)
+                journey = vehicle.vehiclejourney_set.get(datetime=datetime)
             except VehicleJourney.DoesNotExist:
                 journey = VehicleJourney(datetime=datetime)
 

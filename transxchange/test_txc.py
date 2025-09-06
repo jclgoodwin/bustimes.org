@@ -1,6 +1,6 @@
 """Tests for timetables and date ranges"""
 
-import xml.etree.cElementTree as ET
+import xml.etree.ElementTree as ET
 from datetime import date
 from django.test import TestCase
 from . import txc

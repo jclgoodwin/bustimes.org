@@ -14,7 +14,7 @@ class Command(ImportLiveVehiclesCommand):
         parser.add_argument("source_name", type=str)
 
     def handle(self, source_name, **options):
-        self.source_name = source_name
+        self.source_name = self.vehicle_code_scheme = source_name
         super().handle(**options)
 
     def do_source(self):
@@ -23,6 +23,22 @@ class Command(ImportLiveVehiclesCommand):
             self.operators = self.source.settings["operators"]
         else:
             self.operators = {}
+
+    @staticmethod
+    def get_vehicle_identity(item):
+        return item["properties"]["vehicle"]
+
+    @staticmethod
+    def get_journey_identity(item):
+        return (
+            item["properties"]["line"],
+            item["properties"]["direction"],
+            item["properties"].get("destination", ""),
+        )
+
+    @staticmethod
+    def get_item_identity(item):
+        return item["geometry"]["coordinates"]
 
     def get_items(self):
         return super().get_items()["features"]
@@ -89,7 +105,7 @@ class Command(ImportLiveVehiclesCommand):
     def get_journey(self, item, vehicle):
         journey = VehicleJourney(
             route_name=item["properties"]["line"],
-            direction=item["properties"]["direction"][:8],
+            direction=item["properties"]["direction"],
             destination=item["properties"].get("destination", ""),
         )
 

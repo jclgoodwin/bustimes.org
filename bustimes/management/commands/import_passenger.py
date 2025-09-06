@@ -20,9 +20,7 @@ from .import_bod_timetables import clean_up, get_operator_ids, handle_file, logg
 from .import_transxchange import Command as TransXChangeCommand
 
 
-def get_version(dates, url):
-    modified = False
-
+def get_version(source, dates, url):
     filename = os.path.basename(urlparse(url).path)
     path = os.path.join(settings.DATA_DIR, filename)
 
@@ -34,39 +32,40 @@ def get_version(dates, url):
 
         if not os.path.exists(path):
             write_file(path, response)
-            modified = True
 
-    return (
-        Version(
-            start_date=dates[0],
-            end_date=dates[1],
-            url=url,
-            name=filename,
-        ),
-        modified,
+    return Version.objects.update_or_create(
+        {
+            "start_date": dates[0],
+            "end_date": dates[1],
+            "url": url,
+        },
+        source=source,
+        name=filename,
     )
 
 
-def get_versions(session, url):
+def get_versions(session, source):
     versions = []
     try:
-        response = session.get(url, timeout=61)
+        response = session.get(source.url, timeout=61)
     except requests.RequestException as e:
-        logger.warning(f"{url} {e}")
+        logger.warning(f"{source.url} {e}")
         sleep(5)
         return
     if not response.ok:
-        logger.warning(f"{url} {response}")
+        logger.warning(f"{source.url} {response}")
         sleep(5)
         return
 
     soup = bs4.BeautifulSoup(response.text, "lxml")
 
     for heading in soup.find_all("h3"):
-        text = heading.text
-        assert " to " in text
+        if " to " not in heading.text:
+            continue
 
-        dates = text.removeprefix("Current Data (").removesuffix(")").split(" to ")
+        dates = (
+            heading.text.removeprefix("Current Data (").removesuffix(")").split(" to ")
+        )
         assert len(dates) == 2
 
         for element in heading.next_siblings:
@@ -76,7 +75,7 @@ def get_versions(session, url):
             assert link.text == "Download TransXChange"
             url = urljoin(response.url, link.attrs["href"])
             assert "/txc" in url
-            versions.append(get_version(dates, url))
+            versions.append(get_version(source, dates, url))
 
             break
 
@@ -95,17 +94,16 @@ class Command(BaseCommand):
         session = Session()
 
         prefix = "https://data.discoverpassenger.com/operator"
-
-        sources = DataSource.objects.filter(url__startswith=prefix)
+        suffix = "/open-data"
 
         timetable_data_sources = TimetableDataSource.objects.filter(
-            active=True, url__startswith=prefix
+            Q(url__startswith=prefix) | Q(url__endswith=suffix), active=True
         )
         if operator_name:
             timetable_data_sources = timetable_data_sources.filter(name=operator_name)
 
         for source in timetable_data_sources:
-            versions = get_versions(session, source.url)
+            versions = get_versions(session, source)
 
             if versions:
                 prefix = versions[0][0].name.split("_")[0]
@@ -140,11 +138,9 @@ class Command(BaseCommand):
                     if modified or operator_name:
                         logger.info(version)
                         command.version = version
-                        version.source = source
-                        version.save()
                         handle_file(command, version.name, qualify_filename=True)
 
-                clean_up(source, sources)
+                clean_up(source, [command.source])
 
                 operator_ids = get_operator_ids(command.source)
                 logger.info(f"  {operator_ids}")
@@ -152,10 +148,13 @@ class Command(BaseCommand):
                 foreign_operators = [o for o in operator_ids if o not in operators]
                 logger.info(f"  {foreign_operators}")
 
-            # even if there are no new versions, delete expired versions
+            # even if there are no new versions, delete non-current
             old_versions = source.version_set.filter(
-                ~Q(id__in=[version.id for version in versions])
+                ~Q(id__in=[version.id for version, _ in versions])
             )
+            command.source.route_set.filter(
+                version__in=old_versions, service__isnull=False
+            ).update(service=None, version=None)
             old_versions = old_versions.delete()
 
             if not (new_versions or operator_name):

@@ -252,7 +252,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
             response = self.client.get("/stops/2900W0321/times.json?when=yesterday")
         self.assertEqual(400, response.status_code)
 
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(9):
             response = self.client.get("/stops/2900W0321?date=2038-01-19")
             self.assertEqual(str(response.context["when"]), "2038-01-19 00:00:00")
             self.assertEqual(
@@ -263,7 +263,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
         #     "departures.live.NorfolkDepartures.get_departures", return_value=[]
         # ) as mocked:
 
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(9):
             response = self.client.get("/stops/2900W0321?date=2020-05-02")
         self.assertEqual(1, len(response.context["departures"]))
         self.assertEqual(str(response.context["when"]), "2020-05-02 00:00:00")
@@ -276,7 +276,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
         self.assertEqual(str(response.context["when"]), "2020-05-02 11:00:00")
         self.assertContains(response, '<a href="?date=2020-05-03">')  # next day
 
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(10):
             response = self.client.get("/stops/2900w0321/departures?date=poop")
         self.assertEqual(str(response.context["when"]), "2020-05-01 01:00:00+01:00")
         self.assertEqual(len(response.context["departures"]), 1)
@@ -287,12 +287,12 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
         self.assertEqual(len(response.context["departures"]), 0)
         Service.objects.update(current=True)
 
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(8):
             response = self.client.get("/stations/2900A")
         self.assertEqual(str(response.context["when"]), "2020-05-01 01:00:00+01:00")
         self.assertEqual(len(response.context["departures"]), 3)
 
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(9):
             response = self.client.get("/stops/2900W0321?date=2020-05-02")
         self.assertEqual(str(response.context["when"]), "2020-05-02 00:00:00")
 
@@ -485,14 +485,14 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
                 "bustimes.management.commands.import_bod_timetables.download_if_modified",
                 return_value=(True, parse_datetime("2020-06-10T12:00:00+01:00")),
             ) as download_if_modified:
-                with self.assertNumQueries(110):
+                with self.assertNumQueries(116):
                     call_command("import_bod_timetables", "stagecoach")
                 download_if_modified.assert_called_with(
                     path, DataSource.objects.get(name="Stagecoach East"), ANY
                 )
 
                 route_links = RouteLink.objects.order_by("id")
-                self.assertEqual(len(route_links), 4)
+                self.assertEqual(len(route_links), 210)
                 route_link = route_links[0]
                 route_link.geometry = (
                     "SRID=4326;LINESTRING(0 0, 0 0)"  # should be overwritten later
@@ -505,11 +505,11 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
                 with self.assertNumQueries(1):
                     call_command("import_bod_timetables", "stagecoach", "SCOX")
 
-                with self.assertNumQueries(116):
+                with self.assertNumQueries(124):
                     call_command("import_bod_timetables", "stagecoach", "SCCM")
 
                 route_link.refresh_from_db()
-                self.assertEqual(len(route_link.geometry.coords), 32)
+                self.assertEqual(len(route_link.geometry.coords), 14)
 
             self.client.force_login(self.user)
             source = DataSource.objects.filter(name="Stagecoach East").first()
@@ -539,13 +539,13 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
         self.assertEqual(2, Service.objects.count())
         self.assertEqual(2, Route.objects.count())
 
-        self.assertEqual(RouteLink.objects.count(), 4)
+        self.assertEqual(RouteLink.objects.count(), 210)
 
         trip = route.trip_set.last()
         response = self.client.get(f"/api/trips/{trip.id}/")
         self.assertTrue(response.json()["times"][8]["track"])
 
-        with self.assertNumQueries(18):
+        with self.assertNumQueries(19):
             response = self.client.get("/services/904-huntingdon-peterborough")
         self.assertContains(response, "Possibly similar services")
         self.assertContains(
@@ -563,7 +563,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
         BankHolidayDate.objects.create(
             bank_holiday=BankHoliday.objects.get(name="ChristmasDay"), date="2020-12-25"
         )
-        with self.assertNumQueries(16):
+        with self.assertNumQueries(17):
             response = self.client.get(
                 "/services/904-huntingdon-peterborough?date=2020-12-25"
             )

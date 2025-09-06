@@ -126,7 +126,9 @@ class LiveDeparturesTest(TestCase):
             line_name="8",
             region_id="W",
         )
-        StopUsage.objects.create(stop=self.london_stop, service=service, order=1)
+        StopUsage.objects.create(
+            stop=self.london_stop, service=service, order=1, line_name="8"
+        )
         route = Route.objects.create(source=self.source, service=service, line_name="8")
         trip = Trip.objects.create(route=route, start="0", end="1")
         StopTime.objects.create(trip=trip, stop=self.london_stop)
@@ -150,7 +152,7 @@ class LiveDeparturesTest(TestCase):
                         <tr>
                             <td></td>
                             <th scope="col">To</th>
-                            <th scope="col">Ex&shy;pected</th>
+                            <th scope="col">Expected</th>
                         </tr>
                     <tr><td><a href="/services/8">8</a></td><td>Bow Church
                         <div class="vehicle">LTZ1414</div></td>
@@ -228,9 +230,13 @@ class LiveDeparturesTest(TestCase):
         )
         Vehicle.objects.create(source=vehicle_source, code="686")
 
-        with time_machine.travel(datetime(2022, 6, 14, 12)), vcr.use_cassette(
-            "fixtures/vcr/edinburgh.yaml", decode_compressed_response=True
-        ), self.assertNumQueries(9):
+        with (
+            time_machine.travel(datetime(2022, 6, 14, 12)),
+            vcr.use_cassette(
+                "fixtures/vcr/edinburgh.yaml", decode_compressed_response=True
+            ),
+            self.assertNumQueries(10),
+        ):
             response = self.client.get(stop.get_absolute_url())
         self.assertContains(response, '<a href="/vehicles/none-686#journeys/None">')
 
@@ -304,7 +310,7 @@ class LiveDeparturesTest(TestCase):
                     <tr>
                         <td></td>
                         <th scope="col">To</th>
-                        <th scope="col">Sched&shy;uled</th>
+                        <th scope="col">Scheduled</th>
                     </tr>
                     <tr><td>X98</td><td>Bratislava</td><td>11:53</td><td></td></tr>
                 </tbody></table>
@@ -313,7 +319,7 @@ class LiveDeparturesTest(TestCase):
                     <tr>
                         <td></td>
                         <th scope="col">To</th>
-                        <th scope="col">Sched&shy;uled</th>
+                        <th scope="col">Scheduled</th>
                     </tr>
                     <tr><td>9</td><td>Shilbottle</td><td>11:53</td><td></td></tr>
                 </tbody></table>
@@ -330,7 +336,7 @@ class LiveDeparturesTest(TestCase):
             time_machine.travel("Sat Feb 09 10:45:45 GMT 2019"),
             vcr.use_cassette("fixtures/vcr/worcester.yaml"),
         ):
-            with self.assertNumQueries(9):
+            with self.assertNumQueries(10):
                 response = self.client.get(self.worcester_stop.get_absolute_url())
 
             self.client.force_login(self.user)
@@ -395,7 +401,7 @@ class LiveDeparturesTest(TestCase):
         self.assertEqual(0, VehicleJourney.objects.count())
 
         # test the actual task
-        with self.assertNumQueries(14):
+        with self.assertNumQueries(15):
             log_vehicle_journey(*args[:-1], self.trip.id)
 
         with self.assertNumQueries(3):

@@ -9,11 +9,15 @@ import requests
 import xmltodict
 from django.conf import settings
 from django.core.cache import cache
+from django.db.models import Prefetch, prefetch_related_objects, IntegerField
+
 from django.db.models.functions import Coalesce
+from django.db.models import F, ExpressionWrapper, OuterRef, Exists
 from django.utils import timezone
 
 from bustimes.utils import get_stop_times
-from vehicles.models import Vehicle
+from vehicles.models import Vehicle, VehicleJourney
+from disruptions.models import Call
 
 
 TIMEZONE = ZoneInfo("Europe/London")
@@ -267,9 +271,10 @@ class TimetableDepartures(Departures):
             "destination": stop_time.destination,
             "link": trip.get_absolute_url(),
             "stop_time": stop_time,
+            "cancelled": stop_time.cancelled,
         }
 
-    def get_times(self, date, time=None, trips=None):
+    def get_times(self, date, time=None, trips=None, day_shift=0):
         return (
             get_stop_times(date, time, self.stop, self.routes, trips)
             .select_related("trip")
@@ -278,10 +283,20 @@ class TimetableDepartures(Departures):
                     "trip__destination__locality__name",
                     "trip__destination__common_name",
                     "trip__headsign",
-                )
+                ),
+                order=ExpressionWrapper(
+                    F("departure") + day_shift * 86400, output_field=IntegerField()
+                ),
+                cancelled=Exists(
+                    Call.objects.filter(
+                        journey__situation__current=True,
+                        journey__trip=OuterRef("trip"),
+                        stop_time=OuterRef("id"),
+                        condition="notStopping",
+                    )
+                ),
             )
-            .order_by("departure")
-        )
+        ).order_by("departure")
 
     def get_departures(self):
         time_since_midnight = datetime.timedelta(
@@ -292,8 +307,10 @@ class TimetableDepartures(Departures):
         yesterday_date = (self.now - one_day).date()
         yesterday_time = time_since_midnight + one_day
 
-        all_today_times = self.get_times(yesterday_date, yesterday_time).union(
-            self.get_times(date, time_since_midnight), all=True
+        all_today_times = (
+            self.get_times(yesterday_date, yesterday_time)
+            .union(self.get_times(date, time_since_midnight, day_shift=1), all=True)
+            .order_by("order")
         )
         today_times = list(all_today_times[: self.per_page])
 
@@ -309,6 +326,21 @@ class TimetableDepartures(Departures):
             today_times += all_today_times[self.per_page : self.per_page + 8]
 
         times = [self.get_row(stop_time) for stop_time in today_times]
+
+        # prefetch journeys to show which vehicle is operating journey
+        prefetch_related_objects(
+            [time["stop_time"].trip for time in times],
+            Prefetch(
+                "vehiclejourney_set",
+                VehicleJourney.objects.filter(datetime__date=date).select_related(
+                    "vehicle"
+                ),
+                to_attr="vehicle_journeys",
+            ),
+        )
+        for time in times:
+            if time["stop_time"].trip.vehicle_journeys:
+                time["vehicle"] = time["stop_time"].trip.vehicle_journeys[0].vehicle
 
         # # add tomorrow's times until there are 10, or the next day until there more than 0
         # i = 0

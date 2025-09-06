@@ -1,15 +1,13 @@
 FROM node:20-slim
 
-ARG API_ROOT=/
-
 WORKDIR /app/
 
 COPY package.json package-lock.json /app/
 RUN npm install
 
 COPY frontend /app/frontend
-COPY tsconfig.json /app/
-RUN npm run lint && API_ROOT=${API_ROOT} npm run build
+COPY .parcelrc tsconfig.json /app/
+RUN npm run lint && npm run build
 
 
 FROM python:3.13

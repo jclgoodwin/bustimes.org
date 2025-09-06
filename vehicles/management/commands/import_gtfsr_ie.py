@@ -14,10 +14,22 @@ from bustimes.utils import get_calendars
 from ...models import Vehicle, VehicleJourney, VehicleLocation
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
+occupancies = {
+    0: "Empty",
+    1: "Many seats available",
+    2: "Few seats available",
+    3: "Standing room only",
+    4: "Crushed standing room only",
+    5: "Full",
+    6: "Not accepting passengers",
+    7: "No data available",
+    8: "Not boardable",
+}
+
 
 class Command(ImportLiveVehiclesCommand):
     source_name = "Realtime Transport Operators"
-    previous_locations = {}
+    vehicle_code_scheme = "NTA"
 
     def do_source(self):
         self.tzinfo = ZoneInfo("Europe/Dublin")
@@ -25,57 +37,41 @@ class Command(ImportLiveVehiclesCommand):
         self.url = "https://api.nationaltransport.ie/gtfsr/v2/Vehicles"
         return self
 
-    def get_datetime(self, item):
+    @staticmethod
+    def get_datetime(item):
         return datetime.fromtimestamp(item.vehicle.timestamp, timezone.utc)
 
-    def prefetch_vehicles(self, vehicle_codes):
-        vehicles = self.vehicles.filter(source=self.source, code__in=vehicle_codes)
-        self.vehicle_cache = {vehicle.code: vehicle for vehicle in vehicles}
+    @staticmethod
+    def get_vehicle_identity(item):
+        return item.vehicle.vehicle.id
+
+    @staticmethod
+    def get_journey_identity(item):
+        return (
+            item.vehicle.trip.route_id,
+            item.vehicle.trip.trip_id,
+            item.vehicle.trip.start_date,
+        )
+
+    @staticmethod
+    def get_item_identity(item):
+        return item.vehicle.timestamp
 
     def get_items(self):
         assert settings.NTA_API_KEY
         response = self.session.get(
             self.url, headers={"x-api-key": settings.NTA_API_KEY}, timeout=10
         )
-        assert response.ok
+        response.raise_for_status()
 
         feed = gtfs_realtime_pb2.FeedMessage()
         feed.ParseFromString(response.content)
 
-        items = []
-        vehicle_codes = []
-
-        # build list of vehicles that have moved
-        for item in feed.entity:
-            key = item.vehicle.vehicle.id
-            value = (
-                item.vehicle.trip.route_id,
-                item.vehicle.trip.trip_id,
-                item.vehicle.trip.start_date,
-                item.vehicle.position.latitude,
-                item.vehicle.position.longitude,
-            )
-            if self.previous_locations.get(key) != value:
-                items.append(item)
-                vehicle_codes.append(key)
-                self.previous_locations[key] = value
-
-        self.prefetch_vehicles(vehicle_codes)
-
-        return items
+        return feed.entity
 
     def get_vehicle(self, item):
         vehicle_code = item.vehicle.vehicle.id
-
-        if vehicle_code in self.vehicle_cache:
-            return self.vehicle_cache[vehicle_code], False
-
-        vehicle = Vehicle(
-            code=vehicle_code, source=self.source, slug=f"ie-{vehicle_code.lower()}"
-        )
-        vehicle.save()
-
-        return vehicle, True
+        return Vehicle.objects.get_or_create(code=vehicle_code, source=self.source)
 
     def get_journey(self, item, vehicle):
         # GTFS spec for working out datetimes:
@@ -135,11 +131,10 @@ class Command(ImportLiveVehiclesCommand):
             except (Service.MultipleObjectsReturned, Service.DoesNotExist):
                 pass
 
-            code_suffix = journey.code.split("_", 1)[1]
             trips = Trip.objects.filter(
                 route__source=self.source,
                 start=start_time,
-                inbound=item.vehicle.trip.direction_id == 1
+                inbound=item.vehicle.trip.direction_id == 1,
             )
             if service:
                 trips = trips.filter(route__service=service)
@@ -180,4 +175,5 @@ class Command(ImportLiveVehiclesCommand):
             latlong=GEOSGeometry(
                 f"POINT({item.vehicle.position.longitude} {item.vehicle.position.latitude})"
             ),
+            occupancy=occupancies.get(item.vehicle.occupancy_status or None),
         )

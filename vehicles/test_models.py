@@ -54,9 +54,11 @@ class VehicleModelTests(TestCase):
         self.assertEqual(
             livery.get_styles(),
             [
-                f""".livery-{livery.id} {{
+                f""".livery-{livery.id}{{
   background: linear-gradient(#fdee00 66%,#7d287d 66%);
-  color:#c0c0c0;fill:#c0c0c0;stroke:#ffee99\n}}\n"""
+  color: #c0c0c0;
+  stroke: #ffee99
+}}\n"""
             ],
         )
 

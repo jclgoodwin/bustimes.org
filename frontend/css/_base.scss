@@ -18,7 +18,6 @@
     --active-link-color: var(--black);
     --summary-marker-color: var(--border-color);
 
-    // supported-color-schemes: dark light;
     color-scheme: light;
 }
 
@@ -270,7 +269,7 @@ body {
 h1,
 h2 {
     line-height: 1.2em;
-    margin: .5em 0;
+    margin: 1rem 0;
 }
 
 h1 {
@@ -299,7 +298,6 @@ h1 .reg {
 
 h2 {
     font-size: 20px;
-    margin-top: 1em;
 }
 
 section header {
@@ -542,12 +540,11 @@ ol ::marker {
 .history {
     ul {
         display: flex;
+        flex-wrap: wrap;
+        gap: 1em 1.5em;
 
         li {
             margin: 0;
-        }
-        li + li {
-            margin-left: 1.5em;
         }
 
         strong {
@@ -666,6 +663,10 @@ table {
         }
     }
 
+    .description {
+        align-content: center;
+    }
+
     a:hover {
         text-decoration: none;
 
@@ -680,20 +681,24 @@ table {
     }
 }
 
+.names {
+    display: flex;
+    margin-right: 16px;
+}
+
 .name {
     border: 1px solid var(--border-color);
     color: var(--text-color);
     float: left;
     font-size: 16px;
     line-height: 18px;
-    margin-right: 16px;
     padding: 6px;
     text-align: center;
     font-weight: normal;
     white-space: nowrap;
+    align-content: center;
 
     &.is-short {
-        height: 36px;
         line-height: 36px;
         font-size: 30px;
         padding: 6px 8px;
@@ -701,7 +706,6 @@ table {
 
     &.is-short + .name {
         white-space: normal;
-        height: 36px;
         align-content: center;
     }
 
@@ -717,11 +721,11 @@ table {
 
     + .name {
         border-left: 0;
-        margin-left: -16px;
     }
 }
 
 .service-header {
+    align-items: flex-start;
     display: flex;
     flex-wrap: wrap;
     row-gap: 8px;
@@ -737,12 +741,10 @@ table {
     }
 }
 
-.has-smalls .name {
-    margin-right: .75em;
 
-    + .name {
-        margin-left: -.75em;
-    }
+.has-smalls .names {
+    float: left;
+    margin-right: .75em;
 }
 
 #hugemap {
@@ -834,6 +836,8 @@ table {
 .fleet {
     .livery-cell {
         position: relative;
+        padding-left: 3.5em;
+
 
         .livery {
             left: .5em;
@@ -1329,8 +1333,9 @@ input:not(:checked) + label {
     }
 
     h3 {
-        margin: 1em 0 -1em;
+        margin: 1em 0 0;
     }
+
     p {
         margin: .5em 0;
     }
@@ -1445,12 +1450,17 @@ input:not(:checked) + label {
     gap: 1em;
     overflow-wrap: anywhere;
 
+    dt {
+        font-size: 12px;
+    }
+
     dd {
         margin: 0;
     }
 
     .livery {
-        margin: .3em .5em 0 0;
+        float: left;
+        margin-right: .25em;
     }
 }
 
@@ -1473,29 +1483,17 @@ nav {
 
 .ad-wrapper {
     text-align: center;
-    margin: 1em -1em 10px;
-
-    body & {
-        min-height: 120px;  // override AdFirst Media <style>
-    }
+    margin: 1em 0 10px;
+    min-height: 120px;
 
     iframe {
         vertical-align: bottom;
     }
 }
 
-@media (min-height: 480px) {
-    .ad-wrapper {
-        position: sticky;
-        top: 0;
-        pointer-events: none;
-        z-index: 9999;
-
-        iframe {
-            background: var(--background-color);
-            pointer-events: auto;
-        }
-    }
+#AFM_inContentTop_ad {
+    top: 0;
+    position: sticky;
 }
 
 #content {
@@ -1513,7 +1511,6 @@ body.has-overlay {
     // services_header
     #AFM_inContentTop_ad {
         position: fixed;
-        top: 0;
         left: 0;
         width: 100%;
         z-index: 9999;
@@ -1550,23 +1547,28 @@ body.has-overlay {
     }
 }
 
+li[title="NaPTAN code"],
+li[title="ATCO code"] {
+    font-variant-numeric: slashed-zero;
+}
+
 .tabs {
     border-bottom: 1px solid var(--brand-color-darker);
     display: flex;
-    overflow: visible;
-    margin: 1em -1em;
+    overflow: auto;
+    margin: 1em -.75em;
 
     > li {
         box-shadow: inset 0 -4px var(--brand-color-darker);
         float: left;
-        margin: 0 1em;
+        margin: 0 .75em;
         padding-top: .25em;
         padding-bottom: .75em;
 
         > a {
             box-shadow: inset 0 -4px var(--background-color);
-            padding: .25em 1em .75em;
-            margin: -.25em -1em -.75em;
+            padding: .25em .75em .75em;
+            margin: -.25em -.75em -.75em;
         }
     }
 }

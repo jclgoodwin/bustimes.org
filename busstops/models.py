@@ -21,7 +21,7 @@ from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 
-from bustimes.models import Route, StopTime, TimetableDataSource, Trip
+from bustimes.models import Route, TimetableDataSource, Trip
 from bustimes.timetables import Timetable, get_stop_usages
 from bustimes.utils import get_descriptions
 
@@ -76,7 +76,7 @@ class AdminArea(models.Model):
     """
 
     id = models.PositiveSmallIntegerField(primary_key=True)
-    atco_code = models.CharField(max_length=3)
+    atco_code = models.CharField(verbose_name="ATCO code", max_length=3)
     name = models.CharField(max_length=48)
     short_name = models.CharField(max_length=48, blank=True)
     country = models.CharField(max_length=3, blank=True)
@@ -327,8 +327,12 @@ class StopPoint(models.Model):
 
     source = models.ForeignKey(DataSource, models.DO_NOTHING, null=True, blank=True)
 
-    atco_code = models.CharField(max_length=36, primary_key=True)
-    naptan_code = models.CharField(max_length=16, null=True, blank=True)
+    atco_code = models.CharField(
+        verbose_name="ATCO code", max_length=36, primary_key=True
+    )
+    naptan_code = models.CharField(
+        verbose_name="NaPTAN code", max_length=16, null=True, blank=True
+    )
 
     common_name = models.CharField(max_length=48)
     short_common_name = models.CharField(max_length=48, blank=True)
@@ -473,7 +477,7 @@ class StopPoint(models.Model):
             )
             if self.common_name and locality_name.endswith(self.common_name):
                 return locality_name.replace(self.common_name, name)  # Cardiff Airport
-            if slugify(locality_name) not in slugify(self.common_name):
+            if slugify(locality_name).split("-", 1)[0] not in slugify(self.common_name):
                 if self.indicator.lower() in self.prepositions:
                     indicator = self.indicator.lower()
                     if not short:
@@ -644,14 +648,13 @@ class StopUsage(models.Model):
 
     service = models.ForeignKey("Service", models.CASCADE)
     stop = models.ForeignKey(StopPoint, models.CASCADE)
-    direction = models.CharField(max_length=8)
-    order = models.PositiveIntegerField()
-    timing_status = models.CharField(max_length=3, choices=TIMING_STATUS_CHOICES)
+    order = models.PositiveSmallIntegerField()
+    timing_point = models.BooleanField(default=True)
+    inbound = models.BooleanField(default=False)
+    line_name = models.CharField()
 
     class Meta:
-        ordering = ("-direction", "order")  # outbound then inbound
-
-    is_minor = StopTime.is_minor
+        ordering = ("inbound", "order")
 
 
 class ServiceColour(models.Model):
@@ -752,13 +755,7 @@ class Service(models.Model):
 
     def __str__(self):
         line_name = self.get_line_name()
-        description = None
-        if hasattr(self, "direction") and hasattr(
-            self, f"{self.direction}_description"
-        ):
-            description = getattr(self, f"{self.direction}_description")
-        if not description or description.lower() == self.direction:
-            description = self.description
+        description = self.description
         if description == line_name:
             description = None
         elif (
@@ -1011,43 +1008,45 @@ class Service(models.Model):
         return timetable
 
     def do_stop_usages(self):
-        outbound, inbound = get_stop_usages(Trip.objects.filter(route__service=self))
+        proposed = get_stop_usages(Trip.objects.filter(route__service=self))
 
-        existing = self.stopusage_set.all()
+        existing = self.stopusage_set.order_by("id")
 
-        stop_usages = [
+        proposed = [
             StopUsage(
                 service=self,
                 stop_id=stop_time.stop_id,
-                timing_status=stop_time.timing_status,
-                direction="outbound",
+                timing_point=(stop_time.timing_status == "PTP"),
+                inbound=inbound,
                 order=i,
+                line_name=line_name,
             )
-            for i, stop_time in enumerate(outbound)
-        ] + [
-            StopUsage(
-                service=self,
-                stop_id=stop_time.stop_id,
-                timing_status=stop_time.timing_status,
-                direction="inbound",
-                order=i,
-            )
-            for i, stop_time in enumerate(inbound)
+            for line_name, groupings in proposed.items()
+            for inbound, grouping in groupings.items()
+            for i, stop_time in enumerate(grouping)
         ]
 
         existing_hash = [
-            (su.stop_id, su.timing_status, su.direction, su.order) for su in existing
+            (su.stop_id, su.timing_point, su.inbound, su.order, su.line_name)
+            for su in existing
         ]
         proposed_hash = [
-            (su.stop_id, su.timing_status, su.direction, su.order) for su in stop_usages
+            (su.stop_id, su.timing_point, su.inbound, su.order, su.line_name)
+            for su in proposed
         ]
 
         if existing_hash != proposed_hash:
-            if existing:
-                existing.delete()
-            StopUsage.objects.bulk_create(stop_usages)
-
-        return stop_usages
+            if len(existing_hash) >= len(proposed_hash):  # reuse ids
+                for proposed_su, existing_su in zip(proposed, existing):
+                    proposed_su.id = existing_su.id
+                StopUsage.objects.bulk_update(
+                    proposed,
+                    ["stop_id", "timing_point", "inbound", "order", "line_name"],
+                )
+            else:
+                if existing_hash:
+                    existing.delete()
+                StopUsage.objects.bulk_create(proposed)
 
     def update_description(self):
         routes = self.route_set.all()

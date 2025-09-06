@@ -74,7 +74,7 @@
         {% for result in vehicles %}
             <li>
                 <a href="{{ result.get_absolute_url }}">
-                    <span>{% if result.withdrawn %}<del>{{ result }}</del>{% else %}{{ result }}{% endif %}</span>
+                    <span>{% if result.withdrawn %}<s>{{ result }}</s>{% else %}{{ result }}{% endif %}</span>
                     {% if result.operator %}
                         <small>{{ result.operator }}</small>
                     {% endif %}
