@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_06bcf2d2e74f1893_test_tnds_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.5">coverage.py v7.10.5</a>,
-            created at 2025-09-06 03:12 +0000
+            created at 2025-09-06 04:37 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -1590,12 +1590,12 @@
     <p class="run"><span class="n"><a id="t1508" href="#t1508">1508</a></span><span class="t">        <span class="key">with</span> <span class="nam">self</span><span class="op">.</span><span class="nam">assertNumQueries</span><span class="op">(</span><span class="num">2</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1509" href="#t1509">1509</a></span><span class="t">            <span class="nam">response</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">client</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"/api/trips/"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1510" href="#t1510">1510</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t1511" href="#t1511">1511</a></span><span class="t">        <span class="key">with</span> <span class="nam">self</span><span class="op">.</span><span class="nam">assertNumQueries</span><span class="op">(</span><span class="num">7</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t1511" href="#t1511">1511</a></span><span class="t">        <span class="key">with</span> <span class="nam">self</span><span class="op">.</span><span class="nam">assertNumQueries</span><span class="op">(</span><span class="num">6</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1512" href="#t1512">1512</a></span><span class="t">            <span class="nam">response</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">client</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="fst">f"</span><span class="fst">/trips/</span><span class="op">{</span><span class="nam">trip</span><span class="op">.</span><span class="nam">id</span><span class="op">}</span><span class="fst">/block</span><span class="fst">"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1513" href="#t1513">1513</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">assertContains</span><span class="op">(</span><span class="nam">response</span><span class="op">,</span> <span class="str">"07:55"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1514" href="#t1514">1514</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">assertContains</span><span class="op">(</span><span class="nam">response</span><span class="op">,</span> <span class="str">"12:25"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1515" href="#t1515">1515</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t1516" href="#t1516">1516</a></span><span class="t">        <span class="key">with</span> <span class="nam">self</span><span class="op">.</span><span class="nam">assertNumQueries</span><span class="op">(</span><span class="num">7</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t1516" href="#t1516">1516</a></span><span class="t">        <span class="key">with</span> <span class="nam">self</span><span class="op">.</span><span class="nam">assertNumQueries</span><span class="op">(</span><span class="num">6</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1517" href="#t1517">1517</a></span><span class="t">            <span class="nam">response</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">client</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="fst">f"</span><span class="fst">/trips/</span><span class="op">{</span><span class="nam">trip</span><span class="op">.</span><span class="nam">id</span><span class="op">}</span><span class="fst">/block?date=2025-01-26</span><span class="fst">"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1518" href="#t1518">1518</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">assertContains</span><span class="op">(</span><span class="nam">response</span><span class="op">,</span> <span class="str">"15:05"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1519" href="#t1519">1519</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">assertContains</span><span class="op">(</span><span class="nam">response</span><span class="op">,</span> <span class="str">"16:00"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -1665,7 +1665,7 @@
             <a class="nav" href="z_06bcf2d2e74f1893_test_tnds_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.5">coverage.py v7.10.5</a>,
-            created at 2025-09-06 03:12 +0000
+            created at 2025-09-06 04:37 +0000
         </p>
     </div>
 </footer>
