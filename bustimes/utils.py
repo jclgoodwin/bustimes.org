@@ -88,17 +88,18 @@ def get_routes(routes, when=None, from_date=None):
             Q(end_date=None) | Q(end_date__gte=when),
         )
 
-        # TfL: pick the file with the highest Service Change Number, if there are multiple
+        # TfL: try to pick the file with the highest Service Change Number, if there are multiple
         # https://techforum.tfl.gov.uk/t/duplicate-files-in-journey-planner-datastore-is-there-a-way-to-choose-the-right-one/2571
+        # (actually using service_code order, which assumes that the SCNs have the same number of digits)
         routes = routes.filter(
             ~Q(code__contains="tfl_")
             | ~Exists(
                 Route.objects.filter(
+                    Q(end_date__gte=when) | Q(end_date__isnull=True),
                     service=OuterRef("service"),
                     source=OuterRef("source"),
                     service_code__gt=OuterRef("service_code"),
-                    start_date__gte=when,
-                    end_date__gte=when,
+                    start_date__lte=when,
                 )
             )
         )
