@@ -136,12 +136,6 @@ class Timetable:
             self.calendars = None
             return
 
-        if not date and len(routes) > 1:
-            current_routes = get_routes(routes, from_date=self.today)
-            if len(current_routes) == 1:
-                # completely ignore expired routes
-                self.routes = self.current_routes = current_routes
-
         four_weeks_time = self.today + datetime.timedelta(days=28)
 
         scotland = any(route.source.name == "S" for route in routes)
@@ -201,7 +195,8 @@ class Timetable:
                     self.date = self.today
 
         # consider revision numbers:
-        self.current_routes = get_routes(routes, when=self.date)
+        if self.date:
+            self.current_routes = get_routes(routes, self.date)
 
         if not self.calendar:
             if self.calendars:

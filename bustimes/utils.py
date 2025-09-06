@@ -42,87 +42,66 @@ class log_time_taken:
         self.logger.info(f"  ⏱️ {datetime.now() - self.start}")
 
 
-def get_routes(routes, when=None, from_date=None):
-    if when:
-        filter_by_revision_number = True
-        if type(routes) is list:
-            filter_by_revision_number = any(route.revision_number for route in routes)
+def get_routes(routes, when):
+    filter_by_revision_number = True
+    if type(routes) is list:
+        filter_by_revision_number = any(route.revision_number for route in routes)
 
-            routes = Route.objects.filter(
-                id__in=[route.id for route in routes]
-            ).select_related("source")
+        routes = Route.objects.filter(
+            id__in=[route.id for route in routes]
+        ).select_related("source")
 
-        if filter_by_revision_number:
-            routes = routes.filter(
-                Q(start_date=None) | Q(start_date__lte=when),
-                ~Exists(
-                    Route.objects.filter(
-                        source=OuterRef("source"),
-                        service_code=OuterRef("service_code"),
-                        revision_number_context=OuterRef("revision_number_context"),
-                        start_date__lte=when,
-                        revision_number__gt=OuterRef("revision_number"),
-                    )
-                ),
-            ).order_by("id")
-
-        # complicated way of working out which Passenger .zip applies
-        routes = routes.filter(
-            Q(version=None)
-            | Q(
-                ~Exists(
-                    Version.objects.filter(
-                        source=OuterRef("version__source"),
-                        start_date__lte=when,
-                        end_date__gte=when,
-                        start_date__gt=OuterRef("version__start_date"),
-                    )
-                ),
-                version__start_date__lte=when,
-                version__end_date__gte=when,
-            )
-        )
-
+    if filter_by_revision_number:
         routes = routes.filter(
             Q(start_date=None) | Q(start_date__lte=when),
-            Q(end_date=None) | Q(end_date__gte=when),
+            ~Exists(
+                Route.objects.filter(
+                    source=OuterRef("source"),
+                    service_code=OuterRef("service_code"),
+                    revision_number_context=OuterRef("revision_number_context"),
+                    start_date__lte=when,
+                    revision_number__gt=OuterRef("revision_number"),
+                )
+            ),
+        ).order_by("id")
+
+    # complicated way of working out which Passenger .zip applies
+    routes = routes.filter(
+        Q(version=None)
+        | Q(
+            ~Exists(
+                Version.objects.filter(
+                    source=OuterRef("version__source"),
+                    start_date__lte=when,
+                    end_date__gte=when,
+                    start_date__gt=OuterRef("version__start_date"),
+                )
+            ),
+            version__start_date__lte=when,
+            version__end_date__gte=when,
         )
+    )
 
-    if from_date:
-        # just filter out previous versions
-        routes = [
-            route
-            for route in routes
-            if route.end_date is None or route.end_date >= from_date
-        ]
+    routes = routes.filter(
+        Q(start_date=None) | Q(start_date__lte=when),
+        Q(end_date=None) | Q(end_date__gte=when),
+    )
 
-    if len(routes) <= 1:
-        return routes
-
-    # TfL: parse Service Change Number from filename (like a revision number) and use the highest one
+    # TfL: try to pick the file with the highest Service Change Number, if there are multiple
     # https://techforum.tfl.gov.uk/t/duplicate-files-in-journey-planner-datastore-is-there-a-way-to-choose-the-right-one/2571
-    if when and any(route.source.name == "L" for route in routes):
-        routes = [
-            route
-            for route in routes
-            if route.source.name != "L"
-            or not any(
-                route.code[:-5] == r.code[:-5] and route.code < r.code for r in routes
+    # (actually using service_code order, which assumes that the SCNs have the same number of digits)
+    routes = routes.filter(
+        ~Q(code__contains="tfl_")
+        | ~Exists(
+            Route.objects.filter(
+                Q(end_date__gte=when) | Q(end_date__isnull=True),
+                service=OuterRef("service"),
+                source=OuterRef("source"),
+                service_code__gt=OuterRef("service_code"),
+                start_date__lte=when,
             )
-        ]
-
-    # remove duplicates
-    if len(set(route.source_id for route in routes)) > 1:
-        sources_by_sha1 = {
-            route.source.sha1: route.source_id for route in routes if route.source.sha1
-        }
-        # if multiple sources have the same sha1 hash, we're only interested in one
-        routes = [
-            route
-            for route in routes
-            if not route.source.sha1
-            or route.source_id == sources_by_sha1[route.source.sha1]
-        ]
+        )
+    )
 
     return routes
 

@@ -206,8 +206,8 @@ class BusTimesTest(TestCase):
     def test_get_routes(self):
         sources = DataSource.objects.bulk_create(
             [
-                DataSource(name="Lynx A", sha1="abc123"),
-                DataSource(name="Lynx B", sha1="abc123"),
+                DataSource(name="Lynx A"),
+                DataSource(name="Lynx B"),
                 DataSource(name="Leith Lynx"),
                 DataSource(name="Ticketer", url=""),
             ]
@@ -218,7 +218,8 @@ class BusTimesTest(TestCase):
             Route(
                 service=service,
                 description="1",
-                code="55",
+                code="1",
+                service_code="55",
                 revision_number=3,
                 source=sources[0],
                 start_date=date(2022, 2, 1),
@@ -226,6 +227,8 @@ class BusTimesTest(TestCase):
             Route(
                 service=service,
                 description="2",
+                code="2",
+                service_code="55",
                 revision_number=3,
                 source=sources[1],
                 start_date=date(2022, 2, 1),
@@ -233,7 +236,8 @@ class BusTimesTest(TestCase):
             Route(
                 service=service,
                 description="3",
-                code="55b",
+                code="3",
+                service_code="55",
                 revision_number=4,
                 source=sources[0],
                 start_date=date(2022, 3, 1),
@@ -241,7 +245,8 @@ class BusTimesTest(TestCase):
             Route(
                 service=service,
                 description="4",
-                code="55c",
+                service_code="55",
+                code="4",
                 revision_number=4,
                 source=sources[0],
                 start_date=date(2022, 3, 1),
@@ -249,7 +254,7 @@ class BusTimesTest(TestCase):
             Route(
                 service=service,
                 description="5",
-                code="55d",
+                code="5",
                 revision_number=5,
                 source=sources[2],
                 start_date=date(2022, 4, 1),
@@ -276,21 +281,22 @@ class BusTimesTest(TestCase):
         Route.objects.bulk_create(routes)
 
         # maximum revision number for each source
-        self.assertEqual(get_routes(routes[:5], when=date(2022, 4, 4)), routes[2:5])
-
-        # ignore duplicate source with the same sha1
-        self.assertEqual(get_routes(routes[:2]), [routes[1]])
+        self.assertEqual(
+            list(get_routes(routes[:5], when=date(2022, 4, 4))), routes[1:5]
+        )
 
         # Ticketer filename - treat '5B' and '5BH' despite having the same service_code
-        self.assertEqual(get_routes(routes[5:7]), routes[5:7])
+        self.assertEqual(
+            list(get_routes(routes[5:7], when=date(2022, 4, 4))), routes[5:7]
+        )
 
-        # from_date - include future versions
-        self.assertEqual(
-            get_routes(routes[2:4], from_date=date(2022, 4, 3)), routes[2:4]
-        )
-        self.assertEqual(
-            get_routes(routes[2:4], from_date=date(2022, 4, 4)), routes[2:4]
-        )
+        # # from_date - include future versions
+        # self.assertEqual(
+        #     get_routes(routes[2:4], from_date=date(2022, 4, 3)), routes[2:4]
+        # )
+        # self.assertEqual(
+        #     get_routes(routes[2:4], from_date=date(2022, 4, 4)), routes[2:4]
+        # )
         # # ignore old versions:
         # self.assertEqual(
         #     get_routes(routes[2:4], from_date=date(2022, 4, 5)), routes[3:4]
@@ -298,19 +304,19 @@ class BusTimesTest(TestCase):
 
         routes = [
             Route(
-                code="1",
+                code="6",
                 source=sources[0],
                 revision_number=171,
                 start_date=date(2023, 2, 26),
             ),
             Route(
-                code="2",
+                code="7",
                 source=sources[0],
                 revision_number=165,
                 start_date=date(2023, 2, 19),
             ),
             Route(
-                code="3",
+                code="8",
                 source=sources[0],
                 revision_number=172,
                 start_date=date(2023, 3, 5),
@@ -325,38 +331,40 @@ class BusTimesTest(TestCase):
 
     def test_get_routes_tfl(self):
         source = DataSource.objects.create(id=1, name="L")
+        service = Service.objects.create(slug="bus-34")
 
         routes = [
             Route(
-                service_code="683",
-                code="86-683-_-y05-60196",
+                service_code="86-683-_-y05-60196",
+                code="tfl_86-683-_-y05-60196",
                 revision_number=3,
                 start_date=date(2023, 2, 11),
                 source=source,
+                service=service,
             ),
             Route(
-                service_code="683",
-                code="86-683-_-y05-60197",  # highest Service Change Number in filename
+                service_code="86-683-_-y05-60197",
+                code="tfl_86-683-_-y05-60197",  # highest Service Change Number in filename
                 revision_number=3,
                 start_date=date(2023, 2, 11),
                 source=source,
+                service=service,
             ),
             Route(
-                service_code="683",
-                code="86-683-_-y05-59862",
+                service_code="86-683-_-y05-59862",
+                code="tfl_86-683-_-y05-59862",
                 revision_number=3,
                 start_date=date(2023, 2, 11),
                 source=source,
+                service=service,
             ),
         ]
         Route.objects.bulk_create(routes)
 
         gotten_routes = get_routes(routes, when=date(2023, 2, 12))
         self.assertEqual(len(gotten_routes), 1)
-        self.assertEqual(gotten_routes[0].code, "86-683-_-y05-60197")
+        self.assertEqual(gotten_routes[0].code, "tfl_86-683-_-y05-60197")
         self.assertEqual(gotten_routes[0], routes[1])
-
-        self.assertFalse(get_routes([]), 2)
 
     def test_get_routes_passenger(self):
         tds = TimetableDataSource.objects.create()
