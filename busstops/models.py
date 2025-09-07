@@ -1043,6 +1043,8 @@ class Service(models.Model):
                     proposed,
                     ["stop_id", "timing_point", "inbound", "order", "line_name"],
                 )
+                if len(existing_hash) > len(proposed_hash):
+                    existing.filter(~Q(id__in=[su.id for su in proposed])).delete()
             else:
                 if existing_hash:
                     existing.delete()
