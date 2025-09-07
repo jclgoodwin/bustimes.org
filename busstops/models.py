@@ -15,7 +15,7 @@ from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.core.cache import cache
 from django.db.models import Q
-from django.db.models.functions import Coalesce, Now, Upper
+from django.db.models.functions import Coalesce, Upper
 from django.urls import reverse
 from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
@@ -816,7 +816,7 @@ class Service(models.Model):
             return ("", number, prefix, suffix)
         return (prefix, number, suffix)
 
-    def get_tfl_url(self):
+    def get_tfl_url(self) -> str:
         return f"https://tfl.gov.uk/bus/timetable/{self.line_name}/"
 
     def get_trapeze_link(self):
@@ -825,17 +825,16 @@ class Service(models.Model):
         query = (("serviceId", self.service_code.replace("_", " ")),)
         return f"https://www.{domain}/timetables?{urlencode(query)}", name
 
-    def get_traveline_links(self, date=None):
+    def get_traveline_links(self, date=None) -> list:
         if not self.source_id:
-            return
+            return []
 
         if (
             self.source.name == "S"
             and "_" in self.service_code
             and not self.service_code.startswith("S_")
         ):
-            yield self.get_trapeze_link()
-            return
+            return [self.get_trapeze_link()]
 
         if self.source.name == "W" or self.region_id == "W":
             for service_code in self.servicecode_set.filter(scheme="Traveline Cymru"):
@@ -845,61 +844,17 @@ class Service(models.Model):
                     ("timetable_key", service_code.code),
                 )
                 url = "https://www.traveline.cymru/timetables/?" + urlencode(query)
-                yield (url, "Timetable on the Traveline Cymru website")
-            return
+                return [(url, "Timetable on the Traveline Cymru website")]
 
-        base_url = (
-            "https://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST?"
-        )
-
-        base_query = [("command", "direct"), ("outputFormat", 0)]
-
-        if (
-            self.source.name in {"SE", "SW", "EM", "WM", "EA", "L"}
-            or ".gov." in self.source.url
+        elif (
+            self.source.name == "L"
+            and self.servicecode_set.filter(scheme="TfL").exists()
         ):
-            if self.servicecode_set.filter(scheme="TfL").exists():
-                yield (
-                    self.get_tfl_url(),
-                    "Timetable on the Transport for London website",
-                )
-                return
-
-            if self.service_code.startswith("tfl_") or self.service_code.startswith(
-                "nrc_"
-            ):
-                return
-
-            try:
-                routes = self.route_set.filter(
-                    Q(end_date__gte=Now()) | Q(end_date=None),
-                    code__contains="swe_",
-                ).order_by("start_date")
-                for i, route in enumerate(routes):
-                    parts = route.code.split("-")
-                    net, line = parts[0].split("_")
-                    if not net.isalpha() or not net.islower():
-                        break
-                    line_ver = parts[4][:-4]
-                    line = line.zfill(2) + parts[1].zfill(3)
-
-                    query = [
-                        ("line", line),
-                        ("lineVer", line_ver),
-                        ("net", net),
-                        ("project", parts[3]),
-                    ]
-                    if parts[2] != "_":
-                        query.append(("sup", parts[2]))
-
-                    text = "Timetable"
-                    if i:  # probably a future-dated version
-                        text = f"{text} from {route.start_date:%-d %B}"
-                    text = f"{text} on the Traveline South West website"
-
-                    yield (f"{base_url}{urlencode(query + base_query)}", text)
-            except (ValueError, IndexError):
-                pass
+            return [
+                self.get_tfl_url(),
+                "Timetable on the Transport for London website",
+            ]
+        return []
 
     def get_similar_services(self):
         ids = self.link_from.values("to_service").union(

@@ -200,18 +200,6 @@ class ImportTransXChangeTest(TestCase):
         route.code = route.code.replace("ea_", "swe_")  # to test get_traveline_links
         route.save(update_fields=["code"])
 
-        with patch("busstops.models.Now", return_value="2016-10-10"):
-            self.assertEqual(
-                list(service.get_traveline_links()),
-                [
-                    (
-                        "https://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST"
-                        "?line=2113B&lineVer=1&net=swe&project=y08&sup=B&command=direct&outputFormat=0",
-                        "Timetable on the Traveline South West website",
-                    )
-                ],
-            )
-
         res = self.client.get(service.get_absolute_url())
         self.assertEqual(res.context_data["breadcrumb"], [self.ea, self.fecs])
         self.assertContains(res, "Ivy Road - Queens Square")

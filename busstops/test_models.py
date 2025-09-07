@@ -175,34 +175,6 @@ class ServiceTests(TestCase):
         operator = Operator(vehicle_mode="rail")
         self.assertEqual(operator.get_a_mode(), "A rail")
 
-    def test_traveline_links(self):
-        source = DataSource.objects.create(name="Y")
-        # this will cause an IndexError that needs to be caught
-        Route.objects.create(
-            service=self.london_service,
-            source=source,
-            code="swindonbus_1587119026.zip/Swindon-17042020_SER14.xml",
-        )
-
-        self.assertEqual([], list(self.london_service.get_traveline_links()))
-
-        links = list(self.service.get_traveline_links())
-        self.assertEqual(
-            links,
-            [
-                (
-                    "https://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST?line=2101A&lineVer=1"
-                    "&net=swe&project=y08&command=direct&outputFormat=0",
-                    "Timetable on the Traveline South West website",
-                ),
-                (
-                    "https://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST?line=2101A&lineVer=2"
-                    "&net=swe&project=y08&command=direct&outputFormat=0",
-                    "Timetable from 1 May on the Traveline South West website",
-                ),
-            ],
-        )
-
     def test_admin(self):
         self.client.force_login(self.user)
 
