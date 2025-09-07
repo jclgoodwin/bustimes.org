@@ -249,7 +249,7 @@ class Command(BaseCommand):
                 ].copy()
                 rl.geometry = LineString(
                     *(Point(p.x, p.y) for p in segment_gdf.geometry.values)
-                ).simplify()
+                )
 
         RouteLink.objects.bulk_update(
             [rl for rl in route_links.values() if rl.id], fields=["geometry"]
