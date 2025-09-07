@@ -1,8 +1,10 @@
 import logging
 from functools import cache
+from itertools import pairwise
 from datetime import datetime, timezone
 from pathlib import Path
 from zipfile import ZipFile
+import geopandas as gpd
 
 import gtfs_kit
 import requests
@@ -10,12 +12,14 @@ from google.transit import gtfs_realtime_pb2
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
+from django.db.models import Min, Subquery, OuterRef
+from django.contrib.gis.geos import LineString, Point
 
 from busstops.models import DataSource, Operator, Service, StopPoint
 from vosa.models import Registration
 
 from ...download_utils import download_if_modified
-from ...models import Calendar, CalendarDate, Route, StopTime, Trip, Note
+from ...models import Calendar, CalendarDate, Route, StopTime, Trip, Note, RouteLink
 
 logger = logging.getLogger(__name__)
 
@@ -202,6 +206,56 @@ class Command(BaseCommand):
 
             stop_times.append(stop_time)
 
+        existing_route_links = {
+            (rl.service.line_name, rl.from_stop_id, rl.to_stop_id): rl
+            for rl in RouteLink.objects.filter(service__source=source)
+        }
+        route_links = {}
+
+        for trip in feed.trips.itertuples():
+            service = existing_routes[trip.route_id].service
+
+            shape = feed.shapes[feed.shapes.shape_id == trip.shape_id]
+            shape_gdf = gpd.GeoDataFrame(
+                shape,
+                geometry=gpd.points_from_xy(shape.shape_pt_lon, shape.shape_pt_lat),
+                crs="EPSG:4326",
+            )
+
+            for a, b in pairwise(
+                feed.stop_times[feed.stop_times.trip_id == trip.trip_id].itertuples()
+            ):
+                key = (trip.route_id, a.stop_id, b.stop_id)
+
+                if key in route_links:
+                    continue
+
+                if (trip.route_id, a.stop_id, b.stop_id) in route_links:
+                    continue
+
+                if key in existing_route_links:
+                    rl = existing_route_links[key]
+                else:
+                    rl = RouteLink(
+                        service=service,
+                        from_stop=stops[a.stop_id],
+                        to_stop=stops[b.stop_id],
+                    )
+                route_links[(trip.route_id, a.stop_id, b.stop_id)] = rl
+
+                segment_gdf = shape_gdf[
+                    (shape_gdf.shape_dist_traveled >= a.shape_dist_traveled)
+                    & (shape_gdf.shape_dist_traveled <= b.shape_dist_traveled)
+                ].copy()
+                rl.geometry = LineString(
+                    *(Point(p.x, p.y) for p in segment_gdf.geometry.values)
+                ).simplify()
+
+        RouteLink.objects.bulk_update(
+            [rl for rl in route_links.values() if rl.id], fields=["geometry"]
+        )
+        RouteLink.objects.bulk_create([rl for rl in route_links.values() if not rl.id])
+
         # get TripUpdates from the GTFS-RT feed - to mark some stops as "pre-book only":
 
         realtime_url = "https://api.ember.to/v1/gtfs/realtime/"
@@ -280,6 +334,14 @@ class Command(BaseCommand):
             print(
                 operator.service_set.filter(current=True, route__isnull=True).update(
                     current=False
+                )
+            )
+
+            source.route_set.update(
+                start_date=Subquery(
+                    Route.objects.filter(pk=OuterRef("pk"))
+                    .annotate(min_date=Min("trip__calendar__start_date"))
+                    .values("min_date")[:1]
                 )
             )
 
