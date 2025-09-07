@@ -330,7 +330,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                         "name": "T2-1 - DW18 HAM",
                     },
                     "heading": 92.0,
-                    "datetime": "2020-10-15T07:46:08Z",
+                    "datetime": "2020-10-15T08:46:08+01:00",
                     "destination": "",
                     "service_id": self.service_c.id,
                     "service": {"line_name": "C", "url": "/services/c"},
