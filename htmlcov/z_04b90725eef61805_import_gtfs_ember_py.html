@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_04b90725eef61805_import_gtfs_flixbus_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.5">coverage.py v7.10.5</a>,
-            created at 2025-09-08 14:35 +0000
+            created at 2025-09-08 16:12 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -179,7 +179,7 @@
     <p class="run"><span class="n"><a id="t97" href="#t97">97</a></span><span class="t">            <span class="key">return</span>  <span class="com"># no new data to import</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t98" href="#t98">98</a></span><span class="t">        <span class="nam">source</span><span class="op">.</span><span class="nam">datetime</span> <span class="op">=</span> <span class="nam">last_modified</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t99" href="#t99">99</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t100" href="#t100">100</a></span><span class="t">        <span class="nam">print</span><span class="op">(</span><span class="fst">f"</span><span class="op">{</span><span class="nam">source</span><span class="op">}</span><span class="fst"> </span><span class="op">{</span><span class="nam">last_modified</span><span class="op">}</span><span class="fst">"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t100" href="#t100">100</a></span><span class="t">        <span class="nam">logger</span><span class="op">.</span><span class="nam">info</span><span class="op">(</span><span class="fst">f"</span><span class="op">{</span><span class="nam">source</span><span class="op">}</span><span class="fst"> </span><span class="op">{</span><span class="nam">last_modified</span><span class="op">}</span><span class="fst">"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t101" href="#t101">101</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t102" href="#t102">102</a></span><span class="t">        <span class="nam">feed</span> <span class="op">=</span> <span class="nam">gtfs_kit</span><span class="op">.</span><span class="nam">read_feed</span><span class="op">(</span><span class="nam">path</span><span class="op">,</span> <span class="nam">dist_units</span><span class="op">=</span><span class="str">"km"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t103" href="#t103">103</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -409,15 +409,15 @@
     <p class="run"><span class="n"><a id="t327" href="#t327">327</a></span><span class="t">                <span class="nam">service</span><span class="op">.</span><span class="nam">do_stop_usages</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t328" href="#t328">328</a></span><span class="t">                <span class="nam">service</span><span class="op">.</span><span class="nam">update_search_vector</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t329" href="#t329">329</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t330" href="#t330">330</a></span><span class="t">            <span class="nam">print</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t330" href="#t330">330</a></span><span class="t">            <span class="nam">logger</span><span class="op">.</span><span class="nam">info</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t331" href="#t331">331</a></span><span class="t">                <span class="nam">source</span><span class="op">.</span><span class="nam">route_set</span><span class="op">.</span><span class="nam">exclude</span><span class="op">(</span><span class="nam">id__in</span><span class="op">=</span><span class="op">[</span><span class="nam">route</span><span class="op">.</span><span class="nam">id</span> <span class="key">for</span> <span class="nam">route</span> <span class="key">in</span> <span class="nam">routes</span><span class="op">]</span><span class="op">)</span><span class="op">.</span><span class="nam">delete</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t332" href="#t332">332</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t333" href="#t333">333</a></span><span class="t">            <span class="nam">print</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t333" href="#t333">333</a></span><span class="t">            <span class="nam">logger</span><span class="op">.</span><span class="nam">info</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t334" href="#t334">334</a></span><span class="t">                <span class="nam">operator</span><span class="op">.</span><span class="nam">trip_set</span><span class="op">.</span><span class="nam">exclude</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t335" href="#t335">335</a></span><span class="t">                    <span class="nam">id__in</span><span class="op">=</span><span class="op">[</span><span class="nam">trip</span><span class="op">.</span><span class="nam">id</span> <span class="key">for</span> <span class="nam">trip</span> <span class="key">in</span> <span class="nam">trips</span><span class="op">.</span><span class="nam">values</span><span class="op">(</span><span class="op">)</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t336" href="#t336">336</a></span><span class="t">                <span class="op">)</span><span class="op">.</span><span class="nam">delete</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t337" href="#t337">337</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t338" href="#t338">338</a></span><span class="t">            <span class="nam">print</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t338" href="#t338">338</a></span><span class="t">            <span class="nam">logger</span><span class="op">.</span><span class="nam">info</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t339" href="#t339">339</a></span><span class="t">                <span class="nam">operator</span><span class="op">.</span><span class="nam">service_set</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span><span class="nam">current</span><span class="op">=</span><span class="key">True</span><span class="op">,</span> <span class="nam">route__isnull</span><span class="op">=</span><span class="key">True</span><span class="op">)</span><span class="op">.</span><span class="nam">update</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t340" href="#t340">340</a></span><span class="t">                    <span class="nam">current</span><span class="op">=</span><span class="key">False</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t341" href="#t341">341</a></span><span class="t">                <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -441,7 +441,7 @@
             <a class="nav" href="z_04b90725eef61805_import_gtfs_flixbus_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.5">coverage.py v7.10.5</a>,
-            created at 2025-09-08 14:35 +0000
+            created at 2025-09-08 16:12 +0000
         </p>
     </div>
 </footer>
