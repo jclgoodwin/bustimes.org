@@ -97,7 +97,7 @@ class Command(BaseCommand):
             return  # no new data to import
         source.datetime = last_modified
 
-        print(f"{source} {last_modified}")
+        logger.info(f"{source} {last_modified}")
 
         feed = gtfs_kit.read_feed(path, dist_units="km")
 
@@ -327,15 +327,15 @@ class Command(BaseCommand):
                 service.do_stop_usages()
                 service.update_search_vector()
 
-            print(
+            logger.info(
                 source.route_set.exclude(id__in=[route.id for route in routes]).delete()
             )
-            print(
+            logger.info(
                 operator.trip_set.exclude(
                     id__in=[trip.id for trip in trips.values()]
                 ).delete()
             )
-            print(
+            logger.info(
                 operator.service_set.filter(current=True, route__isnull=True).update(
                     current=False
                 )
