@@ -851,8 +851,7 @@ class Service(models.Model):
             and self.servicecode_set.filter(scheme="TfL").exists()
         ):
             return [
-                self.get_tfl_url(),
-                "Timetable on the Transport for London website",
+                (self.get_tfl_url(), "Timetable on the Transport for London website"),
             ]
         return []
 
