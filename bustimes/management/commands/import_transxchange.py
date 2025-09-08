@@ -178,7 +178,7 @@ def get_calendar_date(
     )
 
 
-def get_registration(service_code):
+def get_registration(service_code: str) -> Registration | None:
     parts = service_code.split("_")[0].split(":")
     if len(parts[0]) != 9:
         prefix = parts[0][:2]
@@ -191,6 +191,178 @@ def get_registration(service_code):
             )
         except Registration.DoesNotExist:
             pass
+
+
+def get_route_links(journeys, transxchange: TransXChange):
+    patterns = {
+        journey.journey_pattern.id: journey.journey_pattern for journey in journeys
+    }
+    route_refs = [
+        pattern.route_ref for pattern in patterns.values() if pattern.route_ref
+    ]
+    if route_refs:
+        routes = [
+            transxchange.routes[route_id]
+            for route_id in transxchange.routes
+            if route_id in route_refs
+        ]
+        for route in routes:
+            for section_ref in route.route_section_refs:
+                route_section = transxchange.route_sections[section_ref]
+                for route_link in route_section.links:
+                    if route_link.track:
+                        yield route_link
+    else:
+        route_links = {}
+        for route_section in transxchange.route_sections.values():
+            for route_section_link in route_section.links:
+                route_links[route_section_link.id] = route_section_link
+        for journey in journeys:
+            if journey.journey_pattern:
+                for section in journey.journey_pattern.sections:
+                    for timing_link in section.timinglinks:
+                        try:
+                            route_link = route_links[timing_link.route_link_ref]
+                        except KeyError:
+                            continue
+                        if route_link.track:
+                            yield route_link
+
+
+def do_route_links(journeys, transxchange, stops, service):
+    route_links = list(get_route_links(journeys, transxchange))
+
+    # we're not interested in straight lines between stops
+    if any(len(link.track) > 2 for link in route_links):
+        stops_to_update = []
+
+        route_links_to_create = {}  # or update
+
+        for route_link in route_links:
+            from_stop = stops.get(route_link.from_stop)
+            to_stop = stops.get(route_link.to_stop)
+
+            if type(from_stop) is StopPoint and type(to_stop) is StopPoint:
+                key = (from_stop.atco_code, to_stop.atco_code)
+                route_links_to_create[key] = RouteLink(
+                    from_stop_id=from_stop.atco_code,
+                    to_stop_id=to_stop.atco_code,
+                    geometry=route_link.track,
+                    service=service,
+                )
+
+                # deduce stop location from start or end of track
+                if from_stop.latlong is None:
+                    from_stop.latlong = Point(route_link.track[0])
+                    stops_to_update.append(from_stop)
+                elif to_stop.latlong is None:
+                    to_stop.latlong = Point(route_link.track[-1])
+                    stops_to_update.append(to_stop)
+
+        RouteLink.objects.bulk_create(
+            route_links_to_create.values(),
+            update_conflicts=True,
+            update_fields=["geometry"],
+            unique_fields=["from_stop", "to_stop", "service"],
+        )
+
+        StopPoint.objects.bulk_update(stops_to_update, ["latlong"])
+
+
+def get_stop_time(trip, cell, stops: dict):
+    timing_status = cell.stopusage.timingstatus or ""
+    if len(timing_status) > 3:
+        match timing_status:
+            case "otherPoint":
+                timing_status = "OTH"
+            case "timeInfoPoint":
+                timing_status = "TIP"
+            case "principleTimingPoint" | "principalTimingPoint":
+                timing_status = "PTP"
+            case _:
+                logger.warning(timing_status)
+
+    stop_time = StopTime(
+        trip=trip,
+        sequence=cell.stopusage.sequencenumber,
+        timing_status=timing_status,
+    )
+    if (
+        stop_time.sequence is not None and stop_time.sequence > 32767
+    ):  # too big for smallint
+        stop_time.sequence = None
+
+    match cell.activity:
+        case "pickUp":
+            stop_time.set_down = False
+        case "setDown":
+            stop_time.pick_up = False
+        case "pass":
+            stop_time.pick_up = False
+            stop_time.set_down = False
+
+    stop_time.departure = cell.departure_time
+    if cell.arrival_time != cell.departure_time:
+        stop_time.arrival = cell.arrival_time
+
+    if trip.start is None:
+        trip.start = stop_time.departure_or_arrival()
+
+    atco_code = cell.stopusage.stop.atco_code.upper()
+    if atco_code in stops:
+        if type(stops[atco_code]) is str:
+            stop_time.stop_code = stops[atco_code]
+        else:
+            stop_time.stop = stops[atco_code]
+            trip.destination = stop_time.stop
+    else:
+        # stop missing from TransXChange StopPoints - this should never happen
+        try:
+            stops[atco_code] = StopPoint.objects.get(atco_code__iexact=atco_code)
+        except StopPoint.DoesNotExist:
+            logger.warning(atco_code)
+            stops[atco_code] = atco_code
+            stop_time.stop_code = atco_code  # !
+        else:
+            stop_time.stop = stops[atco_code]
+            trip.destination = stop_time.stop
+
+    return stop_time
+
+
+def get_description(txc_service):
+    description = txc_service.description
+
+    if description and description.isupper():
+        description = titlecase(description, callback=initialisms)
+
+    origin = txc_service.origin
+    destination = txc_service.destination
+
+    if origin and destination:
+        if origin[:4].isdigit() and destination[:4].isdigit():
+            print(origin, destination)
+
+        if origin.isupper() and destination.isupper():
+            txc_service.origin = origin = titlecase(origin, callback=initialisms)
+            txc_service.destination = destination = titlecase(
+                destination, callback=initialisms
+            )
+
+        if not description:
+            description = f"{origin} - {destination}"
+            vias = txc_service.vias
+            if vias:
+                if all(via.isupper() for via in vias):
+                    vias = [titlecase(via, callback=initialisms) for via in vias]
+                if len(vias) == 1:
+                    via = vias[0]
+                    if "via " in via:
+                        return f"{description} {via}"
+                    elif "," in via or " and " in via or "&" in via:
+                        return f"{description} via {via}"
+                description = " - ".join([origin] + vias + [destination])
+    return description
 
 
 class Command(BaseCommand):
@@ -633,66 +805,6 @@ class Command(BaseCommand):
 
         return calendar
 
-    def get_stop_time(self, trip, cell, stops: dict):
-        timing_status = cell.stopusage.timingstatus or ""
-        if len(timing_status) > 3:
-            match timing_status:
-                case "otherPoint":
-                    timing_status = "OTH"
-                case "timeInfoPoint":
-                    timing_status = "TIP"
-                case "principleTimingPoint" | "principalTimingPoint":
-                    timing_status = "PTP"
-                case _:
-                    logger.warning(timing_status)
-
-        stop_time = StopTime(
-            trip=trip,
-            sequence=cell.stopusage.sequencenumber,
-            timing_status=timing_status,
-        )
-        if (
-            stop_time.sequence is not None and stop_time.sequence > 32767
-        ):  # too big for smallint
-            stop_time.sequence = None
-
-        match cell.activity:
-            case "pickUp":
-                stop_time.set_down = False
-            case "setDown":
-                stop_time.pick_up = False
-            case "pass":
-                stop_time.pick_up = False
-                stop_time.set_down = False
-
-        stop_time.departure = cell.departure_time
-        if cell.arrival_time != cell.departure_time:
-            stop_time.arrival = cell.arrival_time
-
-        if trip.start is None:
-            trip.start = stop_time.departure_or_arrival()
-
-        atco_code = cell.stopusage.stop.atco_code.upper()
-        if atco_code in stops:
-            if type(stops[atco_code]) is str:
-                stop_time.stop_code = stops[atco_code]
-            else:
-                stop_time.stop = stops[atco_code]
-                trip.destination = stop_time.stop
-        else:
-            # stop missing from TransXChange StopPoints - this should never happen
-            try:
-                stops[atco_code] = StopPoint.objects.get(atco_code__iexact=atco_code)
-            except StopPoint.DoesNotExist:
-                logger.warning(atco_code)
-                stops[atco_code] = atco_code
-                stop_time.stop_code = atco_code  # !
-            else:
-                stop_time.stop = stops[atco_code]
-                trip.destination = stop_time.stop
-
-        return stop_time
-
     @cache
     def get_note(self, note_code, note_text):
         return Note.objects.get_or_create(
@@ -769,7 +881,7 @@ class Command(BaseCommand):
 
             blank = False
             for cell in journey.get_times():
-                stop_time = self.get_stop_time(trip, cell, stops)
+                stop_time = get_stop_time(trip, cell, stops)
                 stop_times.append(stop_time)
 
                 if not stop_time.timing_status:
@@ -842,7 +954,7 @@ class Command(BaseCommand):
                             )
                             journey.departure_time = trip.start
                             for cell in journey.get_times():
-                                stop_time = self.get_stop_time(trip, cell, stops)
+                                stop_time = get_stop_time(trip, cell, stops)
                                 stop_times.append(stop_time)
                             trip.end = stop_time.arrival_or_departure()
                             trips.append(trip)
@@ -902,40 +1014,6 @@ class Command(BaseCommand):
 
         StopTime.notes.through.objects.bulk_create(stop_time_notes, batch_size=1000)
 
-    def get_description(self, txc_service):
-        description = txc_service.description
-
-        if description and description.isupper():
-            description = titlecase(description, callback=initialisms)
-
-        origin = txc_service.origin
-        destination = txc_service.destination
-
-        if origin and destination:
-            if origin[:4].isdigit() and destination[:4].isdigit():
-                print(origin, destination)
-
-            if origin.isupper() and destination.isupper():
-                txc_service.origin = origin = titlecase(origin, callback=initialisms)
-                txc_service.destination = destination = titlecase(
-                    destination, callback=initialisms
-                )
-
-            if not description:
-                description = f"{origin} - {destination}"
-                vias = txc_service.vias
-                if vias:
-                    if all(via.isupper() for via in vias):
-                        vias = [titlecase(via, callback=initialisms) for via in vias]
-                    if len(vias) == 1:
-                        via = vias[0]
-                        if "via " in via:
-                            return f"{description} {via}"
-                        elif "," in via or " and " in via or "&" in via:
-                            return f"{description} via {via}"
-                    description = " - ".join([origin] + vias + [destination])
-        return description
-
     def should_defer_to_other_source(self, operators: dict, line_name: str):
         if self.source.name == "L" or not operators:
             return False
@@ -956,41 +1034,6 @@ class Command(BaseCommand):
             operator__in=nocs,
             route__line_name__iexact=line_name,
         ).exists()
-
-    def get_route_links(self, journeys, transxchange):
-        patterns = {
-            journey.journey_pattern.id: journey.journey_pattern for journey in journeys
-        }
-        route_refs = [
-            pattern.route_ref for pattern in patterns.values() if pattern.route_ref
-        ]
-        if route_refs:
-            routes = [
-                transxchange.routes[route_id]
-                for route_id in transxchange.routes
-                if route_id in route_refs
-            ]
-            for route in routes:
-                for section_ref in route.route_section_refs:
-                    route_section = transxchange.route_sections[section_ref]
-                    for route_link in route_section.links:
-                        if route_link.track:
-                            yield route_link
-        else:
-            route_links = {}
-            for route_section in transxchange.route_sections.values():
-                for route_section_link in route_section.links:
-                    route_links[route_section_link.id] = route_section_link
-            for journey in journeys:
-                if journey.journey_pattern:
-                    for section in journey.journey_pattern.sections:
-                        for timing_link in section.timinglinks:
-                            try:
-                                route_link = route_links[timing_link.route_link_ref]
-                            except KeyError:
-                                continue
-                            if route_link.track:
-                                yield route_link
 
     def handle_service(self, filename: str, transxchange, txc_service, today, stops):
         skip_journeys = False
@@ -1038,7 +1081,7 @@ class Command(BaseCommand):
             )
             return
 
-        description = self.get_description(txc_service)
+        description = get_description(txc_service)
 
         if description == "Origin - Destination":
             description = ""
@@ -1359,43 +1402,7 @@ class Command(BaseCommand):
 
             # route links (geometry between stops):
             if transxchange.route_sections:
-                route_links = list(self.get_route_links(journeys, transxchange))
-
-                # we're not interested in straight lines between stops
-                if any(len(link.track) > 2 for link in route_links):
-                    stops_to_update = []
-
-                    route_links_to_create = {}  # or update
-
-                    for route_link in route_links:
-                        from_stop = stops.get(route_link.from_stop)
-                        to_stop = stops.get(route_link.to_stop)
-
-                        if type(from_stop) is StopPoint and type(to_stop) is StopPoint:
-                            key = (from_stop.atco_code, to_stop.atco_code)
-                            route_links_to_create[key] = RouteLink(
-                                from_stop_id=from_stop.atco_code,
-                                to_stop_id=to_stop.atco_code,
-                                geometry=route_link.track,
-                                service=service,
-                            )
-
-                            # deduce stop location from start or end of track
-                            if from_stop.latlong is None:
-                                from_stop.latlong = Point(route_link.track[0])
-                                stops_to_update.append(from_stop)
-                            elif to_stop.latlong is None:
-                                to_stop.latlong = Point(route_link.track[-1])
-                                stops_to_update.append(to_stop)
-
-                    RouteLink.objects.bulk_create(
-                        route_links_to_create.values(),
-                        update_conflicts=True,
-                        update_fields=["geometry"],
-                        unique_fields=["from_stop", "to_stop", "service"],
-                    )
-
-                    StopPoint.objects.bulk_update(stops_to_update, ["latlong"])
+                do_route_links(journeys, transxchange, stops, service)
 
             route_code = filename
             if len(transxchange.services) > 1:
