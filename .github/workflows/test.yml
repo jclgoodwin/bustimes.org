@@ -67,10 +67,6 @@ jobs:
 
     - uses: astral-sh/setup-uv@v5
 
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.13'
-
     - run: uv sync --group test
 
     - run: rm -r busstops/static
@@ -82,7 +78,7 @@ jobs:
 
     - name: run tests
       env:
-        DATABASE_URL: postgis://postgres:postgres@localhost/postgres
+        DATABASE_URL: postgis://postgres:postgres@postgres/postgres
         SECRET_KEY: secret
         COVERAGE_CORE: sysmon
       run: |
