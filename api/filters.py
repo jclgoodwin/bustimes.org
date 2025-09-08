@@ -42,11 +42,18 @@ class VehicleJourneyFilter(FilterSet):
 
 
 class StopFilter(FilterSet):
-    service = ModelChoiceFilter(queryset=Service.objects, widget=NumberInput)
+    service = ModelChoiceFilter(
+        queryset=Service.objects, widget=NumberInput, label="Service"
+    )
 
     class Meta:
         model = StopPoint
-        fields = ["atco_code", "naptan_code", "stop_type"]
+        fields = {
+            "atco_code": ["exact", "iexact"],
+            "naptan_code": ["exact", "iexact"],
+            "stop_type": ["exact"],
+            "modified_at": ["gte"],
+        }
 
 
 class ServiceFilter(FilterSet):
@@ -67,6 +74,7 @@ class ServiceFilter(FilterSet):
             "public_use": ["exact"],
             "mode": ["exact", "in"],
             "slug": ["exact", "in"],
+            "modified_at": ["gte"],
         }
 
 

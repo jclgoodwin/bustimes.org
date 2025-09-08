@@ -96,6 +96,7 @@ class ServiceSerializer(serializers.ModelSerializer):
             "region_id",
             "mode",
             "operator",
+            "modified_at",
         ]
 
 
