@@ -1,4 +1,4 @@
-name: bustimes.org
+name: Run tests
 
 on:
   push:
@@ -35,6 +35,8 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     needs: test-frontend
+    container:
+      image: ghcr.io/jclgoodwin/bustimes.org/bustimes-base:latest
 
     permissions:
       # Gives the action the necessary permissions for publishing new
@@ -62,11 +64,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-
-    - name: Install Geospatial libraries
-      # required by GeoDjango
-      # see https://docs.djangoproject.com/en/dev/ref/contrib/gis/install/geolibs/
-      run: sudo apt-get update && sudo apt-get install -y --no-install-recommends gdal-bin
 
     - uses: astral-sh/setup-uv@v5
 
