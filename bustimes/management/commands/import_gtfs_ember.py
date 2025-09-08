@@ -221,6 +221,8 @@ class Command(BaseCommand):
                 geometry=gpd.points_from_xy(shape.shape_pt_lon, shape.shape_pt_lat),
                 crs="EPSG:4326",
             )
+            if shape_gdf.empty:
+                continue
 
             for a, b in pairwise(
                 feed.stop_times[feed.stop_times.trip_id == trip.trip_id].itertuples()
@@ -233,6 +235,13 @@ class Command(BaseCommand):
                 if (trip.route_id, a.stop_id, b.stop_id) in route_links:
                     continue
 
+                segment_gdf = shape_gdf[
+                    (shape_gdf.shape_dist_traveled >= a.shape_dist_traveled)
+                    & (shape_gdf.shape_dist_traveled <= b.shape_dist_traveled)
+                ]
+                if segment_gdf.empty:
+                    continue
+
                 if key in existing_route_links:
                     rl = existing_route_links[key]
                 else:
@@ -241,15 +250,10 @@ class Command(BaseCommand):
                         from_stop=stops[a.stop_id],
                         to_stop=stops[b.stop_id],
                     )
-                route_links[(trip.route_id, a.stop_id, b.stop_id)] = rl
-
-                segment_gdf = shape_gdf[
-                    (shape_gdf.shape_dist_traveled >= a.shape_dist_traveled)
-                    & (shape_gdf.shape_dist_traveled <= b.shape_dist_traveled)
-                ].copy()
                 rl.geometry = LineString(
                     *(Point(p.x, p.y) for p in segment_gdf.geometry.values)
                 )
+                route_links[(trip.route_id, a.stop_id, b.stop_id)] = rl
 
         RouteLink.objects.bulk_update(
             [rl for rl in route_links.values() if rl.id], fields=["geometry"]
