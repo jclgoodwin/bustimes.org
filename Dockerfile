@@ -10,15 +10,7 @@ COPY .parcelrc tsconfig.json /app/
 RUN npm run lint && npm run build
 
 
-FROM python:3.13
-
-ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
-
-# install GDAL (https://docs.djangoproject.com/en/5.1/ref/contrib/gis/install/geolibs/)
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends gdal-bin && \
-    rm -rf /var/lib/apt && \
-    rm -rf /var/lib/dpkg/info/*
+FROM ghcr.io/jclgoodwin/bustimes.org/bustimes-base:latest
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
