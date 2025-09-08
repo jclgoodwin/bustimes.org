@@ -145,8 +145,9 @@ class FlixbusTest(TestCase):
         ):
             make_zipfile(directory, "ember_gtfs")
 
-            call_command("import_gtfs_ember")
-            call_command("import_gtfs_ember")
+            with vcr.use_cassette(str(FIXTURES_DIR / "ember_gtfsr.yml")):
+                call_command("import_gtfs_ember")
+                call_command("import_gtfs_ember")
 
         response = self.client.get("/operators/ember")
 
