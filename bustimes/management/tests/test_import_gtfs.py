@@ -80,7 +80,10 @@ class GTFSTest(TestCase):
                     str(FIXTURES_DIR / "google_transit_ie.yaml"),
                 ) as cassette,
                 override_settings(DATA_DIR=Path(directory)),
-                self.assertLogs("bustimes.download_utils", "ERROR") as cm,
+                self.assertLogs("bustimes.download_utils", "ERROR") as errors,
+                self.assertLogs(
+                    "bustimes.management.commands.import_gtfs", "WARNING"
+                ) as warnings,
             ):
                 call_command(
                     "import_gtfs", ["Mortons", "Wexford Bus", "Seamus Doherty"]
@@ -94,7 +97,7 @@ class GTFSTest(TestCase):
                 )
 
         self.assertEqual(
-            sorted(cm.output),
+            sorted(errors.output),
             [
                 "ERROR:bustimes.download_utils:<Response [404]> "
                 "https://www.transportforireland.ie/transitData/Data/GTFS_Mortons.zip",
@@ -104,6 +107,15 @@ class GTFSTest(TestCase):
                 "https://www.transportforireland.ie/transitData/Data/GTFS_Seamus_Doherty.zip",
                 "ERROR:bustimes.download_utils:<Response [404]> "
                 "https://www.transportforireland.ie/transitData/Data/GTFS_Seamus_Doherty.zip",
+            ],
+        )
+        self.assertEqual(
+            warnings.output,
+            [
+                "WARNING:bustimes.management.commands.import_gtfs:"
+                "trip 2868_105 has no stop times",
+                "WARNING:bustimes.management.commands.import_gtfs:"
+                "trip 2868_105 has no stop times",
             ],
         )
 
