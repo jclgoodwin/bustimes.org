@@ -1032,15 +1032,19 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertEqual(journey_2.vehicle.operator.name, "National Express Coventry")
 
     def test_zipfile(self):
-        with use_cassette(str(self.vcr_path / "bod_avl_zipfile.yaml")):
-            self.source.url = "https://data.bus-data.dft.gov.uk/avl/download/sirivm_tfl"
-            command = import_bod_avl.Command()
-            command.source = self.source
+        self.source.url = "https://data.bus-data.dft.gov.uk/avl/download/sirivm_tfl"
+        command = import_bod_avl.Command()
+        command.source = self.source
 
+        with use_cassette(str(self.vcr_path / "bod_avl_zipfile.yaml")):
             items = command.get_items()
-        self.assertIsNone(list(items))
+
+            self.assertEqual([], list(items))
 
         self.source.url = "https://bustimes.org/404"
-        with use_cassette(str(self.vcr_path / "bod_avl_error.yaml")):
+        with (
+            use_cassette(str(self.vcr_path / "bod_avl_error.yaml")),
+            self.assertRaises(Exception),
+        ):
             items = command.get_items()
-            self.assertEqual(items, [])
+            self.assertEqual([], list(items))

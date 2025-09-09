@@ -540,21 +540,24 @@ class Command(ImportLiveVehiclesCommand):
         )
         if monitored_vehicle_journey.findtext("OperatorRef") == "TFLO":
             location.tfl_code = monitored_vehicle_journey.findtext("VehicleRef")
-        # extensions = item.get("Extensions")
-        # if extensions:
-        #     extensions = extensions.find("VehicleJourney") or extensions.find(
-        #         "VehicleJourneyExtensions"
-        #     )
-        # if extensions:
-        # location.occupancy_thresholds = extensions.find("OccupancyThresholds")
-        # if "SeatedOccupancy" in extensions:
-        #     location.seated_occupancy = int(extensions.findtext("SeatedOccupancy")
-        # if "SeatedCapacity" in extensions:
-        #     location.seated_capacity = int(extensions.findtext("SeatedCapacity"))
-        # if "WheelchairOccupancy" in extensions:
-        #     location.wheelchair_occupancy = int(extensions["WheelchairOccupancy"])
-        # if "WheelchairCapacity" in extensions:
-        #     location.wheelchair_capacity = int(extensions["WheelchairCapacity"])
+        if extensions := item.find("Extensions"):
+            extensions = extensions.find("VehicleJourney") or extensions.find(
+                "VehicleJourneyExtensions"
+            )
+        if extensions:
+            if (
+                occupancy_thresholds := extensions.findtext("OccupancyThresholds")
+            ) is not None:
+                location.occupancy_thresholds = occupancy_thresholds
+            for a, b in (
+                ("seated_occupancy", "SeatedOccupancy"),
+                ("seated_capacity", "SeatedCapacity"),
+                ("wheelchair_occupancy", "WheelchairOccupancy"),
+                ("wheelchair_capacity", "WheelchairCapacity"),
+            ):
+                if value := extensions.findtext(b):
+                    setattr(location, a, int(value))
+
         return location
 
     def get_items(self):
@@ -563,10 +566,7 @@ class Command(ImportLiveVehiclesCommand):
             url = self.source.settings.get("fallback_url") or url
 
         response = self.session.get(url, timeout=61)
-
-        if not response.ok:
-            print(response.headers, response.content, response)
-            return []
+        response.raise_for_status()
 
         if response.headers["content-type"] == "application/zip":
             with (
