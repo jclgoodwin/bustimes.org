@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_10fae538ba4e8521_tests_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.5">coverage.py v7.10.5</a>,
-            created at 2025-09-09 13:47 +0000
+            created at 2025-09-09 22:14 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -334,35 +334,38 @@
     <p class="run run2"><span class="n"><a id="t252" href="#t252">252</a></span><span class="t">            <span class="str">"vehicle_journey_code"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t253" href="#t253">253</a></span><span class="t">            <span class="str">"ticket_machine_code"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t254" href="#t254">254</a></span><span class="t">            <span class="str">"block"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t255" href="#t255">255</a></span><span class="t">            <span class="str">"service"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t256" href="#t256">256</a></span><span class="t">            <span class="str">"operator"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t257" href="#t257">257</a></span><span class="t">            <span class="str">"notes"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t258" href="#t258">258</a></span><span class="t">            <span class="str">"times"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t259" href="#t259">259</a></span><span class="t">        <span class="op">]</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t260" href="#t260">260</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t261" href="#t261">261</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t262" href="#t262">262</a></span><span class="t"><span class="key">class</span> <span class="nam">VehicleJourneySerializer</span><span class="op">(</span><span class="nam">serializers</span><span class="op">.</span><span class="nam">ModelSerializer</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t263" href="#t263">263</a></span><span class="t">    <span class="nam">vehicle</span> <span class="op">=</span> <span class="nam">serializers</span><span class="op">.</span><span class="nam">SerializerMethodField</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t255" href="#t255">255</a></span><span class="t">            <span class="str">"start"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t256" href="#t256">256</a></span><span class="t">            <span class="str">"end"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t257" href="#t257">257</a></span><span class="t">            <span class="str">"headsign"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t258" href="#t258">258</a></span><span class="t">            <span class="str">"service"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t259" href="#t259">259</a></span><span class="t">            <span class="str">"operator"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t260" href="#t260">260</a></span><span class="t">            <span class="str">"notes"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t261" href="#t261">261</a></span><span class="t">            <span class="str">"times"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t262" href="#t262">262</a></span><span class="t">        <span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t263" href="#t263">263</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t264" href="#t264">264</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t265" href="#t265">265</a></span><span class="t">    <span class="key">def</span> <span class="nam">get_vehicle</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">obj</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t266" href="#t266">266</a></span><span class="t">        <span class="key">if</span> <span class="nam">obj</span><span class="op">.</span><span class="nam">vehicle_id</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t267" href="#t267">267</a></span><span class="t">            <span class="key">return</span> <span class="op">{</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t268" href="#t268">268</a></span><span class="t">                <span class="str">"id"</span><span class="op">:</span> <span class="nam">obj</span><span class="op">.</span><span class="nam">vehicle_id</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t269" href="#t269">269</a></span><span class="t">                <span class="str">"slug"</span><span class="op">:</span> <span class="nam">obj</span><span class="op">.</span><span class="nam">vehicle</span><span class="op">.</span><span class="nam">slug</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t270" href="#t270">270</a></span><span class="t">                <span class="str">"fleet_code"</span><span class="op">:</span> <span class="nam">obj</span><span class="op">.</span><span class="nam">vehicle</span><span class="op">.</span><span class="nam">fleet_code</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t271" href="#t271">271</a></span><span class="t">                <span class="str">"reg"</span><span class="op">:</span> <span class="nam">obj</span><span class="op">.</span><span class="nam">vehicle</span><span class="op">.</span><span class="nam">reg</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t272" href="#t272">272</a></span><span class="t">            <span class="op">}</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t273" href="#t273">273</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t274" href="#t274">274</a></span><span class="t">    <span class="key">class</span> <span class="nam">Meta</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t275" href="#t275">275</a></span><span class="t">        <span class="nam">model</span> <span class="op">=</span> <span class="nam">VehicleJourney</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t276" href="#t276">276</a></span><span class="t">        <span class="nam">fields</span> <span class="op">=</span> <span class="op">[</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t277" href="#t277">277</a></span><span class="t">            <span class="str">"id"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t278" href="#t278">278</a></span><span class="t">            <span class="str">"datetime"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t279" href="#t279">279</a></span><span class="t">            <span class="str">"vehicle"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t280" href="#t280">280</a></span><span class="t">            <span class="str">"route_name"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t281" href="#t281">281</a></span><span class="t">            <span class="str">"destination"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t282" href="#t282">282</a></span><span class="t">            <span class="str">"trip_id"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t283" href="#t283">283</a></span><span class="t">        <span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t265" href="#t265">265</a></span><span class="t"><span class="key">class</span> <span class="nam">VehicleJourneySerializer</span><span class="op">(</span><span class="nam">serializers</span><span class="op">.</span><span class="nam">ModelSerializer</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t266" href="#t266">266</a></span><span class="t">    <span class="nam">vehicle</span> <span class="op">=</span> <span class="nam">serializers</span><span class="op">.</span><span class="nam">SerializerMethodField</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t267" href="#t267">267</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t268" href="#t268">268</a></span><span class="t">    <span class="key">def</span> <span class="nam">get_vehicle</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">obj</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t269" href="#t269">269</a></span><span class="t">        <span class="key">if</span> <span class="nam">obj</span><span class="op">.</span><span class="nam">vehicle_id</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t270" href="#t270">270</a></span><span class="t">            <span class="key">return</span> <span class="op">{</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t271" href="#t271">271</a></span><span class="t">                <span class="str">"id"</span><span class="op">:</span> <span class="nam">obj</span><span class="op">.</span><span class="nam">vehicle_id</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t272" href="#t272">272</a></span><span class="t">                <span class="str">"slug"</span><span class="op">:</span> <span class="nam">obj</span><span class="op">.</span><span class="nam">vehicle</span><span class="op">.</span><span class="nam">slug</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t273" href="#t273">273</a></span><span class="t">                <span class="str">"fleet_code"</span><span class="op">:</span> <span class="nam">obj</span><span class="op">.</span><span class="nam">vehicle</span><span class="op">.</span><span class="nam">fleet_code</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t274" href="#t274">274</a></span><span class="t">                <span class="str">"reg"</span><span class="op">:</span> <span class="nam">obj</span><span class="op">.</span><span class="nam">vehicle</span><span class="op">.</span><span class="nam">reg</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t275" href="#t275">275</a></span><span class="t">            <span class="op">}</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t276" href="#t276">276</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t277" href="#t277">277</a></span><span class="t">    <span class="key">class</span> <span class="nam">Meta</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t278" href="#t278">278</a></span><span class="t">        <span class="nam">model</span> <span class="op">=</span> <span class="nam">VehicleJourney</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t279" href="#t279">279</a></span><span class="t">        <span class="nam">fields</span> <span class="op">=</span> <span class="op">[</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t280" href="#t280">280</a></span><span class="t">            <span class="str">"id"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t281" href="#t281">281</a></span><span class="t">            <span class="str">"datetime"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t282" href="#t282">282</a></span><span class="t">            <span class="str">"vehicle"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t283" href="#t283">283</a></span><span class="t">            <span class="str">"route_name"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t284" href="#t284">284</a></span><span class="t">            <span class="str">"destination"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t285" href="#t285">285</a></span><span class="t">            <span class="str">"trip_id"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t286" href="#t286">286</a></span><span class="t">        <span class="op">]</span>&nbsp;</span><span class="r"></span></p>
 </main>
 <footer>
     <div class="content">
@@ -372,7 +375,7 @@
             <a class="nav" href="z_10fae538ba4e8521_tests_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.5">coverage.py v7.10.5</a>,
-            created at 2025-09-09 13:47 +0000
+            created at 2025-09-09 22:14 +0000
         </p>
     </div>
 </footer>
