@@ -1015,7 +1015,7 @@ class Command(BaseCommand):
         StopTime.notes.through.objects.bulk_create(stop_time_notes, batch_size=1000)
 
     def should_defer_to_other_source(self, operators: dict, line_name: str):
-        if not (self.self.source.is_tnds() or self.source.name == "TfGM"):
+        if not (self.source.is_tnds() or self.source.name == "TfGM"):
             return False
         elif self.source.name == "L":  # TfL data is always best
             return False
