@@ -15,7 +15,7 @@ from django.contrib.postgres.aggregates import StringAgg
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
-from django.db import IntegrityError, OperationalError, connection, transaction
+from django.db import IntegrityError, OperationalError, transaction
 from django.db.models import Case, F, Max, OuterRef, Q, When
 from django.db.models.functions import Coalesce, Now, TruncDate
 from django.http import Http404, HttpResponse, HttpResponseBadRequest, JsonResponse
@@ -39,7 +39,6 @@ from bustimes.models import Garage, Route, StopTime
 from bustimes.utils import contiguous_stoptimes_only, get_other_trips_in_block
 
 from . import filters, forms
-from .management.commands import import_bod_avl
 from .models import (
     Livery,
     SiriSubscription,
@@ -1133,41 +1132,6 @@ def latest_journey_debug(request, **kwargs):
         pass
 
     return JsonResponse(vehicle.latest_journey_data, safe=False)
-
-
-def debug(request):
-    form = forms.DebuggerForm(request.POST or None)
-    result = None
-    if form.is_valid():
-        data = form.cleaned_data["data"]
-        try:
-            item = json.loads(data)
-        except ValueError as e:
-            form.add_error("data", e)
-        else:
-            vehicle = None
-            journey = None
-            connection.force_debug_cursor = True
-            try:
-                with transaction.atomic():
-                    command = import_bod_avl.Command()
-                    command.do_source()
-                    vehicle, created = command.get_vehicle(item)
-                    journey = command.get_journey(item, vehicle)
-                    if not journey.datetime:
-                        journey.datetime = command.get_datetime(item)
-                    raise Exception
-            except Exception:
-                pass
-            connection.force_debug_cursor = False
-
-            result = {
-                "vehicle": vehicle,
-                "journey": journey,
-                "queries": connection.queries,
-            }
-
-    return render(request, "vehicles/debug.html", {"form": form, "result": result})
 
 
 @csrf_exempt

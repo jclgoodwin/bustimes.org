@@ -1,8 +1,10 @@
 from pathlib import Path
 from unittest import mock
+import xml.etree.ElementTree as ET
 
 import fakeredis
 import time_machine
+import xmltodict
 from django.test import TestCase, override_settings
 from vcr import use_cassette
 
@@ -260,11 +262,16 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 },
             },
         ]
+        items = ET.fromstring(xmltodict.unparse({"Siri": {"VehicleActivity": items}}))
 
         command = import_bod_avl.Command()
         command.source = self.source
         command.source.datetime = command.get_datetime(
-            {"RecordedAtTime": "2020-10-15T07:46:08+00:00"}
+            ET.fromstring(
+                xmltodict.unparse(
+                    {"Siri": {"RecordedAtTime": "2020-10-15T07:46:08+00:00"}}
+                )
+            )
         )
         command.get_operator.cache_clear()
         import_bod_avl.get_destination_name.cache_clear()
@@ -288,12 +295,14 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 wait = command.update()
             self.assertEqual(30, wait)
 
-            items[0]["RecordedAtTime"] = "2020-10-30T05:09:00+00:00"
+            items[0].find("RecordedAtTime").text = "2020-10-30T05:09:00+00:00"
             with self.assertNumQueries(1):
                 command.update()
 
-            items[0]["RecordedAtTime"] = "2020-10-30T05:10:00+00:00"
-            items[0]["OriginAimedDepartureTime"] = "2020-10-30T09:00:00+00:00"
+            items[0].find("RecordedAtTime").text = "2020-10-30T05:10:00+00:00"
+            items[0].find(
+                "MonitoredVehicleJourney/OriginAimedDepartureTime"
+            ).text = "2020-10-30T09:00:00+00:00"
             with self.assertNumQueries(1):
                 wait = command.update()
 
@@ -418,49 +427,64 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             "vehicles.management.import_live_vehicles.redis_client", redis_client
         ):
             command.handle_item(
-                {
-                    "Extensions": {
-                        "VehicleJourney": {"DriverRef": "105", "VehicleUniqueId": "104"}
-                    },
-                    "ItemIdentifier": "2cb5543a-add1-4e14-ae7a-a1ee730d9814",
-                    "RecordedAtTime": "2020-11-28T12:58:25+00:00",
-                    "ValidUntilTime": "2020-11-28T13:04:06.989808",
-                    "MonitoredVehicleJourney": {
-                        "LineRef": "146",
-                        "BlockRef": "2",
-                        "VehicleRef": "BB62_BUS",
-                        "OperatorRef": "BDRB",
-                        "DirectionRef": "inbound",
-                        "VehicleLocation": {
-                            "Latitude": "52.62269",
-                            "Longitude": "1.296443",
-                        },
-                        "PublishedLineName": "146",
-                        "VehicleJourneyRef": "146_20201128_12_58",
-                    },
-                }
+                ET.fromstring(
+                    xmltodict.unparse(
+                        {
+                            "VehicleActivity": {
+                                "Extensions": {
+                                    "VehicleJourney": {
+                                        "DriverRef": "105",
+                                        "VehicleUniqueId": "104",
+                                    }
+                                },
+                                "ItemIdentifier": "2cb5543a-add1-4e14-ae7a-a1ee730d9814",
+                                "RecordedAtTime": "2020-11-28T12:58:25+00:00",
+                                "ValidUntilTime": "2020-11-28T13:04:06.989808",
+                                "MonitoredVehicleJourney": {
+                                    "LineRef": "146",
+                                    "BlockRef": "2",
+                                    "VehicleRef": "BB62_BUS",
+                                    "OperatorRef": "BDRB",
+                                    "DirectionRef": "inbound",
+                                    "VehicleLocation": {
+                                        "Latitude": "52.62269",
+                                        "Longitude": "1.296443",
+                                    },
+                                    "PublishedLineName": "146",
+                                    "VehicleJourneyRef": "146_20201128_12_58",
+                                },
+                            }
+                        }
+                    )
+                )
             )
             command.save()
             command.handle_item(
-                {
-                    "RecordedAtTime": "2020-11-28T15:07:06+00:00",
-                    "ItemIdentifier": "26ff29be-0d0a-4f5e-8160-bec0d831b681",
-                    "ValidUntilTime": "2020-11-28T15:12:56.049069",
-                    "MonitoredVehicleJourney": {
-                        "LineRef": "146",
-                        "DirectionRef": "inbound",
-                        "PublishedLineName": "146",
-                        "OperatorRef": "BDRB",
-                        "DestinationRef": "390071066",
-                        "VehicleLocation": {
-                            "Longitude": "1.675893",
-                            "Latitude": "52.328398",
-                        },
-                        "BlockRef": "2",
-                        "VehicleJourneyRef": "146_20201128_12_58",
-                        "VehicleRef": "BB62_BUS",
-                    },
-                }
+                ET.fromstring(
+                    xmltodict.unparse(
+                        {
+                            "VehicleActivity": {
+                                "RecordedAtTime": "2020-11-28T15:07:06+00:00",
+                                "ItemIdentifier": "26ff29be-0d0a-4f5e-8160-bec0d831b681",
+                                "ValidUntilTime": "2020-11-28T15:12:56.049069",
+                                "MonitoredVehicleJourney": {
+                                    "LineRef": "146",
+                                    "DirectionRef": "inbound",
+                                    "PublishedLineName": "146",
+                                    "OperatorRef": "BDRB",
+                                    "DestinationRef": "390071066",
+                                    "VehicleLocation": {
+                                        "Longitude": "1.675893",
+                                        "Latitude": "52.328398",
+                                    },
+                                    "BlockRef": "2",
+                                    "VehicleJourneyRef": "146_20201128_12_58",
+                                    "VehicleRef": "BB62_BUS",
+                                },
+                            }
+                        }
+                    )
+                )
             )
             command.save()
 
@@ -609,6 +633,8 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 "VehicleJourneyRef": "m1_20211010_10_58",
             },
         }
+        item = ET.fromstring(xmltodict.unparse({"VehicleActivity": item}))
+
         vehicle, created = command.get_vehicle(item)
         self.assertFalse(created)
         self.assertEqual(vehicle.name, "Jeff")
@@ -617,13 +643,13 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertEqual("m1_20211010_10_58", journey.code)
         self.assertEqual("outbound", journey.direction)
 
-        item["MonitoredVehicleJourney"]["VehicleRef"] = "11111"
+        item.find("MonitoredVehicleJourney/VehicleRef").text = "11111"
         vehicle, created = command.get_vehicle(item)
         self.assertFalse(created)
         self.assertEqual(vehicle.code, "11111")
         # self.assertEqual(vehicle.fleet_code, "2929")
 
-        item["MonitoredVehicleJourney"]["VehicleRef"] = "FBRI-502_-_DK09_DZH"
+        item.find("MonitoredVehicleJourney/VehicleRef").text = "FBRI-502_-_DK09_DZH"
         vehicle, created = command.get_vehicle(item)
         self.assertTrue(created)
 
@@ -676,6 +702,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 "VehicleJourneyRef": "4237",
             },
         }
+        item = ET.fromstring(xmltodict.unparse({"VehicleActivity": item}))
 
         redis_client = fakeredis.FakeStrictRedis(version=7)
 
@@ -746,11 +773,10 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             },
             "Extensions": None,
         }
+        item = ET.fromstring(xmltodict.unparse({"VehicleActivity": item}))
+
         command.handle_item(item)
         command.save()
-
-        journey = VehicleJourney.objects.get()
-        self.assertEqual(item, journey.vehicle.latest_journey_data)
 
         item = {
             "Extensions": None,
@@ -771,6 +797,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             "RecordedAtTime": "2022-07-09T17:03:26+00:00",
             "ValidUntilTime": "2022-07-11T00:20:56.514340",
         }
+        item = ET.fromstring(xmltodict.unparse({"VehicleActivity": item}))
         command.handle_item(item)
 
     def test_tfl(self):
@@ -818,6 +845,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             },
             "Extensions": None,
         }
+        item = ET.fromstring(xmltodict.unparse({"VehicleActivity": item}))
 
         redis_client = fakeredis.FakeStrictRedis(version=7)
         with mock.patch(
@@ -890,6 +918,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 "DestinationAimedArrivalTime": "2024-07-05T08:05:00+00:00",
             },
         }
+        item = ET.fromstring(xmltodict.unparse({"VehicleActivity": item}))
         command.handle_item(item)
         command.save()
         vj = VehicleJourney.objects.get()
@@ -905,11 +934,11 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             route=r,
             destination=stop,
         )
-        item["RecordedAtTime"] = "2024-07-05T23:02:56+00:00"
-        item["MonitoredVehicleJourney"]["VehicleJourneyRef"] = (
-            "NT11-Out-51011-NT3390W3-2024-07-06T00:02:00-2024-07-05"
-        )
-        item["MonitoredVehicleJourney"]["VehicleLocation"] = {
+        item.find("RecordedAtTime").text = "2024-07-05T23:02:56+00:00"
+        item.find(
+            "MonitoredVehicleJourney/VehicleJourneyRef"
+        ).text = "NT11-Out-51011-NT3390W3-2024-07-06T00:02:00-2024-07-05"
+        item.find("MonitoredVehicleJourney/VehicleLocation").text = {
             "Latitude": "53.0",
             "Longitude": "-1.12",
         }
@@ -933,50 +962,62 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         )
 
         command.handle_item(
-            {
-                "RecordedAtTime": "2022-05-23T09:19:56+00:00",
-                "ItemIdentifier": "8fa84dbe-e4f7-45ed-abbc-8709de59b7e9",
-                "ValidUntilTime": "2022-05-23T12:36:03.702621",
-                "MonitoredVehicleJourney": {
-                    "LineRef": "DEAD",
-                    "FramedVehicleJourneyRef": {
-                        "DataFrameRef": "2022-05-23",
-                        "DatedVehicleJourneyRef": "0",
-                    },
-                    "PublishedLineName": "DEAD",
-                    "OperatorRef": "CV",
-                    "VehicleLocation": {
-                        "Longitude": "-1.505448",
-                        "Latitude": "52.421363",
-                    },
-                    "Bearing": "205.0",
-                    "VehicleRef": "CV-4407",
-                },
-                "Extensions": None,
-            }
+            ET.fromstring(
+                xmltodict.unparse(
+                    {
+                        "VehicleActivity": {
+                            "RecordedAtTime": "2022-05-23T09:19:56+00:00",
+                            "ItemIdentifier": "8fa84dbe-e4f7-45ed-abbc-8709de59b7e9",
+                            "ValidUntilTime": "2022-05-23T12:36:03.702621",
+                            "MonitoredVehicleJourney": {
+                                "LineRef": "DEAD",
+                                "FramedVehicleJourneyRef": {
+                                    "DataFrameRef": "2022-05-23",
+                                    "DatedVehicleJourneyRef": "0",
+                                },
+                                "PublishedLineName": "DEAD",
+                                "OperatorRef": "CV",
+                                "VehicleLocation": {
+                                    "Longitude": "-1.505448",
+                                    "Latitude": "52.421363",
+                                },
+                                "Bearing": "205.0",
+                                "VehicleRef": "CV-4407",
+                            },
+                            "Extensions": None,
+                        }
+                    }
+                )
+            )
         )
         command.handle_item(
-            {
-                "RecordedAtTime": "2022-05-23T12:30:32+00:00",
-                "ItemIdentifier": "7da087e7-0143-4738-9951-36eb6b190932",
-                "ValidUntilTime": "2022-05-23T12:36:03.780564",
-                "MonitoredVehicleJourney": {
-                    "LineRef": "C19",
-                    "FramedVehicleJourneyRef": {
-                        "DataFrameRef": "2022-05-23",
-                        "DatedVehicleJourneyRef": "15",
-                    },
-                    "PublishedLineName": "C19",
-                    "OperatorRef": "CV",
-                    "VehicleLocation": {
-                        "Longitude": "-1.52882",
-                        "Latitude": "52.392785",
-                    },
-                    "Bearing": "210.0",
-                    "VehicleRef": "CV-840",
-                },
-                "Extensions": None,
-            }
+            ET.fromstring(
+                xmltodict.unparse(
+                    {
+                        "VehicleActivity": {
+                            "RecordedAtTime": "2022-05-23T12:30:32+00:00",
+                            "ItemIdentifier": "7da087e7-0143-4738-9951-36eb6b190932",
+                            "ValidUntilTime": "2022-05-23T12:36:03.780564",
+                            "MonitoredVehicleJourney": {
+                                "LineRef": "C19",
+                                "FramedVehicleJourneyRef": {
+                                    "DataFrameRef": "2022-05-23",
+                                    "DatedVehicleJourneyRef": "15",
+                                },
+                                "PublishedLineName": "C19",
+                                "OperatorRef": "CV",
+                                "VehicleLocation": {
+                                    "Longitude": "-1.52882",
+                                    "Latitude": "52.392785",
+                                },
+                                "Bearing": "210.0",
+                                "VehicleRef": "CV-840",
+                            },
+                            "Extensions": None,
+                        }
+                    }
+                )
+            )
         )
         command.save()
 
@@ -990,71 +1031,12 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertEqual(journey_2.vehicle.reg, "")
         self.assertEqual(journey_2.vehicle.operator.name, "National Express Coventry")
 
-    def test_debugger(self):
-        service = Service.objects.create(line_name="21C")
-        service.operator.add("NIBS")
-        route = Route.objects.create(service=service, source=self.source)
-        calendar = Calendar.objects.create(
-            mon=True,
-            tue=True,
-            wed=True,
-            thu=True,
-            fri=True,
-            sat=True,
-            sun=True,
-            start_date="2021-01-01",
-        )
-        trip = Trip.objects.create(
-            start="18:08:000",
-            end="19:00:00",
-            route=route,
-            calendar=calendar,
-            inbound=True,
-        )
-
-        response = self.client.post(
-            "/vehicles/debug",
-            {
-                "data": """{
-"Extensions": null,
-"ItemIdentifier": "86cc7f7f-d80d-4e49-beae-0ca20f90ed68",
-"RecordedAtTime": "2021-12-30T18:02:49+00:00",
-"ValidUntilTime": "2021-12-30T18:08:26.472197",
-"MonitoredVehicleJourney": {
-"Bearing": "328.0",
-"LineRef": "21C",
-"BlockRef": "7550",
-"VehicleRef": "nibs_443_-_YX10_FEU",
-"OperatorRef": "NIBS",
-"DirectionRef": "inbound",
-"VehicleLocation": {
-"Latitude": "51.712366",
-"Longitude": "0.245008"
-},
-"PublishedLineName": "21C",
-"VehicleJourneyRef": "1808"
-}
-}"""
-            },
-        )
-
-        self.assertEqual(response.context["result"]["journey"].code, "1808")
-        self.assertEqual(response.context["result"]["journey"].service, service)
-        self.assertEqual(response.context["result"]["journey"].trip, trip)
-
-    def test_debugger_error(self):
-        response = self.client.post("/vehicles/debug", {"data": "trdgserawse/"})
-        self.assertIn(
-            "Expecting value: line 1 column 1 (char 0)",
-            str(response.context["form"].errors),
-        )
-
     def test_zipfile(self):
-        self.source.url = "https://data.bus-data.dft.gov.uk/avl/download/sirivm_tfl"
-        command = import_bod_avl.Command()
-        command.source = self.source
-
         with use_cassette(str(self.vcr_path / "bod_avl_zipfile.yaml")):
+            self.source.url = "https://data.bus-data.dft.gov.uk/avl/download/sirivm_tfl"
+            command = import_bod_avl.Command()
+            command.source = self.source
+
             items = command.get_items()
         self.assertIsNone(list(items))
 

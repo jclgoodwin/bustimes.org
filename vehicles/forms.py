@@ -206,10 +206,6 @@ link to a picture to prove it. Be polite.""",
                 del self.fields["features"]
 
 
-class DebuggerForm(forms.Form):
-    data = forms.CharField(widget=forms.Textarea(attrs={"rows": 6}))
-
-
 class DateForm(forms.Form):
     date = forms.DateField()
 

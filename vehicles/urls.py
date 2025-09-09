@@ -13,7 +13,6 @@ urlpatterns = [
     path("services/<slug>/vehicles", views.service_vehicles_history),
     path("vehicles", views.vehicles),
     path("vehicles.json", views.vehicles_json),
-    path("vehicles/debug", views.debug),
     path("vehicles/history", views.vehicle_edits),
     path("vehicles/edits", views.vehicle_edits),
     path(
