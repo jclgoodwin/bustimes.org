@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_75b41f4b22c00b34_import_bushub_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.5">coverage.py v7.10.5</a>,
-            created at 2025-09-08 22:49 +0000
+            created at 2025-09-09 12:15 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -309,7 +309,7 @@
     <p class="run"><span class="n"><a id="t227" href="#t227">227</a></span><span class="t">        <span class="nam">services</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">services</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span><span class="nam">line_name_query</span><span class="op">)</span><span class="op">.</span><span class="nam">defer</span><span class="op">(</span><span class="str">"geometry"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t228" href="#t228">228</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t229" href="#t229">229</a></span><span class="t">        <span class="key">if</span> <span class="nam">item</span><span class="op">[</span><span class="str">"MonitoredVehicleJourney"</span><span class="op">]</span><span class="op">[</span><span class="str">"OperatorRef"</span><span class="op">]</span> <span class="op">==</span> <span class="str">"TFLO"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t230" href="#t230">230</a></span><span class="t">            <span class="key">return</span> <span class="nam">services</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span><span class="nam">source__name</span><span class="op">=</span><span class="str">"L"</span><span class="op">)</span><span class="op">.</span><span class="nam">first</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t230" href="#t230">230</a></span><span class="t">            <span class="key">return</span> <span class="nam">services</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span><span class="nam">Q</span><span class="op">(</span><span class="nam">source__name</span><span class="op">=</span><span class="str">"L"</span><span class="op">)</span> <span class="op">|</span> <span class="nam">Q</span><span class="op">(</span><span class="nam">line_name</span><span class="op">=</span><span class="str">"SCS"</span><span class="op">)</span><span class="op">)</span><span class="op">.</span><span class="nam">first</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t231" href="#t231">231</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t232" href="#t232">232</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">operators</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t233" href="#t233">233</a></span><span class="t">            <span class="key">pass</span>&nbsp;</span><span class="r"></span></p>
@@ -809,7 +809,7 @@
             <a class="nav" href="z_75b41f4b22c00b34_import_bushub_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.5">coverage.py v7.10.5</a>,
-            created at 2025-09-08 22:49 +0000
+            created at 2025-09-09 12:15 +0000
         </p>
     </div>
 </footer>
