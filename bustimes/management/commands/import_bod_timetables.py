@@ -404,7 +404,9 @@ def stagecoach(specific_operator=None):
     session = requests.Session()
 
     timetable_data_sources = TimetableDataSource.objects.filter(
-        url__startswith="https://opendata.stagecoachbus.com", active=True
+        Q(url__startswith="https://opendata.stagecoachbus.com/")
+        | Q(url__endswith="/TfGMtxcnew.zip"),
+        active=True,
     )
     if specific_operator:
         timetable_data_sources = timetable_data_sources.filter(

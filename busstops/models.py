@@ -294,6 +294,11 @@ class DataSource(models.Model):
         else:
             text = self.name
 
+        if text == "FlixBus":
+            url = "https://transport.data.gouv.fr/datasets/flixbus-horaires-theoriques-du-reseau-europeen-1"
+        elif text == "TfGM":
+            url = "https://www.data.gov.uk/dataset/c3ca6469-7955-4a57-8bfc-58ef2361b797/gm-public-transport-schedules-gtfs"
+
         if route:
             # get date from 'bluestar_1611829131.zip/Bluestar 31 01 2021_SER2.xml'
             timestamp = route.code.split("/")[0].split("_")[-1].removesuffix(".zip")
