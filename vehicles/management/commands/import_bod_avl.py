@@ -10,7 +10,7 @@ from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.cache import cache
 from django.db import IntegrityError
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Exists, OuterRef, Q, Case, When
 from django.utils import timezone
 from django.utils.dateparse import parse_duration
 
@@ -20,7 +20,7 @@ from busstops.models import (
     OperatorCode,
     Service,
     ServiceCode,
-    StopPoint,
+    StopUsage,
 )
 from bustimes.models import Route, Trip
 
@@ -36,6 +36,9 @@ occupancies = {
 
 
 def get_destination_ref(destination_ref: str) -> str | None:
+    if not destination_ref:
+        return
+
     destination_ref = destination_ref.removeprefix("NT")  # Nottingham City Transport
 
     if (
@@ -209,9 +212,6 @@ class Command(ImportLiveVehiclesCommand):
     def get_service(self, operators, item, line_ref, vehicle_operator_id):
         monitored_vehicle_journey = item["MonitoredVehicleJourney"]
 
-        if destination_ref := monitored_vehicle_journey.get("DestinationRef"):
-            destination_ref = get_destination_ref(destination_ref)
-
         # filter by LineRef or (if present and different) TicketMachineServiceCode
         line_name_query = get_line_name_query(line_ref)
         try:
@@ -227,120 +227,65 @@ class Command(ImportLiveVehiclesCommand):
         services = self.services.filter(line_name_query).defer("geometry")
 
         if item["MonitoredVehicleJourney"]["OperatorRef"] == "TFLO":
-            return services.filter(source__name="L").first()
+            return services.filter(Q(source__name="L") | Q(line_name="SCS")).first()
 
-        if not operators:
-            pass
-        elif len(operators) == 1 and operators[0].parent and destination_ref:
-            operator = operators[0]
+        if operators:
+            condition = Q(operator__in=operators)
+            if vehicle_operator_id:
+                condition |= Q(operator=vehicle_operator_id)
+            services = services.filter(condition)
 
-            # first try taking OperatorRef at face value
-            # (temporary while some services may have no StopUsages)
-            try:
-                return services.filter(operator=operator).get()
-            except (Service.DoesNotExist, Service.MultipleObjectsReturned):
-                pass
+        score = 0
 
-            condition = Q(parent=operator.parent)
-
-            # in case the vehicle operator has a different parent (e.g. HCTY)
-            if vehicle_operator_id != operator.noc:
-                condition |= Q(noc=vehicle_operator_id)
-
-            services = services.filter(
-                Exists(Operator.objects.filter(condition, service=OuterRef("pk")))
-            )
-            # we don't just use 'operator__parent=' because a service can have multiple operators
-
-            # we will use the DestinationRef later to find out exactly which operator it is,
-            # because the OperatorRef field is unreliable,
-            # e.g. sometimes has the wrong up First Yorkshire operator code
-
-        elif operators:
-            if len(operators) == 1:
-                operator = operators[0]
-                condition = Q(operator=operator)
-                if vehicle_operator_id != operator.noc:
-                    condition |= Q(operator=vehicle_operator_id)
-                services = services.filter(condition)
-            else:
-                services = services.filter(
+        if destination_ref := get_destination_ref(
+            monitored_vehicle_journey.get("DestinationRef")
+        ):
+            score += Case(
+                When(
                     Exists(
-                        Service.operator.through.objects.filter(
-                            operator__in=operators, service=OuterRef("id")
+                        StopUsage.objects.filter(
+                            service=OuterRef("pk"), stop_id=destination_ref
                         )
-                    )
-                )
-
-            try:
-                return services.get()
-            except Service.DoesNotExist:
-                return
-            except Service.MultipleObjectsReturned:
-                pass
-
-        if destination_ref:
-            # cope with a missing leading zero
-            atco_code__startswith = Q(atco_code__startswith=destination_ref[:3])
-            if (
-                destination_ref.isdigit()
-                and destination_ref[0] != "0"
-                and destination_ref[3] == "0"
-            ):
-                atco_code__startswith |= Q(
-                    atco_code__startswith=f"0{destination_ref}[:3]"
-                )
-
-            stops = StopPoint.objects.filter(
-                atco_code__startswith, service=OuterRef("pk")
+                    ),
+                    then=1,
+                ),
+                default=0,
             )
-            services = services.filter(Exists(stops))
-            try:
-                return services.get()
-            except Service.DoesNotExist:
-                return
-            except Service.MultipleObjectsReturned:
-                condition = Exists(
-                    StopPoint.objects.filter(
-                        service=OuterRef("pk"), atco_code=destination_ref
-                    )
-                )
-                origin_ref = monitored_vehicle_journey.get("OriginRef")
-                if origin_ref:
-                    condition &= Exists(
-                        StopPoint.objects.filter(
-                            service=OuterRef("pk"), atco_code=origin_ref
+
+        if origin_ref := get_destination_ref(
+            monitored_vehicle_journey.get("OriginRef")
+        ):
+            score += Case(
+                When(
+                    Exists(
+                        StopUsage.objects.filter(
+                            service=OuterRef("pk"), stop_id=origin_ref
                         )
-                    )
-                try:
-                    return services.get(condition)
-                except Service.DoesNotExist:
-                    pass
-                except Service.MultipleObjectsReturned:
-                    services = services.filter(condition)
-
-        else:
-            latlong = self.create_vehicle_location(item).latlong
-            try:
-                return services.get(geometry__bboverlaps=latlong)
-            except (Service.DoesNotExist, Service.MultipleObjectsReturned):
-                pass
-
-        try:
-            # in case there was MultipleObjectsReturned caused by a bogus ServiceCode
-            # e.g. both Somerset 21 and 21A have 21A ServiceCode
-            return services.get(line_name__iexact=line_ref)
-        except (Service.DoesNotExist, Service.MultipleObjectsReturned):
-            pass
-
-        try:
-            when = self.get_datetime(item)
-            trips = Trip.objects.filter(
-                **{f"calendar__{when:%a}".lower(): True}, route__service=OuterRef("pk")
+                    ),
+                    then=1,
+                ),
+                default=0,
             )
-            return services.get(Exists(trips))
-        except (Service.DoesNotExist, Service.MultipleObjectsReturned):
-            pass
+
+        if block_ref := monitored_vehicle_journey.get("BlockRef"):
+            score += Case(
+                When(
+                    Exists(
+                        Trip.objects.filter(
+                            route__service=OuterRef("pk"), block=block_ref
+                        )
+                    ),
+                    then=1,
+                ),
+                default=0,
+            )
+
+        latlong = self.create_vehicle_location(item).latlong
+        score += Case(When(Q(geometry__bboverlaps=latlong), then=1), default=0)
+
+        services = services.annotate(score=score).order_by("-score")
+
+        return services.first()
 
     def get_journey(self, item, vehicle):
         monitored_vehicle_journey = item["MonitoredVehicleJourney"]
