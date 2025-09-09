@@ -1015,24 +1015,29 @@ class Command(BaseCommand):
         StopTime.notes.through.objects.bulk_create(stop_time_notes, batch_size=1000)
 
     def should_defer_to_other_source(self, operators: dict, line_name: str):
-        if self.source.name == "L" or not operators:
+        if not (self.self.source.is_tnds() or self.source.name == "TfGM"):
+            return False
+        elif self.source.name == "L":  # TfL data is always best
+            return False
+        elif not operators:
             return False
 
         nocs = [operator.noc for operator in operators.values()]
 
-        if any(noc not in self.incomplete_operators for noc in nocs):
-            return False  # jointly-operated service?
+        if self.source.name != "TfGM":
+            if any(noc not in self.incomplete_operators for noc in nocs):
+                return False  # jointly-operated service?
 
         if "FHAL" in nocs:
             nocs.append("FHUD")
         elif "FHUD" in nocs:
             nocs.append("FHAL")
 
-        return Service.objects.filter(
+        return Route.objects.filter(
             ~Q(source=self.source),
-            current=True,
-            operator__in=nocs,
-            route__line_name__iexact=line_name,
+            service__current=True,
+            service__operator__in=nocs,
+            line_name__iexact=line_name,
         ).exists()
 
     def handle_service(self, filename: str, transxchange, txc_service, today, stops):
@@ -1099,9 +1104,7 @@ class Command(BaseCommand):
             line.line_name = line.line_name.replace("_", " ")
 
             # prefer a BODS-type source over TNDS
-            if self.source.is_tnds() and self.should_defer_to_other_source(
-                operators, line.line_name
-            ):
+            if self.should_defer_to_other_source(operators, line.line_name):
                 continue
 
             existing = None
