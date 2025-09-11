@@ -243,8 +243,8 @@ def do_route_links(journeys, transxchange, stops, service):
             to_stop = stops.get(route_link.to_stop)
 
             if type(from_stop) is StopPoint and type(to_stop) is StopPoint:
-                start_point = Point(*route_link.track[0])
-                end_point = Point(*route_link.track[-1])
+                start_point = Point(route_link.track[0])
+                end_point = Point(route_link.track[-1])
 
                 if from_stop.latlong:
                     distance = from_stop.latlong.distance(start_point)
@@ -267,10 +267,10 @@ def do_route_links(journeys, transxchange, stops, service):
 
                 # deduce stop location from start or end of track
                 if from_stop.latlong is None:
-                    from_stop.latlong = Point(route_link.track[0])
+                    from_stop.latlong = start_point
                     stops_to_update.append(from_stop)
                 elif to_stop.latlong is None:
-                    to_stop.latlong = Point(route_link.track[-1])
+                    to_stop.latlong = end_point
                     stops_to_update.append(to_stop)
 
         RouteLink.objects.bulk_create(

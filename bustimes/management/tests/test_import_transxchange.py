@@ -85,7 +85,7 @@ class ImportTransXChangeTest(TestCase):
                 indicator=indicator,
                 latlong=Point(lng, lat, srid=4326),
             )
-            for atco_code, common_name, indicator, lat, lng in (
+            for atco_code, common_name, indicator, lng, lat in (
                 ("639004572", "Bulls Head", "adj", -2.5042125060, 53.7423055225),
                 ("639004562", "Markham Road", 'by"', -2.5083672338, 53.7398252112),
                 ("639004554", "Witton Park", "opp", -2.5108434749, 53.7389877672),
