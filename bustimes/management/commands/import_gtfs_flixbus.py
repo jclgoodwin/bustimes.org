@@ -347,7 +347,7 @@ def do_route_links(
                     rl = RouteLink(
                         service_id=key[0],
                         from_stop_id=key[1],
-                        to_stop_id=key[3],
+                        to_stop_id=key[2],
                     )
                 rl.geometry = geom.wkt
                 route_links[key] = rl

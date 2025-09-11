@@ -202,6 +202,6 @@ class BankHolidayAdmin(admin.ModelAdmin):
 
 
 @admin.register(RouteLink)
-class RouteLinkAdmin(admin.ModelAdmin):
+class RouteLinkAdmin(GISModelAdmin):
     raw_id_fields = ["from_stop", "to_stop", "service"]
     list_display = ["from_stop", "to_stop", "service"]
