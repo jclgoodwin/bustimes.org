@@ -244,7 +244,9 @@ def do_route_links(journeys, transxchange, stops, service):
 
             if type(from_stop) is StopPoint and type(to_stop) is StopPoint:
                 start_point = Point(route_link.track[0], srid=route_link.track.srid)
+                start_point.transform(4326)
                 end_point = Point(route_link.track[-1], srid=route_link.track.srid)
+                end_point.transform(4326)
 
                 if from_stop.latlong:
                     distance = from_stop.latlong.distance(start_point)
