@@ -30,7 +30,7 @@
 | busstops/management/\_\_init\_\_.py                             |        0 |        0 |    100% |           |
 | busstops/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
 | busstops/management/commands/import\_noc.py                     |      125 |        3 |     98% |155, 179, 238 |
-| busstops/management/commands/naptan\_new.py                     |      162 |       12 |     93% |39, 41, 165-173, 214, 263 |
+| busstops/management/commands/naptan\_new.py                     |      161 |       11 |     93% |39, 41, 165-172, 213, 262 |
 | busstops/management/commands/nptg\_new.py                       |       94 |        7 |     93% |148, 158, 163, 169-170, 172-173 |
 | busstops/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | busstops/management/tests/test\_import\_ie.py                   |       63 |        0 |    100% |           |
@@ -169,7 +169,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16383** | **1111** | **93%** |           |
+|                                                       **TOTAL** | **16382** | **1110** | **93%** |           |
 
 
 ## Setup coverage badge
