@@ -1,9 +1,11 @@
 import logging
 from pathlib import Path
+from itertools import pairwise
 
 import gtfs_kit
 import pandas as pd
 from shapely.errors import EmptyPartError
+from shapely import ops as so
 from zipfile import BadZipFile
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
@@ -15,7 +17,7 @@ from django.db.transaction import atomic
 from busstops.models import AdminArea, DataSource, Operator, Region, Service, StopPoint
 
 from ...download_utils import download_if_modified
-from ...models import Route, StopTime, Trip
+from ...models import Route, StopTime, Trip, RouteLink
 from .import_gtfs_ember import get_calendars
 
 logger = logging.getLogger(__name__)
@@ -59,27 +61,23 @@ class Command(BaseCommand):
 
         return operator
 
-    def do_stops(self, feed: gtfs_kit.feed.Feed):
+    def do_stops(self, feed: gtfs_kit.feed.Feed) -> dict[str, StopPoint]:
         stops = {}
         admin_areas = {}
-        stops_not_created = {}
-        for i, line in feed.stops.iterrows():
+        for _, line in feed.stops.iterrows():
             stop_id = line.stop_id
-            if stop_id[0] in "78" and len(stop_id) <= 16:
-                stop = StopPoint(
-                    atco_code=stop_id,
-                    common_name=line.stop_name,
-                    latlong=GEOSGeometry(f"POINT({line.stop_lon} {line.stop_lat})"),
-                    locality_centre=False,
-                    active=True,
-                    source=self.source,
-                )
-                if ", stop" in stop.common_name and stop.common_name.count(", ") == 1:
-                    stop.common_name, stop.indicator = stop.common_name.split(", ")
-                stop.common_name = stop.common_name[:48]
-                stops[stop_id] = stop
-            else:
-                stops_not_created[stop_id] = line
+            stop = StopPoint(
+                atco_code=stop_id,
+                common_name=line.stop_name,
+                latlong=GEOSGeometry(f"POINT({line.stop_lon} {line.stop_lat})"),
+                locality_centre=False,
+                active=True,
+                source=self.source,
+            )
+            if ", stop" in stop.common_name and stop.common_name.count(", ") == 1:
+                stop.common_name, stop.indicator = stop.common_name.split(", ")
+            stop.common_name = stop.common_name[:48]
+            stops[stop_id] = stop
         existing_stops = StopPoint.objects.only(
             "atco_code", "common_name", "latlong"
         ).in_bulk(stops)
@@ -110,7 +108,7 @@ class Command(BaseCommand):
                 stop.admin_area_id = admin_area_id
 
         StopPoint.objects.bulk_create(stops_to_create, batch_size=1000)
-        return StopPoint.objects.only("atco_code").in_bulk(stops), stops_not_created
+        return StopPoint.objects.only("atco_code").in_bulk(stops)
 
     def handle_route(self, line):
         line_name = line.route_short_name if type(line.route_short_name) is str else ""
@@ -171,14 +169,6 @@ class Command(BaseCommand):
     def handle_zipfile(self, path):
         feed = gtfs_kit.read_feed(path, dist_units="km")
 
-        # # exclude Dublin Express routes (they are in the NCSD dataset instead)
-        # excluded_agencies = feed.agency[
-        #     feed.agency.agency_name == "Dublin Express"
-        # ].agency_id
-        # feed = feed.restrict_to_routes(
-        #     feed.routes[~feed.routes.agency_id.isin(excluded_agencies)].route_id
-        # )
-
         self.operators = {}
         self.routes = {}
         self.route_operators = {}
@@ -198,7 +188,7 @@ class Command(BaseCommand):
         except (AttributeError, EmptyPartError, ValueError):
             pass
 
-        stops, stops_not_created = self.do_stops(feed)
+        stops = self.do_stops(feed)
 
         calendars = get_calendars(feed, source=self.source)
 
@@ -333,12 +323,7 @@ class Command(BaseCommand):
                 case _:
                     assert False
 
-            if stop := stops.get(line.stop_id):
-                stop_time.stop = stop
-            elif stop := stops_not_created.ge(line.stop_id):
-                stop_time.stop_code = stop.stop_name
-            else:
-                stop_time.stop_code = line.stop_id
+            stop_time.stop = stops[line.stop_id]
 
             if stop_time.arrival == stop_time.departure:
                 stop_time.arrival = None
@@ -397,6 +382,8 @@ class Command(BaseCommand):
         )
         old_routes.update(service=None)
 
+        do_route_links(feed, self.source, self.routes, stops)
+
     def handle(self, *args, **options):
         collections = DataSource.objects.filter(
             url__startswith="https://www.transportforireland.ie/transitData/Data/GTFS_"
@@ -421,3 +408,59 @@ class Command(BaseCommand):
                     logger.exception(e)
 
             # sleep(2)
+
+
+def do_route_links(
+    feed: gtfs_kit.feed.Feed, source: DataSource, routes: dict, stops: dict
+):
+    try:
+        trips = feed.get_trips(as_gdf=True).drop_duplicates("shape_id")
+    except ValueError:
+        return
+
+    existing_route_links = {
+        (rl.service_id, rl.from_stop_id, rl.to_stop_id): rl
+        for rl in RouteLink.objects.filter(service__source=source)
+    }
+    route_links = {}
+
+    for trip in trips.itertuples():
+        if trip.geometry is None:
+            continue
+
+        service = routes[trip.route_id].service_id
+
+        start_dist = 0
+
+        for a, b in pairwise(
+            feed.stop_times[feed.stop_times.trip_id == trip.trip_id].itertuples()
+        ):
+            key = (service, a.stop_id, b.stop_id)
+
+            if key in route_links:
+                continue
+
+            # find the substring of rl.geometry between the stops a and b
+            stop_b = stops[b.stop_id]
+            point_b = so.Point(stop_b.latlong.x, stop_b.latlong.y)
+            end_dist = trip.geometry.project(point_b)
+
+            geom = so.substring(trip.geometry, start_dist, end_dist)
+            if type(geom) is so.LineString:
+                if key in existing_route_links:
+                    rl = existing_route_links[key]
+                else:
+                    rl = RouteLink(
+                        service_id=key[0],
+                        from_stop_id=key[1],
+                        to_stop_id=key[3],
+                    )
+                rl.geometry = geom.wkt
+                route_links[key] = rl
+
+            start_dist = end_dist
+
+    RouteLink.objects.bulk_update(
+        [rl for rl in route_links.values() if rl.id], fields=["geometry"]
+    )
+    RouteLink.objects.bulk_create([rl for rl in route_links.values() if not rl.id])
