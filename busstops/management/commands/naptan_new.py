@@ -162,10 +162,9 @@ class Command(BaseCommand):
             for key in self.bulk_update_fields[1:]:
                 if getattr(stop, key) != getattr(existing, key):
                     if key == "latlong":
-                        distance = stop.latlong.transform(4326, clone=True).distance(
-                            existing.latlong
-                        )
-                        if distance < 0.00005:
+                        if stop.latlong.srid and stop.latlong.srid != 4326:
+                            stop.latlong.transform(4326)
+                        if stop.latlong.distance(existing.latlong) < 0.00005:
                             pass
                         else:
                             print(atco_code, existing.latlong, stop.latlong)
