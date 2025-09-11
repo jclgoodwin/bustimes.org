@@ -1,8 +1,9 @@
 from django.contrib import admin
 from django.contrib.gis.admin import GISModelAdmin
-from django.contrib.gis.db.models import CharField
+from django.contrib.gis.db.models import GeometryField
+from django.db.models import Func
 from django.contrib.postgres.aggregates import StringAgg
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, OuterRef, F, CharField
 from django.db.models.functions import Cast
 from django.urls import reverse
 from django.utils.safestring import mark_safe
@@ -201,7 +202,42 @@ class BankHolidayAdmin(admin.ModelAdmin):
         return queryset
 
 
+class StartPoint(Func):
+    function = "ST_StartPoint"
+    output_field = GeometryField()
+
+
+class EndPoint(Func):
+    function = "ST_EndPoint"
+    output_field = GeometryField()
+
+
+class DodgyRouteLinkFilter(admin.SimpleListFilter):
+    title = "Dodgy"
+    parameter_name = "dodgy"
+
+    def lookups(self, request, model_admin):
+        return (
+            ("from_stop", "start point is far away"),
+            ("to_stop", "end point is far away"),
+        )
+
+    def queryset(self, request, queryset):
+        print(self.value())
+        if self.value() == "from_stop":
+            return queryset.annotate(startpoint=StartPoint(F("geometry"))).exclude(
+                startpoint__dwithin=(F("from_stop__latlong"), 1)
+            )
+        elif self.value() == "to_stop":
+            return queryset.annotate(endpoint=EndPoint(F("geometry"))).exclude(
+                endpoint__dwithin=(F("to_stop__latlong"), 1)
+            )
+        return queryset
+
+
 @admin.register(RouteLink)
 class RouteLinkAdmin(GISModelAdmin):
     raw_id_fields = ["from_stop", "to_stop", "service"]
     list_display = ["from_stop", "to_stop", "service"]
+
+    list_filter = [DodgyRouteLinkFilter]
