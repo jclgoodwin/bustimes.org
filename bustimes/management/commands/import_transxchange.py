@@ -243,8 +243,8 @@ def do_route_links(journeys, transxchange, stops, service):
             to_stop = stops.get(route_link.to_stop)
 
             if type(from_stop) is StopPoint and type(to_stop) is StopPoint:
-                start_point = Point(route_link.track[0])
-                end_point = Point(route_link.track[-1])
+                start_point = Point(route_link.track[0], srid=route_link.track.srid)
+                end_point = Point(route_link.track[-1], srid=route_link.track.srid)
 
                 if from_stop.latlong:
                     distance = from_stop.latlong.distance(start_point)
@@ -254,7 +254,7 @@ def do_route_links(journeys, transxchange, stops, service):
                 if to_stop.latlong:
                     distance = to_stop.latlong.distance(end_point)
                     if distance > 0.1:
-                        print(start_point, to_stop.latlong, distance)
+                        print(end_point, to_stop.latlong, distance)
                         continue
 
                 key = (from_stop.atco_code, to_stop.atco_code)
