@@ -129,9 +129,7 @@ class Command(BaseCommand):
 
         geometries = {}
         for row in routes_as_gdf(feed).itertuples():
-            # print(row)
             if row.geometry:
-                # print(row.geometry, row.geometry.wkt)
                 geometries[row.route_id] = row.geometry.wkt
             else:
                 logger.info(row)
@@ -335,6 +333,10 @@ def do_route_links(
                 continue
 
             # find the substring of rl.geometry between the stops a and b
+            if not start_dist:
+                stop_a = stops[a.stop_id]
+                point_a = so.Point(stop_a.stop_lon, stop_a.stop_lat)
+                start_dist = trip.geometry.project(point_a)
             stop_b = stops[b.stop_id]
             point_b = so.Point(stop_b.stop_lon, stop_b.stop_lat)
             end_dist = trip.geometry.project(point_b)

@@ -441,8 +441,12 @@ def do_route_links(
                 continue
 
             # find the substring of rl.geometry between the stops a and b
+            if not start_dist:
+                stop_a = stops[a.stop_id]
+                point_a = so.Point(stop_a.latlong.coords)
+                start_dist = trip.geometry.project(point_a)
             stop_b = stops[b.stop_id]
-            point_b = so.Point(stop_b.latlong.x, stop_b.latlong.y)
+            point_b = so.Point(stop_b.latlong.coords)
             end_dist = trip.geometry.project(point_b)
 
             geom = so.substring(trip.geometry, start_dist, end_dist)

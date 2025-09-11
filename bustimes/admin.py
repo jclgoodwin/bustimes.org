@@ -223,7 +223,6 @@ class DodgyRouteLinkFilter(admin.SimpleListFilter):
         )
 
     def queryset(self, request, queryset):
-        print(self.value())
         if self.value() == "from_stop":
             return queryset.annotate(startpoint=StartPoint(F("geometry"))).exclude(
                 startpoint__dwithin=(F("from_stop__latlong"), 1)
