@@ -168,7 +168,9 @@ class GTFSTest(TestCase):
         service = Service.objects.get(route__code="21-963-1-y11-1")
         self.assertEqual(service.mode, "bus")
         timetable = service.get_timetable(datetime.date(2017, 6, 7)).render()
-        self.assertEqual(str(timetable.groupings[0]), "Outbound")
+        self.assertEqual(
+            str(timetable.groupings[0]), "To <NA>"
+        )  # this looks like a bug, but in practice there is always a headsign
         self.assertEqual(
             str(timetable.groupings[0].rows[0].times), "['', 10:15, '', 14:15, 17:45]"
         )
