@@ -10,14 +10,15 @@ from zipfile import BadZipFile
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.management.base import BaseCommand
+from django.db import connection
 from django.db.models import Count, Exists, OuterRef, Q
 from django.db.models.functions import Now
-from django.db.transaction import atomic
+from django.utils.dateparse import parse_duration
 
 from busstops.models import AdminArea, DataSource, Operator, Region, Service, StopPoint
 
 from ...download_utils import download_if_modified
-from ...models import Route, StopTime, Trip, RouteLink
+from ...models import Route, Trip, RouteLink
 from .import_gtfs_ember import get_calendars
 
 logger = logging.getLogger(__name__)
@@ -297,47 +298,49 @@ class Command(BaseCommand):
                     )
                     route.service.save(update_fields=["description"])
 
-        i = 0
-        stop_times = []
+        with (
+            connection.cursor() as cursor,
+            cursor.copy(
+                "COPY bustimes_stoptime (stop_id, arrival, departure, sequence, trip_id, timing_status, pick_up, set_down, stop_code) FROM STDIN"
+            ) as copy,
+        ):
+            for line in feed.stop_times.itertuples():
+                timing_status = "PTP" if getattr(line, "timepoint", 1) == 1 else "OTH"
 
-        for line in feed.stop_times.itertuples():
-            stop_time = StopTime(
-                arrival=line.arrival_time,
-                departure=line.departure_time,
-                sequence=line.stop_sequence,
-                trip=trips[line.trip_id],
-                timing_status="PTP" if getattr(line, "timepoint", 1) == 1 else "OTH",
-            )
-            match line.pickup_type:
-                case 0:  # Regularly scheduled pickup
-                    stop_time.pick_up = True
-                case 1:  # "No pickup available"
-                    stop_time.pick_up = False
-                case _:
-                    assert False
-            match line.drop_off_type:
-                case 0:  # Regularly scheduled drop off
-                    stop_time.set_down = True
-                case 1:  # "No drop off available"
-                    stop_time.set_down = False
-                case _:
-                    assert False
+                pick_up = None
+                match line.pickup_type:
+                    case 0:  # Regularly scheduled pickup
+                        pick_up = True
+                    case 1:  # "No pickup available"
+                        pick_up = False
 
-            stop_time.stop = stops[line.stop_id]
+                set_down = None
+                match line.drop_off_type:
+                    case 0:  # Regularly scheduled drop off
+                        set_down = True
+                    case 1:  # "No drop off available"
+                        set_down = False
 
-            if stop_time.arrival == stop_time.departure:
-                stop_time.arrival = None
+                departure = int(parse_duration(line.departure_time).total_seconds())
+                arrival = None
+                if line.arrival_time != departure:
+                    arrival = int(parse_duration(line.arrival_time).total_seconds())
 
-            stop_times.append(stop_time)
+                copy.write_row(
+                    (
+                        line.stop_id,
+                        arrival,
+                        departure,
+                        line.stop_sequence,
+                        trips[line.trip_id].pk,
+                        timing_status,
+                        pick_up,
+                        set_down,
+                        "",
+                    )
+                )
 
-            if i == 999:
-                StopTime.objects.bulk_create(stop_times)
-                stop_times = []
-                i = 0
-            else:
-                i += 1
-
-        StopTime.objects.bulk_create(stop_times)
+        del trips
 
         services = Service.objects.filter(id__in=self.services.keys())
 
@@ -402,8 +405,7 @@ class Command(BaseCommand):
                     source.datetime = last_modified
                 self.source = source
                 try:
-                    with atomic():
-                        self.handle_zipfile(path)
+                    self.handle_zipfile(path)
                 except (OSError, BadZipFile) as e:
                     logger.exception(e)
 
