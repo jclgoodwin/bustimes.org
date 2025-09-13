@@ -3,7 +3,6 @@ from pathlib import Path
 from itertools import pairwise
 
 import gtfs_kit
-import pandas as pd
 from shapely.errors import EmptyPartError
 from shapely import ops as so
 from zipfile import BadZipFile
@@ -194,7 +193,6 @@ class Command(BaseCommand):
         calendars = get_calendars(feed, source=self.source)
 
         trips = {}
-        headsigns = {}
 
         # line as in line in a spreadsheet, not as in the Elizabeth Line
         for line in feed.trips.itertuples():
@@ -210,19 +208,6 @@ class Command(BaseCommand):
                 operator=self.route_operators[line.route_id],
             )
 
-            if pd.notna(headsign := line.trip_headsign):
-                if headsign.endswith(" -"):
-                    headsign = None
-                elif headsign.startswith("- "):
-                    headsign = headsign[2:]
-                if headsign:
-                    if line.route_id not in headsigns:
-                        headsigns[line.route_id] = {
-                            0: set(),
-                            1: set(),
-                        }
-                    headsigns[line.route_id][line.direction_id].add(headsign)
-
         # use stop_times.txt to calculate trips' start times, end times and destinations:
 
         trip = None
@@ -236,9 +221,6 @@ class Command(BaseCommand):
 
                 trip = trips[line.trip_id]
                 trip.start = line.departure_time
-                # if line["stop_headsign"]:
-                #     if not trip["trip_headsign"]:
-                #         trip["trip_headsign"] = line["stop_headsign"]
 
             previous_line = line
 
@@ -257,46 +239,6 @@ class Command(BaseCommand):
             [trip for trip in trips.values() if isinstance(trip, Trip)],
             batch_size=1000,
         )
-
-        # headsigns - origins and destinations:
-
-        for route_id in headsigns:
-            route = self.routes[route_id]
-            origins = headsigns[route_id][1]  # inbound destinations
-            destinations = headsigns[route_id][0]  # outbound destinations
-            origin = ""
-            destination = ""
-            if len(origins) <= 1 and len(destinations) <= 1:
-                if origins:
-                    origin = list(origins)[0]
-                if destinations:
-                    destination = list(destinations)[0]
-
-                # if headsign contains ' - ' assume it's 'origin - destination', not just destination
-                if origin and " - " in origin:
-                    route.inbound_description = origin
-                    origin = ""
-                if destination and " - " in destination:
-                    route.outbound_description = destination
-                    destination = ""
-
-                route.origin = origin
-                route.destination = destination
-
-                route.save(
-                    update_fields=[
-                        "origin",
-                        "destination",
-                        "inbound_description",
-                        "outbound_description",
-                    ]
-                )
-
-                if not route.service.description:
-                    route.service.description = (
-                        route.outbound_description or route.inbound_description
-                    )
-                    route.service.save(update_fields=["description"])
 
         with (
             connection.cursor() as cursor,

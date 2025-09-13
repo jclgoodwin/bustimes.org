@@ -134,12 +134,8 @@ class GTFSTest(TestCase):
         with time_machine.travel("2017-06-07"):
             response = self.client.get("/services/165")
         timetable = response.context_data["timetable"]
-        self.assertEqual(str(timetable.groupings[0]), "Ailesbury Road - Citywest Road")
-        self.assertEqual(str(timetable.groupings[1]), "Citywest Road - Ailesbury Road")
-        self.assertEqual(
-            timetable.origins_and_destinations,
-            [("Ailesbury Road", "Citywest Road")],
-        )
+        self.assertEqual(str(timetable.groupings[0]), "To Citywest Road")
+        self.assertEqual(str(timetable.groupings[1]), "To Ailesbury Road")
         self.assertEqual(str(timetable.groupings[0].rows[0].times), "[07:45]")
         self.assertEqual(str(timetable.groupings[0].rows[4].times), "[07:52]")
         self.assertEqual(str(timetable.groupings[0].rows[6].times), "[08:01]")

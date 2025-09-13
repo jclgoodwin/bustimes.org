@@ -565,6 +565,9 @@ class Grouping:
                 partses = [reversed(parts) for parts in partses]
             return "\n".join([" - ".join(parts) for parts in partses])
 
+        if headsigns := set(trip.headsign for trip in self.trips if trip.headsign):
+            return f"To {' or '.join(headsigns)}"
+
         if self.inbound:
             return "Inbound"
         return "Outbound"
