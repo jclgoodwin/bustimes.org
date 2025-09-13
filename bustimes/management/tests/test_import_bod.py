@@ -365,7 +365,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
             response = self.client.get(f"/journeys/{journey.id}.json")
             json = response.json()
             self.assertEqual(
-                json["stops"][2]["actual_departure_time"], "2019-05-29T12:03:34Z"
+                json["stops"][2]["actual_departure_time"], "2019-05-29T13:03:34+01:00"
             )
 
             # newer API

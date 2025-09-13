@@ -264,12 +264,15 @@ class VehiclesTests(TestCase):
             {
                 "code": "",
                 "current": True,
-                "datetime": "2020-10-19T23:47:00Z",
+                "datetime": "2020-10-20T00:47:00+01:00",
                 "destination": "",
                 "direction": "",
-                "next": {"datetime": "2020-10-20T12:00:00Z", "id": self.journey.id + 2},
+                "next": {
+                    "datetime": "2020-10-20T13:00:00+01:00",
+                    "id": self.journey.id + 2,
+                },
                 "previous": {
-                    "datetime": "2020-10-16T12:00:00Z",
+                    "datetime": "2020-10-16T13:00:00+01:00",
                     "id": self.journey.id + 1,
                 },
                 "route_name": "2",
