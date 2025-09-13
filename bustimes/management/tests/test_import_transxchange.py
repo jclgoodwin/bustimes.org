@@ -101,7 +101,7 @@ class ImportTransXChangeTest(TestCase):
                 ("0260006515", "Acorn Close", "adj", -1.121080085, 52.671200066),
                 ("0260006516", "Church Hill", "opp", -1.121200186, 52.673322583),
                 # excel split reg
-                ("0500FWISH025", "Wisbech Bus Station", "", 0, 50),
+                ("0500FWISH025", "Wisbech Bus Station", "", 0.161173, 52.666239),
                 ("0590PQG10", "Peterborough Bus Station", "", -0.246691, 52.57392),
             )
         )

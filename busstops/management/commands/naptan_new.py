@@ -167,11 +167,13 @@ class Command(BaseCommand):
                         if stop.latlong.distance(existing.latlong) < 0.00005:
                             pass
                         else:
-                            print(atco_code, existing.latlong, stop.latlong)
+                            logger.info(
+                                f"{atco_code}: {existing.latlong} → {stop.latlong}"
+                            )
                             self.stops_to_update.append(stop)
                             break
                     else:
-                        print(atco_code, key)
+                        logger.info(f"{atco_code}: {key}")
                         self.stops_to_update.append(stop)
                         break
         else:
@@ -233,7 +235,7 @@ class Command(BaseCommand):
         )
         StopArea.objects.bulk_create(stop_areas_to_create, batch_size=1000)
 
-        print(
+        logger.info(
             f"{len(stop_areas_to_update)=} {len(stop_areas_to_create)=} {len(self.stops_to_create)=} {len(self.stops_to_update)=}"
         )
 
@@ -298,7 +300,7 @@ class Command(BaseCommand):
             if element.tag == "StopPoint":
                 atco_code = element.findtext("AtcoCode")
                 if atco_code[:3] != atco_code_prefix:
-                    print(f"{atco_code_prefix=}")
+                    logger.info(f"{atco_code_prefix=}")
 
                     if atco_code_prefix:
                         self.update_and_create()
