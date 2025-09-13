@@ -25,7 +25,7 @@ type VehicleJourneyLocation = {
   coordinates: [number, number];
   // delta: number | null;
   direction?: number | null;
-  datetime: string | number;
+  datetime: string;
 };
 
 export type StopTime = {
@@ -141,7 +141,7 @@ export const Locations = React.memo(function Locations({
                 // delta: l.delta,
                 heading: l.direction,
                 // datetime: l.datetime,
-                time: new Date(l.datetime).toTimeString().slice(0, 8),
+                time: l.datetime.slice(11, 19),
               },
             };
           }),
@@ -237,19 +237,11 @@ export const JourneyStops = React.memo(function Stops({
   );
 });
 
-function nextOrPreviousLink(
-  today: string,
-  nextOrPrevious: VehicleJourney["next"],
-): string {
-  const nextOrPreviousDate = new Date(nextOrPrevious.datetime);
-  const string = nextOrPreviousDate.toLocaleDateString();
-  const timeString = nextOrPreviousDate.toTimeString().slice(0, 5);
-
-  if (string === today) {
-    return timeString;
+function formatDatetime(datetime: string, contextDate?: string) {
+  if (contextDate && datetime.startsWith(contextDate)) {
+    return datetime.slice(11, 16); // just the time
   }
-
-  return `${string} ${timeString}`;
+  return datetime.slice(0, 16).replace("T", " ");
 }
 
 function Sidebar({
@@ -272,13 +264,14 @@ function Sidebar({
     return tripFromJourney(journey);
   }, [journey]);
 
-  const today = new Date(journey.datetime).toLocaleDateString();
-
   let previousLink: React.ReactElement | string | undefined;
   let nextLink: React.ReactElement | string | undefined;
+  const date = journey.datetime.slice(0, 10);
+
   if (journey) {
     if (journey.previous) {
-      previousLink = nextOrPreviousLink(today, journey.previous);
+      previousLink = formatDatetime(journey.previous.datetime, date);
+
       previousLink = (
         <p className="previous">
           <a href={`#journeys/${journey.previous.id}`}>&larr; {previousLink}</a>
@@ -286,7 +279,7 @@ function Sidebar({
       );
     }
     if (journey.next) {
-      nextLink = nextOrPreviousLink(today, journey.next);
+      nextLink = formatDatetime(journey.next.datetime, date);
       nextLink = (
         <p className="next">
           <a href={`#journeys/${journey.next.id}`}>{nextLink} &rarr;</a>
@@ -295,7 +288,7 @@ function Sidebar({
     }
   }
 
-  let text = today;
+  let text = formatDatetime(journey.datetime);
   let reg = null;
   if (journey.vehicle) {
     reg = journey.vehicle;
@@ -466,7 +459,6 @@ export default function JourneyMap({
             {
               id: new Date(vehicle.datetime).getTime(),
               coordinates: vehicle.coordinates,
-              // delta: null,
               datetime: vehicle.datetime,
               direction: vehicle.heading,
             },

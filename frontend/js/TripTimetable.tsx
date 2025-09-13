@@ -118,7 +118,7 @@ function Row({
       actual = stop.actual_departure_time; // vehicle history
     }
     if (actual) {
-      actual = new Date(actual).toTimeString().slice(0, 5);
+      actual = actual.slice(11, 16);
     }
   }
   if (actual) {
