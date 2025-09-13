@@ -955,7 +955,7 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
         "vehicle_id": journey.vehicle_id,
         "service_id": journey.service_id,
         "trip_id": journey.trip_id,
-        "datetime": journey.datetime,
+        "datetime": timezone.localtime(journey.datetime),
         "route_name": journey.route_name,
         "code": journey.code,
         "destination": journey.destination,
@@ -1046,10 +1046,9 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
                 }
             )
     elif journey.service_id:
-        stop_usages = StopUsage.objects.filter(service_id=journey.service_id)
-        if journey.direction:
-            is_inbound = journey.direction in ("inbound", "anticloc", "anticlockwise")
-            stop_usages = stop_usages.filter(inbound=is_inbound)
+        stop_usages = StopUsage.objects.filter(
+            service_id=journey.service_id
+        ).select_related("stop")
         data["stops"] = [
             {
                 "id": su.id,
@@ -1058,13 +1057,15 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
                 "heading": su.stop.get_heading(),
                 "coordinates": su.stop.latlong and su.stop.latlong.coords,
                 "minor": not su.timing_point,
+                "inbound": su.inbound,
             }
-            for i, su in enumerate(stop_usages.select_related("stop"))
+            for i, su in enumerate(stop_usages)
         ]
 
     if "stops" in data and "locations" in data:
         # only stops with coordinates
         stops = [stop for stop in data["stops"] if stop["coordinates"]]
+
         if stops:
             stop_coords = [stop["coordinates"][::-1] for stop in stops]
             vehicle_coords = [
@@ -1089,6 +1090,31 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
                     if distance < 100:
                         nearest_stop["actual_departure_time"] = location["datetime"]
 
+            # work out which direction we're going in
+            inbound = datetime.timedelta()
+            outbound = datetime.timedelta()
+            previous = None
+
+            for stop in stops:
+                if "inbound" in stop and "actual_departure_time" in stop:
+                    if previous and previous["inbound"] == stop["inbound"]:
+                        difference = (
+                            stop["actual_departure_time"]
+                            - previous["actual_departure_time"]
+                        )
+                        if stop["inbound"]:
+                            inbound += difference
+                        else:
+                            outbound += difference
+
+                    previous = stop
+
+            # whichever sum-of-differences is bigger is the direction of travel
+            if inbound > outbound:
+                data["stops"] = [stop for stop in data["stops"] if stop["inbound"]]
+            elif inbound < outbound:
+                data["stops"] = [stop for stop in data["stops"] if not stop["inbound"]]
+
     if vehicle_id:
         next_previous_filter = {"vehicle_id": vehicle_id}
     elif service_id:
@@ -1105,7 +1131,10 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
     except VehicleJourney.DoesNotExist:
         pass
     else:
-        data["next"] = {"id": next_journey.id, "datetime": next_journey.datetime}
+        data["next"] = {
+            "id": next_journey.id,
+            "datetime": timezone.localtime(next_journey.datetime),
+        }
 
     try:
         previous_journey = journey.get_previous_by_datetime(**next_previous_filter)
@@ -1114,7 +1143,7 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
     else:
         data["previous"] = {
             "id": previous_journey.id,
-            "datetime": previous_journey.datetime,
+            "datetime": timezone.localtime(previous_journey.datetime),
         }
 
     return JsonResponse(data)

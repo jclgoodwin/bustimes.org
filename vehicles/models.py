@@ -744,8 +744,8 @@ class VehicleLocation:
             "coordinates": location[1:3],
             "delta": (location[5] or None) and location[6],
             "direction": (location[3] or None) and location[4],
-            "datetime": datetime.datetime.fromtimestamp(
-                location[0], datetime.timezone.utc
+            "datetime": timezone.localtime(
+                datetime.datetime.fromtimestamp(location[0], datetime.timezone.utc)
             ),
         }
 
