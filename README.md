@@ -59,7 +59,7 @@
 | bustimes/management/commands/bank\_holidays.py                  |       52 |        1 |     98% |       102 |
 | bustimes/management/commands/import\_atco\_cif.py               |      235 |       25 |     89% |28-35, 40, 43-44, 71, 203, 205, 208, 210, 218, 224, 288, 321-326, 366-367, 434 |
 | bustimes/management/commands/import\_bod\_timetables.py         |      271 |       25 |     91% |48, 99, 103, 106-109, 114, 119-120, 141, 169, 179, 191-192, 259, 269-273, 289-291, 314, 330-331, 347 |
-| bustimes/management/commands/import\_gtfs.py                    |      225 |        6 |     97% |78, 130-131, 143, 150, 347 |
+| bustimes/management/commands/import\_gtfs.py                    |      227 |        6 |     97% |79, 131-132, 144, 151, 348 |
 | bustimes/management/commands/import\_gtfs\_ember.py             |      167 |       12 |     93% |78-79, 94, 137, 142, 159, 184, 225, 236, 246, 323-324 |
 | bustimes/management/commands/import\_gtfs\_flixbus.py           |      181 |        7 |     96% |76, 141, 209, 308-309, 333, 347 |
 | bustimes/management/commands/import\_ni.py                      |       31 |        0 |    100% |           |
@@ -81,7 +81,7 @@
 | bustimes/tests.py                                               |      129 |        0 |    100% |           |
 | bustimes/timetables.py                                          |      636 |       52 |     92% |101-114, 224-235, 266-267, 327, 339-342, 354, 368-373, 387, 406, 481, 484, 500-503, 505, 532, 644-659, 745-746, 817, 963-965 |
 | bustimes/urls.py                                                |        3 |        0 |    100% |           |
-| bustimes/utils.py                                               |      180 |       10 |     94% |207, 233-235, 255-256, 325, 342-343, 391 |
+| bustimes/utils.py                                               |      178 |       10 |     94% |205, 231-233, 253-254, 323, 340-341, 389 |
 | bustimes/views.py                                               |      369 |       75 |     80% |162-176, 185-187, 195-204, 206-214, 221, 243, 333, 342, 378, 384, 464, 554, 578-580, 597, 601-629, 657-668, 677-683 |
 | departures/\_\_init\_\_.py                                      |        0 |        0 |    100% |           |
 | departures/avl.py                                               |       12 |        1 |     92% |        14 |
