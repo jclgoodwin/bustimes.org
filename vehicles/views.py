@@ -1058,11 +1058,21 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
                 "coordinates": su.stop.latlong and su.stop.latlong.coords,
                 "minor": not su.timing_point,
                 "inbound": su.inbound,
+                "line_name": su.line_name.upper(),
             }
             for i, su in enumerate(stop_usages)
         ]
+        del stop_usages
 
     if "stops" in data and "locations" in data:
+        # filter by line name
+        if "line_name" in data["stops"][0]:
+            line_name = journey.route_name.upper()
+            if any(stop["line_name"] == line_name for stop in data["stops"]):
+                data["stops"] = [
+                    stop for stop in data["stops"] if stop["line_name"] == line_name
+                ]
+
         # only stops with coordinates
         stops = [stop for stop in data["stops"] if stop["coordinates"]]
 
