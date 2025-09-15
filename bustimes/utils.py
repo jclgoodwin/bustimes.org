@@ -1,4 +1,3 @@
-import logging
 from datetime import date, datetime, timedelta
 from difflib import Differ
 from itertools import pairwise
@@ -28,7 +27,6 @@ from .models import (
 )
 
 differ = Differ(charjunk=lambda _: True)
-logger = logging.getLogger(__name__)
 
 
 class log_time_taken:

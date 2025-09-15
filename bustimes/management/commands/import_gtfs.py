@@ -17,6 +17,7 @@ from django.utils.dateparse import parse_duration
 from busstops.models import AdminArea, DataSource, Operator, Region, Service, StopPoint
 
 from ...download_utils import download_if_modified
+from ...utils import log_time_taken
 from ...models import Route, Trip, RouteLink
 from .import_gtfs_ember import get_calendars
 
@@ -347,7 +348,8 @@ class Command(BaseCommand):
                     source.datetime = last_modified
                 self.source = source
                 try:
-                    self.handle_zipfile(path)
+                    with log_time_taken(logger):
+                        self.handle_zipfile(path)
                 except (OSError, BadZipFile) as e:
                     logger.exception(e)
 
