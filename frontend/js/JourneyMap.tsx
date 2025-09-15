@@ -452,7 +452,7 @@ export default function JourneyMap({
     (vehicle: Vehicle) => {
       if (
         !locations.length ||
-        locations[locations.length - 1].datetime > vehicle.datetime
+        locations[locations.length - 1].datetime < vehicle.datetime
       ) {
         setLocations(
           locations.concat([
