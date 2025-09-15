@@ -33,6 +33,9 @@ You can also suggest edits <a href="/contact">by email</a> or <a href="https://d
     else:
         form = forms.RegistrationForm()
 
+    if invite_code := request.GET.get("invite_code"):
+        form.fields["invite_code"].initial = invite_code
+
     return render(
         request,
         "register.html",

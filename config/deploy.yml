@@ -16,7 +16,6 @@ servers:
         WEB_CONCURRENCY: 12
         EMAIL_HOST: email-smtp.eu-west-1.amazonaws.com
         DISABLE_EDITING: ""
-        DISABLE_REGISTRATION: yes
         READ_ONLY_DB_HOST: private-jumbo-replica-do-user-1296332-0.d.db.ondigitalocean.com
       secret:
         - SECRET_KEY
