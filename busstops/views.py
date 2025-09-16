@@ -218,6 +218,8 @@ Disallow: /
 
 User-agent: GPTBot
 Disallow: /
+
+Sitemap: https://bustimes.org/sitemap.xml
 """
     else:  # staging site/other
         content = """User-agent: Mediapartners-Google
