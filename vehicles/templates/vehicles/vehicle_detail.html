@@ -106,10 +106,10 @@
             <td class="link">
                 {% if not vehicle %}
                     {% if journey.vehicle %}
-                        <a href="{{ journey.vehicle.get_absolute_url }}?date={{ date.isoformat }}">{{ journey.vehicle }}</a>
+                        <a href="{{ journey.vehicle.get_absolute_url }}?date={{ date.isoformat }}" rel="nofollow">{{ journey.vehicle }}</a>
                     {% endif %}
                 {% elif journey.service %}
-                    <a href="{{ journey.service.get_absolute_url }}/vehicles?date={{ date.isoformat }}">{{ journey.line_name }}</a>
+                    <a href="{{ journey.service.get_absolute_url }}/vehicles?date={{ date.isoformat }}" rel="nofollow">{{ journey.line_name }}</a>
                 {% else %}
                     {{ journey.line_name }}
                 {% endif %}
@@ -124,7 +124,7 @@
             {% endif %}
             <td>{% firstof journey.destination journey.direction %}</td>
             {% if journey.locations is not False %}
-                <td class="link"><a href="#journeys/{{ journey.id }}">Map</a></td>
+                <td class="link"><a href="#journeys/{{ journey.id }}"" rel="nofollow">Map</a></td>
             {% endif %}
             {% if perms.vehicles.change_vehiclejourney %}
                 <td class="link">
