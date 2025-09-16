@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_06bcf2d2e74f1893_test_import_gtfs_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.6">coverage.py v7.10.6</a>,
-            created at 2025-09-15 15:07 +0000
+            created at 2025-09-16 14:40 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -356,7 +356,7 @@
     <p class="run"><span class="n"><a id="t274" href="#t274">274</a></span><span class="t">        <span class="key">with</span> <span class="nam">self</span><span class="op">.</span><span class="nam">assertNumQueries</span><span class="op">(</span><span class="num">8</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t275" href="#t275">275</a></span><span class="t">            <span class="nam">response</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">client</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"/stops/2900W0321?date=2020-05-02&amp;time=11:00"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t276" href="#t276">276</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">assertEqual</span><span class="op">(</span><span class="nam">str</span><span class="op">(</span><span class="nam">response</span><span class="op">.</span><span class="nam">context</span><span class="op">[</span><span class="str">"when"</span><span class="op">]</span><span class="op">)</span><span class="op">,</span> <span class="str">"2020-05-02 11:00:00"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t277" href="#t277">277</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">assertContains</span><span class="op">(</span><span class="nam">response</span><span class="op">,</span> <span class="str">'&lt;a href="?date=2020-05-03">'</span><span class="op">)</span>  <span class="com"># next day</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t277" href="#t277">277</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">assertContains</span><span class="op">(</span><span class="nam">response</span><span class="op">,</span> <span class="str">'&lt;a href="?date=2020-05-03"'</span><span class="op">)</span>  <span class="com"># next day</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t278" href="#t278">278</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t279" href="#t279">279</a></span><span class="t">        <span class="key">with</span> <span class="nam">self</span><span class="op">.</span><span class="nam">assertNumQueries</span><span class="op">(</span><span class="num">10</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t280" href="#t280">280</a></span><span class="t">            <span class="nam">response</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">client</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"/stops/2900w0321/departures?date=poop"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -659,7 +659,7 @@
             <a class="nav" href="z_06bcf2d2e74f1893_test_import_gtfs_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.6">coverage.py v7.10.6</a>,
-            created at 2025-09-15 15:07 +0000
+            created at 2025-09-16 14:40 +0000
         </p>
     </div>
 </footer>
