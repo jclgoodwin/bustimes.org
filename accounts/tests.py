@@ -4,7 +4,7 @@ from unittest.mock import patch
 from django.core import mail
 from django.test import TransactionTestCase, override_settings
 
-from .models import User
+from .models import User, Invitation
 
 
 class RegistrationTest(TransactionTestCase):
@@ -31,22 +31,46 @@ class RegistrationTest(TransactionTestCase):
         response = self.client.get("/accounts/register/")
         self.assertContains(response, "Email address")
 
+        dummy_uuid = "b4fcbc02-1920-4d0d-b07b-756db0cb2cd0"
+
+        # no invite code
+        with self.assertNumQueries(1):
+            response = self.client.post(
+                "/accounts/register/",
+                {
+                    "email": "rufus@herring.pizza",
+                    "turnstile": "foo",
+                    "invite_code": dummy_uuid,
+                },
+            )
+        self.assertContains(response, "is not valid or has expired")
+
+        Invitation.objects.create(uuid=dummy_uuid, expires_at="3000-01-01")
+
         # IP address banned:
         User.objects.create(trusted=False, ip_address="6.6.6.6")
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(2):
             # create new account
             response = self.client.post(
                 "/accounts/register/",
-                {"email": "rufus@herring.pizza", "turnstile": "foo"},
+                {
+                    "email": "rufus@herring.pizza",
+                    "turnstile": "foo",
+                    "invite_code": dummy_uuid,
+                },
                 headers={"CF-Connecting-IP": "6.6.6.6"},
             )
             self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
 
         # create new account successfully:
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(5):
             response = self.client.post(
                 "/accounts/register/",
-                {"email": "rufus@herring.pizza", "turnstile": "foo"},
+                {
+                    "email": "rufus@herring.pizza",
+                    "turnstile": "foo",
+                    "invite_code": dummy_uuid,
+                },
                 headers={"CF-Connecting-IP": "1.2.3.4"},
             )
         self.assertContains(response, "Check your email (rufus@herring.pizza")
@@ -58,11 +82,15 @@ class RegistrationTest(TransactionTestCase):
         user.is_active = False
         user.save()
 
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(3):
             # reactivate existing account
             response = self.client.post(
                 "/accounts/register/",
-                {"email": "RUFUS@HeRRInG.piZZa", "turnstile": "foo"},
+                {
+                    "email": "RUFUS@HeRRInG.piZZa",
+                    "turnstile": "foo",
+                    "invite_code": dummy_uuid,
+                },
             )
 
         user.refresh_from_db()
@@ -71,10 +99,14 @@ class RegistrationTest(TransactionTestCase):
         self.assertIs(True, user.is_active)
         self.assertEqual(str(user), str(user.id))
 
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(3):
             response = self.client.post(
                 "/accounts/register/",
-                {"email": "ROY@HotMail.com", "turnstile": "foo"},
+                {
+                    "email": "ROY@HotMail.com",
+                    "turnstile": "foo",
+                    "invite_code": dummy_uuid,
+                },
             )
 
         user = User.objects.get(email__iexact="ROY@HotMail.com")

@@ -393,7 +393,8 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 response = self.client.get(whippet_journey.get_absolute_url())
 
             self.assertContains(
-                response, '<a href="/services/u/vehicles?date=2020-06-17">UU</a>'
+                response,
+                '<a href="/services/u/vehicles?date=2020-06-17" rel="nofollow">UU</a>',
             )
             self.assertContains(
                 response, f"""<a href="#journeys/{whippet_journey.id}">09:23</a>"""

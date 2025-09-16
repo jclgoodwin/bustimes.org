@@ -274,7 +274,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
         with self.assertNumQueries(8):
             response = self.client.get("/stops/2900W0321?date=2020-05-02&time=11:00")
         self.assertEqual(str(response.context["when"]), "2020-05-02 11:00:00")
-        self.assertContains(response, '<a href="?date=2020-05-03">')  # next day
+        self.assertContains(response, '<a href="?date=2020-05-03"')  # next day
 
         with self.assertNumQueries(10):
             response = self.client.get("/stops/2900w0321/departures?date=poop")

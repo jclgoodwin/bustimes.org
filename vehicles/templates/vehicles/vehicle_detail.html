@@ -124,7 +124,7 @@
             {% endif %}
             <td>{% firstof journey.destination journey.direction %}</td>
             {% if journey.locations is not False %}
-                <td class="link"><a href="#journeys/{{ journey.id }}"" rel="nofollow">Map</a></td>
+                <td class="link"><a href="#journeys/{{ journey.id }}">Map</a></td>
             {% endif %}
             {% if perms.vehicles.change_vehiclejourney %}
                 <td class="link">

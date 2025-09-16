@@ -244,7 +244,7 @@ class ViewsTests(TestCase):
         self.assertContains(response, "<b>Sandwich</b> - <b>Deal</b>")
         self.assertContains(
             response,
-            '<li><a rel="next" href="?q=sandwich+deal&amp;page=2#services">2</a></li>',
+            '<li><a rel="next nofollow" href="?q=sandwich+deal&amp;page=2#services">2</a></li>',
         )
 
         response = self.client.get("/search?q=sandwich+deal&page=2")
