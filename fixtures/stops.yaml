@@ -72,3 +72,23 @@
 #Durham Bus Station
 '13005528L':
     latlong: POINT(-1.581721 54.777160)
+
+'25001195':
+    common_name: Tesco Express
+
+2400A000080A:
+    landmark: Tesco
+2400A000110A:
+    landmark: Tesco
+2400A060490R:
+    landmark: Tesco
+
+2500DCL5664:
+    landmark: Home Bargains
+2500LAA07247:
+    landmark: Home Bargains
+
+5540AWA12164:
+    landmark: Sports Direct
+"370023314":
+    landmark: ""
