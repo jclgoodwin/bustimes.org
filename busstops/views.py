@@ -97,7 +97,7 @@ def flixbus_affiliate_link(**kwargs) -> str:
 def index(request):
     def stats():
         return {
-            "buses": redis_client.zcard("vehicle_location_locations"),
+            "buses": redis_client and redis_client.zcard("vehicle_location_locations"),
             "stops": StopPoint.objects.filter(active=True).count(),
             "routes": Service.objects.filter(current=True).count(),
             "operators": Service.operator.through.objects.filter(service__current=True)
