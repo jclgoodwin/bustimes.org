@@ -94,6 +94,24 @@ def flixbus_affiliate_link(**kwargs) -> str:
     return f"https://www.awin1.com/cread.php?{urlencode(query)}"
 
 
+def index(request):
+    def stats():
+        return {
+            "buses": redis_client.zcard("vehicle_location_locations"),
+            "stops": StopPoint.objects.filter(active=True).count(),
+            "routes": Service.objects.filter(current=True).count(),
+            "operators": Service.operator.through.objects.filter(service__current=True)
+            .distinct("operator")
+            .count(),
+        }
+
+    context = {
+        "stats": stats,
+    }
+
+    return render(request, "index.html", context)
+
+
 def not_found(request, exception):
     """Custom 404 handler view"""
 

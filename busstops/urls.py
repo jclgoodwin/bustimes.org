@@ -21,11 +21,7 @@ sitemaps = {
 }
 
 urlpatterns = [
-    path(
-        "",
-        TemplateView.as_view(template_name="index.html"),
-        name="index",
-    ),
+    path("", views.index, name="index"),
     path("version", views.version),
     path("contact", views.contact, name="contact"),
     path(
