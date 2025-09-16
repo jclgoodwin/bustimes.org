@@ -17,7 +17,7 @@
 {% with stats=stats %}
 {% load humanize %}
 <ul class="horizontal">
-    <li>Tracking {{ stats.buses }} buses</li>
+    <li><a href="/map">Tracking {{ stats.buses|intcomma }} buses</a></li>
     <li>{{ stats.routes|intcomma }} routes</li>
     <li>{{ stats.stops|intcomma }} stops</li>
     <li>{{ stats.operators|intcomma }} operators</li>
