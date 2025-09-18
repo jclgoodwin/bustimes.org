@@ -8,7 +8,8 @@ from django.core.management.base import BaseCommand
 from django.db.transaction import atomic
 from django.utils.timezone import localtime
 
-from busstops.models import Trip, DataSource
+from busstops.models import DataSource
+from bustimes.models import Trip
 from bustimes.utils import get_calendars
 from ...siri_sx import get_period
 from ...models import Situation, AffectedJourney, Call
