@@ -6,7 +6,7 @@ from functools import cached_property, cmp_to_key, partial
 
 from django.conf import settings
 from django.contrib.postgres.aggregates import ArrayAgg
-from django.db.models import Prefetch, Q, F
+from django.db.models import Prefetch, Q
 from django.utils.html import format_html
 from django.utils.timezone import localdate
 from sql_util.utils import Exists
@@ -16,68 +16,6 @@ from .models import Calendar, Note, StopTime, Trip
 from .utils import get_calendars, get_descriptions, get_routes
 
 differ = Differ(charjunk=lambda _: True)
-
-
-def get_stop_usages(trips):
-    groupings = {}
-
-    trips = trips.prefetch_related(
-        Prefetch(
-            "stoptime_set",
-            queryset=StopTime.objects.filter(stop__isnull=False).order_by(
-                "trip_id", "id"
-            ),
-        )
-    ).annotate(line_name=F("route__line_name"))
-
-    for trip in trips:
-        if trip.line_name not in groupings:
-            groupings[trip.line_name] = {False: [], True: []}
-
-        grouping = groupings[trip.line_name][trip.inbound]
-
-        stop_times = trip.stoptime_set.all()
-
-        old_rows = [stop_time.stop_id for stop_time in grouping]
-        new_rows = [stop_time.stop_id for stop_time in stop_times]
-        diff = differ.compare(old_rows, new_rows)
-
-        y = 0  # how many rows down we are
-
-        for stop_time in stop_times:
-            if y < len(old_rows):
-                existing_row = old_rows[y]
-            else:
-                existing_row = None
-
-            instruction = next(diff)
-
-            while instruction[0] in "-?":
-                if instruction[0] == "-":
-                    y += 1
-                    if y < len(old_rows):
-                        existing_row = old_rows[y]
-                    else:
-                        existing_row = None
-                instruction = next(diff)
-
-            assert instruction[2:] == stop_time.stop_id
-
-            if instruction[0] == "+":
-                if not existing_row:
-                    grouping.append(stop_time)
-                    old_rows.append(stop_time.stop_id)
-                else:
-                    grouping = grouping[:y] + [stop_time] + grouping[y:]
-                    old_rows = old_rows[:y] + [stop_time.stop_id] + old_rows[y:]
-            else:
-                assert instruction[2:] == existing_row
-
-            y += 1
-
-        groupings[trip.line_name][trip.inbound] = grouping
-
-    return groupings
 
 
 def compare_trips(rows, trip_ids, a, b):

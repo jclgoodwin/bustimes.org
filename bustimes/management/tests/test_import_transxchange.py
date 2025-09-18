@@ -307,7 +307,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(1, len(timetable.groupings))
         self.assertEqual(3, len(timetable.groupings[0].rows[0].times))
 
-        self.assertEqual(19, service.stopusage_set.count())
+        self.assertEqual(18, service.stopusage_set.count())
 
     @time_machine.travel("2016-12-15")
     def test_timetable_ne(self):
@@ -662,7 +662,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(date_options[0], date(2016, 2, 22))  # Monday
         self.assertEqual(date_options[-1], date(2017, 1, 27))
 
-        self.assertEqual(37, service.stopusage_set.count())
+        self.assertEqual(34, service.stopusage_set.count())
 
     @time_machine.travel("2018-09-24")
     def test_timetable_plymouth(self):

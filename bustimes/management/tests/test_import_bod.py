@@ -485,7 +485,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
                 "bustimes.management.commands.import_bod_timetables.download_if_modified",
                 return_value=(True, parse_datetime("2020-06-10T12:00:00+01:00")),
             ) as download_if_modified:
-                with self.assertNumQueries(116):
+                with self.assertNumQueries(114):
                     call_command("import_bod_timetables", "stagecoach")
                 download_if_modified.assert_called_with(
                     path, DataSource.objects.get(name="Stagecoach East"), ANY
@@ -505,7 +505,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
                 with self.assertNumQueries(1):
                     call_command("import_bod_timetables", "stagecoach", "SCOX")
 
-                with self.assertNumQueries(124):
+                with self.assertNumQueries(122):
                     call_command("import_bod_timetables", "stagecoach", "SCCM")
 
                 route_link.refresh_from_db()

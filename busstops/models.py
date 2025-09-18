@@ -21,8 +21,8 @@ from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 
-from bustimes.models import Route, TimetableDataSource, Trip
-from bustimes.timetables import Timetable, get_stop_usages
+from bustimes.models import Route, TimetableDataSource, StopTime
+from bustimes.timetables import Timetable
 from bustimes.utils import get_descriptions
 
 TIMING_STATUS_CHOICES = (
@@ -967,22 +967,41 @@ class Service(models.Model):
         return timetable
 
     def do_stop_usages(self):
-        proposed = get_stop_usages(Trip.objects.filter(route__service=self))
-
         existing = self.stopusage_set.order_by("id")
+
+        stop_times = StopTime.objects.filter(
+            trip__route__service=self, stop__isnull=False
+        )
+        stop_times = stop_times.distinct(
+            "trip__inbound", "trip__route__line_name", "stop_id"
+        ).order_by()
+        stop_times = stop_times.values(
+            "trip__route__line_name", "trip__inbound", "id", "stop_id", "timing_status"
+        )
+        stop_usages = [
+            (
+                st["trip__route__line_name"],
+                st["trip__inbound"],
+                st["id"],
+                st["stop_id"],
+                st["timing_status"],
+            )
+            for st in stop_times
+        ]
+        stop_usages.sort()
 
         proposed = [
             StopUsage(
                 service=self,
-                stop_id=stop_time.stop_id,
-                timing_point=(stop_time.timing_status == "PTP"),
+                stop_id=stop_id,
+                timing_point=(timing_status == "PTP"),
                 inbound=inbound,
                 order=i,
                 line_name=line_name,
             )
-            for line_name, groupings in proposed.items()
-            for inbound, grouping in groupings.items()
-            for i, stop_time in enumerate(grouping)
+            for i, (line_name, inbound, _, stop_id, timing_status) in enumerate(
+                stop_usages
+            )
         ]
 
         existing_hash = [
