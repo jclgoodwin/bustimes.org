@@ -18,16 +18,19 @@ class Command(BaseCommand):
         endpoint = "https://obst-s2s.tfw.vix-its.com"
         requestor_ref = "TFW_Bustimes_VM"
 
+        subscription = SiriSubscription.objects.get(name="Transport for Wales")
+
         now = datetime.now(timezone.utc)
-        stats = cache.get("tfw_status")
+        stats = cache.get(subscription.get_status_key())
         if stats:
             if (now - stats[-1][0]) < timedelta(minutes=5):
                 return
+        else:
+            print(f"no {subscription} history, subscribing")
 
         session = requests.Session()
         session.mount("https://", SourceAddressAdapter(source_address))
 
-        subscription = SiriSubscription.objects.get(name="Transport for Wales")
         consumer_address = f"{consumer_address}/siri/{subscription.uuid}"
 
         initial_termination_time = now + timedelta(hours=20) - timedelta(minutes=6)

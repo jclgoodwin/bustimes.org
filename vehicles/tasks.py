@@ -57,7 +57,7 @@ def handle_siri_post(uuid, data):
         command.handle_items(changed_journey_items, changed_journey_identities)
 
     # stats for last 50 updates:
-    key = f"{subscription.name.replace(' ', '_')}_status"
+    key = subscription.get_status_key()
     stats = cache.get(key, [])
     stats.append(
         import_bod_avl.Status(

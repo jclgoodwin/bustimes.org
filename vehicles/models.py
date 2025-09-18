@@ -802,3 +802,6 @@ class SiriSubscription(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_status_key(self):
+        return f"{self.name.replace(' ', '_')}_status"
