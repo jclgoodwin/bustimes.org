@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_06bcf2d2e74f1893_test_bank_holidays_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.6">coverage.py v7.10.6</a>,
-            created at 2025-09-18 18:07 +0000
+            created at 2025-09-18 18:36 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -335,15 +335,15 @@
     <p class="run"><span class="n"><a id="t253" href="#t253">253</a></span><span class="t">                <span class="key">if</span> <span class="nam">from_stop</span><span class="op">.</span><span class="nam">latlong</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t254" href="#t254">254</a></span><span class="t">                    <span class="nam">distance</span> <span class="op">=</span> <span class="nam">from_stop</span><span class="op">.</span><span class="nam">latlong</span><span class="op">.</span><span class="nam">distance</span><span class="op">(</span><span class="nam">start_point</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t255" href="#t255">255</a></span><span class="t">                    <span class="key">if</span> <span class="nam">distance</span> <span class="op">></span> <span class="num">0.1</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t256" href="#t256">256</a></span><span class="t">                        <span class="nam">print</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t256" href="#t256">256</a></span><span class="t">                        <span class="nam">logger</span><span class="op">.</span><span class="nam">warning</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t257" href="#t257">257</a></span><span class="t">                            <span class="fst">f"</span><span class="op">{</span><span class="nam">service</span><span class="op">.</span><span class="nam">slug</span><span class="op">}</span><span class="fst">: </span><span class="op">{</span><span class="nam">from_stop</span><span class="op">.</span><span class="nam">atco_code</span><span class="op">}</span><span class="fst"> is </span><span class="op">{</span><span class="nam">distance</span><span class="op">}</span><span class="fst"> from </span><span class="op">{</span><span class="nam">start_point</span><span class="op">}</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t258" href="#t258">258</a></span><span class="t">                        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t259" href="#t259">259</a></span><span class="t">                        <span class="key">continue</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t260" href="#t260">260</a></span><span class="t">                <span class="key">if</span> <span class="nam">to_stop</span><span class="op">.</span><span class="nam">latlong</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t261" href="#t261">261</a></span><span class="t">                    <span class="nam">distance</span> <span class="op">=</span> <span class="nam">to_stop</span><span class="op">.</span><span class="nam">latlong</span><span class="op">.</span><span class="nam">distance</span><span class="op">(</span><span class="nam">end_point</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t262" href="#t262">262</a></span><span class="t">                    <span class="key">if</span> <span class="nam">distance</span> <span class="op">></span> <span class="num">0.1</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t263" href="#t263">263</a></span><span class="t">                        <span class="nam">print</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t264" href="#t264">264</a></span><span class="t">                            <span class="fst">f"</span><span class="op">{</span><span class="nam">service</span><span class="op">.</span><span class="nam">slug</span><span class="op">}</span><span class="fst">: </span><span class="op">{</span><span class="nam">to_stop</span><span class="op">.</span><span class="nam">atco_code</span><span class="op">}</span><span class="fst"> is </span><span class="op">{</span><span class="nam">end_point</span><span class="op">}</span><span class="fst"> from </span><span class="op">{</span><span class="nam">distance</span><span class="op">}</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t263" href="#t263">263</a></span><span class="t">                        <span class="nam">logger</span><span class="op">.</span><span class="nam">warning</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t264" href="#t264">264</a></span><span class="t">                            <span class="fst">f"</span><span class="op">{</span><span class="nam">service</span><span class="op">.</span><span class="nam">slug</span><span class="op">}</span><span class="fst">: </span><span class="op">{</span><span class="nam">to_stop</span><span class="op">.</span><span class="nam">atco_code</span><span class="op">}</span><span class="fst"> is </span><span class="op">{</span><span class="nam">distance</span><span class="op">}</span><span class="fst"> from </span><span class="op">{</span><span class="nam">end_point</span><span class="op">}</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t265" href="#t265">265</a></span><span class="t">                        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t266" href="#t266">266</a></span><span class="t">                        <span class="key">continue</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t267" href="#t267">267</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -1656,7 +1656,7 @@
             <a class="nav" href="z_06bcf2d2e74f1893_test_bank_holidays_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.6">coverage.py v7.10.6</a>,
-            created at 2025-09-18 18:07 +0000
+            created at 2025-09-18 18:36 +0000
         </p>
     </div>
 </footer>
