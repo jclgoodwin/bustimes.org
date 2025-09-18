@@ -1529,19 +1529,19 @@ body.has-overlay {
 
 .horizontal {
     li {
-        display: inline;
+        display: inline-block;
 
         a {
             display: inline;
         }
 
-        &:before {
+        &::after {
             color: var(--border-color-darker);
             content: '  \00B7  ';
             font-weight: bold;
         }
 
-        &:first-child::before {
+        &:last-child::after {
             display: none;
         }
     }
