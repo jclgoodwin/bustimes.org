@@ -1,0 +1,14 @@
+{% extends 'page.html' %}
+
+{% block content %}
+
+<p>
+    from (A)
+    <a href="{{ object.from_stop.get_absolute_url }}">{{ object.from_stop }}</a>
+    to (B)
+    <a href="{{ object.to_stop.get_absolute_url }}">{{ object.to_stop }}</a>
+</p>
+
+<img width="600" height="600" alt="map" src="{{ image_url }}">
+
+{% endblock content %}

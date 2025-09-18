@@ -17,4 +17,9 @@ urlpatterns = [
     path("trips/<int:pk>", views.TripDetailView.as_view(), name="trip_detail"),
     path("trips/<int:pk>/block", views.trip_block, name="block_detail"),
     path("trip_updates", views.trip_updates),
+    path(
+        "routelinks/<int:pk>",
+        views.RouteLinkDetailView.as_view(),
+        name="routelink_detail",
+    ),
 ]

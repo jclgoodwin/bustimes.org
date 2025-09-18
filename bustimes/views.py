@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 import zipfile
 from datetime import datetime, timedelta
 from pathlib import Path
+from urllib.parse import urlencode
 
 import requests
 from ciso8601 import parse_datetime
@@ -53,7 +54,7 @@ from vehicles.models import Vehicle, VehicleJourney
 from vehicles.rtpi import add_progress_and_delay
 
 from .download_utils import download
-from .models import Route, StopTime, Trip
+from .models import Route, StopTime, Trip, RouteLink
 from .utils import get_other_trips_in_block
 
 
@@ -99,6 +100,35 @@ class ServiceDebugView(DetailView):
         )
 
         context["breadcrumb"] = [self.object]
+
+        return context
+
+
+class RouteLinkDetailView(DetailView):
+    model = RouteLink
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["breadcrumb"] = [self.object.service]
+
+        context[
+            "image_url"
+        ] = f"https://tiles.stadiamaps.com/static/alidade_bright.png?{
+            urlencode(
+                (
+                    ('size', '600x600@2x'),
+                    (
+                        'markers',
+                        f'{self.object.from_stop.latlong.y},{self.object.from_stop.latlong.x},,,A',
+                    ),
+                    (
+                        'markers',
+                        f'{self.object.to_stop.latlong.y},{self.object.to_stop.latlong.x},,,B',
+                    ),
+                )
+            )
+        }"
 
         return context
 

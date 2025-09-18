@@ -110,6 +110,9 @@ class RouteLink(models.Model):
     def __repr__(self):
         return f"<RouteLink: {self.pk} {self.service_id} {self.from_stop_id} {self.to_stop_id}>"
 
+    def get_absolute_url(self):
+        return reverse("routelink_detail", args=(self.id,))
+
 
 class BankHoliday(models.Model):
     id = models.SmallAutoField(primary_key=True)

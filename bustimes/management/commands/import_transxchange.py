@@ -253,15 +253,15 @@ def do_route_links(journeys, transxchange, stops, service):
                 if from_stop.latlong:
                     distance = from_stop.latlong.distance(start_point)
                     if distance > 0.1:
-                        print(
+                        logger.warning(
                             f"{service.slug}: {from_stop.atco_code} is {distance} from {start_point}"
                         )
                         continue
                 if to_stop.latlong:
                     distance = to_stop.latlong.distance(end_point)
                     if distance > 0.1:
-                        print(
-                            f"{service.slug}: {to_stop.atco_code} is {end_point} from {distance}"
+                        logger.warning(
+                            f"{service.slug}: {to_stop.atco_code} is {distance} from {end_point}"
                         )
                         continue
 
