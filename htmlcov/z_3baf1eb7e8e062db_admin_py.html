@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_3baf1eb7e8e062db_download_utils_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.6">coverage.py v7.10.6</a>,
-            created at 2025-09-18 00:39 +0000
+            created at 2025-09-18 00:40 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -307,11 +307,11 @@
     <p class="run"><span class="n"><a id="t225" href="#t225">225</a></span><span class="t">    <span class="key">def</span> <span class="nam">queryset</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">request</span><span class="op">,</span> <span class="nam">queryset</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t226" href="#t226">226</a></span><span class="t">        <span class="key">if</span> <span class="nam">self</span><span class="op">.</span><span class="nam">value</span><span class="op">(</span><span class="op">)</span> <span class="op">==</span> <span class="str">"from_stop"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t227" href="#t227">227</a></span><span class="t">            <span class="key">return</span> <span class="nam">queryset</span><span class="op">.</span><span class="nam">annotate</span><span class="op">(</span><span class="nam">startpoint</span><span class="op">=</span><span class="nam">StartPoint</span><span class="op">(</span><span class="nam">F</span><span class="op">(</span><span class="str">"geometry"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">.</span><span class="nam">exclude</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t228" href="#t228">228</a></span><span class="t">                <span class="nam">startpoint__dwithin</span><span class="op">=</span><span class="op">(</span><span class="nam">F</span><span class="op">(</span><span class="str">"from_stop__latlong"</span><span class="op">)</span><span class="op">,</span> <span class="num">1</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis mis2 show_mis"><span class="n"><a id="t228" href="#t228">228</a></span><span class="t">                <span class="nam">startpoint__dwithin</span><span class="op">=</span><span class="op">(</span><span class="nam">F</span><span class="op">(</span><span class="str">"from_stop__latlong"</span><span class="op">)</span><span class="op">,</span> <span class="num">0.15</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis mis2 show_mis"><span class="n"><a id="t229" href="#t229">229</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t230" href="#t230">230</a></span><span class="t">        <span class="key">elif</span> <span class="nam">self</span><span class="op">.</span><span class="nam">value</span><span class="op">(</span><span class="op">)</span> <span class="op">==</span> <span class="str">"to_stop"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t231" href="#t231">231</a></span><span class="t">            <span class="key">return</span> <span class="nam">queryset</span><span class="op">.</span><span class="nam">annotate</span><span class="op">(</span><span class="nam">endpoint</span><span class="op">=</span><span class="nam">EndPoint</span><span class="op">(</span><span class="nam">F</span><span class="op">(</span><span class="str">"geometry"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">.</span><span class="nam">exclude</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t232" href="#t232">232</a></span><span class="t">                <span class="nam">endpoint__dwithin</span><span class="op">=</span><span class="op">(</span><span class="nam">F</span><span class="op">(</span><span class="str">"to_stop__latlong"</span><span class="op">)</span><span class="op">,</span> <span class="num">1</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis mis2 show_mis"><span class="n"><a id="t232" href="#t232">232</a></span><span class="t">                <span class="nam">endpoint__dwithin</span><span class="op">=</span><span class="op">(</span><span class="nam">F</span><span class="op">(</span><span class="str">"to_stop__latlong"</span><span class="op">)</span><span class="op">,</span> <span class="num">0.15</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis mis2 show_mis"><span class="n"><a id="t233" href="#t233">233</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t234" href="#t234">234</a></span><span class="t">        <span class="key">return</span> <span class="nam">queryset</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t235" href="#t235">235</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -331,7 +331,7 @@
             <a class="nav" href="z_3baf1eb7e8e062db_download_utils_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.6">coverage.py v7.10.6</a>,
-            created at 2025-09-18 00:39 +0000
+            created at 2025-09-18 00:40 +0000
         </p>
     </div>
 </footer>
