@@ -29,6 +29,8 @@ class InviteCodeField(UUIDField):
 class RegistrationForm(PasswordResetForm):
     invite_code = InviteCodeField()
 
+    field_order = ["invite_code"]
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
