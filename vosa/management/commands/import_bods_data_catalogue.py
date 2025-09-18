@@ -104,7 +104,7 @@ class Command(BaseCommand):
                     )
                     changed = True
                 else:
-                    changed = not reg.registered
+                    changed = False
 
                 for a, b in reg_mapping:
                     to_value = row[b]
