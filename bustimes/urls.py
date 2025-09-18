@@ -19,7 +19,7 @@ urlpatterns = [
     path("trip_updates", views.trip_updates),
     path(
         "routelinks/<int:pk>",
-        views.RouteLinkDetailView.as_view(),
+        views.route_link_view,
         name="routelink_detail",
     ),
 ]

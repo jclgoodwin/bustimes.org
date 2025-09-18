@@ -3,9 +3,9 @@ import xml.etree.ElementTree as ET
 import zipfile
 from datetime import datetime, timedelta
 from pathlib import Path
-from urllib.parse import urlencode
 
 import requests
+import folium
 from ciso8601 import parse_datetime
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
@@ -104,33 +104,31 @@ class ServiceDebugView(DetailView):
         return context
 
 
-class RouteLinkDetailView(DetailView):
-    model = RouteLink
+@require_GET
+def route_link_view(request, pk):
+    route_link = get_object_or_404(RouteLink, pk=pk)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+    start = [route_link.from_stop.latlong.y, route_link.from_stop.latlong.x]
+    end = [route_link.to_stop.latlong.y, route_link.to_stop.latlong.x]
 
-        context["breadcrumb"] = [self.object.service]
+    m = folium.Map()
+    m.fit_bounds([start, end])
 
-        context[
-            "image_url"
-        ] = f"https://tiles.stadiamaps.com/static/alidade_bright.png?{
-            urlencode(
-                (
-                    ('size', '600x600@2x'),
-                    (
-                        'markers',
-                        f'{self.object.from_stop.latlong.y},{self.object.from_stop.latlong.x},,,A',
-                    ),
-                    (
-                        'markers',
-                        f'{self.object.to_stop.latlong.y},{self.object.to_stop.latlong.x},,,B',
-                    ),
-                )
-            )
-        }"
+    folium.Marker(
+        location=start,
+        tooltip=f"from {route_link.from_stop}",
+    ).add_to(m)
 
-        return context
+    folium.Marker(
+        location=end,
+        tooltip=f"to {route_link.to_stop}",
+    ).add_to(m)
+
+    folium.vector_layers.PolyLine([[(y, x) for (x, y) in route_link.geometry]]).add_to(
+        m
+    )
+
+    return HttpResponse(m.get_root().render())
 
 
 def maybe_download_file(local_path, s3_key):
