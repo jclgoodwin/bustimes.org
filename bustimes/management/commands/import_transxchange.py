@@ -1249,9 +1249,6 @@ class Command(BaseCommand):
                 or "Origin - " not in description
                 and " - Destination" not in description
             ):
-                if line.line_brand:
-                    description = description.removesuffix(f" [{line.line_brand}]")
-
                 service.description = description
 
             if line.colour:
@@ -1275,6 +1272,11 @@ class Command(BaseCommand):
             line_brand = line.line_brand or line.marketing_name
             if line_brand:
                 logger.info(line_brand)
+                if service.description:
+                    service.description = service.description.removesuffix(
+                        f" [{line.line_brand}]"
+                    )
+
             if txc_service.marketing_name:
                 logger.info(txc_service.marketing_name)
                 if txc_service.marketing_name in (
