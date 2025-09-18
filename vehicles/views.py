@@ -1209,19 +1209,18 @@ def debug(request):
 
 @csrf_exempt
 def siri_post(request, uuid):
-    get_object_or_404(SiriSubscription, uuid=uuid)
+    subscription = get_object_or_404(SiriSubscription, uuid=uuid)
+    last_post_key = subscription.get_status_key().replace("_status", "_last_post")
 
     if request.method == "GET":
-        return HttpResponse(
-            cache.get("last_siri_post")["body"], content_type="text/xml"
-        )
+        return HttpResponse(cache.get(last_post_key)["body"], content_type="text/xml")
 
     body = request.body.decode()
     data = xmltodict.parse(body, force_list=["VehicleActivity"])
 
     handle_siri_post(uuid, data)
 
-    cache.set("last_siri_post", {"headers": request.headers, "body": body})
+    cache.set(last_post_key, {"headers": request.headers, "body": body}, None)
 
     return HttpResponse("")
 
@@ -1229,7 +1228,7 @@ def siri_post(request, uuid):
 @csrf_exempt
 @require_POST
 def overland(request, uuid):
-    get_object_or_404(SiriSubscription, uuid=uuid)
+    subscription = get_object_or_404(SiriSubscription, uuid=uuid)
 
     data = json.loads(request.body)
 
@@ -1265,6 +1264,12 @@ def overland(request, uuid):
                 }
             },
         )
+
+    cache.set(
+        subscription.get_status_key().replace("_status", "_last_post"),
+        {"headers": request.headers, "body": request.body.decode()},
+        None,
+    )
 
     # https://github.com/aaronpk/Overland-iOS#api
     return JsonResponse({"result": "ok"})
