@@ -12,7 +12,7 @@ from django.core.cache import cache
 from django.core.management.base import BaseCommand
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import IntegrityError
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Exists, OuterRef, Q, F
 from django.db.models.functions import Now
 from django.utils import timezone
 from redis.exceptions import ConnectionError
@@ -396,22 +396,20 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
     def handle_items(self, items, identities):
         with sentry_sdk.start_span(name="get vehicle codes"):
-            vehicle_codes = (
-                VehicleCode.objects.filter(
-                    code__in=identities, scheme=self.vehicle_code_scheme
+            vehicles = (
+                Vehicle.objects.filter(
+                    vehiclecode__code__in=identities,
+                    vehiclecode__scheme=self.vehicle_code_scheme,
                 )
-                .select_related("vehicle__latest_journey__trip")
-                .defer("vehicle__latest_journey_data", "vehicle__data")
+                .annotate(code_code=F("vehiclecode__code"))
+                .defer("latest_journey_data", "data")
             )
+            vehicles_by_identity = {v.code_code: v for v in vehicles}
 
-            vehicles_by_identity = {code.code: code.vehicle for code in vehicle_codes}
-
-        vehicle_locations = redis_client.mget(
-            [f"vehicle{vc.vehicle_id}" for vc in vehicle_codes]
-        )
+        vehicle_locations = redis_client.mget([f"vehicle{v.id}" for v in vehicles])
         vehicle_locations = {
-            vehicle_code.vehicle_id: json.loads(item)
-            for vehicle_code, item in zip(vehicle_codes, vehicle_locations)
+            v.id: json.loads(item)
+            for v, item in zip(vehicles, vehicle_locations)
             if item
         }
 
