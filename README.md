@@ -137,7 +137,7 @@
 | vehicles/management/commands/import\_polar.py                   |       84 |       28 |     67% |13-14, 25, 29, 33, 41, 44, 49-55, 61-63, 67, 77-78, 81, 95-98, 101, 114, 121 |
 | vehicles/management/commands/import\_stagecoach\_avl.py         |       72 |        5 |     93% |124, 134, 139-140, 172 |
 | vehicles/management/commands/signalr.py                         |       74 |        5 |     93% |59, 77-79, 94 |
-| vehicles/management/commands/siri\_vm\_subscribe.py             |       26 |        0 |    100% |           |
+| vehicles/management/commands/siri\_vm\_subscribe.py             |       27 |        7 |     74% |     29-58 |
 | vehicles/management/import\_live\_vehicles.py                   |      333 |       55 |     83% |46, 59-75, 132, 141, 147-149, 151, 173, 202, 211-214, 223, 236, 244, 253-254, 256-257, 262-263, 277-283, 315-316, 357, 360-361, 382-383, 389, 480, 517-519, 529, 549, 556-557, 562-564 |
 | vehicles/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | vehicles/management/tests/test\_bod\_avl.py                     |      293 |        0 |    100% |           |
@@ -150,7 +150,7 @@
 | vehicles/management/tests/test\_siri\_post.py                   |       40 |        0 |    100% |           |
 | vehicles/management/tests/test\_stagecoach\_avl.py              |       33 |        0 |    100% |           |
 | vehicles/management/tests/test\_stats.py                        |       24 |        0 |    100% |           |
-| vehicles/models.py                                              |      498 |       37 |     93% |75, 191, 216, 283, 302, 308, 380, 386, 437, 458, 573-574, 587, 595, 612-614, 622-623, 626-627, 632-633, 658, 679-683, 714, 721-724, 766, 779, 788, 804 |
+| vehicles/models.py                                              |      500 |       37 |     93% |75, 191, 216, 283, 302, 308, 380, 386, 437, 458, 573-574, 587, 595, 612-614, 622-623, 626-627, 632-633, 658, 679-683, 714, 721-724, 766, 779, 788, 804 |
 | vehicles/rtpi.py                                                |       76 |        1 |     99% |        28 |
 | vehicles/signals.py                                             |       11 |        0 |    100% |           |
 | vehicles/tasks.py                                               |      136 |       22 |     84% |80, 85, 95, 102-105, 108, 110, 119, 132, 136-137, 155, 169, 182, 188-189, 197, 249-250, 253 |
@@ -169,7 +169,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16358** | **1107** | **93%** |           |
+|                                                       **TOTAL** | **16361** | **1114** | **93%** |           |
 
 
 ## Setup coverage badge
