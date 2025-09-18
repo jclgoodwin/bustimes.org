@@ -1112,6 +1112,10 @@ class ServiceDetailView(DetailView):
 
         if self.object.tracking and self.object.vehiclejourney_set.exists():
             context["vehicles"] = True
+            if redis_client:
+                context["tracking_count"] = redis_client.scard(
+                    f"service{self.object.id}vehicles"
+                )
 
         # disruptions
 
