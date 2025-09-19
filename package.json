@@ -5,7 +5,6 @@
     "@babel/preset-flow": "^7.22.5",
     "@babel/preset-react": "^7.22.5",
     "@parcel/optimizer-data-url": "^2.10.1",
-    "@parcel/transformer-inline": "^2.10.1",
     "@parcel/transformer-inline-string": "^2.10.1",
     "@parcel/transformer-sass": "^2.10.1",
     "@types/jest": "^29.5.4",
