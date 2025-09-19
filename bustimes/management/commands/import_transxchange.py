@@ -80,9 +80,13 @@ ________________________________________________________________________________
 """
 
 
+# a callback for titlecase
 def initialisms(word, **kwargs):
     if word in ("YMCA", "PH"):
         return word
+
+
+STUPID_ORIGINS_DESTINATIONS = {"Origin", "Destination", "Unknown"}
 
 
 def get_summary(summary: str):
@@ -1312,7 +1316,7 @@ class Command(BaseCommand):
 
             if (
                 line.outbound_description != line.inbound_description
-                or txc_service.origin == "Origin"
+                or txc_service.origin in STUPID_ORIGINS_DESTINATIONS
             ):
                 out_desc = line.outbound_description
                 in_desc = line.inbound_description
@@ -1400,12 +1404,18 @@ class Command(BaseCommand):
                     logger.warning(f"{key} too long in {filename}")
                     route_defaults[key] = route_defaults[key][:255]
 
-            if txc_service.origin and txc_service.origin != "Origin":
+            if (
+                txc_service.origin
+                and txc_service.origin not in STUPID_ORIGINS_DESTINATIONS
+            ):
                 route_defaults["origin"] = txc_service.origin
             else:
                 route_defaults["origin"] = ""
 
-            if txc_service.destination and txc_service.destination != "Destination":
+            if (
+                txc_service.destination
+                and txc_service.destination not in STUPID_ORIGINS_DESTINATIONS
+            ):
                 if " via " in txc_service.destination:
                     (
                         route_defaults["destination"],
