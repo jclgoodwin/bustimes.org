@@ -178,6 +178,7 @@ class Command(BaseCommand):
                 vehicle_journey_code=row.trip_id,
                 headsign=row.trip_headsign if pd.notna(row.trip_headsign) else "",
                 operator=operator,
+                journey_pattern=row.shape_id,
             )
             if trip.vehicle_journey_code in existing_trips:
                 # reuse existing trip id

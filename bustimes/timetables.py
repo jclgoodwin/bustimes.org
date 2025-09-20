@@ -212,6 +212,27 @@ class Timetable:
         if len(self.current_routes) > 1:
             self.correct_directions(trips)
 
+        # FlixBus: try to work out direction (inbound/outbound) using shape or destination
+        source = self.current_routes and self.current_routes[0].source
+        if (
+            source
+            and source.name == "FlixBus"
+            and not any(trip.inbound for trip in trips)
+        ):
+            journey_patterns = set(trip.journey_pattern for trip in trips)
+            if len(journey_patterns) == 2:
+                inbound_pattern = journey_patterns.pop()
+                for trip in trips:
+                    if trip.journey_pattern == inbound_pattern:
+                        trip.inbound = True
+            else:
+                destinations = set(trip.destination_id for trip in trips)
+                if len(destinations) == 2:
+                    inbound_destination = destinations.pop()
+                    for trip in trips:
+                        if trip.destination_id == inbound_destination:
+                            trip.inbound = True
+
         for trip in trips:
             # split inbound and outbound trips into lists
             if trip.inbound:
