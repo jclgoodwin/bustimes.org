@@ -321,7 +321,7 @@ def do_route_links(
 
         service = routes[trip.route_id].service_id
 
-        start_dist = 0
+        start_dist = None
 
         for a, b in pairwise(
             feed.stop_times[feed.stop_times.trip_id == trip.trip_id].itertuples()
@@ -331,6 +331,7 @@ def do_route_links(
             key = (service, from_stop, to_stop)
 
             if key in route_links:
+                start_dist = None
                 continue
 
             # find the substring of rl.geometry between the stops a and b
