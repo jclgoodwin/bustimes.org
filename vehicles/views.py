@@ -1057,7 +1057,7 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
         ]
         del stop_usages
 
-    if "stops" in data and "locations" in data:
+    if data.get("stops") and data.get("locations"):
         # filter by line name
         if "line_name" in data["stops"][0]:
             line_name = journey.route_name.upper()
