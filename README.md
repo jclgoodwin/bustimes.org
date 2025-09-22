@@ -42,7 +42,7 @@
 | busstops/templatetags/\_\_init\_\_.py                           |        0 |        0 |    100% |           |
 | busstops/templatetags/date\_range.py                            |       25 |        3 |     88% | 9, 22, 28 |
 | busstops/templatetags/urlise.py                                 |       16 |        0 |    100% |           |
-| busstops/test\_admin.py                                         |       52 |        0 |    100% |           |
+| busstops/test\_admin.py                                         |       66 |        0 |    100% |           |
 | busstops/test\_middleware.py                                    |       10 |        0 |    100% |           |
 | busstops/test\_models.py                                        |      137 |        0 |    100% |           |
 | busstops/test\_views.py                                         |      270 |        0 |    100% |           |
@@ -50,7 +50,7 @@
 | busstops/utils.py                                               |       11 |        0 |    100% |           |
 | busstops/views.py                                               |      643 |       50 |     92% |139, 180-189, 485, 511, 549, 694, 712, 772-775, 777, 908-913, 926, 1003, 1031-1032, 1037-1038, 1046-1055, 1116, 1212, 1233, 1235, 1261-1265, 1314, 1387, 1417-1418, 1421-1425, 1575, 1587-1588, 1593, 1605-1606 |
 | bustimes/\_\_init\_\_.py                                        |        0 |        0 |    100% |           |
-| bustimes/admin.py                                               |      132 |       17 |     87% |65, 68-69, 75, 78-79, 82-83, 140-144, 167, 175, 188, 191, 202, 227, 231 |
+| bustimes/admin.py                                               |      132 |       15 |     89% |65, 68-69, 75, 78-79, 82-83, 140-144, 167, 175, 188, 191, 202 |
 | bustimes/download\_utils.py                                     |       32 |        0 |    100% |           |
 | bustimes/fields.py                                              |       31 |        1 |     97% |        12 |
 | bustimes/formatting.py                                          |       19 |        0 |    100% |           |
@@ -76,13 +76,13 @@
 | bustimes/management/tests/test\_import\_passenger.py            |       23 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_transxchange.py         |      742 |        0 |    100% |           |
 | bustimes/management/tests/test\_tnds.py                         |       19 |        0 |    100% |           |
-| bustimes/models.py                                              |      342 |        9 |     97% |111, 114, 375, 378, 407, 452-455, 487 |
+| bustimes/models.py                                              |      342 |        8 |     98% |111, 375, 378, 407, 452-455, 487 |
 | bustimes/test\_get\_trip.py                                     |       31 |        0 |    100% |           |
 | bustimes/tests.py                                               |      129 |        0 |    100% |           |
 | bustimes/timetables.py                                          |      615 |       64 |     90% |39-52, 162-173, 204-205, 222-234, 286, 298-301, 313, 327-332, 346, 365, 440, 443, 459-462, 464, 491, 603-618, 704-705, 776, 922-924 |
 | bustimes/urls.py                                                |        3 |        0 |    100% |           |
 | bustimes/utils.py                                               |      178 |       10 |     94% |205, 231-233, 253-254, 323, 340-341, 389 |
-| bustimes/views.py                                               |      381 |       84 |     78% |109-131, 190-204, 213-215, 223-232, 234-242, 249, 271, 361, 370, 406, 412, 492, 582, 606-608, 625, 629-657, 685-696, 705-711 |
+| bustimes/views.py                                               |      381 |       75 |     80% |190-204, 213-215, 223-232, 234-242, 249, 271, 361, 370, 406, 412, 492, 582, 606-608, 625, 629-657, 685-696, 705-711 |
 | departures/\_\_init\_\_.py                                      |        0 |        0 |    100% |           |
 | departures/avl.py                                               |       12 |        1 |     92% |        14 |
 | departures/gtfsr.py                                             |       91 |        2 |     98% |   91, 111 |
@@ -169,7 +169,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16395** | **1125** | **93%** |           |
+|                                                       **TOTAL** | **16409** | **1113** | **93%** |           |
 
 
 ## Setup coverage badge
