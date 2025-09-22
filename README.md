@@ -25,7 +25,7 @@
 | buses/urls.py                                                   |        5 |        0 |    100% |           |
 | buses/utils.py                                                  |       23 |        4 |     83% |     34-37 |
 | busstops/\_\_init\_\_.py                                        |        0 |        0 |    100% |           |
-| busstops/admin.py                                               |      318 |       16 |     95% |103-109, 184, 243-251, 333-334, 380, 455, 459, 508, 542, 586, 590, 614, 618 |
+| busstops/admin.py                                               |      318 |       13 |     96% |103-109, 184, 243-251, 333-334, 380, 455, 459, 508, 590, 618 |
 | busstops/forms.py                                               |       46 |        0 |    100% |           |
 | busstops/management/\_\_init\_\_.py                             |        0 |        0 |    100% |           |
 | busstops/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
@@ -50,7 +50,7 @@
 | busstops/utils.py                                               |       11 |        0 |    100% |           |
 | busstops/views.py                                               |      643 |       50 |     92% |139, 180-189, 485, 511, 549, 694, 712, 772-775, 777, 908-913, 926, 1003, 1031-1032, 1037-1038, 1046-1055, 1116, 1212, 1233, 1235, 1261-1265, 1314, 1387, 1417-1418, 1421-1425, 1575, 1587-1588, 1593, 1605-1606 |
 | bustimes/\_\_init\_\_.py                                        |        0 |        0 |    100% |           |
-| bustimes/admin.py                                               |      132 |       15 |     89% |65, 68-69, 75, 78-79, 82-83, 140-144, 167, 175, 188, 191, 202 |
+| bustimes/admin.py                                               |      132 |       12 |     91% |65, 68-69, 80-81, 84-85, 142-146, 169, 190, 193 |
 | bustimes/download\_utils.py                                     |       32 |        0 |    100% |           |
 | bustimes/fields.py                                              |       31 |        1 |     97% |        12 |
 | bustimes/formatting.py                                          |       19 |        0 |    100% |           |
@@ -102,7 +102,7 @@
 | disruptions/urls.py                                             |        3 |        0 |    100% |           |
 | disruptions/views.py                                            |       23 |        0 |    100% |           |
 | fares/\_\_init\_\_.py                                           |        0 |        0 |    100% |           |
-| fares/admin.py                                                  |       37 |        2 |     95% |    26, 29 |
+| fares/admin.py                                                  |       37 |        1 |     97% |        31 |
 | fares/forms.py                                                  |       26 |        3 |     88% | 18, 41-42 |
 | fares/management/commands/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | fares/management/commands/import\_netex\_fares.py               |      353 |       59 |     83% |28, 69-70, 121, 128-130, 223-224, 323, 367-368, 449, 528-535, 555, 564-565, 583-588, 595-632, 652-653, 663-664, 670-679 |
@@ -169,7 +169,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16409** | **1113** | **93%** |           |
+|                                                       **TOTAL** | **16409** | **1106** | **93%** |           |
 
 
 ## Setup coverage badge

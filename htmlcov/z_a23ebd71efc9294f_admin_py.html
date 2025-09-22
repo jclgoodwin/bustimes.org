@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for busstops/admin.py: 95%</title>
+    <title>Coverage for busstops/admin.py: 96%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_58284776.png">
     <link rel="stylesheet" href="style_cb_6b508a39.css" type="text/css">
     <script src="coverage_html_cb_6fb7b396.js" defer></script>
@@ -12,7 +12,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>busstops/admin.py</b>:
-            <span class="pc_cov">95%</span>
+            <span class="pc_cov">96%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -55,8 +55,8 @@
         </aside>
         <h2>
             <span class="text">318 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">302<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">16<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">305<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">13<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_a23ebd71efc9294f_forms_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.6">coverage.py v7.10.6</a>,
-            created at 2025-09-22 12:39 +0000
+            created at 2025-09-22 13:32 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -226,7 +226,7 @@
     <p class="run"><span class="n"><a id="t144" href="#t144">144</a></span><span class="t">    <span class="key">def</span> <span class="nam">get_queryset</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">request</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t145" href="#t145">145</a></span><span class="t">        <span class="nam">queryset</span> <span class="op">=</span> <span class="nam">super</span><span class="op">(</span><span class="op">)</span><span class="op">.</span><span class="nam">get_queryset</span><span class="op">(</span><span class="nam">request</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t146" href="#t146">146</a></span><span class="t">        <span class="key">if</span> <span class="str">"changelist"</span> <span class="key">in</span> <span class="nam">request</span><span class="op">.</span><span class="nam">resolver_match</span><span class="op">.</span><span class="nam">view_name</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t147" href="#t147">147</a></span><span class="t">            <span class="key">return</span> <span class="nam">queryset</span><span class="op">.</span><span class="nam">annotate</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t147" href="#t147">147</a></span><span class="t">            <span class="nam">queryset</span> <span class="op">=</span> <span class="nam">queryset</span><span class="op">.</span><span class="nam">annotate</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t148" href="#t148">148</a></span><span class="t">                <span class="nam">services</span><span class="op">=</span><span class="nam">SubqueryCount</span><span class="op">(</span><span class="str">"service"</span><span class="op">,</span> <span class="nam">filter</span><span class="op">=</span><span class="nam">Q</span><span class="op">(</span><span class="nam">service__current</span><span class="op">=</span><span class="key">True</span><span class="op">)</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t149" href="#t149">149</a></span><span class="t">                <span class="nam">vehicles</span><span class="op">=</span><span class="nam">SubqueryCount</span><span class="op">(</span><span class="str">"vehicle"</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t150" href="#t150">150</a></span><span class="t">            <span class="op">)</span><span class="op">.</span><span class="nam">prefetch_related</span><span class="op">(</span><span class="str">"operatorcode_set"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -616,12 +616,12 @@
     <p class="run"><span class="n"><a id="t534" href="#t534">534</a></span><span class="t">    <span class="key">def</span> <span class="nam">get_queryset</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">request</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t535" href="#t535">535</a></span><span class="t">        <span class="nam">queryset</span> <span class="op">=</span> <span class="nam">super</span><span class="op">(</span><span class="op">)</span><span class="op">.</span><span class="nam">get_queryset</span><span class="op">(</span><span class="nam">request</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t536" href="#t536">536</a></span><span class="t">        <span class="key">if</span> <span class="str">"changelist"</span> <span class="key">in</span> <span class="nam">request</span><span class="op">.</span><span class="nam">resolver_match</span><span class="op">.</span><span class="nam">view_name</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t537" href="#t537">537</a></span><span class="t">            <span class="key">return</span> <span class="nam">queryset</span><span class="op">.</span><span class="nam">annotate</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t537" href="#t537">537</a></span><span class="t">            <span class="nam">queryset</span> <span class="op">=</span> <span class="nam">queryset</span><span class="op">.</span><span class="nam">annotate</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t538" href="#t538">538</a></span><span class="t">                <span class="nam">routes</span><span class="op">=</span><span class="nam">SubqueryCount</span><span class="op">(</span><span class="str">"route"</span><span class="op">,</span> <span class="nam">filter</span><span class="op">=</span><span class="op">~</span><span class="nam">Q</span><span class="op">(</span><span class="nam">service</span><span class="op">=</span><span class="key">None</span><span class="op">)</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t539" href="#t539">539</a></span><span class="t">                <span class="nam">services</span><span class="op">=</span><span class="nam">SubqueryCount</span><span class="op">(</span><span class="str">"service"</span><span class="op">,</span> <span class="nam">filter</span><span class="op">=</span><span class="nam">Q</span><span class="op">(</span><span class="nam">current</span><span class="op">=</span><span class="key">True</span><span class="op">)</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t540" href="#t540">540</a></span><span class="t">                <span class="com"># journeys=Exists(VehicleJourney.objects.filter(source=OuterRef("id"))),</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t541" href="#t541">541</a></span><span class="t">            <span class="op">)</span><span class="op">.</span><span class="nam">prefetch_related</span><span class="op">(</span><span class="str">"operatorcode_set"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t542" href="#t542">542</a></span><span class="t">        <span class="key">return</span> <span class="nam">queryset</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t542" href="#t542">542</a></span><span class="t">        <span class="key">return</span> <span class="nam">queryset</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t543" href="#t543">543</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t544" href="#t544">544</a></span><span class="t">    <span class="op">@</span><span class="nam">admin</span><span class="op">.</span><span class="nam">display</span><span class="op">(</span><span class="nam">ordering</span><span class="op">=</span><span class="str">"routes"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t545" href="#t545">545</a></span><span class="t">    <span class="key">def</span> <span class="nam">routes</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">obj</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -660,12 +660,12 @@
     <p class="run"><span class="n"><a id="t578" href="#t578">578</a></span><span class="t">    <span class="key">def</span> <span class="nam">get_queryset</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">request</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t579" href="#t579">579</a></span><span class="t">        <span class="nam">queryset</span> <span class="op">=</span> <span class="nam">super</span><span class="op">(</span><span class="op">)</span><span class="op">.</span><span class="nam">get_queryset</span><span class="op">(</span><span class="nam">request</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t580" href="#t580">580</a></span><span class="t">        <span class="key">if</span> <span class="str">"changelist"</span> <span class="key">in</span> <span class="nam">request</span><span class="op">.</span><span class="nam">resolver_match</span><span class="op">.</span><span class="nam">view_name</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t581" href="#t581">581</a></span><span class="t">            <span class="key">return</span> <span class="nam">queryset</span><span class="op">.</span><span class="nam">annotate</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t581" href="#t581">581</a></span><span class="t">            <span class="nam">queryset</span> <span class="op">=</span> <span class="nam">queryset</span><span class="op">.</span><span class="nam">annotate</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t582" href="#t582">582</a></span><span class="t">                <span class="nam">areas</span><span class="op">=</span><span class="nam">StringAgg</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t583" href="#t583">583</a></span><span class="t">                    <span class="nam">Cast</span><span class="op">(</span><span class="str">"admin_areas__atco_code"</span><span class="op">,</span> <span class="nam">output_field</span><span class="op">=</span><span class="nam">CharField</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">,</span> <span class="str">", "</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t584" href="#t584">584</a></span><span class="t">                <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t585" href="#t585">585</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t586" href="#t586">586</a></span><span class="t">        <span class="key">return</span> <span class="nam">queryset</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t586" href="#t586">586</a></span><span class="t">        <span class="key">return</span> <span class="nam">queryset</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t587" href="#t587">587</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t588" href="#t588">588</a></span><span class="t">    <span class="op">@</span><span class="nam">staticmethod</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t589" href="#t589">589</a></span><span class="t">    <span class="key">def</span> <span class="nam">areas</span><span class="op">(</span><span class="nam">obj</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -690,10 +690,10 @@
     <p class="run"><span class="n"><a id="t608" href="#t608">608</a></span><span class="t">    <span class="key">def</span> <span class="nam">get_queryset</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">request</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t609" href="#t609">609</a></span><span class="t">        <span class="nam">queryset</span> <span class="op">=</span> <span class="nam">super</span><span class="op">(</span><span class="op">)</span><span class="op">.</span><span class="nam">get_queryset</span><span class="op">(</span><span class="nam">request</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t610" href="#t610">610</a></span><span class="t">        <span class="key">if</span> <span class="str">"changelist"</span> <span class="key">in</span> <span class="nam">request</span><span class="op">.</span><span class="nam">resolver_match</span><span class="op">.</span><span class="nam">view_name</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t611" href="#t611">611</a></span><span class="t">            <span class="key">return</span> <span class="nam">queryset</span><span class="op">.</span><span class="nam">annotate</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t611" href="#t611">611</a></span><span class="t">            <span class="nam">queryset</span> <span class="op">=</span> <span class="nam">queryset</span><span class="op">.</span><span class="nam">annotate</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t612" href="#t612">612</a></span><span class="t">                <span class="nam">operators</span><span class="op">=</span><span class="nam">StringAgg</span><span class="op">(</span><span class="str">"operator"</span><span class="op">,</span> <span class="str">", "</span><span class="op">,</span> <span class="nam">distinct</span><span class="op">=</span><span class="key">True</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t613" href="#t613">613</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t614" href="#t614">614</a></span><span class="t">        <span class="key">return</span> <span class="nam">queryset</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t614" href="#t614">614</a></span><span class="t">        <span class="key">return</span> <span class="nam">queryset</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t615" href="#t615">615</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t616" href="#t616">616</a></span><span class="t">    <span class="op">@</span><span class="nam">staticmethod</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t617" href="#t617">617</a></span><span class="t">    <span class="key">def</span> <span class="nam">operators</span><span class="op">(</span><span class="nam">obj</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -712,7 +712,7 @@
             <a class="nav" href="z_a23ebd71efc9294f_forms_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.6">coverage.py v7.10.6</a>,
-            created at 2025-09-22 12:39 +0000
+            created at 2025-09-22 13:32 +0000
         </p>
     </div>
 </footer>
