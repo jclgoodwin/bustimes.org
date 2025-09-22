@@ -19,7 +19,7 @@ from django.db import IntegrityError, OperationalError, connection, transaction
 from django.db.models import Case, F, Max, OuterRef, Q, When
 from django.db.models.functions import Coalesce, Now, TruncDate
 from django.http import Http404, HttpResponse, HttpResponseBadRequest, JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.cache import get_conditional_response, set_response_etag
@@ -52,6 +52,13 @@ from .models import (
 from .rtpi import add_progress_and_delay
 from .tasks import handle_siri_post
 from .utils import apply_revision, get_revision, redis_client  # calculate_bearing,
+
+
+def get_redirect_view(*args, **kwargs):
+    def redirect_view(request):
+        return redirect(*args, **kwargs)
+
+    return redirect_view
 
 
 class Vehicles:

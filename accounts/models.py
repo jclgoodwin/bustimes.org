@@ -15,7 +15,7 @@ class Invitation(models.Model):
     operators = models.ManyToManyField("busstops.Operator", blank=True)
 
     def get_absolute_url(self):
-        return reverse("register")
+        return reverse("register") + f"?invite_code={self.uuid}"
 
 
 class OperatorUser(models.Model):

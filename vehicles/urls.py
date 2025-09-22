@@ -46,7 +46,7 @@ urlpatterns = [
     path("liveries.<int:version>.css", views.liveries_css),
     path("rules", TemplateView.as_view(template_name="rules.html")),
     path("map", TemplateView.as_view(template_name="map.html"), name="map"),
-    path("maps", TemplateView.as_view(template_name="map.html")),
+    path("maps", views.get_redirect_view("map", permanent=True)),
     path("map/old", TemplateView.as_view(template_name="map_classic.html")),
     path("siri/<uuid:uuid>", views.siri_post),
     path("overland/<uuid:uuid>", views.overland),
