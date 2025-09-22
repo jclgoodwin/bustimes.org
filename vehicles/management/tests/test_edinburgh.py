@@ -45,7 +45,7 @@ class EdinburghImportTest(TestCase):
             with mock.patch(
                 "vehicles.management.import_live_vehicles.redis_client", redis_client
             ):
-                with self.assertNumQueries(44):
+                with self.assertNumQueries(41):
                     command.update()
 
                 cassette.rewind()
@@ -53,7 +53,7 @@ class EdinburghImportTest(TestCase):
                 # make it think 1 vehicle has moved
                 del command.identifiers["454"]
 
-                with self.assertNumQueries(1):
+                with self.assertNumQueries(3):
                     command.update()
 
         journey = command.source.vehiclejourney_set.first()

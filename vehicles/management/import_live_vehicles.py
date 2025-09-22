@@ -35,6 +35,17 @@ Status = namedtuple(
 )
 
 
+def same_journey(a, b):
+    if b.datetime:
+        return a.datetime == b.datetime
+    return (a.trip_id, a.code, a.service_id, a.route_name) == (
+        b.trip_id,
+        b.code,
+        b.service_id,
+        b.route_name,
+    )
+
+
 class ImportLiveVehiclesCommand(BaseCommand):
     url = ""
     vehicles = Vehicle.objects.select_related("latest_journey__trip")
@@ -51,6 +62,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
         super().__init__(*args, **kwargs)
         self.session = requests.Session()
         self.to_save = []
+        self.journeys_to_create = []
+        self.journeys_to_update = []
         self.vehicles_to_update = []
         self.identifiers = {}
         self.journeys_ids = {}
@@ -210,32 +223,28 @@ class ImportLiveVehiclesCommand(BaseCommand):
         if keep_journey:
             pass
         else:
+            if latest_journey and same_journey(journey, latest_journey):
+                journey.id = latest_journey.id
+                self.journeys_to_update.append(journey)
+            else:
+                self.journeys_to_create.append(journey)
+
             journey.source = self.source
             if not journey.datetime:
                 journey.datetime = location.datetime
-            try:
-                journey.save()
-            except IntegrityError as e:
-                try:
-                    journey = vehicle.vehiclejourney_set.using("default").get(
-                        datetime=journey.datetime
-                    )
-                except VehicleJourney.DoesNotExist:
-                    logger.exception(e)
 
             if journey.service_id and VehicleJourney.service.is_cached(journey):
                 if not journey.service.tracking:
                     journey.service.tracking = True
                     journey.service.save(update_fields=["tracking"])
 
-        location.id = vehicle.id
-        location.journey = journey
-
-        if vehicle.latest_journey_id != journey.id:
             vehicle.latest_journey = journey
             if type(item) is dict:
                 vehicle.latest_journey_data = item
             self.vehicles_to_update.append(vehicle)
+
+        location.id = vehicle.id
+        location.journey = journey
 
         self.to_save.append((location, vehicle))
 
@@ -245,9 +254,35 @@ class ImportLiveVehiclesCommand(BaseCommand):
         if not self.to_save:
             return
 
-        # update vehicle records if necessary
+        update_fields = (
+            "code",
+            "service",
+            "trip",
+            "route_name",
+            "destination",
+            "direction",
+            "source",
+        )
 
+        VehicleJourney.objects.bulk_update(
+            self.journeys_to_update,
+            update_fields,
+        )
+        self.journeys_to_update = []
+
+        VehicleJourney.objects.bulk_create(
+            self.journeys_to_create,
+            update_conflicts=True,
+            unique_fields=["vehicle", "datetime"],
+            update_fields=update_fields,
+        )
+        self.journeys_to_create = []
+
+        # update vehicle records if necessary
         if self.vehicles_to_update:
+            for v in self.vehicles_to_update:
+                v.latest_journey = v.latest_journey
+
             try:
                 Vehicle.objects.bulk_update(
                     self.vehicles_to_update,
