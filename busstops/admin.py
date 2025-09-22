@@ -144,7 +144,7 @@ class OperatorAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         if "changelist" in request.resolver_match.view_name:
-            return queryset.annotate(
+            queryset = queryset.annotate(
                 services=SubqueryCount("service", filter=Q(service__current=True)),
                 vehicles=SubqueryCount("vehicle"),
             ).prefetch_related("operatorcode_set")
@@ -534,7 +534,7 @@ class DataSourceAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         if "changelist" in request.resolver_match.view_name:
-            return queryset.annotate(
+            queryset = queryset.annotate(
                 routes=SubqueryCount("route", filter=~Q(service=None)),
                 services=SubqueryCount("service", filter=Q(current=True)),
                 # journeys=Exists(VehicleJourney.objects.filter(source=OuterRef("id"))),
@@ -578,7 +578,7 @@ class SIRISourceAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         if "changelist" in request.resolver_match.view_name:
-            return queryset.annotate(
+            queryset = queryset.annotate(
                 areas=StringAgg(
                     Cast("admin_areas__atco_code", output_field=CharField()), ", "
                 )
@@ -608,7 +608,7 @@ class PaymentMethodAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         if "changelist" in request.resolver_match.view_name:
-            return queryset.annotate(
+            queryset = queryset.annotate(
                 operators=StringAgg("operator", ", ", distinct=True)
             )
         return queryset

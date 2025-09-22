@@ -22,7 +22,9 @@ class DataSetAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         if "changelist" in request.resolver_match.view_name:
-            return queryset.annotate(noc=StringAgg("operators", ", ", distinct=True))
+            queryset = queryset.annotate(
+                noc=StringAgg("operators", ", ", distinct=True)
+            )
         return queryset
 
     def noc(self, obj):
