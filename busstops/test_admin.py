@@ -20,8 +20,12 @@ class BusStopsAdminTests(TestCase):
             line_name="129A", description="Frankby - Moreton - Liscard"
         )
 
-        stop_a = StopPoint.objects.create(atco_code="2902", active=True)
-        stop_b = StopPoint.objects.create(atco_code="2903", active=True)
+        stop_a = StopPoint.objects.create(
+            atco_code="2902", active=True, common_name="Sandy Corner"
+        )
+        stop_b = StopPoint.objects.create(
+            atco_code="2903", active=True, common_name="Leafy Hollow"
+        )
         RouteLink.objects.create(
             from_stop=stop_a,
             to_stop=stop_b,
@@ -131,3 +135,26 @@ class BusStopsAdminTests(TestCase):
                     "_selected_action": [self.source.id],
                 },
             )
+
+    def test_routelink_admin(self):
+        url = "/admin/bustimes/routelink/"
+
+        self.client.force_login(self.staff_user)
+
+        response = self.client.get(url + "?dodgy=from_stop")
+        self.assertEqual(response.context_data["cl"].result_count, 0)
+
+        # move the stop away from the route link so it's "dodgy"
+        StopPoint.objects.all().update(latlong="POINT(1.9 51.9)")
+
+        response = self.client.get(url + "?dodgy=from_stop")
+        self.assertEqual(response.context_data["cl"].result_count, 2)
+
+        response = self.client.get(url + "?dodgy=to_stop")
+        self.assertEqual(response.context_data["cl"].result_count, 2)
+
+        url = RouteLink.objects.first().get_absolute_url()
+
+        res = self.client.get(url)
+        self.assertContains(res, "from Sandy Corner")
+        self.assertContains(res, "to Leafy Hollow")
