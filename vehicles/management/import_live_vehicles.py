@@ -35,14 +35,21 @@ Status = namedtuple(
 )
 
 
-def same_journey(a, b):
-    if b.datetime:
-        return a.datetime == b.datetime
-    return (a.trip_id, a.code, a.service_id, a.route_name) == (
-        b.trip_id,
-        b.code,
-        b.service_id,
-        b.route_name,
+def same_journey(journey, last_journey, now):
+    if journey.datetime:
+        return journey.datetime == last_journey.datetime
+    return (
+        journey.service_id,
+        journey.route_name,
+        journey.code,
+        journey.direction,
+        now.date(),
+    ) == (
+        last_journey.service_id,
+        last_journey.route_name,
+        last_journey.code,
+        last_journey.direction,
+        last_journey.datetime.date(),
     )
 
 
@@ -223,7 +230,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
         if keep_journey:
             pass
         else:
-            if latest_journey and same_journey(journey, latest_journey):
+            if latest_journey and same_journey(
+                journey, latest_journey, location.datetime
+            ):
                 journey.id = latest_journey.id
                 self.journeys_to_update.append(journey)
             else:
