@@ -147,7 +147,7 @@
 | vehicles/management/tests/test\_import\_nx.py                   |       43 |        0 |    100% |           |
 | vehicles/management/tests/test\_polar.py                        |       33 |        0 |    100% |           |
 | vehicles/management/tests/test\_signalr.py                      |       22 |        0 |    100% |           |
-| vehicles/management/tests/test\_siri\_post.py                   |       40 |        0 |    100% |           |
+| vehicles/management/tests/test\_siri\_post.py                   |       51 |        0 |    100% |           |
 | vehicles/management/tests/test\_stagecoach\_avl.py              |       33 |        0 |    100% |           |
 | vehicles/management/tests/test\_stats.py                        |       24 |        0 |    100% |           |
 | vehicles/models.py                                              |      500 |       37 |     93% |75, 191, 216, 283, 302, 308, 380, 386, 437, 458, 573-574, 587, 595, 612-614, 622-623, 626-627, 632-633, 658, 679-683, 714, 721-724, 766, 779, 788, 804 |
@@ -160,7 +160,7 @@
 | vehicles/time\_aware\_polyline.py                               |       56 |       28 |     50% |18, 36, 49, 54, 57, 87-98, 106-120 |
 | vehicles/urls.py                                                |        4 |        0 |    100% |           |
 | vehicles/utils.py                                               |      116 |        5 |     96% |41, 144, 156-157, 161 |
-| vehicles/views.py                                               |      605 |       66 |     89% |58, 351-352, 392, 419, 443-444, 463-464, 477, 495-496, 548, 566-567, 572, 588-589, 607-626, 704-705, 717, 825, 827, 829, 834, 879-880, 892-894, 981, 984-985, 995, 1011-1016, 1063-1065, 1084-1085, 1103-1113, 1117, 1119, 1159, 1226-1270 |
+| vehicles/views.py                                               |      604 |       54 |     91% |58, 351-352, 392, 419, 443-444, 463-464, 477, 495-496, 548, 566-567, 572, 588-589, 607-626, 704-705, 717, 825, 827, 829, 834, 879-880, 892-894, 981, 984-985, 995, 1011-1016, 1063-1065, 1084-1085, 1103-1113, 1117, 1119 |
 | vosa/\_\_init\_\_.py                                            |        0 |        0 |    100% |           |
 | vosa/admin.py                                                   |       36 |        0 |    100% |           |
 | vosa/management/commands/\_\_init\_\_.py                        |        0 |        0 |    100% |           |
@@ -169,7 +169,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16385** | **1137** | **93%** |           |
+|                                                       **TOTAL** | **16395** | **1125** | **93%** |           |
 
 
 ## Setup coverage badge
