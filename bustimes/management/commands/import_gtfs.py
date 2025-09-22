@@ -19,19 +19,9 @@ from busstops.models import AdminArea, DataSource, Operator, Region, Service, St
 from ...download_utils import download_if_modified
 from ...utils import log_time_taken
 from ...models import Route, Trip, RouteLink
-from .import_gtfs_ember import get_calendars
+from ...gtfs_utils import get_calendars, MODES
 
 logger = logging.getLogger(__name__)
-
-MODES = {
-    0: "tram",
-    2: "rail",
-    3: "bus",
-    4: "ferry",
-    6: "cable car",
-    200: "coach",
-    76: "air",  # 1100
-}
 
 
 class Command(BaseCommand):

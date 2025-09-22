@@ -18,9 +18,12 @@ from busstops.models import DataSource, Operator, Service, StopPoint
 
 from ...download_utils import download_if_modified
 from ...models import Route, StopTime, Trip, RouteLink
-from .import_gtfs_ember import get_calendars
+from ...gtfs_utils import get_calendars, MODES
 
 logger = logging.getLogger(__name__)
+
+
+MODES = {**MODES, 3: "coach"}
 
 
 def routes_as_gdf(feed):
@@ -157,6 +160,7 @@ class Command(BaseCommand):
             service.source = source
             service.geometry = geometries.get(row.route_id)
             service.region_id = "GB"
+            service.mode = MODES[row.route_type]
 
             service.save()
             service.operator.add(operator)

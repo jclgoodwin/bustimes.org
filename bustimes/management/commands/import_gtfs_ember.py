@@ -19,7 +19,8 @@ from busstops.models import DataSource, Operator, Service, StopPoint
 from vosa.models import Registration
 
 from ...download_utils import download_if_modified
-from ...models import Calendar, CalendarDate, Route, StopTime, Trip, Note, RouteLink
+from ...models import Route, StopTime, Trip, Note, RouteLink
+from ...gtfs_utils import get_calendars, MODES
 
 logger = logging.getLogger(__name__)
 
@@ -27,51 +28,6 @@ logger = logging.getLogger(__name__)
 @cache
 def get_note(note_code, note_text):
     return Note.objects.get_or_create(code=note_code or "", text=note_text[:255])[0]
-
-
-def get_calendars(feed, source) -> dict:
-    calendars = {
-        row.service_id: Calendar(
-            mon=row.monday,
-            tue=row.tuesday,
-            wed=row.wednesday,
-            thu=row.thursday,
-            fri=row.friday,
-            sat=row.saturday,
-            sun=row.sunday,
-            start_date=row.start_date,
-            end_date=row.end_date,
-            source=source,
-        )
-        for row in feed.calendar.itertuples()
-    }
-
-    calendar_dates = []
-
-    if feed.calendar_dates is not None:
-        for row in feed.calendar_dates.itertuples():
-            operation = row.exception_type == 1
-            # 1: operates, 2: does not operate
-
-            if (calendar := calendars.get(row.service_id)) is None:
-                calendar = Calendar(
-                    start_date=row.date,  # dummy date
-                )
-                calendars[row.service_id] = calendar
-            calendar_dates.append(
-                CalendarDate(
-                    calendar=calendar,
-                    start_date=row.date,
-                    end_date=row.date,
-                    operation=operation,
-                    special=operation,  # additional date of operation
-                )
-            )
-
-    Calendar.objects.bulk_create(calendars.values())
-    CalendarDate.objects.bulk_create(calendar_dates)
-
-    return calendars
 
 
 def get_last_modified(path):
@@ -149,6 +105,7 @@ class Command(BaseCommand):
             service.description = route.description = row.route_long_name
             service.current = True
             service.colour_id = operator.colour_id
+            service.route_type = MODES[row.route_type]
             if row.geometry:
                 service.geometry = row.geometry.wkt
 
