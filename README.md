@@ -54,14 +54,15 @@
 | bustimes/download\_utils.py                                     |       32 |        0 |    100% |           |
 | bustimes/fields.py                                              |       31 |        1 |     97% |        12 |
 | bustimes/formatting.py                                          |       19 |        0 |    100% |           |
+| bustimes/gtfs\_utils.py                                         |       15 |        0 |    100% |           |
 | bustimes/management/\_\_init\_\_.py                             |        0 |        0 |    100% |           |
 | bustimes/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
 | bustimes/management/commands/bank\_holidays.py                  |       52 |        1 |     98% |       102 |
 | bustimes/management/commands/import\_atco\_cif.py               |      235 |       25 |     89% |28-35, 40, 43-44, 71, 203, 205, 208, 210, 218, 224, 288, 321-326, 366-367, 434 |
 | bustimes/management/commands/import\_bod\_timetables.py         |      271 |       25 |     91% |48, 99, 103, 106-109, 114, 119-120, 141, 169, 179, 191-192, 259, 269-273, 289-291, 314, 330-331, 347 |
-| bustimes/management/commands/import\_gtfs.py                    |      228 |        6 |     97% |79, 131-132, 144, 151, 348 |
-| bustimes/management/commands/import\_gtfs\_ember.py             |      167 |       12 |     93% |78-79, 94, 137, 142, 159, 184, 225, 236, 246, 323-324 |
-| bustimes/management/commands/import\_gtfs\_flixbus.py           |      182 |        8 |     96% |76, 141, 210, 309-310, 334-335, 349 |
+| bustimes/management/commands/import\_gtfs.py                    |      227 |        6 |     97% |69, 121-122, 134, 141, 338 |
+| bustimes/management/commands/import\_gtfs\_ember.py             |      156 |       12 |     92% |34-35, 50, 93, 98, 116, 141, 182, 193, 203, 280-281 |
+| bustimes/management/commands/import\_gtfs\_flixbus.py           |      184 |        8 |     96% |79, 144, 214, 313-314, 338-339, 353 |
 | bustimes/management/commands/import\_ni.py                      |       31 |        0 |    100% |           |
 | bustimes/management/commands/import\_passenger.py               |      116 |       35 |     70% |51-54, 56-58, 64, 103, 113-117, 143-180 |
 | bustimes/management/commands/import\_tnds.py                    |       43 |        0 |    100% |           |
@@ -169,7 +170,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16409** | **1106** | **93%** |           |
+|                                                       **TOTAL** | **16414** | **1106** | **93%** |           |
 
 
 ## Setup coverage badge
