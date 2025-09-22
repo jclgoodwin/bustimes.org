@@ -1154,9 +1154,7 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
 
 @require_safe
 def latest_journey_debug(request, **kwargs):
-    vehicle = get_object_or_404(Vehicle, **kwargs)
-    if not vehicle.latest_journey_data:
-        raise Http404
+    vehicle = get_object_or_404(Vehicle, **kwargs, latest_journey_data__isnull=False)
 
     # redact possible personal information
     try:
@@ -1208,7 +1206,10 @@ def siri_post(request, uuid):
     last_post_key = subscription.get_status_key().replace("_status", "_last_post")
 
     if request.method == "GET":
-        return HttpResponse(cache.get(last_post_key)["body"], content_type="text/xml")
+        last_post = cache.get(last_post_key)
+        return HttpResponse(
+            last_post["body"], content_type=last_post["headers"]["content-type"]
+        )
 
     body = request.body.decode()
     data = xmltodict.parse(body, force_list=["VehicleActivity"])
