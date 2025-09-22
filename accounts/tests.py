@@ -8,30 +8,22 @@ from .models import User, Invitation
 
 
 class RegistrationTest(TransactionTestCase):
-    @override_settings(DISABLE_REGISTRATION=True)
-    def test_registration_disabled(self):
-        with self.assertNumQueries(0):
-            response = self.client.post("/accounts/register/")
-        self.assertContains(
-            response, "Registration is currently closed", status_code=503
-        )
-
-    @override_settings(DISABLE_REGISTRATION=False)
     def test_blank_email(self):
         with self.assertNumQueries(0):
             response = self.client.post("/accounts/register/")
         self.assertContains(response, "This field is required")
 
     @override_settings(
-        DISABLE_REGISTRATION=False,
+        # use an old, insecure password hasher, because it's fast
         PASSWORD_HASHERS=["django.contrib.auth.hashers.MD5PasswordHasher"],
     )
     @patch("turnstile.fields.TurnstileField.validate", return_value=True)
     def test_registration(self, mocked_validate):
-        response = self.client.get("/accounts/register/")
-        self.assertContains(response, "Email address")
-
         dummy_uuid = "b4fcbc02-1920-4d0d-b07b-756db0cb2cd0"
+
+        response = self.client.get(f"/accounts/register/?invite_code={dummy_uuid}")
+        self.assertContains(response, "Email address")
+        self.assertContains(response, dummy_uuid)
 
         # no invite code
         with self.assertNumQueries(1):
@@ -45,7 +37,13 @@ class RegistrationTest(TransactionTestCase):
             )
         self.assertContains(response, "is not valid or has expired")
 
-        Invitation.objects.create(uuid=dummy_uuid, expires_at="3000-01-01")
+        invitation = Invitation.objects.create(
+            uuid=dummy_uuid, expires_at="3000-01-01 00:00:00+00:00"
+        )
+        self.assertEqual(
+            invitation.get_absolute_url(),
+            f"/accounts/register/?invite_code={dummy_uuid}",
+        )
 
         # IP address banned:
         User.objects.create(trusted=False, ip_address="6.6.6.6")

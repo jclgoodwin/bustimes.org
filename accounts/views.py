@@ -1,11 +1,9 @@
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
-from django.utils.safestring import mark_safe
 from sql_util.utils import SubqueryCount
 
 from . import forms
@@ -14,18 +12,6 @@ UserModel = get_user_model()
 
 
 def register(request):
-    if settings.DISABLE_REGISTRATION:
-        return render(
-            request,
-            "403.html",
-            {
-                "exception": mark_safe("""Registration is currently closed, sorry.
-You can still enjoy all the main features of bustimes.org without an account.
-You can also suggest edits <a href="/contact">by email</a> or <a href="https://discord.com/invite/gY4PdDFau7">on Discord</a>."""),
-            },
-            status=503,
-        )
-
     if request.method == "POST":
         form = forms.RegistrationForm(request.POST)
         if form.is_valid():

@@ -1,5 +1,4 @@
 import datetime
-from http import HTTPStatus
 import json
 import logging
 from itertools import pairwise, groupby
@@ -502,8 +501,6 @@ def vehicles_json(request) -> JsonResponse:
         cache.set_many(journeys_to_cache_later, 3600)  # an hour
 
     response = JsonResponse(locations, safe=False)
-    if not locations:
-        response.status_code = HTTPStatus.NOT_FOUND
 
     return respond_conditionally(request, response)
 
@@ -709,15 +706,6 @@ def record_ip_address(request):
 
 
 def check_user(request):
-    if settings.DISABLE_EDITING and not request.user.has_perm(
-        "vehicles.change_vehicle"
-    ):
-        raise PermissionDenied(
-            """This bit of the website is in “read-only” mode.
-            Sorry for the inconvenience.
-            Don’t worry, you can still enjoy all of the main features of the website."""
-        )
-
     if request.user.trusted is False:
         raise PermissionDenied
 
