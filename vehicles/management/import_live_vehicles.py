@@ -35,46 +35,6 @@ Status = namedtuple(
 )
 
 
-def same_journey(latest_journey, journey, latest_datetime, when):
-    if not latest_journey:
-        return False
-
-    if journey.id:
-        return latest_journey.id == journey.id
-
-    if latest_journey.datetime == journey.datetime:
-        return True
-
-    if latest_journey.route_name and journey.route_name:
-        same_route = latest_journey.route_name == journey.route_name
-    else:
-        same_route = latest_journey.service_id == journey.service_id
-
-    if not same_route:
-        return False
-
-    if (when - latest_journey.datetime) > twelve_hours:
-        return False
-
-    if latest_journey.code and journey.code:
-        return (latest_journey.code, latest_journey.destination) == (
-            journey.code,
-            journey.destination,
-        )
-
-    if latest_journey.direction and journey.direction:
-        if latest_journey.direction != journey.direction:
-            return False
-    elif latest_journey.destination and journey.destination:
-        return latest_journey.destination == journey.destination
-
-    # last time was less than 15 minutes ago
-    if latest_datetime and (when - latest_datetime) < fifteen_minutes:
-        return True
-
-    return False
-
-
 class ImportLiveVehiclesCommand(BaseCommand):
     url = ""
     vehicles = Vehicle.objects.select_related("latest_journey__trip")
@@ -131,7 +91,14 @@ class ImportLiveVehiclesCommand(BaseCommand):
             except queryset.model.MultipleObjectsReturned:
                 continue
 
-    def handle_item(self, item, now=None, vehicle=None, latest=None, keep_journey=None):
+    def handle_item(
+        self,
+        item,
+        now=None,
+        vehicle: Vehicle | None = None,
+        latest: dict | None = None,
+        keep_journey=False,
+    ):
         datetime = self.get_datetime(item)
         if now and datetime and now < datetime:
             difference = datetime - now
@@ -178,11 +145,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
         #     return
 
         latest_journey = vehicle.latest_journey
-        if latest_journey:
-            # take a snapshot here, to see if they have changed later,
-            # cos get_journey() might return same object
-            original_service_id = latest_journey.service_id
-            original_destination = latest_journey.destination
 
         if keep_journey:
             journey = latest_journey
@@ -247,27 +209,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         if keep_journey:
             pass
-        elif same_journey(latest_journey, journey, latest_datetime, location.datetime):
-            changed = []
-            if latest_journey.source_id != self.source.id:
-                latest_journey.source = self.source
-                changed.append("source")
-            if journey.service_id != original_service_id:
-                latest_journey.service_id = journey.service_id
-                changed.append("service")
-            if journey.destination != original_destination:
-                latest_journey.destination = journey.destination
-                changed.append("destination")
-            if journey.datetime and journey.datetime != latest_journey.datetime:
-                latest_journey.datetime = journey.datetime
-                changed.append("datetime")
-            if changed:
-                latest_journey.save(update_fields=changed)
-                if changed != ["source"]:
-                    cache.delete(f"journey{latest_journey.id}")
-
-            journey = latest_journey
-
         else:
             journey.source = self.source
             if not journey.datetime:
