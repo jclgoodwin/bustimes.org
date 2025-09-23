@@ -165,7 +165,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
         #     return
 
         latest_journey = vehicle.latest_journey
-
         if keep_journey:
             journey = latest_journey
         else:
@@ -400,6 +399,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             if item
         }
 
+        i = 1
         for item, vehicle_identity in zip(items, identities):
             journey_identity = self.journeys_ids[vehicle_identity]
 
@@ -433,12 +433,16 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 if result:
                     location, vehicle = result
 
-                    self.journeys_ids_ids[vehicle_identity] = (
-                        journey_identity,
-                        vehicle.latest_journey_id,
-                    )
+                self.journeys_ids_ids[vehicle_identity] = (
+                    journey_identity,
+                    vehicle.latest_journey_id,
+                )
 
             self.identifiers[vehicle_identity] = self.get_item_identity(item)
+
+            if i % 500 == 0:
+                self.save()
+            i += 1
 
         self.save()
 
