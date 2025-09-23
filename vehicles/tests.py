@@ -916,7 +916,11 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
     def test_big_map(self):
         with self.assertNumQueries(1):
             response = self.client.get("/map")
-        self.assertContains(response, "latitude: 54,")
+            self.assertContains(response, "latitude: 54,")
+
+        with self.assertNumQueries(0):
+            response = self.client.get("/maps")
+            self.assertRedirects(response, "/map", 301)
 
         # 🇮🇪
         response = self.client.get("/map", headers={"CF-IPCountry": "IE"})
