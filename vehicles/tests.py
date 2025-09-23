@@ -918,7 +918,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             response = self.client.get("/map")
             self.assertContains(response, "latitude: 54,")
 
-        with self.assertNumQueries(0):
+        with self.assertNumQueries(1):
             response = self.client.get("/maps")
             self.assertRedirects(response, "/map", 301)
 

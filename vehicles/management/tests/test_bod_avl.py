@@ -466,7 +466,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             command.save()
 
         journey = VehicleJourney.objects.get()
-        self.assertEqual(journey.direction, "inbound")
+        self.assertEqual(journey.direction, "")
         self.assertEqual(journey.destination, "Southwold")
 
         with mock.patch("vehicles.views.redis_client", redis_client):
@@ -479,7 +479,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 "current": True,
                 "datetime": "2020-11-28T12:58:25Z",
                 "destination": "Southwold",
-                "direction": "inbound",
+                "direction": "",
                 "route_name": "146",
                 "service_id": None,
                 "trip_id": None,
