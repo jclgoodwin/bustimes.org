@@ -78,11 +78,10 @@ class Command(ImportLiveVehiclesCommand):
     @staticmethod
     def get_journey_identity(item):
         return (
-            item.get("td"),
-            item.get("eo"),
-            item.get("ao"),
-            item.get("fs"),
-            item.get("sn"),
+            item.get("td"),  # journey code
+            item.get("ao") or item.get("eo"),  # aimed or expected origin departure time
+            item.get("fs"),  # destination
+            item.get("sn"),  # service number
         )
 
     @staticmethod
