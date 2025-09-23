@@ -20,7 +20,7 @@
 | buses/\_\_init\_\_.py                                           |        0 |        0 |    100% |           |
 | buses/context\_processors.py                                    |        5 |        0 |    100% |           |
 | buses/jinja2.py                                                 |       36 |        2 |     94% |    40, 61 |
-| buses/settings.py                                               |      121 |       31 |     74% |96-105, 122, 141-149, 205, 224-232, 249-265, 317 |
+| buses/settings.py                                               |      121 |       31 |     74% |96-106, 123, 142-150, 206, 225-233, 250-266, 318 |
 | buses/tests.py                                                  |        5 |        0 |    100% |           |
 | buses/urls.py                                                   |        5 |        0 |    100% |           |
 | buses/utils.py                                                  |       23 |        4 |     83% |     34-37 |
