@@ -69,8 +69,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
         super().__init__(*args, **kwargs)
         self.session = requests.Session()
         self.to_save = []
-        self.journeys_to_create = []
-        self.journeys_to_update = []
+        self.journeys_to_create = {}
+        self.journeys_to_update = {}
         self.vehicles_to_update = []
         self.identifiers = {}
         self.journeys_ids = {}
@@ -233,9 +233,18 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 journey, latest_journey, location.datetime
             ):
                 journey.id = latest_journey.id
-                self.journeys_to_update.append(journey)
+                if journey.vehicle_id in self.journeys_to_update:
+                    logger.warning(
+                        f"{vehicle=}: {self.journeys_to_update[journey.vehicle_id]} vs {journey}"
+                    )
+                self.journeys_to_update[journey.vehicle_id] = journey
             else:
-                self.journeys_to_create.append(journey)
+                key = (vehicle.id, journey.datetime)
+                if key in self.journeys_to_create:
+                    logger.warning(
+                        f"{vehicle=}: {self.journeys_to_create[key]} vs {journey}"
+                    )
+                self.journeys_to_create[key] = journey
 
             journey.source = self.source
             if not journey.datetime:
@@ -273,18 +282,18 @@ class ImportLiveVehiclesCommand(BaseCommand):
         )
 
         VehicleJourney.objects.bulk_update(
-            self.journeys_to_update,
+            self.journeys_to_update.values(),
             update_fields,
         )
-        self.journeys_to_update = []
+        self.journeys_to_update = {}
 
         VehicleJourney.objects.bulk_create(
-            self.journeys_to_create,
+            self.journeys_to_create.values(),
             update_conflicts=True,
             unique_fields=["vehicle", "datetime"],
             update_fields=update_fields,
         )
-        self.journeys_to_create = []
+        self.journeys_to_create = {}
 
         # update vehicle records if necessary
         if self.vehicles_to_update:
