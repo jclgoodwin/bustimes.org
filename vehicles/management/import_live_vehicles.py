@@ -36,8 +36,8 @@ Status = namedtuple(
 
 
 def same_journey(journey, last_journey, now):
-    if journey.datetime:
-        return journey.datetime == last_journey.datetime
+    if journey.datetime == last_journey.datetime:
+        return True
     return (
         journey.service_id,
         journey.route_name,
