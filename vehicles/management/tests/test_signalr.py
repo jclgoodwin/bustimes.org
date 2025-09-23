@@ -14,11 +14,8 @@ from ...models import VehicleJourney
 class SignalRTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        source = DataSource.objects.create(
-            name="signalr", url="https://example.com/hub"
-        )
+        DataSource.objects.create(name="signalr", url="https://example.com/hub")
         DataSource.objects.create(name="IM")
-        source.save()
         Region.objects.create(name="Isle of Man", id="IM")
         Operator.objects.create(noc="bus-vannin", name="Man I Feel Like a Bus")
 
