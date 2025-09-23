@@ -173,7 +173,9 @@ class Command(BaseCommand):
                             self.stops_to_update.append(stop)
                             break
                     else:
-                        logger.info(f"{atco_code}: {key}")
+                        logger.info(
+                            f"{atco_code} {key}: {getattr(existing, key)!r} → {getattr(stop, key)!r}"
+                        )
                         self.stops_to_update.append(stop)
                         break
         else:
