@@ -63,6 +63,7 @@ test = [
     "coverage>=7.6.1,<8",
 ]
 dev = [
+    "django-watchfiles>=1.4.0",
     "ipdb>=0.13.9,<0.14",
     "ipython>=9.0.2,<10",
     "uritemplate>=4.1.1,<5",

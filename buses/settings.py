@@ -96,6 +96,7 @@ if DEBUG and not TEST:
     INSTALLED_APPS += [
         "debug_toolbar",
         "template_profiler_panel",
+        "django_watchfiles",
     ]
     MIDDLEWARE += [
         "debug_toolbar.middleware.DebugToolbarMiddleware",
