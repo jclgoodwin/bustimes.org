@@ -233,6 +233,20 @@ def get_route_links(journeys, transxchange: TransXChange):
                             yield route_link
 
 
+def route_link_is_dodgy(point: Point, stop: StopPoint, context: str) -> bool:
+    if point.srid and point.srid != 4326:
+        point.transform(4326)
+
+    if stop.latlong:
+        if stop.latlong.srid and stop.latlong.srid != 4326:
+            stop.latlong.transform(4326)
+        distance = stop.latlong.distance(point)
+        if distance > 0.1:
+            logger.warning(f"{context}: {stop.atco_code} is {distance} from {point}")
+            return True
+    return False
+
+
 def do_route_links(journeys, transxchange, stops, service):
     route_links = list(get_route_links(journeys, transxchange))
 
@@ -248,26 +262,13 @@ def do_route_links(journeys, transxchange, stops, service):
 
             if type(from_stop) is StopPoint and type(to_stop) is StopPoint:
                 start_point = Point(route_link.track[0], srid=route_link.track.srid)
-                if start_point.srid and start_point.srid != 4326:
-                    start_point.transform(4326)
                 end_point = Point(route_link.track[-1], srid=route_link.track.srid)
-                if end_point.srid and end_point.srid != 4326:
-                    end_point.transform(4326)
 
-                if from_stop.latlong:
-                    distance = from_stop.latlong.distance(start_point)
-                    if distance > 0.1:
-                        logger.warning(
-                            f"{service.slug}: {from_stop.atco_code} is {distance} from {start_point}"
-                        )
-                        continue
-                if to_stop.latlong:
-                    distance = to_stop.latlong.distance(end_point)
-                    if distance > 0.1:
-                        logger.warning(
-                            f"{service.slug}: {to_stop.atco_code} is {distance} from {end_point}"
-                        )
-                        continue
+                if route_link_is_dodgy(start_point, from_stop, service.slug):
+                    continue
+
+                if route_link_is_dodgy(end_point, to_stop, service.slug):
+                    continue
 
                 key = (from_stop.atco_code, to_stop.atco_code)
                 route_links_to_create[key] = RouteLink(
