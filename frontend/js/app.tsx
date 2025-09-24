@@ -38,7 +38,10 @@ if ((rootElement = document.getElementById("history"))) {
   const root = createRoot(rootElement);
   root.render(
     <React.StrictMode>
-      <ServiceMap serviceId={window.SERVICE_ID} />
+      <ServiceMap
+        serviceId={window.SERVICE_ID}
+        buttonText={rootElement.innerText}
+      />
     </React.StrictMode>,
   );
 } else if ((rootElement = document.getElementById("hugemap"))) {

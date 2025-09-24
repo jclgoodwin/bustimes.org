@@ -22,11 +22,12 @@ declare global {
 
 type ServiceMapProps = {
   serviceId: number;
+  buttonText: string;
 };
 
 const mapContainer = document.getElementById("map");
 
-export default function ServiceMap({ serviceId }: ServiceMapProps) {
+export default function ServiceMap({ serviceId, buttonText }: ServiceMapProps) {
   const [isOpen, setOpen] = React.useState(() => {
     return window.location.hash === "#map";
   });
@@ -182,22 +183,16 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
   }, [isOpen, selectedServices]);
 
   const count = vehicles?.length;
-  let countString: string | undefined;
 
   if (count) {
     if (count === 1) {
-      countString = `${count} bus`;
+      buttonText = `Map (tracking ${count} bus)`;
     } else {
-      countString = `${count} buses`;
+      buttonText = `Map (tracking ${count} buses)`;
     }
   }
 
-  const button = (
-    <a href="#map">
-      Map
-      {countString ? ` (tracking ${countString})` : null}
-    </a>
-  );
+  const button = <a href="#map">{buttonText}</a>;
 
   if (!isOpen || !mapContainer) {
     return button;
