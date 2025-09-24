@@ -9,12 +9,12 @@ from django.db.models import Q
 
 from busstops.models import DataSource, Service
 
-from ...models import Vehicle, VehicleJourney, VehicleLocation
+from ...models import VehicleJourney, VehicleLocation
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
 class Command(ImportLiveVehiclesCommand):
-    def handle_item(self, item):
+    def handle_item(self, item, vehicle):
         parts = item.split("|")
 
         (
@@ -32,13 +32,11 @@ class Command(ImportLiveVehiclesCommand):
 
         recorded_at_time = parse_datetime(timestamp)
 
-        if False:
+        if vehicle:
             created = False
         else:
             fleet_number = int(vehicle_code) if vehicle_code.isdigit() else None
-            vehicle, created = Vehicle.objects.select_related(
-                "latest_journey"
-            ).get_or_create(
+            vehicle, created = self.vehicles.get_or_create(
                 {
                     "operator_id": self.operator_id,
                     "fleet_code": str(fleet_number or vehicle_code),
@@ -116,6 +114,15 @@ class Command(ImportLiveVehiclesCommand):
 
         self.to_save.append((location, vehicle))
 
+    def handle_items(self, items):
+        vehicle_codes = [item.split("|", 2)[1] for item in items]
+        vehicles = self.vehicles.filter(source=self.source, code__in=vehicle_codes)
+        vehicles = {vehicle.code: vehicle for vehicle in vehicles}
+
+        for vehicle_code, item in zip(vehicle_codes, items):
+            self.handle_item(item, vehicles.get(vehicle_code))
+        self.save()
+
     def add_arguments(self, parser):
         super().add_arguments(parser)
         parser.add_argument("source_name", type=str)
@@ -154,7 +161,10 @@ class Command(ImportLiveVehiclesCommand):
                     if part:
                         part = json.loads(part)
                         if "arguments" in part:
-                            for argument in part["arguments"]:
-                                for location in argument["locations"]:
-                                    self.handle_item(location)
-                            self.save()
+                            self.handle_items(
+                                [
+                                    location
+                                    for argument in part["arguments"]
+                                    for location in argument["locations"]
+                                ]
+                            )
