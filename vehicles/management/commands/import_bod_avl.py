@@ -451,17 +451,16 @@ class Command(ImportLiveVehiclesCommand):
 
         if operator_ref == "TFLO":
             journey.destination = monitored_vehicle_journey.get("DestinationName")
-        elif destination_ref:
-            # try getting the stop locality name - usually more descriptive than "Bus_Station"
-            journey.destination = get_destination_name(destination_ref)
-
-            if not journey.destination:
-                if destination := monitored_vehicle_journey.get("DestinationName"):
-                    journey.destination = destination.replace("_", " ")
-                else:
-                    journey.direction = monitored_vehicle_journey.get(
-                        "DirectionRef", ""
-                    )
+        else:
+            if destination_ref and (
+                destination := get_destination_name(destination_ref)
+            ):
+                # try getting the stop locality name - usually more descriptive than "Bus_Station"
+                journey.destination = destination
+            elif destination := monitored_vehicle_journey.get("DestinationName"):
+                journey.destination = destination.replace("_", " ")
+            else:
+                journey.direction = monitored_vehicle_journey.get("DirectionRef", "")
 
         if not journey.service_id and route_name:
             operators = self.get_operator(operator_ref)
