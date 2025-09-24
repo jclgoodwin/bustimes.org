@@ -233,11 +233,17 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 journey, latest_journey, location.datetime
             ):
                 journey.id = latest_journey.id
-                self.journeys_to_update.append(journey)
+                if journey.datetime and latest_journey.datetime != journey.datetime:
+                    try:
+                        journey.save()
+                    except IntegrityError:
+                        self.journeys_to_update.append(journey)
+                else:
+                    self.journeys_to_update.append(journey)
             else:
                 key = (vehicle.id, journey.datetime)
                 if key in self.journeys_to_create:
-                    # ! unusually, thhe same journey is twice in the feed
+                    # ! unusually, the same journey is twice in the feed
                     journey = self.journeys_to_create[key]
                 else:
                     self.journeys_to_create[key] = journey
