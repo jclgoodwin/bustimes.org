@@ -78,6 +78,7 @@ build-backend = "hatchling.build"
 
 [tool.coverage.run]
 relative_files = true
+source = ["."]
 omit =  ["*/migrations/*"]
 
 [tool.ruff]
