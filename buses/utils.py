@@ -12,23 +12,17 @@ def minify(template_source):
     return template_source
 
 
-def cdn_cache_control(max_age=None, stale_if_error=None):
+def cdn_cache_control(max_age):
     def _cache_controller(view_func):
         @wraps(view_func)
         def _cache_controlled(request, *args, **kw):
-            if max_age:
-                # anonymise request
-                request.user = AnonymousUser
+            # anonymise request
+            request.user = AnonymousUser
 
             response = view_func(request, *args, **kw)
-            if max_age:
-                response["CDN-Cache-Control"] = (
-                    f"public, max-age={max_age}, stale-if-error={max_age}"
-                )
-            elif stale_if_error and request.user.is_anonymous:
-                response["CDN-Cache-Control"] = (
-                    f"public, stale-if-error={stale_if_error}"
-                )
+            response["CDN-Cache-Control"] = (
+                f"public, max-age={max_age}, stale-if-error={max_age}"
+            )
 
             return response
 
