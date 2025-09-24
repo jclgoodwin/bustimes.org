@@ -23,7 +23,7 @@
 | buses/settings.py                                               |      121 |       31 |     74% |96-106, 123, 142-150, 206, 225-233, 250-266, 318 |
 | buses/tests.py                                                  |        5 |        0 |    100% |           |
 | buses/urls.py                                                   |        5 |        0 |    100% |           |
-| buses/utils.py                                                  |       23 |        4 |     83% |     34-37 |
+| buses/utils.py                                                  |       27 |        4 |     85% |     41-44 |
 | busstops/\_\_init\_\_.py                                        |        0 |        0 |    100% |           |
 | busstops/admin.py                                               |      318 |       13 |     96% |103-109, 184, 243-251, 333-334, 380, 455, 459, 508, 590, 618 |
 | busstops/forms.py                                               |       46 |        0 |    100% |           |
@@ -38,7 +38,7 @@
 | busstops/management/tests/test\_import\_nptg.py                 |       31 |        0 |    100% |           |
 | busstops/management/tests/test\_import\_operators.py            |       64 |        0 |    100% |           |
 | busstops/middleware.py                                          |       28 |        7 |     75% |     29-43 |
-| busstops/models.py                                              |      610 |       21 |     97% |275, 300, 326, 432, 469, 519, 545, 601, 635, 673, 825, 858, 929, 941-945, 1028, 1068, 1083, 1120 |
+| busstops/models.py                                              |      610 |       22 |     96% |275, 300, 326, 432, 469, 519, 545, 601, 635, 673, 825, 858, 929, 941-945, 1019, 1028, 1068, 1083, 1120 |
 | busstops/templatetags/\_\_init\_\_.py                           |        0 |        0 |    100% |           |
 | busstops/templatetags/date\_range.py                            |       25 |        3 |     88% | 9, 22, 28 |
 | busstops/templatetags/urlise.py                                 |       16 |        0 |    100% |           |
@@ -46,7 +46,7 @@
 | busstops/test\_middleware.py                                    |       10 |        0 |    100% |           |
 | busstops/test\_models.py                                        |      137 |        0 |    100% |           |
 | busstops/test\_views.py                                         |      270 |        0 |    100% |           |
-| busstops/urls.py                                                |       20 |        2 |     90% |   132-134 |
+| busstops/urls.py                                                |       20 |        2 |     90% |   134-136 |
 | busstops/utils.py                                               |       11 |        0 |    100% |           |
 | busstops/views.py                                               |      643 |       50 |     92% |139, 180-189, 485, 511, 549, 694, 712, 772-775, 777, 908-913, 926, 1003, 1031-1032, 1037-1038, 1046-1055, 1116, 1212, 1233, 1235, 1261-1265, 1314, 1387, 1417-1418, 1421-1425, 1575, 1587-1588, 1593, 1605-1606 |
 | bustimes/\_\_init\_\_.py                                        |        0 |        0 |    100% |           |
@@ -172,7 +172,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16541** | **1105** | **93%** |           |
+|                                                       **TOTAL** | **16545** | **1106** | **93%** |           |
 
 
 ## Setup coverage badge
