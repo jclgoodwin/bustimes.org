@@ -13,7 +13,7 @@ servers:
       - 10.131.240.109
     env:
       clear:
-        WEB_CONCURRENCY: 12
+        WEB_CONCURRENCY: 16
         EMAIL_HOST: email-smtp.eu-west-1.amazonaws.com
         READ_ONLY_DB_HOST: private-jumbo-replica-do-user-1296332-0.d.db.ondigitalocean.com
       secret:
