@@ -18,20 +18,26 @@
 | api/tests.py                                                    |        9 |        0 |    100% |           |
 | api/views.py                                                    |       94 |        0 |    100% |           |
 | buses/\_\_init\_\_.py                                           |        0 |        0 |    100% |           |
+| buses/asgi.py                                                   |        4 |        4 |      0% |     10-16 |
 | buses/context\_processors.py                                    |        5 |        0 |    100% |           |
 | buses/jinja2.py                                                 |       36 |        2 |     94% |    40, 61 |
 | buses/settings.py                                               |      121 |       31 |     74% |96-106, 123, 142-150, 206, 225-233, 250-266, 318 |
 | buses/tests.py                                                  |        5 |        0 |    100% |           |
 | buses/urls.py                                                   |        5 |        0 |    100% |           |
 | buses/utils.py                                                  |       23 |        4 |     83% |     35-38 |
+| buses/wsgi.py                                                   |        4 |        4 |      0% |     10-16 |
 | busstops/\_\_init\_\_.py                                        |        0 |        0 |    100% |           |
 | busstops/admin.py                                               |      318 |       13 |     96% |103-109, 184, 243-251, 333-334, 380, 455, 459, 508, 590, 618 |
 | busstops/forms.py                                               |       46 |        0 |    100% |           |
 | busstops/management/\_\_init\_\_.py                             |        0 |        0 |    100% |           |
 | busstops/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
+| busstops/management/commands/gtfs\_shapes.py                    |       66 |       66 |      0% |     1-127 |
 | busstops/management/commands/import\_noc.py                     |      125 |        3 |     98% |155, 179, 238 |
 | busstops/management/commands/naptan\_new.py                     |      161 |       11 |     93% |39, 41, 165-174, 217, 266 |
 | busstops/management/commands/nptg\_new.py                       |       94 |        7 |     93% |148, 158, 163, 169-170, 172-173 |
+| busstops/management/commands/osm\_iom\_stops.py                 |       34 |       34 |      0% |      1-63 |
+| busstops/management/commands/update\_search\_indexes.py         |       11 |       11 |      0% |      1-19 |
+| busstops/management/commands/update\_slugs.py                   |       20 |       20 |      0% |      1-29 |
 | busstops/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | busstops/management/tests/test\_import\_ie.py                   |       63 |        0 |    100% |           |
 | busstops/management/tests/test\_import\_naptan.py               |       67 |        0 |    100% |           |
@@ -67,6 +73,8 @@
 | bustimes/management/commands/import\_passenger.py               |      116 |       35 |     70% |51-54, 56-58, 64, 103, 113-117, 143-180 |
 | bustimes/management/commands/import\_tnds.py                    |       43 |        0 |    100% |           |
 | bustimes/management/commands/import\_transxchange.py            |      821 |       82 |     90% |86, 101, 147-148, 230-231, 238, 242, 309-310, 320, 328-329, 384, 388, 390, 491, 574-588, 617, 620, 738, 780-781, 818-819, 821-822, 866, 877, 915, 941, 945-947, 959-960, 1003-1007, 1048, 1058-1063, 1077, 1101, 1109, 1111-1114, 1135, 1162, 1201, 1232-1233, 1260-1262, 1269, 1274-1275, 1291, 1296, 1309, 1334, 1368-1369, 1405-1406, 1457 |
+| bustimes/management/commands/poo.py                             |       33 |       33 |      0% |      1-63 |
+| bustimes/management/commands/suggest\_bod.py                    |       36 |       36 |      0% |      1-51 |
 | bustimes/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | bustimes/management/tests/test\_bank\_holidays.py               |       20 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_atco\_cif.py            |       70 |        0 |    100% |           |
@@ -96,6 +104,7 @@
 | disruptions/admin.py                                            |       33 |        1 |     97% |        69 |
 | disruptions/models.py                                           |       86 |        6 |     93% |47, 76, 100, 108, 118, 146 |
 | disruptions/siri\_sx.py                                         |      124 |       14 |     89% |54, 74, 86-89, 100-101, 132, 142-146 |
+| disruptions/tasks.py                                            |        5 |        5 |      0% |       1-7 |
 | disruptions/test\_siri\_sx.py                                   |       48 |        0 |    100% |           |
 | disruptions/test\_tfl\_disruptions.py                           |       34 |        0 |    100% |           |
 | disruptions/tests.py                                            |       16 |        0 |    100% |           |
@@ -128,6 +137,7 @@
 | vehicles/forms.py                                               |       94 |        3 |     97% |130, 168, 206 |
 | vehicles/management/\_\_init\_\_.py                             |        0 |        0 |    100% |           |
 | vehicles/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
+| vehicles/management/commands/compute\_blocks.py                 |       27 |       27 |      0% |      1-47 |
 | vehicles/management/commands/import\_bod\_avl.py                |      404 |       57 |     86% |51, 126, 142, 152-153, 196-199, 202-205, 248, 264, 279-280, 302-320, 371, 373, 379, 410, 416, 431-432, 474-487, 515, 522-523, 538, 567, 601, 675-676, 700, 712, 716 |
 | vehicles/management/commands/import\_bushub.py                  |       83 |       18 |     78% |16-17, 21-22, 25-26, 30, 34, 42, 53, 56, 72-73, 82, 92, 111, 119, 145 |
 | vehicles/management/commands/import\_edinburgh.py               |       63 |        5 |     92% |44, 72, 76-79, 86 |
@@ -138,6 +148,9 @@
 | vehicles/management/commands/import\_nx.py                      |      146 |       29 |     80% |92, 109-111, 113-114, 117-118, 131, 139-146, 150-153, 167-170, 173, 185-186, 196, 207 |
 | vehicles/management/commands/import\_polar.py                   |       84 |       28 |     67% |13-14, 25, 29, 33, 41, 44, 49-55, 61-63, 67, 77-78, 81, 95-98, 101, 114, 121 |
 | vehicles/management/commands/import\_stagecoach\_avl.py         |       72 |        5 |     93% |123, 133, 138-139, 171 |
+| vehicles/management/commands/import\_translink\_avl.py          |       58 |       58 |      0% |     1-114 |
+| vehicles/management/commands/listen.py                          |       22 |       22 |      0% |      1-58 |
+| vehicles/management/commands/newport.py                         |       43 |       43 |      0% |      1-62 |
 | vehicles/management/commands/signalr.py                         |       74 |        5 |     93% |59, 77-79, 94 |
 | vehicles/management/commands/siri\_vm\_subscribe.py             |       27 |        7 |     74% |     29-58 |
 | vehicles/management/import\_live\_vehicles.py                   |      308 |       40 |     87% |112, 128, 134-136, 138, 160, 169, 183, 192-195, 204, 217, 225, 230, 237-240, 247, 310-311, 352, 355-356, 377-378, 384, 480, 517-519, 529, 549, 556-557, 562-564 |
@@ -172,7 +185,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16545** | **1110** | **93%** |           |
+|                                                       **TOTAL** | **16908** | **1473** | **91%** |           |
 
 
 ## Setup coverage badge
