@@ -21,7 +21,7 @@ sitemaps = {
 }
 
 urlpatterns = [
-    path("", views.index, name="index"),
+    path("", cdn_cache_control(stale_if_error=1800)(views.index), name="index"),
     path("version", views.version),
     path("contact", views.contact, name="contact"),
     path(
@@ -33,7 +33,9 @@ urlpatterns = [
         cdn_cache_control(1800)(TemplateView.as_view(template_name="cookies.html")),
     ),
     path("503", TemplateView.as_view(template_name="503.html")),
-    path("data", TemplateView.as_view(template_name="data.html")),
+    path(
+        "data", cdn_cache_control(1800)(TemplateView.as_view(template_name="data.html"))
+    ),
     path("status", views.status),
     path("timetable-source-stats.json", views.timetable_source_stats),
     path("stats.json", views.stats),
@@ -59,7 +61,7 @@ urlpatterns = [
     ),
     path(
         "districts/<int:pk>",
-        views.DistrictDetailView.as_view(),
+        cdn_cache_control(1800)(views.DistrictDetailView.as_view()),
         name="district_detail",
     ),
     re_path(
@@ -84,7 +86,7 @@ urlpatterns = [
     re_path(r"^operators/(?P<pk>[A-Z]+)$", views.OperatorDetailView.as_view()),
     path(
         "operators/<slug>",
-        views.OperatorDetailView.as_view(),
+        cdn_cache_control(stale_if_error=1800)(views.OperatorDetailView.as_view()),
         name="operator_detail",
     ),
     path("operators/<slug>/tickets", mytrip.operator_tickets, name="operator_tickets"),
