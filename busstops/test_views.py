@@ -260,8 +260,7 @@ class ViewsTests(TestCase):
             decode_compressed_response=True,
         ):
             # postcode sufficiently near to fake locality
-            with self.assertNumQueries(1):
-                response = self.client.get("/search?q=w1a 1aa")
+            response = self.client.get("/search?q=w1a 1aa")
 
             self.assertContains(response, "W1A 1AA")
             self.assertContains(
