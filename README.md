@@ -151,7 +151,7 @@
 | vehicles/management/commands/import\_translink\_avl.py          |       58 |       58 |      0% |     1-114 |
 | vehicles/management/commands/listen.py                          |       22 |       22 |      0% |      1-58 |
 | vehicles/management/commands/newport.py                         |       43 |       43 |      0% |      1-62 |
-| vehicles/management/commands/signalr.py                         |       74 |        5 |     93% |59, 77-79, 94 |
+| vehicles/management/commands/signalr.py                         |       79 |        0 |    100% |           |
 | vehicles/management/commands/siri\_vm\_subscribe.py             |       27 |        7 |     74% |     29-58 |
 | vehicles/management/import\_live\_vehicles.py                   |      308 |       40 |     87% |112, 128, 134-136, 138, 160, 169, 183, 192-195, 204, 217, 225, 230, 237-240, 247, 310-311, 352, 355-356, 377-378, 384, 480, 517-519, 529, 549, 556-557, 562-564 |
 | vehicles/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
@@ -162,7 +162,7 @@
 | vehicles/management/tests/test\_import\_live\_jersey.py         |       31 |        0 |    100% |           |
 | vehicles/management/tests/test\_import\_nx.py                   |       43 |        0 |    100% |           |
 | vehicles/management/tests/test\_polar.py                        |       33 |        0 |    100% |           |
-| vehicles/management/tests/test\_signalr.py                      |       21 |        0 |    100% |           |
+| vehicles/management/tests/test\_signalr.py                      |       28 |        0 |    100% |           |
 | vehicles/management/tests/test\_siri\_post.py                   |       51 |        0 |    100% |           |
 | vehicles/management/tests/test\_stagecoach\_avl.py              |       33 |        0 |    100% |           |
 | vehicles/management/tests/test\_stats.py                        |       24 |        0 |    100% |           |
@@ -185,7 +185,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16908** | **1473** | **91%** |           |
+|                                                       **TOTAL** | **16920** | **1468** | **91%** |           |
 
 
 ## Setup coverage badge
