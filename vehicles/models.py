@@ -90,7 +90,7 @@ class VehicleTypeType(models.TextChoices):
     DOUBLE_DECKER = "double decker", "double decker"
     MINIBUS = "minibus", "minibus"
     COACH = "coach", "coach"
-    DOUBLE_DECK_COACH = "double decker coach", "double decker coach"
+    DOUBLE_DECK_COACH = "decker coach", "double decker coach"
     ARTICULATED = "articulated", "bendy bus"
     TRAIN = "train", "train"
     TRAM = "tram", "tram"
