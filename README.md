@@ -45,7 +45,7 @@
 | busstops/test\_admin.py                                         |       66 |        0 |    100% |           |
 | busstops/test\_middleware.py                                    |       10 |        0 |    100% |           |
 | busstops/test\_models.py                                        |      137 |        0 |    100% |           |
-| busstops/test\_views.py                                         |      270 |        0 |    100% |           |
+| busstops/test\_views.py                                         |      269 |        0 |    100% |           |
 | busstops/urls.py                                                |       20 |        2 |     90% |   134-136 |
 | busstops/utils.py                                               |       11 |        0 |    100% |           |
 | busstops/views.py                                               |      643 |       50 |     92% |139, 180-189, 485, 511, 549, 694, 712, 772-775, 777, 908-913, 926, 1003, 1031-1032, 1037-1038, 1046-1055, 1116, 1212, 1233, 1235, 1261-1265, 1314, 1387, 1417-1418, 1421-1425, 1575, 1587-1588, 1593, 1605-1606 |
@@ -140,7 +140,7 @@
 | vehicles/management/commands/import\_stagecoach\_avl.py         |       72 |        5 |     93% |123, 133, 138-139, 171 |
 | vehicles/management/commands/signalr.py                         |       74 |        5 |     93% |59, 77-79, 94 |
 | vehicles/management/commands/siri\_vm\_subscribe.py             |       27 |        7 |     74% |     29-58 |
-| vehicles/management/import\_live\_vehicles.py                   |      303 |       36 |     88% |112, 128, 134-136, 138, 160, 169, 183, 192-195, 204, 217, 225, 230, 241, 304-305, 346, 349-350, 371-372, 378, 474, 511-513, 523, 543, 550-551, 556-558 |
+| vehicles/management/import\_live\_vehicles.py                   |      308 |       40 |     87% |112, 128, 134-136, 138, 160, 169, 183, 192-195, 204, 217, 225, 230, 237-240, 247, 310-311, 352, 355-356, 377-378, 384, 480, 517-519, 529, 549, 556-557, 562-564 |
 | vehicles/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | vehicles/management/tests/test\_bod\_avl.py                     |      293 |        0 |    100% |           |
 | vehicles/management/tests/test\_bushub.py                       |       48 |        0 |    100% |           |
@@ -172,7 +172,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16545** | **1106** | **93%** |           |
+|                                                       **TOTAL** | **16549** | **1110** | **93%** |           |
 
 
 ## Setup coverage badge
