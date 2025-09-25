@@ -134,6 +134,9 @@ export default function ServiceMapMap({
       if (e.features?.length) {
         for (const stop of e.features) {
           if (stop.properties.url !== clickedStop?.properties.url) {
+            if (typeof stop.properties.services === "string") {
+              stop.properties.services = JSON.parse(stop.properties.services);
+            }
             setClickedStop(stop as unknown as Stop);
           }
         }
@@ -200,7 +203,7 @@ export default function ServiceMapMap({
       ) : null}
 
       {Array.from(serviceIds).map((serviceId) => {
-        if (stops && stopsAndGeometry[serviceId]?.geometry) {
+        if (stopsAndGeometry[serviceId]?.geometry) {
           return (
             <Geometry
               key={serviceId}
@@ -210,7 +213,7 @@ export default function ServiceMapMap({
         }
       })}
 
-      {stops ? <Stops stops={stops} /> : null}
+      {stops && stopsAndGeometry ? <Stops stops={stops} /> : null}
     </BusTimesMap>
   );
 }
