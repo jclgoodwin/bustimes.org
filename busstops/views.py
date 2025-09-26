@@ -37,6 +37,7 @@ from django.utils.cache import patch_response_headers
 from django.utils.functional import SimpleLazyObject
 from django.views.csrf import csrf_failure as django_csrf_failure
 from django.views.decorators.cache import cache_control
+from django.views.decorators.http import last_modified
 from django.views.generic.detail import DetailView
 from redis.exceptions import ConnectionError
 from sql_util.utils import Exists, SubqueryMax, SubqueryMin
@@ -1321,22 +1322,28 @@ def service_timetable_csv(request, service_id):
     return response
 
 
-@cdn_cache_control(max_age=7200)
-def service_map_data(request, service_id):
+def service_last_modified(request, service_id):
     service = get_object_or_404(
-        Service.objects.only("geometry", "line_name", "service_code"),
+        Service.objects.only("geometry", "line_name", "service_code", "modified_at"),
         id=service_id,
     )
+    request.service = service
+    return service.modified_at
+
+
+@last_modified(service_last_modified)
+def service_map_data(request, service_id):
+    service = request.service
     stops = service.stops.filter(
-        ~Exists(
-            Situation.objects.filter(
-                summary="Does not stop here",
-                consequence__stops=OuterRef("pk"),
-                consequence__services=service,
-            )
-        ),
+        #     ~Exists(
+        #         Situation.objects.filter(
+        #             summary="Does not stop here",
+        #             consequence__stops=OuterRef("pk"),
+        #             consequence__services=service,
+        #         )
+        #     ),
         latlong__isnull=False,
-    )
+    ).annotate(line_names=stop_line_names)
     stops = stops.distinct().order_by().select_related("locality").in_bulk()
     data = {
         "stops": {
@@ -1350,9 +1357,9 @@ def service_map_data(request, service_id):
                     },
                     "properties": {
                         "name": stop.get_qualified_name(),
-                        "indicator": stop.indicator,
                         "bearing": stop.get_heading(),
                         "url": stop.get_absolute_url(),
+                        "services": stop.line_names,
                     },
                 }
                 for stop in stops.values()
