@@ -70,7 +70,7 @@ class Command(BaseCommand):
             stop.common_name = stop.common_name[:48]
             stops[stop_id] = stop
         existing_stops = StopPoint.objects.only(
-            "atco_code", "common_name", "latlong"
+            "atco_code", "common_name", "latlong", "source_id"
         ).in_bulk(stops)
 
         stops_to_create = [
@@ -80,13 +80,14 @@ class Command(BaseCommand):
             stop
             for stop in stops.values()
             if stop.atco_code in existing_stops
+            and existing_stops[stop.atco_code].source_id in (self.source.id, None)
             and (
                 existing_stops[stop.atco_code].latlong != stop.latlong
                 or existing_stops[stop.atco_code].common_name != stop.common_name
             )
         ]
         StopPoint.objects.bulk_update(
-            stops_to_update, ["common_name", "latlong", "indicator"]
+            stops_to_update, ["common_name", "latlong", "indicator", "source"]
         )
 
         for stop in stops_to_create:
@@ -99,7 +100,7 @@ class Command(BaseCommand):
                 stop.admin_area_id = admin_area_id
 
         StopPoint.objects.bulk_create(stops_to_create, batch_size=1000)
-        return StopPoint.objects.only("atco_code").in_bulk(stops)
+        return StopPoint.objects.only("atco_code", "latlong").in_bulk(stops)
 
     def handle_route(self, line):
         line_name = line.route_short_name if type(line.route_short_name) is str else ""
