@@ -1,0 +1,92 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.5
+    method: GET
+    uri: https://vpos.translinkniplanner.co.uk/velocmap/vmi/VMI
+  response:
+    body:
+      string: "[{    \"ID\": \"9f672527-a167-4be5-9e65-ac3816511891\",
+        \   \"Operator\": \"Ulsterbus\",    \"JourneyIdentifier\": \"1002\",
+        \   \"DayOfOperation\": \"27.09.2025\",    \"Delay\": 73,    \"MOTCode\":
+        5,    \"X\": \"-6.361208\",    \"Y\": \"54.198292\",    \"Timestamp\":
+        \"2025-09-27T06:40:42+01:00\",    \"XPrevious\": \"-6.361343\",    \"YPrevious\":
+        \"54.190586\",    \"TimestampPrevious\": \"2025-09-27T06:40:09+01:00\",
+        \   \"VehicleIdentifier\": \"ULB-1135\",    \"RealtimeAvailable\": 1,
+        \   \"LineText\": \"X1\",    \"DirectionText\": \"Grand Central\"
+        \ },  {    \"ID\": \"2bbf342a-5c67-4634-87dd-eff61f345564\",    \"Operator\":
+        \"Metro\",    \"JourneyIdentifier\": \"0625\",    \"DayOfOperation\":
+        \"27.09.2025\",    \"Delay\": 524,    \"MOTCode\": 5,    \"X\":
+        \"-5.912418\",    \"Y\": \"54.666336\",    \"Timestamp\": \"2025-09-27T06:40:47+01:00\",
+        \   \"XPrevious\": \"-5.912552\",    \"YPrevious\": \"54.666954\",
+        \   \"TimestampPrevious\": \"2025-09-27T06:40:14+01:00\",    \"VehicleIdentifier\":
+        \"TM-3697\",    \"RealtimeAvailable\": 1,    \"LineText\": \"2E\",
+        \   \"DirectionText\": \"City Centre\"  },  {    \"ID\": \"bb29eb8c-a56b-4fba-87c6-4249d174f843\",
+        \   \"Operator\": \"Ulsterbus\",    \"JourneyIdentifier\": \"2005\",
+        \   \"DayOfOperation\": \"27.09.2025\",    \"Delay\": 87,    \"MOTCode\":
+        5,    \"X\": \"-6.750133\",    \"Y\": \"54.853893\",    \"Timestamp\":
+        \"2025-09-27T06:40:53+01:00\",    \"XPrevious\": \"-6.761951\",    \"YPrevious\":
+        \"54.856037\",    \"TimestampPrevious\": \"2025-09-27T06:40:31+01:00\",
+        \   \"VehicleIdentifier\": \"ULB-1281\",    \"RealtimeAvailable\": 1,
+        \   \"LineText\": \"X4\",    \"DirectionText\": \"Dublin\"  },
+        \ {    \"ID\": \"843ba299-5e55-4b57-9ffd-0bcd18525b9a\",    \"Operator\":
+        \"Ulsterbus\",    \"JourneyIdentifier\": \"2001\",    \"DayOfOperation\":
+        \"27.09.2025\",    \"Delay\": 147,    \"MOTCode\": 5,    \"X\":
+        \"-5.917736\",    \"Y\": \"54.642471\",    \"Timestamp\": \"2025-09-27T06:40:31+01:00\",
+        \   \"XPrevious\": \"-5.919618\",    \"YPrevious\": \"54.635109\",
+        \   \"TimestampPrevious\": \"2025-09-27T06:39:56+01:00\",    \"VehicleIdentifier\":
+        \"ULB-1129\",    \"RealtimeAvailable\": 1,    \"LineText\": \"212\",
+        \   \"DirectionText\": \"Derry Londonderry\"  },  {    \"ID\":
+        \"18e7e917-8825-49a0-8c05-aa92bb79ae0f\",    \"Operator\": \"Metro\",
+        \   \"JourneyIdentifier\": \"0700\",    \"DayOfOperation\": \"27.09.2025\",
+        \   \"MOTCode\": 5,    \"X\": \"-5.933067\",    \"Y\": \"54.597225\",
+        \   \"Timestamp\": \"2025-09-27T06:39:07+01:00\",    \"XPrevious\": \"-5.933028\",
+        \   \"YPrevious\": \"54.597278\",    \"TimestampPrevious\": \"2025-09-27T06:38:34+01:00\",
+        \   \"VehicleIdentifier\": \"TM-2396\",    \"RealtimeAvailable\": 0,
+        \   \"LineText\": \"9A\",    \"DirectionText\": \"Conway\"  },
+        \ {    \"ID\": \"3eae9ef8-72a6-4a0a-a99c-63d87b334a22\",    \"Operator\":
+        \"Glider\",    \"JourneyIdentifier\": \"0612\",    \"DayOfOperation\":
+        \"27.09.2025\",    \"Delay\": -43,    \"MOTCode\": 5,    \"X\":
+        \"-5.934896\",    \"Y\": \"54.597313\",    \"Timestamp\": \"2025-09-27T06:40:42+01:00\",
+        \   \"XPrevious\": \"-5.934810\",    \"YPrevious\": \"54.597049\",
+        \   \"TimestampPrevious\": \"2025-09-27T06:40:14+01:00\",    \"VehicleIdentifier\":
+        \"GDR-3225\",    \"RealtimeAvailable\": 1,    \"LineText\": \"G1\",
+        \   \"DirectionText\": \"McKinstry Road\"  },  {    \"ID\": \"3b1ba12b-a80e-460f-81e2-54c0a698956d\",
+        \   \"Operator\": \"Ulsterbus\",    \"JourneyIdentifier\": \"2005\",
+        \   \"DayOfOperation\": \"27.09.2025\",    \"Delay\": 83,    \"MOTCode\":
+        5,    \"X\": \"-6.216710\",    \"Y\": \"54.662735\",    \"Timestamp\":
+        \"2025-09-27T06:34:37+01:00\",    \"XPrevious\": \"-6.215100\",    \"YPrevious\":
+        \"54.662956\",    \"TimestampPrevious\": \"2025-09-27T06:34:08+01:00\",
+        \   \"VehicleIdentifier\": \"ULB-2105\",    \"RealtimeAvailable\": 1,
+        \   \"LineText\": \"300\",    \"DirectionText\": \"Belfast Int Airport\"
+        \ },  {    \"ID\": \"eaefe3f4-1463-4c0f-809d-1b0336fa0719\",    \"Operator\":
+        \"Metro\",    \"JourneyIdentifier\": \"0557\",    \"DayOfOperation\":
+        \"27.09.2025\",    \"MOTCode\": 5,    \"X\": \"0.000000\",    \"Y\":
+        \"0.000000\",    \"Timestamp\": \"2025-09-27T06:35:06+01:00\",    \"VehicleIdentifier\":
+        \"TM-2190\",    \"RealtimeAvailable\": 0,    \"LineText\": \"10H\",
+        \   \"DirectionText\": \"City Centre\"  }]"
+    headers:
+      content-encoding:
+      - gzip
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 27 Sep 2025 05:41:03 GMT
+      server:
+      - Kestrel
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

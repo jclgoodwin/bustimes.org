@@ -15,7 +15,7 @@ interactions:
   response:
     body:
       string: '{"items":[
-        {"vehicleRef":"35694","routeName":"11","direction":"inbound","scheduledTripStartTime":"2025-09-24T07:22:00+01:00","destination":"TownTerminus","tripId":"T8023793","agencyId":"","position":{"bearing":263,"latitude":49.488671,"longitude":-2.514415},"nextStopId":"890000357","reported":"2025-09-24T07:31:12+01:00","received":"2025-09-24T07:31:21.694302+01:00","_links":[]},
+        {"vehicleRef":"35694","routeName":"11","direction":"inbound","scheduledTripStartTime":"2025-09-24T07:22:00+01:00","destination":"TownTerminus","tripId":"T8023793","agencyId":"","position":{"bearing":-1,"latitude":49.488671,"longitude":-2.514415},"nextStopId":"890000357","reported":"2025-09-24T07:31:12+01:00","received":"2025-09-24T07:31:21.694302+01:00","_links":[]},
         {"vehicleRef":"64098","routeName":"12","direction":"outbound","scheduledTripStartTime":"2025-09-24T07:15:00+01:00","destination":"Pembroke Bay","tripId":"T8023914","agencyId":"","vehicleDutyId":"44016c5a-01f2-4487-bf9a-c85c67772f24","position":{"bearing":273,"latitude":49.499331,"longitude":-2.525},"nextStopId":"890000494","reported":"2025-09-24T07:31:10+01:00","received":"2025-09-24T07:31:21.598853+01:00","_links":[]},
         {"vehicleRef":"40631","routeName":"91","direction":"inbound","scheduledTripStartTime":"2025-09-24T07:06:00+01:00","position":{"bearing":90,"latitude":49.482526,"longitude":-2.518111},"currentStopId":"890000361","reported":"2025-09-24T07:31:23+01:00","received":"2025-09-24T07:31:36.702645+01:00","_links":[]}
         ],"_links":[]}'
