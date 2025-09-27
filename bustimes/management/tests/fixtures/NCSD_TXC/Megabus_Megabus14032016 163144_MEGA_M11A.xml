@@ -274,8 +274,8 @@
       </StopRequirements>
       <Mode>coach</Mode>
       <StandardService>
-        <Origin>490014051N</Origin>
-        <Destination>2800S42098F</Destination>
+        <Origin>Belgravia</Origin>
+        <Destination>Liverpool</Destination>
         <JourneyPattern id="JP68">
           <Direction>inbound</Direction>
           <JourneyPatternSectionRefs>JPSection-7</JourneyPatternSectionRefs>

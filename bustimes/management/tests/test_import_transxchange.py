@@ -1,7 +1,6 @@
 import xml.etree.ElementTree as ET
 import zipfile
 from datetime import date
-from functools import partial
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
@@ -1138,18 +1137,14 @@ class ImportTransXChangeTest(TestCase):
         with TemporaryDirectory() as directory, patch("boto3.client") as mock_client:
             zipfile_path = Path(directory) / "NCSD.zip"
             with zipfile.ZipFile(zipfile_path, "a") as open_zipfile:
-                write_to_zipfile = partial(self.write_file_to_zipfile, open_zipfile)
-                write_to_zipfile("IncludedServices.csv")
-                path = Path("NCSD_TXC")
-                open_zipfile.mkdir("NCSD_TXC")
-                filename_1 = "Megabus_Megabus14032016 163144_MEGA_M11A.xml"
-                filename_2 = "Megabus_Megabus14032016 163144_MEGA_M12.xml"
-                write_to_zipfile(path / filename_1)
-                write_to_zipfile(path / filename_2)
-                path_2 = Path("NCSD_TXC_2_4")
-                open_zipfile.mkdir("NCSD_TXC_2_4")
-                write_to_zipfile(path / filename_1, path_2 / filename_1)
-                write_to_zipfile(path / filename_2, path_2 / filename_2)
+                self.write_file_to_zipfile(
+                    open_zipfile,
+                    Path("NCSD_TXC") / "Megabus_Megabus14032016 163144_MEGA_M11A.xml",
+                )
+                self.write_file_to_zipfile(
+                    open_zipfile,
+                    Path("NCSD_TXC") / "Megabus_Megabus14032016 163144_MEGA_M12.xml",
+                )
 
             with self.assertLogs(
                 "bustimes.management.commands.import_transxchange", "WARNING"

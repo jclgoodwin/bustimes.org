@@ -4,7 +4,6 @@ Usage:
     ./manage.py import_transxchange EA.zip [EM.zip etc]
 """
 
-import csv
 import datetime
 import logging
 import os
@@ -402,7 +401,6 @@ class Command(BaseCommand):
         parser.add_argument("files", nargs="*", type=str)
 
     def set_up(self):
-        self.service_descriptions = {}
         self.calendar_cache = {}
         self.missing_operators = []
         self.notes = {}
@@ -523,27 +521,6 @@ class Command(BaseCommand):
 
         return {key: value for key, value in operators.items() if value}
 
-    def set_service_descriptions(self, archive):
-        """
-        If there's a file named 'IncludedServices.csv', as there is in 'NCSD.zip', use it
-        """
-        if "IncludedServices.csv" in archive.namelist():
-            with archive.open("IncludedServices.csv") as csv_file:
-                reader = csv.DictReader(line.decode("utf-8") for line in csv_file)
-                # e.g. {'NATX323': 'Cardiff - Liverpool'}
-                for row in reader:
-                    key = f"{row['Operator']}{row['LineName']}{row['Dir']}"
-                    self.service_descriptions[key] = row["Description"]
-
-    def get_service_descriptions(self, filename):
-        parts = filename.split("_")
-        operator = parts[-2]
-        line_name = parts[-1][:-4]
-        key = f"{operator}{line_name}"
-        outbound = self.service_descriptions.get(f"{key}O", "")
-        inbound = self.service_descriptions.get(f"{key}I", "")
-        return outbound, inbound
-
     def mark_old_services_as_not_current(self):
         # delete old routes, if no longer in the dataset OR
         # all the service's routes' end dates are in the past
@@ -601,16 +578,7 @@ class Command(BaseCommand):
 
         try:
             with zipfile.ZipFile(archive_path) as archive:
-                self.set_service_descriptions(archive)
-
                 namelist = archive.namelist()
-
-                if "NCSD_TXC_2_4/" in namelist:
-                    namelist = [
-                        filename
-                        for filename in namelist
-                        if filename.startswith("NCSD_TXC_2_4/")
-                    ]
 
                 for filename in filenames or namelist:
                     if filename.startswith("__MACOSX"):
@@ -1332,14 +1300,6 @@ class Command(BaseCommand):
                 if in_desc:
                     if not service.description:
                         service.description = in_desc
-
-            if self.service_descriptions:  # NCSD
-                (
-                    outbound_description,
-                    inbound_description,
-                ) = self.get_service_descriptions(filename)
-                if outbound_description or inbound_description:
-                    service.description = outbound_description or inbound_description
 
             service.save()
 
