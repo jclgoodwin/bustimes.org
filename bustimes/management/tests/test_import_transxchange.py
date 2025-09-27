@@ -711,14 +711,17 @@ class ImportTransXChangeTest(TestCase):
         response = self.client.get(f"/sources/{service.source_id}")
         self.assertContains(response, "32-20-_-y10-1")
 
-        service.source.datetime = "2025-01-01 00:00:00Z"
-        service.source.save()
-
         # test route_xml
         with (
             TemporaryDirectory() as data_dir,
             override_settings(DATA_DIR=Path(data_dir)),
         ):
+            response = self.client.get(route.get_absolute_url())
+            self.assertEqual(response.status_code, 404)
+
+            service.source.datetime = "2025-01-01 00:00:00Z"
+            service.source.save()
+
             zipfile_path = Path(data_dir) / "TNDS" / "EA.zip"
 
             # instead of downloading from S3, make our own zipfile
@@ -728,9 +731,15 @@ class ImportTransXChangeTest(TestCase):
 
             with patch("boto3.client") as boto3_client:
                 boto3_client.return_value.download_file.side_effect = side_effect
-                response = self.client.get(route.get_absolute_url())
 
-            self.assertEqual(response.headers["content-type"], "text/plain")
+                response = self.client.get(route.get_absolute_url())
+                self.assertEqual(response.headers["content-type"], "text/plain")
+
+                response = self.client.get(f"/sources/{route.source_id}/routes/")
+                self.assertContains(response, route.code)
+
+                response = self.client.get(f"/sources/{route.source_id}/routes/404")
+                self.assertEqual(response.status_code, 404)
 
     def test_multiple_operators(self):
         """
