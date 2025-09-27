@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for vehicles/management/import_live_vehicles.py: 87%</title>
+    <title>Coverage for vehicles/management/import_live_vehicles.py: 89%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_58284776.png">
     <link rel="stylesheet" href="style_cb_6b508a39.css" type="text/css">
     <script src="coverage_html_cb_6fb7b396.js" defer></script>
@@ -12,7 +12,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>vehicles/management/import_live_vehicles.py</b>:
-            <span class="pc_cov">87%</span>
+            <span class="pc_cov">89%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -55,8 +55,8 @@
         </aside>
         <h2>
             <span class="text">308 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">268<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">40<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">274<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">34<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_47b23bc14ee40030_test_bod_avl_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.6">coverage.py v7.10.6</a>,
-            created at 2025-09-27 03:16 +0000
+            created at 2025-09-27 06:23 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -296,7 +296,7 @@
     <p class="run"><span class="n"><a id="t214" href="#t214">214</a></span><span class="t">            <span class="nam">location</span><span class="op">.</span><span class="nam">latlong</span> <span class="op">=</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t215" href="#t215">215</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t216" href="#t216">216</a></span><span class="t">        <span class="key">if</span> <span class="nam">location</span><span class="op">.</span><span class="nam">heading</span> <span class="op">==</span> <span class="op">-</span><span class="num">1</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t217" href="#t217">217</a></span><span class="t">            <span class="nam">location</span><span class="op">.</span><span class="nam">heading</span> <span class="op">=</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t217" href="#t217">217</a></span><span class="t">            <span class="nam">location</span><span class="op">.</span><span class="nam">heading</span> <span class="op">=</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t218" href="#t218">218</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t219" href="#t219">219</a></span><span class="t">        <span class="nam">location</span><span class="op">.</span><span class="nam">datetime</span> <span class="op">=</span> <span class="nam">datetime</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t220" href="#t220">220</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">location</span><span class="op">.</span><span class="nam">datetime</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -463,9 +463,9 @@
     <p class="pln"><span class="n"><a id="t381" href="#t381">381</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t382" href="#t382">382</a></span><span class="t">    <span class="key">def</span> <span class="nam">do_source</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t383" href="#t383">383</a></span><span class="t">        <span class="key">if</span> <span class="nam">self</span><span class="op">.</span><span class="nam">url</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t384" href="#t384">384</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">source</span><span class="op">,</span> <span class="nam">_</span> <span class="op">=</span> <span class="nam">DataSource</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">get_or_create</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t385" href="#t385">385</a></span><span class="t">                <span class="op">{</span><span class="str">"name"</span><span class="op">:</span> <span class="nam">self</span><span class="op">.</span><span class="nam">source_name</span><span class="op">}</span><span class="op">,</span> <span class="nam">url</span><span class="op">=</span><span class="nam">self</span><span class="op">.</span><span class="nam">url</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t386" href="#t386">386</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t384" href="#t384">384</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">source</span><span class="op">,</span> <span class="nam">_</span> <span class="op">=</span> <span class="nam">DataSource</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">get_or_create</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t385" href="#t385">385</a></span><span class="t">                <span class="op">{</span><span class="str">"name"</span><span class="op">:</span> <span class="nam">self</span><span class="op">.</span><span class="nam">source_name</span><span class="op">}</span><span class="op">,</span> <span class="nam">url</span><span class="op">=</span><span class="nam">self</span><span class="op">.</span><span class="nam">url</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t386" href="#t386">386</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t387" href="#t387">387</a></span><span class="t">        <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t388" href="#t388">388</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">source</span> <span class="op">=</span> <span class="nam">DataSource</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="nam">name</span><span class="op">=</span><span class="nam">self</span><span class="op">.</span><span class="nam">source_name</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t389" href="#t389">389</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">url</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">source</span><span class="op">.</span><span class="nam">url</span>&nbsp;</span><span class="r"></span></p>
@@ -596,7 +596,7 @@
     <p class="run run2"><span class="n"><a id="t514" href="#t514">514</a></span><span class="t">                        <span class="nam">changed_journey_identities</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t515" href="#t515">515</a></span><span class="t">                        <span class="nam">total_items</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t516" href="#t516">516</a></span><span class="t">                    <span class="op">)</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">get_changed_items</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t517" href="#t517">517</a></span><span class="t">                <span class="key">except</span> <span class="nam">requests</span><span class="op">.</span><span class="nam">exceptions</span><span class="op">.</span><span class="nam">RequestException</span> <span class="key">as</span> <span class="nam">e</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t517" href="#t517">517</a></span><span class="t">                <span class="key">except</span> <span class="nam">requests</span><span class="op">.</span><span class="nam">exceptions</span><span class="op">.</span><span class="nam">RequestException</span> <span class="key">as</span> <span class="nam">e</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t518" href="#t518">518</a></span><span class="t">                    <span class="nam">logger</span><span class="op">.</span><span class="nam">exception</span><span class="op">(</span><span class="nam">e</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t519" href="#t519">519</a></span><span class="t">                    <span class="key">return</span> <span class="num">120</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t520" href="#t520">520</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -641,9 +641,9 @@
     <p class="run"><span class="n"><a id="t559" href="#t559">559</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">immediate</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t560" href="#t560">560</a></span><span class="t">            <span class="nam">sleep</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">wait</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t561" href="#t561">561</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">do_source</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t562" href="#t562">562</a></span><span class="t">        <span class="key">while</span> <span class="key">True</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t563" href="#t563">563</a></span><span class="t">            <span class="nam">wait</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">update</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t564" href="#t564">564</a></span><span class="t">            <span class="nam">sleep</span><span class="op">(</span><span class="nam">wait</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t562" href="#t562">562</a></span><span class="t">        <span class="key">while</span> <span class="key">True</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t563" href="#t563">563</a></span><span class="t">            <span class="nam">wait</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">update</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t564" href="#t564">564</a></span><span class="t">            <span class="nam">sleep</span><span class="op">(</span><span class="nam">wait</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
 </main>
 <footer>
     <div class="content">
@@ -653,7 +653,7 @@
             <a class="nav" href="z_47b23bc14ee40030_test_bod_avl_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.6">coverage.py v7.10.6</a>,
-            created at 2025-09-27 03:16 +0000
+            created at 2025-09-27 06:23 +0000
         </p>
     </div>
 </footer>
