@@ -7,6 +7,7 @@ from urllib.parse import urlencode, urlparse
 
 import yaml
 from autoslug import AutoSlugField
+from botocore.exceptions import NoCredentialsError
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models import Extent
 from django.contrib.gis.geos import Polygon
@@ -324,6 +325,18 @@ class DataSource(models.Model):
         if not self.datetime or not when or self.datetime < when:
             return True
         return False
+
+    def get_s3_path(self):
+        return f"source/{self.id}/{self.datetime.isoformat()}"
+
+    def upload_to_s3_etc(self, path):
+        import boto3
+
+        client = boto3.client("s3", endpoint_url="https://ams3.digitaloceanspaces.com")
+        try:
+            client.upload_file(path, "bustimes-data", self.get_s3_path())
+        except NoCredentialsError:
+            pass
 
 
 class StopPoint(models.Model):

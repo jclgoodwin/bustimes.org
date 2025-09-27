@@ -604,13 +604,7 @@ class Command(BaseCommand):
 
         self.source.save(update_fields=["datetime"])
 
-        if basename in ("NCSD.zip", "L.zip"):
-            import boto3
-
-            client = boto3.client(
-                "s3", endpoint_url="https://ams3.digitaloceanspaces.com"
-            )
-            client.upload_file(archive_path, "bustimes-data", "TNDS/" + basename)
+        self.source.upload_to_s3_etc(archive_path)
 
     def finish_services(self):
         """update/create StopUsages, search_vector and geometry fields"""
