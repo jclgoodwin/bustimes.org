@@ -74,13 +74,16 @@ class Command(ImportLiveVehiclesCommand):
         if latest := vehicle.latest_journey:
             time_since_latest = self.get_datetime(item) - latest.datetime
 
-        if not item["service_name"]:
+        if not journey.route_name:
             if latest and time_since_latest < timedelta(hours=1):
                 return latest
         elif latest and latest.route_name == journey.route_name:
             if (
                 latest.code == journey.code
                 and latest.destination == journey.destination
+                or (latest.destination == "Not In Service" or latest.code == "")
+                and (journey.code == "" or journey.code == "Not In Service")
+                and time_since_latest < timedelta(hours=1)
             ):
                 return latest
             journey.service_id = latest.service_id
