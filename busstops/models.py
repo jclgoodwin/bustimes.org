@@ -989,12 +989,18 @@ class Service(models.Model):
             "trip__inbound", "trip__route__line_name", "stop_id"
         ).order_by()
         stop_times = stop_times.values(
-            "trip__route__line_name", "trip__inbound", "id", "stop_id", "timing_status"
+            "trip__route__line_name",
+            "trip__inbound",
+            "sequence",
+            "id",
+            "stop_id",
+            "timing_status",
         )
         stop_usages = [
             (
                 st["trip__route__line_name"],
                 st["trip__inbound"],
+                st["sequence"],
                 st["id"],
                 st["stop_id"],
                 st["timing_status"],
@@ -1012,9 +1018,14 @@ class Service(models.Model):
                 order=i,
                 line_name=line_name,
             )
-            for i, (line_name, inbound, _, stop_id, timing_status) in enumerate(
-                stop_usages
-            )
+            for i, (
+                line_name,
+                inbound,
+                sequence,
+                _,
+                stop_id,
+                timing_status,
+            ) in enumerate(stop_usages)
         ]
 
         existing_hash = [
