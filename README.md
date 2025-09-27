@@ -82,7 +82,7 @@
 | bustimes/management/tests/test\_import\_gtfs\_ember\_flixbus.py |       79 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_ni.py                   |       21 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_passenger.py            |       23 |        0 |    100% |           |
-| bustimes/management/tests/test\_import\_transxchange.py         |      740 |        0 |    100% |           |
+| bustimes/management/tests/test\_import\_transxchange.py         |      746 |        0 |    100% |           |
 | bustimes/management/tests/test\_tnds.py                         |       19 |        0 |    100% |           |
 | bustimes/models.py                                              |      342 |        8 |     98% |111, 375, 378, 407, 452-455, 487 |
 | bustimes/test\_get\_trip.py                                     |       31 |        0 |    100% |           |
@@ -90,7 +90,7 @@
 | bustimes/timetables.py                                          |      615 |       64 |     90% |39-52, 162-173, 204-205, 222-234, 286, 298-301, 313, 327-332, 346, 365, 440, 443, 459-462, 464, 491, 603-618, 704-705, 776, 922-924 |
 | bustimes/urls.py                                                |        3 |        0 |    100% |           |
 | bustimes/utils.py                                               |      178 |       10 |     94% |205, 231-233, 253-254, 323, 340-341, 389 |
-| bustimes/views.py                                               |      383 |       70 |     82% |186, 195-196, 199-200, 205-207, 216-218, 226-235, 237-245, 252, 274, 364, 373, 409, 415, 495, 585, 609-611, 628, 632-660, 688-699, 708-714 |
+| bustimes/views.py                                               |      383 |       66 |     83% |195-196, 199-200, 216-218, 226-235, 237-245, 252, 274, 364, 373, 409, 415, 495, 585, 609-611, 628, 632-660, 688-699, 708-714 |
 | departures/\_\_init\_\_.py                                      |        0 |        0 |    100% |           |
 | departures/avl.py                                               |       12 |        1 |     92% |        14 |
 | departures/gtfsr.py                                             |       91 |        2 |     98% |   91, 111 |
@@ -186,7 +186,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16888** | **1296** | **92%** |           |
+|                                                       **TOTAL** | **16894** | **1292** | **92%** |           |
 
 
 ## Setup coverage badge
