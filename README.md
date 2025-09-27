@@ -43,7 +43,7 @@
 | busstops/management/tests/test\_import\_nptg.py                 |       31 |        0 |    100% |           |
 | busstops/management/tests/test\_import\_operators.py            |       64 |        0 |    100% |           |
 | busstops/middleware.py                                          |       28 |        7 |     75% |     29-43 |
-| busstops/models.py                                              |      620 |       22 |     96% |276, 301, 327, 445, 482, 532, 558, 614, 648, 686, 838, 871, 942, 954-958, 1032, 1041, 1081, 1096, 1133 |
+| busstops/models.py                                              |      620 |       22 |     96% |276, 301, 327, 445, 482, 532, 558, 614, 648, 686, 838, 871, 942, 954-958, 1043, 1052, 1092, 1107, 1144 |
 | busstops/templatetags/\_\_init\_\_.py                           |        0 |        0 |    100% |           |
 | busstops/templatetags/date\_range.py                            |       25 |        3 |     88% | 9, 22, 28 |
 | busstops/templatetags/urlise.py                                 |       16 |        0 |    100% |           |
