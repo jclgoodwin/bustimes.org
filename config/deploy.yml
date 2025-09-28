@@ -13,9 +13,10 @@ servers:
       - 10.131.240.109
     env:
       clear:
-        WEB_CONCURRENCY: 16
+        WEB_CONCURRENCY: 13
         EMAIL_HOST: email-smtp.eu-west-1.amazonaws.com
         READ_ONLY_DB_HOST: private-jumbo-replica-do-user-1296332-0.d.db.ondigitalocean.com
+        ALLOWED_HOSTS: bustimes.org staging.bustimes.org cloud.digitalocean.com
       secret:
         - SECRET_KEY
         - DATABASE_URL
@@ -61,11 +62,8 @@ asset_path: /staticfiles
 
 proxy:
   app_port: 8000
-  healthcheck:
-    path: /version
   buffering:
     responses: false
   logging:
-    request_headers:
-      - Referer
+    request_headers: []
     response_headers: []
