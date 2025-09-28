@@ -8,7 +8,7 @@ MODES = {
     4: "ferry",
     6: "cable car",
     200: "coach",
-    76: "air",  # 1100
+    1100: "air",
 }
 
 

@@ -217,7 +217,7 @@ test = [
     { name = "django-slowtests", specifier = ">=1.1.1,<2" },
     { name = "fakeredis", specifier = ">=2.12.1,<3" },
     { name = "govuk-bank-holidays", specifier = ">=0.15" },
-    { name = "gtfs-kit", specifier = ">=10.0.0,<11" },
+    { name = "gtfs-kit", specifier = ">=11.0.0" },
     { name = "lxml", specifier = ">=6.0.0,<7" },
     { name = "pyrosm", specifier = ">=0.6.2" },
     { name = "requests-toolbelt", specifier = ">=1.0.0,<2" },
@@ -750,7 +750,7 @@ wheels = [
 
 [[package]]
 name = "gtfs-kit"
-version = "10.3.1"
+version = "11.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "folium" },
@@ -761,9 +761,9 @@ dependencies = [
     { name = "rtree" },
     { name = "shapely" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/15/b1/9998bc8eb172cea202644401527e0880f79cc617369c1d9cfdcf0a27f89d/gtfs_kit-10.3.1.tar.gz", hash = "sha256:8749351aebbb4e6550d724f1976ca5647bdcbc501e062f88ed1cdd341687ef6f", size = 1003168, upload-time = "2025-06-04T02:42:02.53Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d9/27/ccfff8193d74c73a78648bf13f8ef77ba00f34000dc6c137b815023c8f44/gtfs_kit-11.0.0.tar.gz", hash = "sha256:55dbc68741e320609197be2c10edbbee7caaf1c2781dada225ffd1fd9dc7ecda", size = 1044056, upload-time = "2025-09-25T21:37:38.237Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/bb/22/fec025b17927403978dc5e048c0055c5bd189d631d7edf3448d5aafdaf96/gtfs_kit-10.3.1-py3-none-any.whl", hash = "sha256:626d165b5c6dfcfa71932e7557bc0144919d10e2c0cef60d67f0135bff8afa38", size = 57629, upload-time = "2025-06-04T02:41:59.813Z" },
+    { url = "https://files.pythonhosted.org/packages/c9/b6/951d5a65cea5093a0b4daaab103847c07c4c208813e1bdd44433eb77098b/gtfs_kit-11.0.0-py3-none-any.whl", hash = "sha256:67cbe95613d640390edbffcc2f212e87b7ffb2eb730fff74be522f96119b7e78", size = 57243, upload-time = "2025-09-25T21:37:36.257Z" },
 ]
 
 [[package]]
