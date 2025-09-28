@@ -1000,7 +1000,7 @@ class Service(models.Model):
             (
                 st["trip__route__line_name"],
                 st["trip__inbound"],
-                st["sequence"],
+                st["sequence"] or 0,
                 st["id"],
                 st["stop_id"],
                 st["timing_status"],
