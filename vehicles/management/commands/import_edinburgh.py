@@ -77,7 +77,8 @@ class Command(ImportLiveVehiclesCommand):
         if not journey.route_name:
             if latest and time_since_latest < timedelta(hours=1):
                 return latest
-        elif latest and latest.route_name == journey.route_name:
+
+        if latest and latest.route_name == journey.route_name:
             if (
                 latest.code == journey.code
                 and latest.destination == journey.destination
@@ -86,20 +87,17 @@ class Command(ImportLiveVehiclesCommand):
                 and time_since_latest < timedelta(hours=1)
             ):
                 return latest
-            journey.service_id = latest.service_id
-        else:
-            try:
-                journey.service = self.services.get(
-                    line_name__iexact=journey.route_name
-                )
-                if journey.service:
-                    operator = journey.service.operator.first()
-                    if not vehicle.operator_id or vehicle.operator_id != operator.noc:
-                        vehicle.operator = operator
-                        vehicle.save(update_fields=["operator"])
 
-            except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
-                print(e, item["service_name"])
+        try:
+            journey.service = self.services.get(line_name__iexact=journey.route_name)
+            if journey.service:
+                operator = journey.service.operator.first()
+                if not vehicle.operator_id or vehicle.operator_id != operator.noc:
+                    vehicle.operator = operator
+                    vehicle.save(update_fields=["operator"])
+
+        except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
+            print(e, item["service_name"])
 
         if journey.service_id and journey.code:
             try:
