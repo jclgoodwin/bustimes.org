@@ -310,7 +310,7 @@ class TimetableDepartures(Departures):
         all_today_times = (
             self.get_times(yesterday_date, yesterday_time)
             .union(self.get_times(date, time_since_midnight, day_shift=1), all=True)
-            .order_by("order")
+            .order_by("order", "id")
         )
         today_times = list(all_today_times[: self.per_page])
 
@@ -319,11 +319,9 @@ class TimetableDepartures(Departures):
             today_times = list(late_times) + today_times
 
         # for eg Victoria Coach Station where there are so many departures at the same time:
-        if (
-            len(today_times) == self.per_page
-            and today_times[0].departure == today_times[-1].departure
-        ):
-            today_times += all_today_times[self.per_page : self.per_page + 8]
+        if len(today_times) == self.per_page:
+            while today_times[0].departure == today_times[-1].departure:
+                today_times += all_today_times[len(today_times) : len(today_times) + 8]
 
         times = [self.get_row(stop_time) for stop_time in today_times]
 
