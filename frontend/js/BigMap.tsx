@@ -573,7 +573,7 @@ export default function BigMap(
         case MapMode.Trip:
           if (props.vehicleId) {
             url = `?id=${props.vehicleId}`;
-          } else if (trip?.service) {
+          } else if (trip?.service?.id) {
             url = `?service=${trip.service.id}&trip=${trip.id}`;
           }
           break;
