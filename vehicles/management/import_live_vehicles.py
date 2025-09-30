@@ -69,6 +69,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
         super().__init__(*args, **kwargs)
         self.session = requests.Session()
         self.to_save = []
+        self.vehicles_by_identity = {}
         self.journeys_to_create = {}
         self.journeys_to_update = []
         self.vehicles_to_update = []
@@ -391,15 +392,24 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
     def handle_items(self, items, identities):
         with sentry_sdk.start_span(name="get vehicle codes"):
+            vehicles_by_identity = {
+                identity: self.vehicles_by_identity[identity]
+                for identity in identities
+                if identity in self.vehicles_by_identity
+            }
+
             vehicle_codes = (
                 VehicleCode.objects.filter(
-                    code__in=identities, scheme=self.vehicle_code_scheme
+                    code__in=[i for i in identities if i not in vehicles_by_identity],
+                    scheme=self.vehicle_code_scheme,
                 )
                 .select_related("vehicle__latest_journey__trip")
                 .defer("vehicle__latest_journey_data", "vehicle__data")
             )
 
-            vehicles_by_identity = {code.code: code.vehicle for code in vehicle_codes}
+            vehicles_by_identity.update(
+                {code.code: code.vehicle for code in vehicle_codes}
+            )
 
         vehicle_locations = redis_client.mget(
             [f"vehicle{vc.vehicle_id}" for vc in vehicle_codes]
@@ -463,6 +473,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         if new_vehicle_codes:
             VehicleCode.objects.bulk_create(new_vehicle_codes)
+            for code in new_vehicle_codes:
+                self.vehicles_by_identity[code.code] = code.vehicle
 
     def get_changed_items(self, items=None):
         changed_items = []

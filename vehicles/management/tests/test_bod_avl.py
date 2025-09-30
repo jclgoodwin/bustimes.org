@@ -289,13 +289,13 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             self.assertEqual(30, wait)
 
             items[0]["RecordedAtTime"] = "2020-10-30T05:09:00+00:00"
-            with self.assertNumQueries(1):
+            with self.assertNumQueries(2):
                 command.update()
 
             items[0]["RecordedAtTime"] = "2020-10-30T05:10:00+00:00"
             items[0]["OriginAimedDepartureTime"] = "2020-10-30T09:00:00+00:00"
-            with self.assertNumQueries(1):
-                wait = command.update()
+            with self.assertNumQueries(0):
+                command.update()
 
         journeys = VehicleJourney.objects.all()
 
