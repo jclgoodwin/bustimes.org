@@ -13,7 +13,7 @@ import zipfile
 from functools import cache
 
 from django.core.management.base import BaseCommand
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import Point, LineString
 from django.db import IntegrityError
 from django.db.models import Count, Exists, OuterRef, Q
 from django.db.models.functions import Now, Upper
@@ -263,6 +263,20 @@ def do_route_links(journeys, transxchange, stops, service):
                 start_point = Point(route_link.track[0], srid=route_link.track.srid)
                 end_point = Point(route_link.track[-1], srid=route_link.track.srid)
 
+                # Highland Council - eastings and northings divided by 100000
+                if 0 < start_point.x < 1 and 0 < start_point.y < 1:
+                    start_point = Point(
+                        start_point.x * 1000000, start_point.y * 1000000, srid=27700
+                    )
+
+                    end_point = Point(
+                        end_point.x * 1000000, end_point.y * 1000000, srid=27700
+                    )
+
+                    route_link.track = LineString(
+                        [(x * 1000000, y * 1000000) for (x, y) in route_link.track],
+                        srid=27700,
+                    )
                 if route_link_is_dodgy(start_point, from_stop, service.slug):
                     continue
 
