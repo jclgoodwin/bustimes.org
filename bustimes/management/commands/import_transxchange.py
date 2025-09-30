@@ -261,7 +261,6 @@ def do_route_links(journeys, transxchange, stops, service):
 
             if type(from_stop) is StopPoint and type(to_stop) is StopPoint:
                 start_point = Point(route_link.track[0], srid=route_link.track.srid)
-                end_point = Point(route_link.track[-1], srid=route_link.track.srid)
 
                 # Highland Council - eastings and northings divided by 100000
                 if 0 < start_point.x < 1 and 0 < start_point.y < 1:
@@ -269,16 +268,15 @@ def do_route_links(journeys, transxchange, stops, service):
                         start_point.x * 1000000, start_point.y * 1000000, srid=27700
                     )
 
-                    end_point = Point(
-                        end_point.x * 1000000, end_point.y * 1000000, srid=27700
-                    )
-
                     route_link.track = LineString(
                         [(x * 1000000, y * 1000000) for (x, y) in route_link.track],
                         srid=27700,
                     )
+
                 if route_link_is_dodgy(start_point, from_stop, service.slug):
                     continue
+
+                end_point = Point(route_link.track[-1], srid=route_link.track.srid)
 
                 if route_link_is_dodgy(end_point, to_stop, service.slug):
                     continue
