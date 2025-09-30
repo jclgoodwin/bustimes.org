@@ -7,7 +7,6 @@ from collections import Counter
 from math import ceil
 from urllib.parse import quote
 
-from autoslug import AutoSlugField
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.db.models import Q, UniqueConstraint
@@ -18,6 +17,7 @@ from django.utils.html import escape, format_html
 from simple_history.models import HistoricalRecords
 from webcolors import HTML5SimpleColor, html5_parse_legacy_color
 
+from busstops.fields import AutoSlugField
 from busstops.models import DataSource, Operator, Service
 from bustimes.utils import get_trip
 from .fields import ColourField, ColoursField, CSSField

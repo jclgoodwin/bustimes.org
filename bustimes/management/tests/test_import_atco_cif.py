@@ -51,7 +51,7 @@ class ImportAtcoCifTest(TestCase):
             with time_machine.travel("2019-10-09"):
                 with self.assertNumQueries(354):
                     call_command("import_atco_cif", zipfile_path)
-                with self.assertNumQueries(370):
+                with self.assertNumQueries(365):
                     call_command("import_atco_cif", zipfile_path)
 
         self.assertEqual(5, Route.objects.count())
