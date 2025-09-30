@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for busstops/management/commands/naptan_new.py: 93%</title>
+    <title>Coverage for busstops/management/commands/naptan_new.py: 94%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_58284776.png">
     <link rel="stylesheet" href="style_cb_6b508a39.css" type="text/css">
     <script src="coverage_html_cb_6fb7b396.js" defer></script>
@@ -12,7 +12,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>busstops/management/commands/naptan_new.py</b>:
-            <span class="pc_cov">93%</span>
+            <span class="pc_cov">94%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -54,9 +54,9 @@
             </div>
         </aside>
         <h2>
-            <span class="text">161 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">150<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">11<span class="text"> missing</span></button>
+            <span class="text">157 statements &nbsp;</span>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">147<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">10<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_ce3c907b0b556e9c_nptg_new_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.6">coverage.py v7.10.6</a>,
-            created at 2025-09-30 00:07 +0000
+            created at 2025-09-30 10:51 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -104,7 +104,7 @@
     <p class="run"><span class="n"><a id="t22" href="#t22">22</a></span><span class="t">    <span class="nam">lat</span> <span class="op">=</span> <span class="nam">element</span><span class="op">.</span><span class="nam">findtext</span><span class="op">(</span><span class="str">"Translation/Latitude"</span><span class="op">)</span> <span class="key">or</span> <span class="nam">element</span><span class="op">.</span><span class="nam">findtext</span><span class="op">(</span><span class="str">"Latitude"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t23" href="#t23">23</a></span><span class="t">    <span class="key">if</span> <span class="nam">lat</span> <span class="key">is</span> <span class="key">not</span> <span class="key">None</span> <span class="key">and</span> <span class="nam">lon</span> <span class="key">is</span> <span class="key">not</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t24" href="#t24">24</a></span><span class="t">        <span class="nam">point</span> <span class="op">=</span> <span class="nam">GEOSGeometry</span><span class="op">(</span><span class="fst">f"</span><span class="fst">POINT(</span><span class="op">{</span><span class="nam">lon</span><span class="op">}</span><span class="fst"> </span><span class="op">{</span><span class="nam">lat</span><span class="op">}</span><span class="fst">)</span><span class="fst">"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t25" href="#t25">25</a></span><span class="t">        <span class="key">if</span> <span class="nam">point</span><span class="op">.</span><span class="nam">x</span> <span class="key">or</span> <span class="nam">point</span><span class="op">.</span><span class="nam">y</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t25" href="#t25">25</a></span><span class="t">        <span class="key">if</span> <span class="op">(</span><span class="nam">point</span><span class="op">.</span><span class="nam">x</span> <span class="key">or</span> <span class="nam">point</span><span class="op">.</span><span class="nam">y</span><span class="op">)</span> <span class="key">and</span> <span class="op">(</span><span class="nam">point</span><span class="op">.</span><span class="nam">x</span> <span class="op">!=</span> <span class="op">-</span><span class="num">7.5571602</span> <span class="key">or</span> <span class="nam">point</span><span class="op">.</span><span class="nam">y</span> <span class="op">!=</span> <span class="num">49.7668072</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t26" href="#t26">26</a></span><span class="t">            <span class="key">return</span> <span class="nam">point</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t27" href="#t27">27</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t28" href="#t28">28</a></span><span class="t">    <span class="nam">easting</span> <span class="op">=</span> <span class="nam">element</span><span class="op">.</span><span class="nam">findtext</span><span class="op">(</span><span class="str">"Easting"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -249,15 +249,15 @@
     <p class="mis show_mis"><span class="n"><a id="t167" href="#t167">167</a></span><span class="t">                        <span class="key">if</span> <span class="nam">stop</span><span class="op">.</span><span class="nam">latlong</span><span class="op">.</span><span class="nam">distance</span><span class="op">(</span><span class="nam">existing</span><span class="op">.</span><span class="nam">latlong</span><span class="op">)</span> <span class="op">&lt;</span> <span class="num">0.00005</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t168" href="#t168">168</a></span><span class="t">                            <span class="key">pass</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t169" href="#t169">169</a></span><span class="t">                        <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t170" href="#t170">170</a></span><span class="t">                            <span class="nam">logger</span><span class="op">.</span><span class="nam">info</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t171" href="#t171">171</a></span><span class="t">                                <span class="fst">f"</span><span class="op">{</span><span class="nam">atco_code</span><span class="op">}</span><span class="fst">: </span><span class="op">{</span><span class="nam">existing</span><span class="op">.</span><span class="nam">latlong</span><span class="op">}</span><span class="fst"> &#8594; </span><span class="op">{</span><span class="nam">stop</span><span class="op">.</span><span class="nam">latlong</span><span class="op">}</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t172" href="#t172">172</a></span><span class="t">                            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t170" href="#t170">170</a></span><span class="t">                            <span class="com"># logger.info(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t171" href="#t171">171</a></span><span class="t">                            <span class="com">#     f"{atco_code}: {existing.latlong} &#8594; {stop.latlong}"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t172" href="#t172">172</a></span><span class="t">                            <span class="com"># )</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t173" href="#t173">173</a></span><span class="t">                            <span class="nam">self</span><span class="op">.</span><span class="nam">stops_to_update</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">stop</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t174" href="#t174">174</a></span><span class="t">                            <span class="key">break</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t175" href="#t175">175</a></span><span class="t">                    <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t176" href="#t176">176</a></span><span class="t">                        <span class="nam">logger</span><span class="op">.</span><span class="nam">info</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t177" href="#t177">177</a></span><span class="t">                            <span class="fst">f"</span><span class="op">{</span><span class="nam">atco_code</span><span class="op">}</span><span class="fst"> </span><span class="op">{</span><span class="nam">key</span><span class="op">}</span><span class="fst">: </span><span class="op">{</span><span class="nam">getattr</span><span class="op">(</span><span class="nam">existing</span><span class="op">,</span> <span class="nam">key</span><span class="op">)</span><span class="op">!</span><span class="nam">r</span><span class="op">}</span><span class="fst"> &#8594; </span><span class="op">{</span><span class="nam">getattr</span><span class="op">(</span><span class="nam">stop</span><span class="op">,</span> <span class="nam">key</span><span class="op">)</span><span class="op">!</span><span class="nam">r</span><span class="op">}</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t178" href="#t178">178</a></span><span class="t">                        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t176" href="#t176">176</a></span><span class="t">                        <span class="com"># logger.info(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t177" href="#t177">177</a></span><span class="t">                        <span class="com">#     f"{atco_code} {key}: {getattr(existing, key)!r} &#8594; {getattr(stop, key)!r}"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t178" href="#t178">178</a></span><span class="t">                        <span class="com"># )</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t179" href="#t179">179</a></span><span class="t">                        <span class="nam">self</span><span class="op">.</span><span class="nam">stops_to_update</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">stop</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t180" href="#t180">180</a></span><span class="t">                        <span class="key">break</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t181" href="#t181">181</a></span><span class="t">        <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -319,9 +319,9 @@
     <p class="run run2"><span class="n"><a id="t237" href="#t237">237</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t238" href="#t238">238</a></span><span class="t">        <span class="nam">StopArea</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">bulk_create</span><span class="op">(</span><span class="nam">stop_areas_to_create</span><span class="op">,</span> <span class="nam">batch_size</span><span class="op">=</span><span class="num">1000</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t239" href="#t239">239</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t240" href="#t240">240</a></span><span class="t">        <span class="nam">logger</span><span class="op">.</span><span class="nam">info</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t241" href="#t241">241</a></span><span class="t">            <span class="fst">f"</span><span class="op">{</span><span class="nam">len</span><span class="op">(</span><span class="nam">stop_areas_to_update</span><span class="op">)</span><span class="op">=</span><span class="op">}</span><span class="fst"> </span><span class="op">{</span><span class="nam">len</span><span class="op">(</span><span class="nam">stop_areas_to_create</span><span class="op">)</span><span class="op">=</span><span class="op">}</span><span class="fst"> </span><span class="op">{</span><span class="nam">len</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">stops_to_create</span><span class="op">)</span><span class="op">=</span><span class="op">}</span><span class="fst"> </span><span class="op">{</span><span class="nam">len</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">stops_to_update</span><span class="op">)</span><span class="op">=</span><span class="op">}</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t242" href="#t242">242</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t240" href="#t240">240</a></span><span class="t">        <span class="com"># logger.info(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t241" href="#t241">241</a></span><span class="t">        <span class="com">#     f"{len(stop_areas_to_update)=} {len(stop_areas_to_create)=} {len(self.stops_to_create)=} {len(self.stops_to_update)=}"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t242" href="#t242">242</a></span><span class="t">        <span class="com"># )</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t243" href="#t243">243</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t244" href="#t244">244</a></span><span class="t">        <span class="com"># create new stops</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t245" href="#t245">245</a></span><span class="t">        <span class="nam">StopPoint</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">bulk_create</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">stops_to_create</span><span class="op">,</span> <span class="nam">batch_size</span><span class="op">=</span><span class="num">1000</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -384,7 +384,7 @@
     <p class="run"><span class="n"><a id="t302" href="#t302">302</a></span><span class="t">            <span class="key">if</span> <span class="nam">element</span><span class="op">.</span><span class="nam">tag</span> <span class="op">==</span> <span class="str">"StopPoint"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t303" href="#t303">303</a></span><span class="t">                <span class="nam">atco_code</span> <span class="op">=</span> <span class="nam">element</span><span class="op">.</span><span class="nam">findtext</span><span class="op">(</span><span class="str">"AtcoCode"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t304" href="#t304">304</a></span><span class="t">                <span class="key">if</span> <span class="nam">atco_code</span><span class="op">[</span><span class="op">:</span><span class="num">3</span><span class="op">]</span> <span class="op">!=</span> <span class="nam">atco_code_prefix</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t305" href="#t305">305</a></span><span class="t">                    <span class="nam">logger</span><span class="op">.</span><span class="nam">info</span><span class="op">(</span><span class="fst">f"</span><span class="op">{</span><span class="nam">atco_code_prefix</span><span class="op">=</span><span class="op">}</span><span class="fst">"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t305" href="#t305">305</a></span><span class="t">                    <span class="com"># logger.info(f"{atco_code_prefix=}")</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t306" href="#t306">306</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t307" href="#t307">307</a></span><span class="t">                    <span class="key">if</span> <span class="nam">atco_code_prefix</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t308" href="#t308">308</a></span><span class="t">                        <span class="nam">self</span><span class="op">.</span><span class="nam">update_and_create</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -419,7 +419,7 @@
             <a class="nav" href="z_ce3c907b0b556e9c_nptg_new_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.6">coverage.py v7.10.6</a>,
-            created at 2025-09-30 00:07 +0000
+            created at 2025-09-30 10:51 +0000
         </p>
     </div>
 </footer>

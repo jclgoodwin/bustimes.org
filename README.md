@@ -32,7 +32,7 @@
 | busstops/management/\_\_init\_\_.py                             |        0 |        0 |    100% |           |
 | busstops/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
 | busstops/management/commands/import\_noc.py                     |      125 |        3 |     98% |155, 179, 238 |
-| busstops/management/commands/naptan\_new.py                     |      161 |       11 |     93% |39, 41, 165-174, 217, 266 |
+| busstops/management/commands/naptan\_new.py                     |      157 |       10 |     94% |39, 41, 165-174, 217, 266 |
 | busstops/management/commands/nptg\_new.py                       |       94 |        7 |     93% |148, 158, 163, 169-170, 172-173 |
 | busstops/management/commands/osm\_iom\_stops.py                 |       34 |       34 |      0% |      1-63 |
 | busstops/management/commands/update\_search\_indexes.py         |       11 |       11 |      0% |      1-19 |
@@ -71,7 +71,7 @@
 | bustimes/management/commands/import\_ni.py                      |       31 |        0 |    100% |           |
 | bustimes/management/commands/import\_passenger.py               |      116 |       35 |     70% |51-54, 56-58, 64, 103, 113-117, 143-180 |
 | bustimes/management/commands/import\_tnds.py                    |       43 |        0 |    100% |           |
-| bustimes/management/commands/import\_transxchange.py            |      798 |       85 |     89% |85, 100, 146-147, 229-230, 237, 241, 268-276, 322-323, 333, 341-342, 397, 401, 403, 503, 565-579, 599, 602, 714, 756-757, 794-795, 797-798, 842, 853, 891, 917, 921-923, 935-936, 979-983, 1024, 1034-1039, 1053, 1077, 1085, 1087-1090, 1111, 1138, 1177, 1208-1209, 1236-1238, 1245, 1250-1251, 1267, 1272, 1285, 1310, 1336-1337, 1373-1374, 1425 |
+| bustimes/management/commands/import\_transxchange.py            |      797 |       84 |     89% |85, 100, 146-147, 229-230, 237, 241, 267-271, 320-321, 331, 339-340, 395, 399, 401, 501, 563-577, 597, 600, 712, 754-755, 792-793, 795-796, 840, 851, 889, 915, 919-921, 933-934, 977-981, 1022, 1032-1037, 1051, 1075, 1083, 1085-1088, 1109, 1136, 1175, 1206-1207, 1234-1236, 1243, 1248-1249, 1265, 1270, 1283, 1308, 1334-1335, 1371-1372, 1423 |
 | bustimes/management/commands/poo.py                             |       33 |       33 |      0% |      1-63 |
 | bustimes/management/commands/suggest\_bod.py                    |       36 |       36 |      0% |      1-51 |
 | bustimes/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
@@ -186,7 +186,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16908** | **1295** | **92%** |           |
+|                                                       **TOTAL** | **16903** | **1293** | **92%** |           |
 
 
 ## Setup coverage badge
