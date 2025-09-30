@@ -49,12 +49,13 @@ jobs:
 
     services:
       postgres:
-        image: postgis/postgis
+        image: postgis/postgis:18-3.6-alpine
+
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_INITDB_ARGS: "--no-sync"
         options: >-
-          --mount type=tmpfs,destination=/var/lib/postgresql/data
+          --mount type=tmpfs,destination=/var/lib/postgresql
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
