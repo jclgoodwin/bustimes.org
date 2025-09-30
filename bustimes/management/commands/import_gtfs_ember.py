@@ -40,7 +40,7 @@ class Command(BaseCommand):
         path = settings.DATA_DIR / Path("ember_gtfs.zip")
 
         source = DataSource.objects.get(name="Ember")
-        source.url = "https://api.ember.to/v1/gtfs/static/"
+        source.url = "https://cdn.ember.to/gtfs/static/Ember_GTFS_latest.zip"
 
         modified, last_modified = download_if_modified(path, source)
         assert modified
