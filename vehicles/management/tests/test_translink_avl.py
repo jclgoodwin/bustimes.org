@@ -33,7 +33,7 @@ class TranslinkAVLTest(TestCase):
             ),
             time_machine.travel("2025-09-24T06:30:00+00:00", tick=False),
         ):
-            with self.assertNumQueries(88), self.assertRaises(Exception):
+            with self.assertNumQueries(81), self.assertRaises(Exception):
                 call_command("import_translink_avl", "--immediate")
 
             cassette.rewind()

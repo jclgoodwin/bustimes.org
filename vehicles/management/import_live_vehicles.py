@@ -410,6 +410,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
             if item
         }
 
+        new_vehicle_codes = []
+
         i = 1
         for item, vehicle_identity in zip(items, identities):
             journey_identity = self.journeys_ids[vehicle_identity]
@@ -420,10 +422,12 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 vehicle, created = self.get_vehicle(item)
                 # print(vehicle_identity, vehicle, created)
                 if vehicle:
-                    VehicleCode.objects.create(
-                        code=vehicle_identity,
-                        scheme=self.vehicle_code_scheme,
-                        vehicle=vehicle,
+                    new_vehicle_codes.append(
+                        VehicleCode(
+                            code=vehicle_identity,
+                            scheme=self.vehicle_code_scheme,
+                            vehicle=vehicle,
+                        )
                     )
 
             keep_journey = False
@@ -456,6 +460,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
             i += 1
 
         self.save()
+
+        if new_vehicle_codes:
+            VehicleCode.objects.bulk_create(new_vehicle_codes)
 
     def get_changed_items(self, items=None):
         changed_items = []
