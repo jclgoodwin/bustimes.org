@@ -22,7 +22,7 @@ def get_point(element):
     lat = element.findtext("Translation/Latitude") or element.findtext("Latitude")
     if lat is not None and lon is not None:
         point = GEOSGeometry(f"POINT({lon} {lat})")
-        if point.x or point.y:
+        if (point.x or point.y) and (point.x != -7.5571602 or point.y != 49.7668072):
             return point
 
     easting = element.findtext("Easting")
@@ -167,15 +167,15 @@ class Command(BaseCommand):
                         if stop.latlong.distance(existing.latlong) < 0.00005:
                             pass
                         else:
-                            logger.info(
-                                f"{atco_code}: {existing.latlong} → {stop.latlong}"
-                            )
+                            # logger.info(
+                            #     f"{atco_code}: {existing.latlong} → {stop.latlong}"
+                            # )
                             self.stops_to_update.append(stop)
                             break
                     else:
-                        logger.info(
-                            f"{atco_code} {key}: {getattr(existing, key)!r} → {getattr(stop, key)!r}"
-                        )
+                        # logger.info(
+                        #     f"{atco_code} {key}: {getattr(existing, key)!r} → {getattr(stop, key)!r}"
+                        # )
                         self.stops_to_update.append(stop)
                         break
         else:
@@ -237,9 +237,9 @@ class Command(BaseCommand):
         )
         StopArea.objects.bulk_create(stop_areas_to_create, batch_size=1000)
 
-        logger.info(
-            f"{len(stop_areas_to_update)=} {len(stop_areas_to_create)=} {len(self.stops_to_create)=} {len(self.stops_to_update)=}"
-        )
+        # logger.info(
+        #     f"{len(stop_areas_to_update)=} {len(stop_areas_to_create)=} {len(self.stops_to_create)=} {len(self.stops_to_update)=}"
+        # )
 
         # create new stops
         StopPoint.objects.bulk_create(self.stops_to_create, batch_size=1000)
@@ -302,7 +302,7 @@ class Command(BaseCommand):
             if element.tag == "StopPoint":
                 atco_code = element.findtext("AtcoCode")
                 if atco_code[:3] != atco_code_prefix:
-                    logger.info(f"{atco_code_prefix=}")
+                    # logger.info(f"{atco_code_prefix=}")
 
                     if atco_code_prefix:
                         self.update_and_create()
