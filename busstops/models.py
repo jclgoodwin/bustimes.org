@@ -6,7 +6,6 @@ import re
 from urllib.parse import urlencode, urlparse
 
 import yaml
-from autoslug import AutoSlugField
 from botocore.exceptions import NoCredentialsError
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models import Extent
@@ -25,6 +24,7 @@ from django.utils.text import slugify
 from bustimes.models import Route, TimetableDataSource, StopTime
 from bustimes.timetables import Timetable
 from bustimes.utils import get_descriptions
+from .fields import AutoSlugField
 
 TIMING_STATUS_CHOICES = (
     ("PPT", "Principal point"),
@@ -134,12 +134,7 @@ class Locality(SearchMixin, models.Model):
     name = models.CharField(max_length=48)
     short_name = models.CharField(max_length=48, blank=True)
     qualifier_name = models.CharField(max_length=48, blank=True)
-    slug = AutoSlugField(
-        always_update=False,
-        populate_from="get_qualified_name",
-        editable=True,
-        unique=True,
-    )
+    slug = AutoSlugField(populate_from="get_qualified_name", editable=True, unique=True)
     admin_area = models.ForeignKey(AdminArea, models.CASCADE)
     district = models.ForeignKey(District, models.SET_NULL, null=True, blank=True)
     parent = models.ForeignKey("self", models.SET_NULL, null=True, blank=True)
@@ -575,7 +570,7 @@ class Operator(SearchMixin, models.Model):
     name = models.CharField(max_length=100, db_index=True)
     qualifier_name = models.CharField(max_length=100, blank=True)
     aka = models.CharField(max_length=100, blank=True)
-    slug = AutoSlugField(populate_from=str, unique=True, editable=True)
+    slug = AutoSlugField(populate_from=str, editable=True, unique=True)
     vehicle_mode = models.CharField(max_length=48, blank=True)
     parent = models.CharField(max_length=48, blank=True, db_index=True)
     group = models.ForeignKey(OperatorGroup, models.SET_NULL, null=True, blank=True)
