@@ -410,6 +410,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             vehicles_by_identity.update(
                 {code.code: code.vehicle for code in vehicle_codes}
             )
+            self.vehicles_by_identity.update(vehicles_by_identity)
 
         vehicle_locations = redis_client.mget(
             [f"vehicle{vc.vehicle_id}" for vc in vehicle_codes]
