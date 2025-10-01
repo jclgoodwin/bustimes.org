@@ -6,7 +6,7 @@
       "@parcel/transformer-react-refresh-wrap"
     ],
     "*.json": [
-      "@parcel/transformer-raw",
+      "./frontend/js/MinifyJsonTransformer"
     ]
   }
 }
