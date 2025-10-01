@@ -1,9 +1,7 @@
 import logging
 from functools import cache
 from itertools import pairwise
-from datetime import datetime, timezone
 from pathlib import Path
-from zipfile import ZipFile
 import geopandas as gpd
 
 import gtfs_kit
@@ -30,11 +28,6 @@ def get_note(note_code, note_text):
     return Note.objects.get_or_create(code=note_code or "", text=note_text[:255])[0]
 
 
-def get_last_modified(path):
-    info = ZipFile(path).infolist()
-    return datetime(*info[0].date_time, tzinfo=timezone.utc)
-
-
 class Command(BaseCommand):
     def handle(self, *args, **options):
         path = settings.DATA_DIR / Path("ember_gtfs.zip")
@@ -43,11 +36,7 @@ class Command(BaseCommand):
         source.url = "https://cdn.ember.to/gtfs/static/Ember_GTFS_latest.zip"
 
         modified, last_modified = download_if_modified(path, source)
-        assert modified
-
-        # there's no last-modified header so use the contents of the zipfile
-        if not last_modified:
-            last_modified = get_last_modified(path)
+        assert last_modified
 
         if source.datetime == last_modified:
             return  # no new data to import
