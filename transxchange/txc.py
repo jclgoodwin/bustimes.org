@@ -126,6 +126,10 @@ class JourneyPattern:
                 self.operating_profile, serviced_organisations
             )
 
+        self.block = element.find("Operational/Block")
+        if self.block is not None:
+            self.block = Block(self.block)
+
     def is_inbound(self):
         return self.direction in ("inbound", "anticlockwise")
 

@@ -865,6 +865,12 @@ class Command(BaseCommand):
 
             if journey.block and journey.block.code:
                 trip.block = journey.block.code
+            elif (
+                journey.journey_pattern
+                and journey.journey_pattern.block
+                and journey.journey_pattern.block.code
+            ):
+                trip.block = journey.journey_pattern.block.code
 
             if journey.vehicle_type and journey.vehicle_type.code:
                 if journey.vehicle_type.code not in self.vehicle_types:
