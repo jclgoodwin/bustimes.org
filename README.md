@@ -139,13 +139,12 @@
 | vehicles/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
 | vehicles/management/commands/compute\_blocks.py                 |       27 |       27 |      0% |      1-47 |
 | vehicles/management/commands/import\_bod\_avl.py                |      403 |       57 |     86% |51, 126, 142, 152-153, 196-199, 202-205, 248, 264, 279-280, 302-320, 371, 373, 379, 410, 416, 431-432, 473-486, 514, 521-522, 537, 566, 600, 674-675, 699, 711, 715 |
-| vehicles/management/commands/import\_bushub.py                  |       83 |       18 |     78% |16-17, 21-22, 25-26, 30, 34, 42, 53, 56, 72-73, 82, 92, 111, 119, 145 |
+| vehicles/management/commands/import\_bushub.py                  |       87 |       18 |     79% |23-24, 28-29, 32-33, 37, 41, 49, 60, 63, 79-80, 89, 99, 118, 126, 152 |
 | vehicles/management/commands/import\_edinburgh.py               |       63 |        4 |     94% |44, 72, 78-79 |
 | vehicles/management/commands/import\_first.py                   |      122 |       21 |     83% |28, 32, 52, 54, 75-76, 82, 98-99, 108, 130-142, 147, 206-207, 209 |
 | vehicles/management/commands/import\_gtfsr\_ember.py            |       44 |        1 |     98% |        53 |
 | vehicles/management/commands/import\_gtfsr\_ie.py               |       96 |        4 |     96% |94, 140, 149, 156 |
 | vehicles/management/commands/import\_live\_jersey.py            |       44 |        3 |     93% |27, 31, 39 |
-| vehicles/management/commands/import\_nx.py                      |      146 |       29 |     80% |92, 109-111, 113-114, 117-118, 131, 139-146, 150-153, 167-170, 173, 185-186, 196, 207 |
 | vehicles/management/commands/import\_polar.py                   |       84 |       28 |     67% |13-14, 25, 29, 33, 41, 44, 49-55, 61-63, 67, 77-78, 81, 95-98, 101, 114, 121 |
 | vehicles/management/commands/import\_stagecoach\_avl.py         |       72 |        5 |     93% |123, 133, 138-139, 171 |
 | vehicles/management/commands/import\_translink\_avl.py          |       58 |        7 |     88% |14, 68-71, 105-106 |
@@ -160,7 +159,6 @@
 | vehicles/management/tests/test\_edinburgh.py                    |       49 |        0 |    100% |           |
 | vehicles/management/tests/test\_first.py                        |       33 |        0 |    100% |           |
 | vehicles/management/tests/test\_import\_live\_jersey.py         |       31 |        0 |    100% |           |
-| vehicles/management/tests/test\_import\_nx.py                   |       43 |        0 |    100% |           |
 | vehicles/management/tests/test\_newport.py                      |       23 |        0 |    100% |           |
 | vehicles/management/tests/test\_polar.py                        |       33 |        0 |    100% |           |
 | vehicles/management/tests/test\_signalr.py                      |       28 |        0 |    100% |           |
@@ -187,7 +185,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16907** | **1292** | **92%** |           |
+|                                                       **TOTAL** | **16722** | **1263** | **92%** |           |
 
 
 ## Setup coverage badge
