@@ -208,24 +208,23 @@ Disallow: /sources
 Disallow: /*/debug
 Disallow: /*/edit
 
-User-Agent: ImagesiftBot
-Disallow: /
-
-User-agent: Bytespider
-Disallow: /
-
+User-agent: ImagesiftBot
+User-agent: AdsBot-Google
 User-agent: ClaudeBot
-Disallow: /
-
 User-agent: GPTBot
 Disallow: /
+
+User-agent: Mediapartners-Google
+User-agent: Verity
+User-agent: ias_crawler
+Disallow:
+
+
 
 Sitemap: https://bustimes.org/sitemap.xml
 """
     else:  # staging site/other
         content = """User-agent: Mediapartners-Google
-Disallow:
-
 User-agent: AdsBot-Google
 Disallow:
 
