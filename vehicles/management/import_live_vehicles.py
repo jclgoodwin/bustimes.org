@@ -448,11 +448,23 @@ class ImportLiveVehiclesCommand(BaseCommand):
                     keep_journey = True  # can dumbly keep same latest_journey
 
             if vehicle:
+                latest_location = vehicle_locations.get(vehicle.id, False)
+                if keep_journey:
+                    if (
+                        latest_location
+                        and latest_location["journey_id"] == vehicle.latest_journey_id
+                    ):
+                        pass
+                    else:
+                        # another source has updated vehicle.latest_journey_id, perhaps
+                        keep_journey = False
+                        del self.vehicles_by_identity[vehicle_identity]
+
                 result = self.handle_item(
                     item,
                     self.source.datetime,
                     vehicle=vehicle,
-                    latest=vehicle_locations.get(vehicle.id, False),
+                    latest=latest_location,
                     keep_journey=keep_journey,
                 )
 
