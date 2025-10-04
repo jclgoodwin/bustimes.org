@@ -395,6 +395,7 @@ class ViewsTests(TestCase):
 
     def test_service(self):
         response = self.client.get("/services/45c-holt-norwich")
+
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "ouibus")
         self.assertContains(response, ">@dril<")
@@ -404,6 +405,12 @@ class ViewsTests(TestCase):
         self.assertContains(response, "euros")
         self.assertContains(response, "Oyster card")
         self.assertContains(response, '"http://example.com"')
+
+        self.assertFalse(response.streaming)
+
+        with override_settings(TEST=False):
+            response = self.client.get("/services/45c-holt-norwich")
+            self.assertTrue(response.streaming)
 
     def test_national_express_service(self):
         self.chariots.name = "National Express"
