@@ -152,8 +152,14 @@ def get_calendars(when: date | datetime, calendar_ids=None, scotland=None):
 
 
 def get_other_trips_in_block(trip, date):
+    if not trip.route_id:
+        return Trip.objects.none()
+
     trips = Trip.objects.filter(
-        block=trip.block, route__source=trip.route.source_id, operator=trip.operator_id
+        block=trip.block,
+        route__source=trip.route.source_id,
+        route__version=trip.route.version_id,
+        operator=trip.operator_id,
     )
     if trip.route.service_id:
         trips = trips.filter(route__service__isnull=False)
