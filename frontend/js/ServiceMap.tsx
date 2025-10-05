@@ -182,13 +182,13 @@ export default function ServiceMap({ serviceId, buttonText }: ServiceMapProps) {
     };
   }, [isOpen, selectedServices]);
 
-  const count = vehicles?.length;
-
-  if (count) {
+  if (vehicles) {
+    buttonText = "Map";
+    const count = vehicles.length;
     if (count === 1) {
-      buttonText = `Map (tracking ${count} bus)`;
-    } else {
-      buttonText = `Map (tracking ${count} buses)`;
+      buttonText += ` (tracking ${count} bus)`;
+    } else if (count) {
+      buttonText += ` (tracking ${count} buses)`;
     }
   }
 
