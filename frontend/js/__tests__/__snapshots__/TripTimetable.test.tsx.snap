@@ -1,155 +1,36 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`shows delay 1`] = `
-<table>
-  <thead>
-    <tr>
-      <th
-        className="stop-name"
-      />
-      <th>
-        Sched­uled
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr
-      onMouseEnter={[Function]}
-    >
-      <td
-        className="stop-name"
-      >
-        <a
-          href="/stops/2900C0305"
-        >
-          Harford Park & Ride
-        </a>
-      </td>
-      <td>
-        10:05
-      </td>
-    </tr>
-    <tr
-      onMouseEnter={[Function]}
-    >
-      <td
-        className="stop-name"
-      >
-        <a
-          href="/stops/2900N1237"
-        >
-          County Hall Bus Shelter (A)
-        </a>
-      </td>
-      <td>
-        10:13
-      </td>
-    </tr>
-    <tr
-      onMouseEnter={[Function]}
-    >
-      <td
-        className="stop-name"
-        rowSpan={2}
-      >
-        <a
-          href="/stops/2900N12909"
-        >
-          Norwich Bus Station (F)
-        </a>
-      </td>
-      <td>
-        10:18
-      </td>
-    </tr>
-    <tr>
-      <td>
-        10:20
-      </td>
-    </tr>
-    <tr
-      className="minor"
-      onMouseEnter={[Function]}
-    >
-      <td
-        className="stop-name"
-      >
-        <a
-          href="/stops/2900N12245"
-        >
-          Norwich Tombland (CM)
-        </a>
-      </td>
-      <td>
-        10:24
-      </td>
-    </tr>
-    <tr
-      onMouseEnter={[Function]}
-    >
-      <td
-        className="stop-name"
-      >
-        <a
-          href="/stops/2900N12233"
-        >
-          Norwich Anglia Square (B)
-        </a>
-      </td>
-      <td>
-        10:27
-      </td>
-    </tr>
-    <tr
-      onMouseEnter={[Function]}
-    >
-      <td
-        className="stop-name"
-      >
-        <a
-          href="/stops/2900S32517"
-        >
-          Sprowston Park and Ride
-        </a>
-      </td>
-      <td>
-        10:40
-      </td>
-    </tr>
-  </tbody>
-</table>
-`;
-
-exports[`shows delay 2`] = `
-[
-  <label>
-    <input
-      checked={false}
-      onChange={[Function]}
-      type="checkbox"
-    />
-     Show previous stops
-  </label>,
+exports[`renders trip timetable 1`] = `
+<div>
   <table>
     <thead>
       <tr>
         <th
-          className="stop-name"
+          class="stop-name"
         />
         <th>
           Sched­uled
         </th>
-        <th>
-          Actual
-        </th>
       </tr>
     </thead>
     <tbody>
-      <tr
-        onMouseEnter={[Function]}
-      >
+      <tr>
         <td
-          className="stop-name"
+          class="stop-name"
+        >
+          <a
+            href="/stops/2900C0305"
+          >
+            Harford Park & Ride
+          </a>
+        </td>
+        <td>
+          10:05
+        </td>
+      </tr>
+      <tr>
+        <td
+          class="stop-name"
         >
           <a
             href="/stops/2900N1237"
@@ -160,16 +41,11 @@ exports[`shows delay 2`] = `
         <td>
           10:13
         </td>
-        <td>
-          09:17
-        </td>
       </tr>
-      <tr
-        onMouseEnter={[Function]}
-      >
+      <tr>
         <td
-          className="stop-name"
-          rowSpan={2}
+          class="stop-name"
+          rowspan="2"
         >
           <a
             href="/stops/2900N12909"
@@ -187,11 +63,10 @@ exports[`shows delay 2`] = `
         </td>
       </tr>
       <tr
-        className="minor"
-        onMouseEnter={[Function]}
+        class="minor"
       >
         <td
-          className="stop-name"
+          class="stop-name"
         >
           <a
             href="/stops/2900N12245"
@@ -203,11 +78,9 @@ exports[`shows delay 2`] = `
           10:24
         </td>
       </tr>
-      <tr
-        onMouseEnter={[Function]}
-      >
+      <tr>
         <td
-          className="stop-name"
+          class="stop-name"
         >
           <a
             href="/stops/2900N12233"
@@ -219,11 +92,9 @@ exports[`shows delay 2`] = `
           10:27
         </td>
       </tr>
-      <tr
-        onMouseEnter={[Function]}
-      >
+      <tr>
         <td
-          className="stop-name"
+          class="stop-name"
         >
           <a
             href="/stops/2900S32517"
@@ -236,25 +107,23 @@ exports[`shows delay 2`] = `
         </td>
       </tr>
     </tbody>
-  </table>,
-]
+  </table>
+</div>
 `;
 
-exports[`shows delay 3`] = `
-[
+exports[`renders trip timetable 2`] = `
+<div>
   <label>
     <input
-      checked={false}
-      onChange={[Function]}
       type="checkbox"
     />
      Show previous stops
-  </label>,
+  </label>
   <table>
     <thead>
       <tr>
         <th
-          className="stop-name"
+          class="stop-name"
         />
         <th>
           Sched­uled
@@ -265,11 +134,9 @@ exports[`shows delay 3`] = `
       </tr>
     </thead>
     <tbody>
-      <tr
-        onMouseEnter={[Function]}
-      >
+      <tr>
         <td
-          className="stop-name"
+          class="stop-name"
         >
           <a
             href="/stops/2900N1237"
@@ -284,12 +151,10 @@ exports[`shows delay 3`] = `
           09:17
         </td>
       </tr>
-      <tr
-        onMouseEnter={[Function]}
-      >
+      <tr>
         <td
-          className="stop-name"
-          rowSpan={2}
+          class="stop-name"
+          rowspan="2"
         >
           <a
             href="/stops/2900N12909"
@@ -307,11 +172,10 @@ exports[`shows delay 3`] = `
         </td>
       </tr>
       <tr
-        className="is-highlighted minor"
-        onMouseEnter={[Function]}
+        class="minor"
       >
         <td
-          className="stop-name"
+          class="stop-name"
         >
           <a
             href="/stops/2900N12245"
@@ -323,11 +187,9 @@ exports[`shows delay 3`] = `
           10:24
         </td>
       </tr>
-      <tr
-        onMouseEnter={[Function]}
-      >
+      <tr>
         <td
-          className="stop-name"
+          class="stop-name"
         >
           <a
             href="/stops/2900N12233"
@@ -339,11 +201,9 @@ exports[`shows delay 3`] = `
           10:27
         </td>
       </tr>
-      <tr
-        onMouseEnter={[Function]}
-      >
+      <tr>
         <td
-          className="stop-name"
+          class="stop-name"
         >
           <a
             href="/stops/2900S32517"
@@ -356,6 +216,115 @@ exports[`shows delay 3`] = `
         </td>
       </tr>
     </tbody>
-  </table>,
-]
+  </table>
+</div>
+`;
+
+exports[`renders trip timetable 3`] = `
+<div>
+  <label>
+    <input
+      type="checkbox"
+    />
+     Show previous stops
+  </label>
+  <table>
+    <thead>
+      <tr>
+        <th
+          class="stop-name"
+        />
+        <th>
+          Sched­uled
+        </th>
+        <th>
+          Actual
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td
+          class="stop-name"
+        >
+          <a
+            href="/stops/2900N1237"
+          >
+            County Hall Bus Shelter (A)
+          </a>
+        </td>
+        <td>
+          10:13
+        </td>
+        <td>
+          09:17
+        </td>
+      </tr>
+      <tr>
+        <td
+          class="stop-name"
+          rowspan="2"
+        >
+          <a
+            href="/stops/2900N12909"
+          >
+            Norwich Bus Station (F)
+          </a>
+        </td>
+        <td>
+          10:18
+        </td>
+      </tr>
+      <tr>
+        <td>
+          10:20
+        </td>
+      </tr>
+      <tr
+        class="is-highlighted minor"
+      >
+        <td
+          class="stop-name"
+        >
+          <a
+            href="/stops/2900N12245"
+          >
+            Norwich Tombland (CM)
+          </a>
+        </td>
+        <td>
+          10:24
+        </td>
+      </tr>
+      <tr>
+        <td
+          class="stop-name"
+        >
+          <a
+            href="/stops/2900N12233"
+          >
+            Norwich Anglia Square (B)
+          </a>
+        </td>
+        <td>
+          10:27
+        </td>
+      </tr>
+      <tr>
+        <td
+          class="stop-name"
+        >
+          <a
+            href="/stops/2900S32517"
+          >
+            Sprowston Park and Ride
+          </a>
+        </td>
+        <td>
+          10:40
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 `;

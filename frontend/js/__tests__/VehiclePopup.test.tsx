@@ -1,25 +1,23 @@
-import React from "react";
-import renderer from "react-test-renderer";
+/**
+ * @jest-environment jsdom
+ */
+
+import { render, screen } from "@testing-library/react";
 import { Delay } from "../VehiclePopup";
 
-it("shows delay", () => {
-  const component = renderer.create(<Delay item={{ delay: 212 }} />);
-  let tree = component.toJSON();
-  expect(tree).toMatchSnapshot();
+it("shows delay", async () => {
+  const { container, rerender } = render(<Delay item={{ delay: 212 }} />);
+  expect(container).toMatchSnapshot();
 
-  component.update(<Delay item={{ delay: -230 }} />);
-  tree = component.toJSON();
-  expect(tree).toMatchSnapshot();
+  rerender(<Delay item={{ delay: -230 }} />);
+  expect(container).toMatchSnapshot();
 
-  component.update(<Delay item={{ delay: 20 }} />);
-  tree = component.toJSON();
-  expect(tree).toMatchSnapshot();
+  rerender(<Delay item={{ delay: 20 }} />);
+  expect(container).toMatchSnapshot();
 
-  component.update(<Delay item={{ delay: -20 }} />);
-  tree = component.toJSON();
-  expect(tree).toMatchSnapshot();
+  rerender(<Delay item={{ delay: -20 }} />);
+  expect(container).toMatchSnapshot();
 
-  component.update(<Delay item={{}} />);
-  tree = component.toJSON();
-  expect(tree).toMatchSnapshot();
+  rerender(<Delay item={{}} />);
+  expect(container).toMatchSnapshot();
 });
