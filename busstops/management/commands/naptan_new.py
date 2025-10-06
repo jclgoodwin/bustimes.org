@@ -164,16 +164,16 @@ class Command(BaseCommand):
             for key in self.bulk_update_fields[1:]:
                 if getattr(stop, key) != getattr(existing, key):
                     if key == "latlong":
-                        if stop.latlong.srid and stop.latlong.srid != 4326:
-                            stop.latlong.transform(4326)
-                        if stop.latlong.distance(existing.latlong) < 0.00005:
-                            pass
-                        else:
-                            # logger.info(
-                            #     f"{atco_code}: {existing.latlong} → {stop.latlong}"
-                            # )
-                            self.stops_to_update.append(stop)
-                            break
+                        if stop.latlong:
+                            if stop.latlong.srid and stop.latlong.srid != 4326:
+                                stop.latlong.transform(4326)
+                            if stop.latlong.distance(existing.latlong) < 0.00005:
+                                continue
+                        # logger.info(
+                        #     f"{atco_code}: {existing.latlong} → {stop.latlong}"
+                        # )
+                        self.stops_to_update.append(stop)
+                        break
                     else:
                         # logger.info(
                         #     f"{atco_code} {key}: {getattr(existing, key)!r} → {getattr(stop, key)!r}"
