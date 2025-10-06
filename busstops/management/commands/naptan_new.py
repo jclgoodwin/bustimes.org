@@ -22,7 +22,9 @@ def get_point(element):
     lat = element.findtext("Translation/Latitude") or element.findtext("Latitude")
     if lat is not None and lon is not None:
         point = GEOSGeometry(f"POINT({lon} {lat})")
-        if (point.x or point.y) and (point.x != -7.5571602 or point.y != 49.7668072):
+        if (point.x or point.y) and not (
+            lon.startswith("-7.5") and lat.startswith("49.7")
+        ):
             return point
 
     easting = element.findtext("Easting")
@@ -33,7 +35,7 @@ def get_point(element):
         easting = element.findtext("Translation/Easting")
         northing = element.findtext("Translation/Northing")
         grid_type = element.findtext("Translation/GridType")
-    if easting:
+    if easting and not ((easting == "0" or easting == "7") and northing == "0"):
         match grid_type:
             case "ITM":
                 srid = 2157
