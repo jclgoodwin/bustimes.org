@@ -4,20 +4,17 @@ import requests
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
-# from ...models import Vehicle
-
 
 def get_content(slug):
     content = slug
 
-    #vehicle = Vehicle.objects.get(slug=slug)
-    #if vehicle.latest_journey and vehicle.latest_journey.route_name:
+    # vehicle = Vehicle.objects.get(slug=slug)
+    # if vehicle.latest_journey and vehicle.latest_journey.route_name:
     #    content += f" on route {vehicle.latest_journey.route_name}"
     #    if vehicle.latest_journey.destination:
     #        content += " to {vehicle.latest_journey.destination}"
 
     return f"[{content}](https://bustimes.org/vehicles/{slug})"
-
 
 
 class Command(BaseCommand):

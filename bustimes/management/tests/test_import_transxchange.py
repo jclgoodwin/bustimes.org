@@ -196,9 +196,6 @@ class ImportTransXChangeTest(TestCase):
         self.assertTrue(service.current)
         self.assertEqual(service.operator.first(), self.fecs)
 
-        route.code = route.code.replace("ea_", "swe_")  # to test get_traveline_links
-        route.save(update_fields=["code"])
-
         res = self.client.get(service.get_absolute_url())
         self.assertEqual(res.context_data["breadcrumb"], [self.ea, self.fecs])
         self.assertContains(res, "Ivy Road - Queens Square")
@@ -214,7 +211,21 @@ class ImportTransXChangeTest(TestCase):
         )
         self.assertContains(res, "<td>19:47</td><td>22:55</td>")
 
-        res = self.client.get(service.get_absolute_url() + "?date=2016-10-16")
+        # test caching
+        url = service.get_absolute_url() + "?date=2016-10-16"
+        with override_settings(
+            CACHES={
+                "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}
+            }
+        ):
+            with self.assertNumQueries(19):
+                res = self.client.get(url)
+
+            with self.assertNumQueries(15):
+                res_2 = self.client.get(url)
+
+        self.assertEqual(res.text, res_2.text)
+
         timetable = res.context_data["timetable"]
 
         self.assertEqual("Ivy Road - Queens Square", str(timetable.groupings[0]))
@@ -230,8 +241,6 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(4, len(timetable.groupings[0].rows[0].times))
 
         self.assertEqual("", timetable.groupings[1].rows[0].times[-1])
-
-        # self.assertEqual(['', '', '', '', '', '', '', ''], timetable.groupings[1].rows[0].times[-8:])
 
         # Test the fallback version without a timetable (just a list of stops)
         service.route_set.all().delete()
