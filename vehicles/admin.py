@@ -1,7 +1,6 @@
 from django.forms import ModelForm, Textarea, TextInput
 from django.contrib import admin, messages
 from django.contrib.auth import get_user_model
-from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.urls import reverse
 from django.utils.html import format_html
@@ -145,6 +144,7 @@ class VehicleAdmin(admin.ModelAdmin):
         "copy_type",
         "make_livery",
         "deduplicate",
+        "merge_all_selected",
         "spare_ticket_machine",
         "lock",
         "unlock",
@@ -176,36 +176,18 @@ class VehicleAdmin(admin.ModelAdmin):
         else:
             self.message_user(request, "Select a vehicle with colours and branding.")
 
-    def deduplicate(self, request, queryset):
-        for vehicle in queryset.order_by("id"):
-            if not vehicle.reg and not vehicle.fleet_code:
-                self.message_user(request, f"{vehicle} has no reg")
-                continue
-            try:
-                if vehicle.reg:
-                    duplicate = models.Vehicle.objects.get(
-                        id__lt=vehicle.id,
-                        operator=vehicle.operator_id,
-                        reg__iexact=vehicle.reg,
-                    )  # vehicle with lower id number we will keep
-                else:
-                    duplicate = models.Vehicle.objects.get(
-                        id__lt=vehicle.id,
-                        operator=vehicle.operator_id,
-                        fleet_code__iexact=vehicle.fleet_code,
-                    )  # vehicle with lower id number we will keep
-            except (
-                models.Vehicle.DoesNotExist,
-                models.Vehicle.MultipleObjectsReturned,
-            ) as e:
-                self.message_user(request, f"{vehicle} {e}")
-                continue
-            try:
-                vehicle.vehiclejourney_set.update(vehicle=duplicate)
-            except IntegrityError:
-                pass
+    def merge_all_selected(self, request, vehicles):
+        vehicle = vehicles[0]
+
+        for duplicate in vehicles[1:]:
+            vehicle.vehiclejourney_set.filter(
+                ~Exists(
+                    duplicate.vehiclejourney_set.filter(datetime=OuterRef("datetime"))
+                )
+            ).update(vehicle=duplicate)
             vehicle.vehiclecode_set.update(vehicle=duplicate)
             vehicle.vehiclerevision_set.update(vehicle=duplicate)
+
             if (
                 not duplicate.latest_journey_id
                 or vehicle.latest_journey_id
@@ -233,6 +215,32 @@ class VehicleAdmin(admin.ModelAdmin):
                     duplicate,
                 ),
             )
+
+    def deduplicate(self, request, queryset):
+        for vehicle in queryset.order_by("id"):
+            if not vehicle.reg and not vehicle.fleet_code:
+                self.message_user(request, f"{vehicle} has no reg")
+                continue
+            try:
+                if vehicle.reg:
+                    duplicate = models.Vehicle.objects.get(
+                        id__lt=vehicle.id,
+                        operator=vehicle.operator_id,
+                        reg__iexact=vehicle.reg,
+                    )  # vehicle with lower id number we will keep
+                else:
+                    duplicate = models.Vehicle.objects.get(
+                        id__lt=vehicle.id,
+                        operator=vehicle.operator_id,
+                        fleet_code__iexact=vehicle.fleet_code,
+                    )  # vehicle with lower id number we will keep
+            except (
+                models.Vehicle.DoesNotExist,
+                models.Vehicle.MultipleObjectsReturned,
+            ) as e:
+                self.message_user(request, f"{vehicle} {e}")
+                continue
+            self.merge_all_selected(request, (vehicle, duplicate))
 
     def spare_ticket_machine(self, request, queryset):
         queryset.update(

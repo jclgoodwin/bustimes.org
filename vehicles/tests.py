@@ -85,7 +85,10 @@ class VehiclesTests(TestCase):
             branding="",
         )
         cls.livery = Livery.objects.create(
-            name="black with lemon piping", colours="#FF0000 #0000FF", published=True
+            name="black with lemon piping",
+            colours="#FF0000 #0000FF",
+            colour="#FF0000",
+            published=True,
         )
         cls.vehicle_2 = Vehicle.objects.create(
             code="50",
@@ -412,22 +415,41 @@ class VehiclesTests(TestCase):
         )
         self.assertContains(response, '<td class="field-vehicles">1</td>')
 
-    #         self.assertContains(
-    #             response,
-    #             """<td class="field-left">\
-    # <svg height="24" width="36" style="line-height:24px;font-size:24px;\
-    # background:linear-gradient(90deg,red 50%,#00f 50%)">
-    #                 <text x="50%" y="80%" fill="#fff" text-anchor="middle" style="">42</text>
-    #             </svg></td>""",
-    #         )
-    #         self.assertContains(
-    #             response,
-    #             """<td class="field-right">\
-    # <svg height="24" width="36" style="line-height:24px;font-size:24px;\
-    # background:linear-gradient(270deg,red 50%,#00f 50%)">
-    #                 <text x="50%" y="80%" fill="#fff" text-anchor="middle" style="">42</text>
-    #             </svg>""",
-    #         )
+        livery_2 = Livery.objects.create()
+
+        response = self.client.post(
+            "/admin/vehicles/livery/",
+            {
+                "action": "merge",
+                "_selected_action": [
+                    self.livery.id,
+                    livery_2.id,
+                ],
+            },
+            follow=True,
+        )
+        self.assertEqual(
+            list(response.context["messages"])[0].message,
+            "You can only merge liveries that are the same",
+        )
+
+        livery_2.colours = self.livery.colours
+        livery_2.left_css = self.livery.left_css
+        livery_2.right_css = self.livery.right_css
+        livery_2.save()
+
+        response = self.client.post(
+            "/admin/vehicles/livery/",
+            {
+                "action": "merge",
+                "_selected_action": [
+                    self.livery.id,
+                    livery_2.id,
+                ],
+            },
+            follow=True,
+        )
+        self.assertEqual(list(response.context["messages"])[0].message, "Merged")
 
     def test_vehicle_type_admin(self):
         self.client.force_login(self.staff_user)
@@ -560,6 +582,12 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             '<td class="field-pending">'
             f'<a href="/admin/vehicles/vehiclerevision/?user={self.staff_user.id}&pending=True">1</a></td>',
         )
+
+        response = self.client.get(
+            "/admin/vehicles/vehiclerevision/?change=changes__reg"
+        )
+        self.assertContains(response, "0 vehicle revisions")
+
         with self.assertNumQueries(5):
             response = self.client.get("/vehicles/edits?status=pending")
         self.assertContains(response, "<strong>previous reg</strong>", html=True)
