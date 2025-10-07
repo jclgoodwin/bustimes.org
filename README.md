@@ -128,7 +128,7 @@
 | transxchange/test\_txc.py                                       |       23 |        0 |    100% |           |
 | transxchange/txc.py                                             |      485 |       19 |     96% |54, 125, 131, 176, 236, 264, 310-317, 384, 386, 430, 451, 513, 546-547, 702, 733 |
 | vehicles/\_\_init\_\_.py                                        |        0 |        0 |    100% |           |
-| vehicles/admin.py                                               |      251 |       34 |     86% |32, 60, 87, 89, 182-183, 192, 205-206, 222, 251, 254, 277, 283, 285, 287, 290, 319, 335, 341, 404-419, 432, 445, 462, 505-507 |
+| vehicles/admin.py                                               |      251 |       22 |     91% |31, 59, 86, 88, 204, 222-223, 232, 259, 262, 285, 291, 293, 295, 298, 327, 343, 349, 453, 513-515 |
 | vehicles/apps.py                                                |        6 |        0 |    100% |           |
 | vehicles/context\_processors.py                                 |       14 |        0 |    100% |           |
 | vehicles/fields.py                                              |       23 |        0 |    100% |           |
@@ -172,7 +172,7 @@
 | vehicles/tasks.py                                               |      136 |       22 |     84% |80, 85, 95, 102-105, 108, 110, 119, 132, 136-137, 155, 169, 182, 188-189, 197, 249-250, 253 |
 | vehicles/test\_models.py                                        |       62 |        0 |    100% |           |
 | vehicles/test\_schedule\_adherence.py                           |       75 |        0 |    100% |           |
-| vehicles/tests.py                                               |      438 |        0 |    100% |           |
+| vehicles/tests.py                                               |      449 |        0 |    100% |           |
 | vehicles/time\_aware\_polyline.py                               |       56 |       28 |     50% |18, 36, 49, 54, 57, 87-98, 106-120 |
 | vehicles/urls.py                                                |        4 |        0 |    100% |           |
 | vehicles/utils.py                                               |      116 |        5 |     96% |41, 144, 156-157, 161 |
@@ -185,7 +185,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16752** | **1249** | **93%** |           |
+|                                                       **TOTAL** | **16763** | **1237** | **93%** |           |
 
 
 ## Setup coverage badge
