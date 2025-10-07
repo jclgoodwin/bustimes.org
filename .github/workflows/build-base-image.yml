@@ -22,8 +22,8 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -f .github/Dockerfile -t ghcr.io/jclgoodwin/bustimes.org/bustimes-base:latest .
+          docker build -f .github/Dockerfile -t ghcr.io/jclgoodwin/bustimes.org/bustimes-base:test .
 
       - name: Push Docker image
         run: |
-          docker push ghcr.io/jclgoodwin/bustimes.org/bustimes-base:latest
+          docker push ghcr.io/jclgoodwin/bustimes.org/bustimes-base:test
