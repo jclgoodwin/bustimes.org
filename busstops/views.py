@@ -278,8 +278,8 @@ def status(request):
     }
 
     for key in ("bod_avl_status", "Transport_for_Wales_status", "Bus_Open_Data_status"):
-        status = cache.get(key, [])
-        context["bod_avl_status"][key] = status
+        if status := cache.get(key):
+            context["bod_avl_status"][key] = status
 
     context["statuses"] = cache.get_many(
         [

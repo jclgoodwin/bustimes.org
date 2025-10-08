@@ -70,7 +70,7 @@ def handle_siri_post(uuid, data):
         )
     )
     stats = stats[-50:]
-    cache.set(key, stats, None)
+    cache.set(key, stats, 800)
 
 
 @db_task()

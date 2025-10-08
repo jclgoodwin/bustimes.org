@@ -669,10 +669,7 @@ class Command(ImportLiveVehiclesCommand):
             time_taken = (timezone.now() - now).total_seconds()
 
             # stats for last 50 updates:
-            try:
-                bod_status = cache.get("bod_avl_status", [])
-            except TypeError:
-                bod_status = []
+            bod_status = cache.get("bod_avl_status", [])
             bod_status.append(
                 Status(
                     now,
@@ -684,7 +681,7 @@ class Command(ImportLiveVehiclesCommand):
                 )
             )
             bod_status = bod_status[-50:]
-            cache.set("bod_avl_status", bod_status, None)
+            cache.set("bod_avl_status", bod_status, 800)
 
             print(f"{time_taken=}")
 
