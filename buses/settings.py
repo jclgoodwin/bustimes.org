@@ -122,10 +122,9 @@ DATABASES["default"]["OPTIONS"] = {
 
 DATABASES["default"]["DISABLE_SERVER_SIDE_CURSORS"] = True
 DATABASES["default"]["TEST"] = {"SERIALIZE": False}
-if DEBUG and "runserver" in sys.argv:
-    del DATABASES["default"][
-        "CONN_MAX_AGE"
-    ]  # reset to the default (i.e. no persistent connections)
+if "runserver" in sys.argv:
+    # local development server - reset to the default (i.e. no persistent connections)
+    del DATABASES["default"]["CONN_MAX_AGE"]
 
 TEST_RUNNER = "django_slowtests.testrunner.DiscoverSlowestTestsRunner"
 NUM_SLOW_TESTS = 10
