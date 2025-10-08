@@ -21,7 +21,7 @@
 | buses/asgi.py                                                   |        4 |        4 |      0% |     10-16 |
 | buses/context\_processors.py                                    |        5 |        0 |    100% |           |
 | buses/jinja2.py                                                 |       36 |        1 |     97% |        40 |
-| buses/settings.py                                               |      119 |       30 |     75% |97-107, 139-147, 203, 222-230, 247-263, 315 |
+| buses/settings.py                                               |      121 |       31 |     74% |97-107, 126, 145-153, 209, 228-236, 253-269, 321 |
 | buses/tests.py                                                  |        5 |        0 |    100% |           |
 | buses/urls.py                                                   |        5 |        0 |    100% |           |
 | buses/utils.py                                                  |       23 |        4 |     83% |     35-38 |
@@ -186,7 +186,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16782** | **1214** | **93%** |           |
+|                                                       **TOTAL** | **16784** | **1215** | **93%** |           |
 
 
 ## Setup coverage badge
