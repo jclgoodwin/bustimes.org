@@ -111,7 +111,9 @@ ROOT_URLCONF = "buses.urls"
 ASGI_APPLICATION = "buses.asgi.application"
 
 
-DATABASES = {"default": dj_database_url.config()}
+DATABASES = {
+    "default": dj_database_url.config(conn_max_age=600, conn_health_checks=True)
+}
 
 DATABASES["default"]["OPTIONS"] = {
     "application_name": os.environ.get("APPLICATION_NAME") or " ".join(sys.argv)[-63:],
@@ -120,6 +122,10 @@ DATABASES["default"]["OPTIONS"] = {
 
 DATABASES["default"]["DISABLE_SERVER_SIDE_CURSORS"] = True
 DATABASES["default"]["TEST"] = {"SERIALIZE": False}
+if DEBUG and "runserver" in sys.argv:
+    del DATABASES["default"][
+        "CONN_MAX_AGE"
+    ]  # reset to the default (i.e. no persistent connections)
 
 TEST_RUNNER = "django_slowtests.testrunner.DiscoverSlowestTestsRunner"
 NUM_SLOW_TESTS = 10
