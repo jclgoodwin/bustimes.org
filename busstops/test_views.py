@@ -5,6 +5,7 @@ import vcr
 from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.core import mail
+from django.core.management import call_command
 from django.shortcuts import render
 from django.test import TestCase, override_settings
 
@@ -253,6 +254,15 @@ class ViewsTests(TestCase):
             response,
             '<li><a rel="prev" href="?q=sandwich+deal&amp;page=1#services">1</a></li>',
         )
+
+    def test_api_search(self):
+        response = self.client.get("/api/services/?search=holt").json()
+        self.assertEqual(response["count"], 0)
+
+        call_command("update_search_indexes")
+
+        response = self.client.get("/api/services/?search=holt").json()
+        self.assertEqual(response["count"], 1)
 
     def test_postcode(self):
         with vcr.use_cassette(
