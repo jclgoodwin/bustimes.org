@@ -134,7 +134,7 @@
 | vehicles/fields.py                                              |       23 |        0 |    100% |           |
 | vehicles/filters.py                                             |       20 |        0 |    100% |           |
 | vehicles/form\_fields.py                                        |       15 |        0 |    100% |           |
-| vehicles/forms.py                                               |       94 |        3 |     97% |130, 168, 206 |
+| vehicles/forms.py                                               |       94 |        3 |     97% |129, 167, 205 |
 | vehicles/management/\_\_init\_\_.py                             |        0 |        0 |    100% |           |
 | vehicles/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
 | vehicles/management/commands/compute\_blocks.py                 |       27 |       27 |      0% |      1-47 |
