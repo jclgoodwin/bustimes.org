@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for api/filters.py: 91%</title>
+    <title>Coverage for api/filters.py: 100%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_58284776.png">
     <link rel="stylesheet" href="style_cb_6b508a39.css" type="text/css">
     <script src="coverage_html_cb_6fb7b396.js" defer></script>
@@ -12,7 +12,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>api/filters.py</b>:
-            <span class="pc_cov">91%</span>
+            <span class="pc_cov">100%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -55,8 +55,8 @@
         </aside>
         <h2>
             <span class="text">67 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">61<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">6<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">67<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">0<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_10fae538ba4e8521_serializers_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.7">coverage.py v7.10.7</a>,
-            created at 2025-10-08 19:54 +0000
+            created at 2025-10-09 05:15 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -144,11 +144,11 @@
     <p class="run"><span class="n"><a id="t62" href="#t62">62</a></span><span class="t">    <span class="nam">stops</span> <span class="op">=</span> <span class="nam">ModelChoiceFilter</span><span class="op">(</span><span class="nam">queryset</span><span class="op">=</span><span class="nam">StopPoint</span><span class="op">.</span><span class="nam">objects</span><span class="op">,</span> <span class="nam">widget</span><span class="op">=</span><span class="nam">TextInput</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t63" href="#t63">63</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t64" href="#t64">64</a></span><span class="t">    <span class="key">def</span> <span class="nam">search_filter</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">queryset</span><span class="op">,</span> <span class="nam">name</span><span class="op">,</span> <span class="nam">value</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t65" href="#t65">65</a></span><span class="t">        <span class="nam">query</span> <span class="op">=</span> <span class="nam">SearchQuery</span><span class="op">(</span><span class="nam">value</span><span class="op">,</span> <span class="nam">search_type</span><span class="op">=</span><span class="str">"websearch"</span><span class="op">,</span> <span class="nam">config</span><span class="op">=</span><span class="str">"english"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t66" href="#t66">66</a></span><span class="t">        <span class="nam">rank</span> <span class="op">=</span> <span class="nam">SearchRank</span><span class="op">(</span><span class="nam">F</span><span class="op">(</span><span class="str">"search_vector"</span><span class="op">)</span><span class="op">,</span> <span class="nam">query</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t67" href="#t67">67</a></span><span class="t">        <span class="nam">query</span> <span class="op">=</span> <span class="nam">Q</span><span class="op">(</span><span class="nam">search_vector</span><span class="op">=</span><span class="nam">query</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t68" href="#t68">68</a></span><span class="t">        <span class="nam">queryset</span> <span class="op">=</span> <span class="nam">queryset</span><span class="op">.</span><span class="nam">annotate</span><span class="op">(</span><span class="nam">rank</span><span class="op">=</span><span class="nam">rank</span><span class="op">)</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span><span class="nam">query</span><span class="op">)</span><span class="op">.</span><span class="nam">order_by</span><span class="op">(</span><span class="str">"-rank"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t69" href="#t69">69</a></span><span class="t">        <span class="key">return</span> <span class="nam">queryset</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t65" href="#t65">65</a></span><span class="t">        <span class="nam">query</span> <span class="op">=</span> <span class="nam">SearchQuery</span><span class="op">(</span><span class="nam">value</span><span class="op">,</span> <span class="nam">search_type</span><span class="op">=</span><span class="str">"websearch"</span><span class="op">,</span> <span class="nam">config</span><span class="op">=</span><span class="str">"english"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t66" href="#t66">66</a></span><span class="t">        <span class="nam">rank</span> <span class="op">=</span> <span class="nam">SearchRank</span><span class="op">(</span><span class="nam">F</span><span class="op">(</span><span class="str">"search_vector"</span><span class="op">)</span><span class="op">,</span> <span class="nam">query</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t67" href="#t67">67</a></span><span class="t">        <span class="nam">query</span> <span class="op">=</span> <span class="nam">Q</span><span class="op">(</span><span class="nam">search_vector</span><span class="op">=</span><span class="nam">query</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t68" href="#t68">68</a></span><span class="t">        <span class="nam">queryset</span> <span class="op">=</span> <span class="nam">queryset</span><span class="op">.</span><span class="nam">annotate</span><span class="op">(</span><span class="nam">rank</span><span class="op">=</span><span class="nam">rank</span><span class="op">)</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span><span class="nam">query</span><span class="op">)</span><span class="op">.</span><span class="nam">order_by</span><span class="op">(</span><span class="str">"-rank"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t69" href="#t69">69</a></span><span class="t">        <span class="key">return</span> <span class="nam">queryset</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t70" href="#t70">70</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t71" href="#t71">71</a></span><span class="t">    <span class="key">class</span> <span class="nam">Meta</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t72" href="#t72">72</a></span><span class="t">        <span class="nam">model</span> <span class="op">=</span> <span class="nam">Service</span>&nbsp;</span><span class="r"></span></p>
@@ -185,7 +185,7 @@
     <p class="run"><span class="n"><a id="t103" href="#t103">103</a></span><span class="t">        <span class="nam">fields</span> <span class="op">=</span> <span class="op">[</span><span class="str">"ticket_machine_code"</span><span class="op">,</span> <span class="str">"vehicle_journey_code"</span><span class="op">,</span> <span class="str">"block"</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t104" href="#t104">104</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t105" href="#t105">105</a></span><span class="t">    <span class="key">def</span> <span class="nam">filter_by_date</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">queryset</span><span class="op">,</span> <span class="nam">name</span><span class="op">,</span> <span class="nam">value</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t106" href="#t106">106</a></span><span class="t">        <span class="key">return</span> <span class="nam">queryset</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span><span class="nam">calendar__in</span><span class="op">=</span><span class="nam">get_calendars</span><span class="op">(</span><span class="nam">value</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t106" href="#t106">106</a></span><span class="t">        <span class="key">return</span> <span class="nam">queryset</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span><span class="nam">calendar__in</span><span class="op">=</span><span class="nam">get_calendars</span><span class="op">(</span><span class="nam">value</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t107" href="#t107">107</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t108" href="#t108">108</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t109" href="#t109">109</a></span><span class="t"><span class="key">class</span> <span class="nam">LiveryFilter</span><span class="op">(</span><span class="nam">FilterSet</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -218,7 +218,7 @@
             <a class="nav" href="z_10fae538ba4e8521_serializers_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.7">coverage.py v7.10.7</a>,
-            created at 2025-10-08 19:54 +0000
+            created at 2025-10-09 05:15 +0000
         </p>
     </div>
 </footer>

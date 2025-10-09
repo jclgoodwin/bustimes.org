@@ -13,7 +13,7 @@
 | accounts/views.py                                               |       60 |        1 |     98% |        99 |
 | api/\_\_init\_\_.py                                             |        0 |        0 |    100% |           |
 | api/api.py                                                      |       11 |        0 |    100% |           |
-| api/filters.py                                                  |       67 |        6 |     91% |65-69, 106 |
+| api/filters.py                                                  |       67 |        0 |    100% |           |
 | api/serializers.py                                              |      111 |        4 |     96% |   221-224 |
 | api/tests.py                                                    |        9 |        0 |    100% |           |
 | api/views.py                                                    |       94 |        0 |    100% |           |
@@ -36,7 +36,7 @@
 | busstops/management/commands/naptan\_new.py                     |      158 |       11 |     93% |41, 43, 167-176, 219, 268 |
 | busstops/management/commands/nptg\_new.py                       |       94 |        7 |     93% |148, 158, 163, 169-170, 172-173 |
 | busstops/management/commands/osm\_iom\_stops.py                 |       34 |       34 |      0% |      1-63 |
-| busstops/management/commands/update\_search\_indexes.py         |       11 |       11 |      0% |      1-19 |
+| busstops/management/commands/update\_search\_indexes.py         |       11 |        0 |    100% |           |
 | busstops/management/commands/update\_slugs.py                   |       20 |       20 |      0% |      1-29 |
 | busstops/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | busstops/management/tests/test\_import\_ie.py                   |       63 |        0 |    100% |           |
@@ -51,7 +51,7 @@
 | busstops/test\_admin.py                                         |       66 |        0 |    100% |           |
 | busstops/test\_middleware.py                                    |       25 |        0 |    100% |           |
 | busstops/test\_models.py                                        |      137 |        0 |    100% |           |
-| busstops/test\_views.py                                         |      273 |        0 |    100% |           |
+| busstops/test\_views.py                                         |      280 |        0 |    100% |           |
 | busstops/urls.py                                                |       20 |        2 |     90% |   134-136 |
 | busstops/utils.py                                               |       11 |        0 |    100% |           |
 | busstops/views.py                                               |      648 |       43 |     93% |140, 481, 507, 545, 690, 708, 768-771, 773, 904-909, 922, 999, 1027-1028, 1033-1034, 1042-1051, 1112, 1208, 1229, 1231, 1310, 1389, 1419-1420, 1423-1427, 1577, 1589-1590, 1595, 1607-1608 |
@@ -83,7 +83,7 @@
 | bustimes/management/tests/test\_import\_gtfs\_ember\_flixbus.py |       79 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_ni.py                   |       21 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_passenger.py            |       23 |        0 |    100% |           |
-| bustimes/management/tests/test\_import\_transxchange.py         |      750 |        0 |    100% |           |
+| bustimes/management/tests/test\_import\_transxchange.py         |      754 |        0 |    100% |           |
 | bustimes/management/tests/test\_tnds.py                         |       19 |        0 |    100% |           |
 | bustimes/models.py                                              |      342 |        8 |     98% |111, 375, 378, 407, 452-455, 487 |
 | bustimes/test\_get\_trip.py                                     |       31 |        0 |    100% |           |
@@ -186,7 +186,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16778** | **1211** | **93%** |           |
+|                                                       **TOTAL** | **16789** | **1194** | **93%** |           |
 
 
 ## Setup coverage badge
