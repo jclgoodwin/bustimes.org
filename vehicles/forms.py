@@ -57,7 +57,7 @@ class EditVehicleForm(forms.Form):
     withdrawn = forms.BooleanField(
         label="Remove from list",
         required=False,
-        help_text="Rarely necessary, unless you're sure this vehicle has definitely been withdrawn for good",
+        help_text="Rarely necessary, unless you're sure this vehicle has definitely been permenantly withdrawn",
     )
 
     fleet_number = forms.CharField(required=False, max_length=24)
