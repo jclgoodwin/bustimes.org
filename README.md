@@ -116,10 +116,10 @@
 | fares/forms.py                                                  |       26 |        3 |     88% | 18, 41-42 |
 | fares/management/commands/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | fares/management/commands/import\_netex\_fares.py               |      353 |       59 |     83% |28, 69-70, 121, 128-130, 223-224, 323, 367-368, 449, 528-535, 555, 564-565, 583-588, 595-632, 652-653, 663-664, 670-679 |
-| fares/management/commands/mytrip\_ticketing.py                  |       38 |        3 |     92% | 15, 44-45 |
+| fares/management/commands/mytrip\_ticketing.py                  |       34 |        0 |    100% |           |
 | fares/models.py                                                 |      176 |        8 |     95% |60, 142, 217, 222, 245-246, 250-251 |
-| fares/mytrip.py                                                 |       53 |        4 |     92% |35, 49-50, 73 |
-| fares/test\_mytrip.py                                           |       40 |        0 |    100% |           |
+| fares/mytrip.py                                                 |       53 |        2 |     96% |     49-50 |
+| fares/test\_mytrip.py                                           |       47 |        0 |    100% |           |
 | fares/tests.py                                                  |       79 |        0 |    100% |           |
 | fares/urls.py                                                   |        3 |        0 |    100% |           |
 | fares/views.py                                                  |       44 |        0 |    100% |           |
@@ -186,7 +186,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16799** | **1199** | **93%** |           |
+|                                                       **TOTAL** | **16802** | **1194** | **93%** |           |
 
 
 ## Setup coverage badge
