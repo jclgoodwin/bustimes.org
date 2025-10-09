@@ -127,7 +127,7 @@ class BusStopsAdminTests(TestCase):
         )
         response = self.client.get(url)
 
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(8):
             self.client.post(
                 url,
                 {

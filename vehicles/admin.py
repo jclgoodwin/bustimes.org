@@ -8,6 +8,7 @@ from simple_history.admin import SimpleHistoryAdmin
 from sql_util.utils import SubqueryCount
 
 from . import models
+from bustimes.admin import log_change
 
 UserModel = get_user_model()
 
@@ -257,9 +258,11 @@ class VehicleAdmin(admin.ModelAdmin):
 
     def lock(self, request, queryset):
         queryset.update(locked=True)
+        log_change(request, queryset, ["locked"])
 
     def unlock(self, request, queryset):
         queryset.update(locked=False)
+        log_change(request, queryset, ["locked"])
 
     @admin.display(ordering="latest_journey__datetime")
     def last_seen(self, obj):

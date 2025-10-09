@@ -10,6 +10,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 from sql_util.utils import SubqueryCount
 
+from bustimes.admin import log_change
 from bustimes.models import Route, RouteLink
 
 from . import models
@@ -331,6 +332,7 @@ class ServiceAdmin(GISModelAdmin):
 
     def current_false(self, request, queryset):
         result = queryset.update(current=False)
+        log_change(request, queryset, ["current"])
         self.message_user(request, f"{result}")
 
     @transaction.atomic
@@ -568,6 +570,7 @@ class DataSourceAdmin(admin.ModelAdmin):
 
     def remove_datetimes(self, request, queryset):
         result = queryset.order_by().update(datetime=None, sha1="")
+        log_change(request, queryset, ["datetime", "sha1"])
         self.message_user(request, result)
 
 

@@ -28,6 +28,15 @@ from .models import (
 )
 
 
+def log_change(request, queryset, fields):
+    admin.models.LogEntry.objects.log_actions(
+        user_id=request.user.pk,
+        queryset=queryset,
+        action_flag=admin.models.CHANGE,
+        change_message=[{"changed": {"fields": fields}}],
+    )
+
+
 class TripInline(admin.TabularInline):
     model = Trip
     show_change_link = True
@@ -78,10 +87,12 @@ class TimetableDataSourceAdmin(admin.ModelAdmin):
 
     def activate(self, request, queryset):
         count = queryset.order_by().update(active=True)
+        log_change(request, queryset, ["active"])
         self.message_user(request, f"Activated {count}")
 
     def deactivate(self, request, queryset):
         count = queryset.order_by().update(active=False)
+        log_change(request, queryset, ["active"])
         self.message_user(request, f"Deactivated {count}")
 
 
