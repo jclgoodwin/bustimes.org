@@ -106,7 +106,6 @@ class EditVehicleForm(forms.Form):
     )
     previous_reg = RegField(
         required=False,
-        max_length=24,
         help_text="Separate multiple regs with a comma (,)",
     )
 
