@@ -21,7 +21,7 @@
 | buses/asgi.py                                                   |        4 |        4 |      0% |     10-16 |
 | buses/context\_processors.py                                    |        5 |        0 |    100% |           |
 | buses/jinja2.py                                                 |       36 |        1 |     97% |        40 |
-| buses/settings.py                                               |      121 |       31 |     74% |97-107, 127, 144-152, 208, 227-235, 252-268, 320 |
+| buses/settings.py                                               |      122 |       31 |     75% |109-119, 139, 156-164, 220, 239-247, 264-280, 332 |
 | buses/tests.py                                                  |        5 |        0 |    100% |           |
 | buses/urls.py                                                   |        5 |        0 |    100% |           |
 | buses/utils.py                                                  |       23 |        4 |     83% |     35-38 |
@@ -85,7 +85,7 @@
 | bustimes/management/tests/test\_import\_passenger.py            |       23 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_transxchange.py         |      756 |        0 |    100% |           |
 | bustimes/management/tests/test\_tnds.py                         |       19 |        0 |    100% |           |
-| bustimes/models.py                                              |      342 |        8 |     98% |111, 375, 378, 407, 452-455, 487 |
+| bustimes/models.py                                              |      342 |        9 |     97% |111, 217, 375, 378, 407, 452-455, 487 |
 | bustimes/test\_get\_trip.py                                     |       31 |        0 |    100% |           |
 | bustimes/tests.py                                               |      129 |        0 |    100% |           |
 | bustimes/timetables.py                                          |      615 |       64 |     90% |39-52, 162-173, 204-205, 222-234, 286, 298-301, 313, 327-332, 346, 365, 440, 443, 459-462, 464, 491, 603-618, 704-705, 776, 922-924 |
@@ -186,7 +186,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16790** | **1193** | **93%** |           |
+|                                                       **TOTAL** | **16791** | **1194** | **93%** |           |
 
 
 ## Setup coverage badge
