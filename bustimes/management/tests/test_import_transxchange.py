@@ -1539,14 +1539,21 @@ class ImportTransXChangeTest(TestCase):
 
     @time_machine.travel("2024-01-01")
     def test_frequency(self):
-        # import a document with a Frequency structure (journey repeats every 10 minutes)
-        self.handle_files(
-            "FECS.zip",
-            [
-                "BNSM_59.xml",
-                "CBBH_10LU_CBBHPF00022806110_20240108_-_f7c2d694-e847-449a-b1c1-34f9a76c3a4d.xml",
-                "CBNL_22_CBNLPF10565247522_20230827_-_d32401c6-d8e7-4045-ba4d-65f3a9061625.xml",
-            ],
+        with self.assertLogs(level="WARNING") as cm:
+            # import a document with a Frequency structure (journey repeats every 10 minutes)
+            self.handle_files(
+                "FECS.zip",
+                [
+                    "BNSM_59.xml",
+                    "CBBH_10LU.xml",
+                    "CBNL_22.xml",
+                ],
+            )
+
+        self.assertEqual(
+            cm.output[-1],
+            "WARNING:bustimes.management.commands.import_transxchange:"
+            "CBNL_22.xml has {'tkt_oid': FABD: First Aberdeen} but unexpected filename format",
         )
 
         # automatically created journey every 10 minutes
