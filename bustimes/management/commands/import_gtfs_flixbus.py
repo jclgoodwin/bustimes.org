@@ -5,7 +5,6 @@ from zoneinfo import ZoneInfo
 from itertools import pairwise
 
 import pandas as pd
-import geopandas as gpd
 import gtfs_kit
 import shapely.ops as so
 from django.conf import settings
@@ -24,39 +23,6 @@ logger = logging.getLogger(__name__)
 
 
 MODES = {**MODES, 3: "coach"}
-
-
-def routes_as_gdf(feed):
-    """
-    Copied from gtfs_kit.routes.get_routes(as_gdf=True),
-    but fixed so it copes with *some* routes having no geometry
-    """
-    trips = feed.get_trips(as_gdf=True)
-    f = feed.routes[lambda x: x["route_id"].isin(trips["route_id"])]
-
-    groupby_cols = ["route_id"]
-    final_cols = f.columns.tolist() + ["geometry"]
-
-    def merge_lines(group):
-        d = {}
-        geometries = [geom for geom in group["geometry"].tolist() if geom is not None]
-        if geometries:
-            d["geometry"] = so.linemerge(geometries)
-        else:
-            d["geometry"] = None
-        return pd.Series(d)
-
-    return (
-        trips.drop_duplicates(subset="shape_id")
-        .filter(groupby_cols + ["geometry"])
-        .groupby(groupby_cols)
-        .apply(merge_lines, include_groups=False)
-        .reset_index()
-        .merge(f, how="right")
-        .pipe(gpd.GeoDataFrame)
-        .set_crs(trips.crs)
-        .filter(final_cols)
-    )
 
 
 def get_stoppoint(stop, source):
@@ -131,7 +97,7 @@ class Command(BaseCommand):
         }
 
         geometries = {}
-        for row in routes_as_gdf(feed).itertuples():
+        for row in feed.get_routes(as_gdf=True).itertuples():
             if row.geometry:
                 geometries[row.route_id] = row.geometry.wkt
             else:

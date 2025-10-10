@@ -173,7 +173,7 @@ class Command(BaseCommand):
             self.handle_route(route)
 
         try:
-            for route in gtfs_kit.routes.get_routes(feed, as_gdf=True).itertuples():
+            for route in feed.get_routes(as_gdf=True).itertuples():
                 self.routes[route.route_id].service.geometry = route.geometry.wkt
                 if route.geometry:
                     self.routes[route.route_id].service.save(update_fields=["geometry"])
