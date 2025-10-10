@@ -45,6 +45,7 @@ dependencies = [
     "django-debug-toolbar-template-profiler>=2.1.0,<3",
     "folium>=0.20.0",
     "xmltodict>=1.0.2",
+    "django-csp>=4.0",
 ]
 
 [dependency-groups]

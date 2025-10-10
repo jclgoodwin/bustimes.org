@@ -7,6 +7,8 @@ from warnings import filterwarnings
 
 import dj_database_url
 import sentry_sdk
+
+# from csp.constants import SELF, NONE
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.huey import HueyIntegration
 from sentry_sdk.integrations.logging import ignore_logger
@@ -62,6 +64,7 @@ INSTALLED_APPS = [
     "simple_history",
     "huey.contrib.djhuey",
     "corsheaders",
+    "csp",
     "turnstile",
 ]
 
@@ -69,6 +72,7 @@ MIDDLEWARE = [
     "busstops.middleware.HealthCheckMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "csp.middleware.CSPMiddleware",
     "busstops.middleware.GZipIfNotStreamingMiddleware",
     "busstops.middleware.WhiteNoiseWithFallbackMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -80,7 +84,7 @@ MIDDLEWARE = [
 
 # Stadia Maps tiles require we send at least the origin in cross-origin requests.
 # For same-origin requests, the full referrer is useful (e.g. for the contact form)
-SECURE_REFERRER_POLICY = "origin-when-cross-origin"
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_CF_VISITOR", '{"scheme":"https"}')
@@ -89,6 +93,14 @@ SECURE_HSTS_PRELOAD = True
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_REDIRECT_EXEMPT = [r"^version$"]
 
+CONTENT_SECURITY_POLICY = {
+    "DIRECTIVES": {
+        "default-src": None,
+        # "font-src": [SELF],
+        # "media-src": [NONE],
+        "upgrade-insecure-requests": True,
+    },
+}
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_URLS_REGEX = r"(^\/(api\/|(vehicles|stops)\.json)|.*\/journeys\/.*)"
