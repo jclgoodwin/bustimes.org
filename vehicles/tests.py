@@ -1072,3 +1072,16 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         with self.assertNumQueries(2):
             response = self.client.get("/api/vehicles/?search=fd54jya")
         self.assertEqual(1, response.json()["count"])
+
+    def test_vehicles_json(self):
+        with self.assertNumQueries(0):
+            response = self.client.get(
+                "/vehicles.json?xmax=984.375&xmin=694.688&ymax=87.043&ymin=-89.261"
+            )
+        # Longitude 984.375 is out of range [-180, 180]
+        self.assertEqual(response.status_code, 400)
+
+        with self.assertNumQueries(0):
+            response = self.client.get("/vehicles.json?xmax=x&xmin=x&ymax=x&ymin=x")
+        # String input unrecognized as WKT EWKT, and HEXEWKB.
+        self.assertEqual(response.status_code, 400)

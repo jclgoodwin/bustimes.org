@@ -12,12 +12,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.gis.geos import GEOSException, Point
 from django.contrib.postgres.aggregates import StringAgg
 from django.core.cache import cache
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, BadRequest
 from django.core.paginator import Paginator
 from django.db import IntegrityError, OperationalError, connection, transaction
 from django.db.models import Case, F, Max, OuterRef, Q, When
 from django.db.models.functions import Coalesce, Now, TruncDate
-from django.http import Http404, HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.utils import timezone
@@ -349,7 +349,7 @@ def vehicles_json(request) -> JsonResponse:
     except KeyError:
         bounds = None
     except (GEOSException, ValueError):
-        return HttpResponseBadRequest()
+        raise BadRequest
 
     vehicle_ids = None
     set_names = None
@@ -364,8 +364,8 @@ def vehicles_json(request) -> JsonResponse:
             # convert to kilometres (only for Redis to convert back to degrees)
             width = haversine((ymin, xmax), (ymin, xmin))
             height = haversine((ymin, xmax), (ymax, xmax))
-        except ValueError as e:
-            return HttpResponseBadRequest(e)
+        except ValueError:
+            raise BadRequest
 
         vehicle_ids = redis_client.geosearch(
             "vehicle_location_locations",
@@ -382,7 +382,7 @@ def vehicles_json(request) -> JsonResponse:
                 int(service_id) for service_id in request.GET["service"].split(",")
             ]
         except ValueError:
-            return HttpResponseBadRequest()
+            raise BadRequest
         set_names = [f"service{service_id}vehicles" for service_id in service_ids]
     elif "operator" in request.GET:
         operator_ids = request.GET["operator"].split(",")

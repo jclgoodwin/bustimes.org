@@ -512,12 +512,6 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             self.assertContains(response, ">Southwold<")
             self.assertContains(response, f'<a href="#journeys/{journey.id}">Map</a>')
 
-            with self.assertNumQueries(0):
-                response = self.client.get(
-                    "/vehicles.json?xmax=984.375&xmin=694.688&ymax=87.043&ymin=-89.261"
-                )
-            self.assertEqual(response.status_code, 400)
-
             with (
                 mock.patch("vehicles.views.redis_client.geosearch", return_value=[]),
                 self.assertNumQueries(0),
