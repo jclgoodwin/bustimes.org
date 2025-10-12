@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for vehicles/views.py: 91%</title>
+    <title>Coverage for vehicles/views.py: 92%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_58284776.png">
     <link rel="stylesheet" href="style_cb_6b508a39.css" type="text/css">
     <script src="coverage_html_cb_6fb7b396.js" defer></script>
@@ -12,7 +12,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>vehicles/views.py</b>:
-            <span class="pc_cov">91%</span>
+            <span class="pc_cov">92%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -55,8 +55,8 @@
         </aside>
         <h2>
             <span class="text">604 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">551<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">53<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">553<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">51<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_2c17191315bcbf2a_admin_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.7">coverage.py v7.10.7</a>,
-            created at 2025-10-10 15:57 +0000
+            created at 2025-10-12 08:36 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -94,12 +94,12 @@
     <p class="run"><span class="n"><a id="t12" href="#t12">12</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">contrib</span><span class="op">.</span><span class="nam">gis</span><span class="op">.</span><span class="nam">geos</span> <span class="key">import</span> <span class="nam">GEOSException</span><span class="op">,</span> <span class="nam">Point</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t13" href="#t13">13</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">contrib</span><span class="op">.</span><span class="nam">postgres</span><span class="op">.</span><span class="nam">aggregates</span> <span class="key">import</span> <span class="nam">StringAgg</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t14" href="#t14">14</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">core</span><span class="op">.</span><span class="nam">cache</span> <span class="key">import</span> <span class="nam">cache</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t15" href="#t15">15</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">core</span><span class="op">.</span><span class="nam">exceptions</span> <span class="key">import</span> <span class="nam">PermissionDenied</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t15" href="#t15">15</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">core</span><span class="op">.</span><span class="nam">exceptions</span> <span class="key">import</span> <span class="nam">PermissionDenied</span><span class="op">,</span> <span class="nam">BadRequest</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t16" href="#t16">16</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">core</span><span class="op">.</span><span class="nam">paginator</span> <span class="key">import</span> <span class="nam">Paginator</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t17" href="#t17">17</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">db</span> <span class="key">import</span> <span class="nam">IntegrityError</span><span class="op">,</span> <span class="nam">OperationalError</span><span class="op">,</span> <span class="nam">connection</span><span class="op">,</span> <span class="nam">transaction</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t18" href="#t18">18</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">db</span><span class="op">.</span><span class="nam">models</span> <span class="key">import</span> <span class="nam">Case</span><span class="op">,</span> <span class="nam">F</span><span class="op">,</span> <span class="nam">Max</span><span class="op">,</span> <span class="nam">OuterRef</span><span class="op">,</span> <span class="nam">Q</span><span class="op">,</span> <span class="nam">When</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t19" href="#t19">19</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">db</span><span class="op">.</span><span class="nam">models</span><span class="op">.</span><span class="nam">functions</span> <span class="key">import</span> <span class="nam">Coalesce</span><span class="op">,</span> <span class="nam">Now</span><span class="op">,</span> <span class="nam">TruncDate</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t20" href="#t20">20</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">http</span> <span class="key">import</span> <span class="nam">Http404</span><span class="op">,</span> <span class="nam">HttpResponse</span><span class="op">,</span> <span class="nam">HttpResponseBadRequest</span><span class="op">,</span> <span class="nam">JsonResponse</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t20" href="#t20">20</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">http</span> <span class="key">import</span> <span class="nam">Http404</span><span class="op">,</span> <span class="nam">HttpResponse</span><span class="op">,</span> <span class="nam">JsonResponse</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t21" href="#t21">21</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">shortcuts</span> <span class="key">import</span> <span class="nam">get_object_or_404</span><span class="op">,</span> <span class="nam">render</span><span class="op">,</span> <span class="nam">redirect</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t22" href="#t22">22</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">urls</span> <span class="key">import</span> <span class="nam">reverse</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t23" href="#t23">23</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">utils</span> <span class="key">import</span> <span class="nam">timezone</span>&nbsp;</span><span class="r"></span></p>
@@ -430,8 +430,8 @@
     <p class="run"><span class="n"><a id="t348" href="#t348">348</a></span><span class="t">        <span class="nam">bounds</span> <span class="op">=</span> <span class="nam">get_bounding_box</span><span class="op">(</span><span class="nam">request</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t349" href="#t349">349</a></span><span class="t">    <span class="key">except</span> <span class="nam">KeyError</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t350" href="#t350">350</a></span><span class="t">        <span class="nam">bounds</span> <span class="op">=</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t351" href="#t351">351</a></span><span class="t">    <span class="key">except</span> <span class="op">(</span><span class="nam">GEOSException</span><span class="op">,</span> <span class="nam">ValueError</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t352" href="#t352">352</a></span><span class="t">        <span class="key">return</span> <span class="nam">HttpResponseBadRequest</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t351" href="#t351">351</a></span><span class="t">    <span class="key">except</span> <span class="op">(</span><span class="nam">GEOSException</span><span class="op">,</span> <span class="nam">ValueError</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t352" href="#t352">352</a></span><span class="t">        <span class="key">raise</span> <span class="nam">BadRequest</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t353" href="#t353">353</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t354" href="#t354">354</a></span><span class="t">    <span class="nam">vehicle_ids</span> <span class="op">=</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t355" href="#t355">355</a></span><span class="t">    <span class="nam">set_names</span> <span class="op">=</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
@@ -446,8 +446,8 @@
     <p class="pln"><span class="n"><a id="t364" href="#t364">364</a></span><span class="t">            <span class="com"># convert to kilometres (only for Redis to convert back to degrees)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t365" href="#t365">365</a></span><span class="t">            <span class="nam">width</span> <span class="op">=</span> <span class="nam">haversine</span><span class="op">(</span><span class="op">(</span><span class="nam">ymin</span><span class="op">,</span> <span class="nam">xmax</span><span class="op">)</span><span class="op">,</span> <span class="op">(</span><span class="nam">ymin</span><span class="op">,</span> <span class="nam">xmin</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t366" href="#t366">366</a></span><span class="t">            <span class="nam">height</span> <span class="op">=</span> <span class="nam">haversine</span><span class="op">(</span><span class="op">(</span><span class="nam">ymin</span><span class="op">,</span> <span class="nam">xmax</span><span class="op">)</span><span class="op">,</span> <span class="op">(</span><span class="nam">ymax</span><span class="op">,</span> <span class="nam">xmax</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t367" href="#t367">367</a></span><span class="t">        <span class="key">except</span> <span class="nam">ValueError</span> <span class="key">as</span> <span class="nam">e</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t368" href="#t368">368</a></span><span class="t">            <span class="key">return</span> <span class="nam">HttpResponseBadRequest</span><span class="op">(</span><span class="nam">e</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t367" href="#t367">367</a></span><span class="t">        <span class="key">except</span> <span class="nam">ValueError</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t368" href="#t368">368</a></span><span class="t">            <span class="key">raise</span> <span class="nam">BadRequest</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t369" href="#t369">369</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t370" href="#t370">370</a></span><span class="t">        <span class="nam">vehicle_ids</span> <span class="op">=</span> <span class="nam">redis_client</span><span class="op">.</span><span class="nam">geosearch</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t371" href="#t371">371</a></span><span class="t">            <span class="str">"vehicle_location_locations"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
@@ -464,7 +464,7 @@
     <p class="run run2"><span class="n"><a id="t382" href="#t382">382</a></span><span class="t">                <span class="nam">int</span><span class="op">(</span><span class="nam">service_id</span><span class="op">)</span> <span class="key">for</span> <span class="nam">service_id</span> <span class="key">in</span> <span class="nam">request</span><span class="op">.</span><span class="nam">GET</span><span class="op">[</span><span class="str">"service"</span><span class="op">]</span><span class="op">.</span><span class="nam">split</span><span class="op">(</span><span class="str">","</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t383" href="#t383">383</a></span><span class="t">            <span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t384" href="#t384">384</a></span><span class="t">        <span class="key">except</span> <span class="nam">ValueError</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t385" href="#t385">385</a></span><span class="t">            <span class="key">return</span> <span class="nam">HttpResponseBadRequest</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t385" href="#t385">385</a></span><span class="t">            <span class="key">raise</span> <span class="nam">BadRequest</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t386" href="#t386">386</a></span><span class="t">        <span class="nam">set_names</span> <span class="op">=</span> <span class="op">[</span><span class="fst">f"</span><span class="fst">service</span><span class="op">{</span><span class="nam">service_id</span><span class="op">}</span><span class="fst">vehicles</span><span class="fst">"</span> <span class="key">for</span> <span class="nam">service_id</span> <span class="key">in</span> <span class="nam">service_ids</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t387" href="#t387">387</a></span><span class="t">    <span class="key">elif</span> <span class="str">"operator"</span> <span class="key">in</span> <span class="nam">request</span><span class="op">.</span><span class="nam">GET</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t388" href="#t388">388</a></span><span class="t">        <span class="nam">operator_ids</span> <span class="op">=</span> <span class="nam">request</span><span class="op">.</span><span class="nam">GET</span><span class="op">[</span><span class="str">"operator"</span><span class="op">]</span><span class="op">.</span><span class="nam">split</span><span class="op">(</span><span class="str">","</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -1360,7 +1360,7 @@
             <a class="nav" href="z_2c17191315bcbf2a_admin_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.7">coverage.py v7.10.7</a>,
-            created at 2025-10-10 15:57 +0000
+            created at 2025-10-12 08:36 +0000
         </p>
     </div>
 </footer>
