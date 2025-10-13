@@ -842,7 +842,7 @@ def edit_vehicle(request, **kwargs):
     else:
         context["breadcrumb"] = [vehicle]
 
-    return render(
+    response = render(
         request,
         "edit_vehicle.html",
         {
@@ -852,6 +852,11 @@ def edit_vehicle(request, **kwargs):
             "vehicle": vehicle,
         },
     )
+
+    # for the ImgBB upload widget
+    response["Cross-Origin-Opener-Policy"] = "unsafe-none"
+
+    return response
 
 
 @require_POST
