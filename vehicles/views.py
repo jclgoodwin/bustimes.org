@@ -698,13 +698,6 @@ class VehicleDetailView(DetailView):
         return context
 
 
-def record_ip_address(request):
-    ip_address = request.headers.get("cf-connecting-ip")
-    if request.user.ip_address != ip_address:
-        request.user.ip_address = ip_address
-        request.user.save(update_fields=["ip_address"])
-
-
 def check_user(request):
     if request.user.trusted is False:
         raise PermissionDenied
@@ -731,7 +724,6 @@ revision_display_related_fields = (
 
 @login_required
 def edit_vehicle(request, **kwargs):
-    record_ip_address(request)
     check_user(request)
 
     vehicle = get_object_or_404(

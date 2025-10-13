@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
 from django.contrib.auth.models import Permission
 from django.contrib.auth.validators import UnicodeUsernameValidator
-from django.core.exceptions import SuspiciousOperation, ValidationError
+from django.core.exceptions import ValidationError
 from django.forms import (
     BooleanField,
     CharField,
@@ -40,12 +40,6 @@ class RegistrationForm(PasswordResetForm):
     def save(self, request=None):
         email_address = self.cleaned_data["email"]
 
-        ip_address = request.headers.get("cf-connecting-ip")
-
-        if ip_address:
-            if User.objects.filter(trusted=False, ip_address=ip_address).exists():
-                raise SuspiciousOperation
-
         try:
             self.user = User.objects.get(email__iexact=email_address)
         except User.DoesNotExist:
@@ -54,10 +48,6 @@ class RegistrationForm(PasswordResetForm):
         if not self.user.is_active:
             self.user.is_active = True
             self.user.save(update_fields=["is_active"])
-
-        if ip_address:
-            self.user.ip_address = ip_address
-            self.user.save(update_fields=["ip_address"])
 
         super().save(
             request=request,

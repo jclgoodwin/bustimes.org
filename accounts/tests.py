@@ -45,23 +45,8 @@ class RegistrationTest(TransactionTestCase):
             f"/accounts/register/?invite_code={dummy_uuid}",
         )
 
-        # IP address banned:
-        User.objects.create(trusted=False, ip_address="6.6.6.6")
-        with self.assertNumQueries(2):
-            # create new account
-            response = self.client.post(
-                "/accounts/register/",
-                {
-                    "email": "rufus@herring.pizza",
-                    "turnstile": "foo",
-                    "invite_code": dummy_uuid,
-                },
-                headers={"CF-Connecting-IP": "6.6.6.6"},
-            )
-            self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
-
         # create new account successfully:
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(3):
             response = self.client.post(
                 "/accounts/register/",
                 {
@@ -76,7 +61,6 @@ class RegistrationTest(TransactionTestCase):
         self.assertIn("a bustimes.org account", mail.outbox[0].body)
 
         user = User.objects.get(email="rufus@herring.pizza")
-        self.assertEqual(user.ip_address, "1.2.3.4")
         user.is_active = False
         user.save()
 
