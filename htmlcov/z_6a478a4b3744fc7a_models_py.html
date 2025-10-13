@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for vehicles/models.py: 93%</title>
+    <title>Coverage for vehicles/models.py: 94%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_58284776.png">
     <link rel="stylesheet" href="style_cb_6b508a39.css" type="text/css">
     <script src="coverage_html_cb_6fb7b396.js" defer></script>
@@ -12,7 +12,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>vehicles/models.py</b>:
-            <span class="pc_cov">93%</span>
+            <span class="pc_cov">94%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -55,8 +55,8 @@
         </aside>
         <h2>
             <span class="text">502 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">467<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">35<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">471<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">31<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_6a478a4b3744fc7a_rtpi_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.7">coverage.py v7.10.7</a>,
-            created at 2025-10-13 11:26 +0000
+            created at 2025-10-13 12:49 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -760,11 +760,11 @@
     <p class="run"><span class="n"><a id="t678" href="#t678">678</a></span><span class="t">    <span class="nam">get_trip</span> <span class="op">=</span> <span class="nam">get_trip</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t679" href="#t679">679</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t680" href="#t680">680</a></span><span class="t">    <span class="key">def</span> <span class="nam">get_trip_block_url</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t681" href="#t681">681</a></span><span class="t">        <span class="nam">url</span> <span class="op">=</span> <span class="nam">reverse</span><span class="op">(</span><span class="str">"block_detail"</span><span class="op">,</span> <span class="nam">args</span><span class="op">=</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">trip_id</span><span class="op">,</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t682" href="#t682">682</a></span><span class="t">        <span class="nam">date</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">datetime</span><span class="op">.</span><span class="nam">date</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t683" href="#t683">683</a></span><span class="t">        <span class="key">if</span> <span class="nam">self</span><span class="op">.</span><span class="nam">trip</span><span class="op">.</span><span class="nam">start</span> <span class="op">>=</span> <span class="nam">datetime</span><span class="op">.</span><span class="nam">timedelta</span><span class="op">(</span><span class="nam">days</span><span class="op">=</span><span class="num">1</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t681" href="#t681">681</a></span><span class="t">        <span class="nam">url</span> <span class="op">=</span> <span class="nam">reverse</span><span class="op">(</span><span class="str">"block_detail"</span><span class="op">,</span> <span class="nam">args</span><span class="op">=</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">trip_id</span><span class="op">,</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t682" href="#t682">682</a></span><span class="t">        <span class="nam">date</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">datetime</span><span class="op">.</span><span class="nam">date</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t683" href="#t683">683</a></span><span class="t">        <span class="key">if</span> <span class="nam">self</span><span class="op">.</span><span class="nam">trip</span><span class="op">.</span><span class="nam">start</span> <span class="op">>=</span> <span class="nam">datetime</span><span class="op">.</span><span class="nam">timedelta</span><span class="op">(</span><span class="nam">days</span><span class="op">=</span><span class="num">1</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t684" href="#t684">684</a></span><span class="t">            <span class="nam">date</span> <span class="op">-=</span> <span class="nam">datetime</span><span class="op">.</span><span class="nam">timedelta</span><span class="op">(</span><span class="nam">days</span><span class="op">=</span><span class="num">1</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t685" href="#t685">685</a></span><span class="t">        <span class="key">return</span> <span class="fst">f"</span><span class="op">{</span><span class="nam">url</span><span class="op">}</span><span class="fst">?date=</span><span class="op">{</span><span class="nam">date</span><span class="op">}</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t685" href="#t685">685</a></span><span class="t">        <span class="key">return</span> <span class="fst">f"</span><span class="op">{</span><span class="nam">url</span><span class="op">}</span><span class="fst">?date=</span><span class="op">{</span><span class="nam">date</span><span class="op">}</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t686" href="#t686">686</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t687" href="#t687">687</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t688" href="#t688">688</a></span><span class="t"><span class="key">class</span> <span class="nam">VehicleLocation</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -898,7 +898,7 @@
             <a class="nav" href="z_6a478a4b3744fc7a_rtpi_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.7">coverage.py v7.10.7</a>,
-            created at 2025-10-13 11:26 +0000
+            created at 2025-10-13 12:49 +0000
         </p>
     </div>
 </footer>

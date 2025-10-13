@@ -83,7 +83,7 @@
 | bustimes/management/tests/test\_import\_gtfs\_ember\_flixbus.py |       79 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_ni.py                   |       21 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_passenger.py            |       23 |        0 |    100% |           |
-| bustimes/management/tests/test\_import\_transxchange.py         |      756 |        0 |    100% |           |
+| bustimes/management/tests/test\_import\_transxchange.py         |      769 |        0 |    100% |           |
 | bustimes/management/tests/test\_tnds.py                         |       19 |        0 |    100% |           |
 | bustimes/models.py                                              |      342 |        8 |     98% |111, 375, 378, 407, 452-455, 487 |
 | bustimes/test\_get\_trip.py                                     |       31 |        0 |    100% |           |
@@ -167,7 +167,7 @@
 | vehicles/management/tests/test\_stagecoach\_avl.py              |       33 |        0 |    100% |           |
 | vehicles/management/tests/test\_stats.py                        |       24 |        0 |    100% |           |
 | vehicles/management/tests/test\_translink\_avl.py               |       22 |        0 |    100% |           |
-| vehicles/models.py                                              |      502 |       35 |     93% |75, 193, 218, 285, 304, 310, 382, 388, 439, 460, 575-576, 589, 597, 614-616, 624-625, 628-629, 634-635, 660, 681-685, 723-726, 781, 790, 806 |
+| vehicles/models.py                                              |      502 |       31 |     94% |75, 193, 218, 285, 304, 310, 382, 388, 439, 460, 575-576, 589, 597, 614-616, 624-625, 628-629, 634-635, 660, 684, 723-726, 781, 790, 806 |
 | vehicles/rtpi.py                                                |       76 |        1 |     99% |        28 |
 | vehicles/signals.py                                             |       11 |        0 |    100% |           |
 | vehicles/tasks.py                                               |      136 |       22 |     84% |80, 85, 95, 102-105, 108, 110, 119, 132, 136-137, 155, 169, 182, 188-189, 197, 249-250, 253 |
@@ -177,7 +177,7 @@
 | vehicles/time\_aware\_polyline.py                               |       56 |       28 |     50% |18, 36, 49, 54, 57, 87-98, 106-120 |
 | vehicles/urls.py                                                |        4 |        0 |    100% |           |
 | vehicles/utils.py                                               |      116 |        5 |     96% |41, 144, 156-157, 161 |
-| vehicles/views.py                                               |      598 |       47 |     92% |443-444, 463-464, 477, 495-496, 548, 566-567, 572, 588-589, 607-626, 710, 817, 819, 821, 826, 871-872, 884-886, 973, 976-977, 987, 1003-1008, 1055-1057, 1076-1077, 1095-1105, 1109, 1111 |
+| vehicles/views.py                                               |      598 |       42 |     93% |443-444, 463-464, 477, 495-496, 548, 566-567, 572, 588-589, 625-626, 710, 817, 819, 821, 826, 871-872, 884-886, 973, 976-977, 987, 1055-1057, 1076-1077, 1095-1105, 1109, 1111 |
 | vosa/\_\_init\_\_.py                                            |        0 |        0 |    100% |           |
 | vosa/admin.py                                                   |       36 |        0 |    100% |           |
 | vosa/management/commands/\_\_init\_\_.py                        |        0 |        0 |    100% |           |
@@ -186,7 +186,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16781** | **1187** | **93%** |           |
+|                                                       **TOTAL** | **16794** | **1178** | **93%** |           |
 
 
 ## Setup coverage badge
