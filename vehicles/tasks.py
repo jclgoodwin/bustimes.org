@@ -76,7 +76,7 @@ def handle_siri_post(uuid, data):
 @db_task()
 def log_vehicle_journey(service, data, time, destination, source_name, url, trip_id):
     operator_ref = data.get("OperatorRef")
-    if operator_ref in ("McG", "SWB", "MID"):  # McGills/Stagecoach/
+    if operator_ref in ("McG", "SWB", "MID", "MBLB"):  # McGills/Stagecoach/
         return
 
     if not time:
