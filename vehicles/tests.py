@@ -1085,3 +1085,8 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             response = self.client.get("/vehicles.json?xmax=x&xmin=x&ymax=x&ymin=x")
         # String input unrecognized as WKT EWKT, and HEXEWKB.
         self.assertEqual(response.status_code, 400)
+
+        with self.assertNumQueries(0):
+            response = self.client.get("/vehicles.json?id=1,2")
+        self.assertEqual(response.json(), [])
+        self.assertEqual(response.headers["ETag"], '"d751713988987e9331980363e24189ce"')
