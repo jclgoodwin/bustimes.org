@@ -21,6 +21,7 @@ from busstops.models import (
     ServiceColour,
     StopPoint,
 )
+from vehicles.models import Vehicle, VehicleJourney
 from vosa.models import Licence, Registration
 
 from ...models import (
@@ -1536,6 +1537,35 @@ class ImportTransXChangeTest(TestCase):
             response = self.client.get(f"/trips/{trip.id}/block?date=2025-01-26")
         self.assertContains(response, "15:05")
         self.assertContains(response, "16:00")
+
+        # test "next trips in block"
+        v = Vehicle.objects.create(code="BB69BUS")
+        trip_1 = Trip.objects.get(vehicle_journey_code="VJ2937")
+        trip_2 = Trip.objects.get(vehicle_journey_code="VJ2938")
+        vj_1 = VehicleJourney.objects.create(
+            trip=trip_1,
+            service=trip.route.service,
+            datetime="2025-10-12T08:05:00+01:00",
+            source_id=service.source_id,
+            vehicle=v,
+        )
+        vj_2 = VehicleJourney.objects.create(
+            trip=trip_2,
+            service=trip.route.service,
+            datetime="2025-10-12T09:00:00+01:00",
+            source_id=service.source_id,
+            vehicle=v,
+        )
+        v.latest_journey = vj_2
+        v.save(update_fields=["latest_journey_id"])
+
+        response = self.client.get(v.get_absolute_url())
+        self.assertEqual(5, len(response.context_data["predictions"]))
+
+        response = self.client.get(f"/journeys/{vj_1.id}.json").json()
+
+        self.assertEqual(vj_2.id, response["next"]["id"])
+        self.assertEqual(20, len(response["stops"]))
 
     @time_machine.travel("2024-01-01")
     def test_frequency(self):
