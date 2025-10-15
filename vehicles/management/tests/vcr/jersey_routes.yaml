@@ -1,0 +1,45 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.5
+    method: GET
+    uri: http://sojbuslivetimespublic.azurewebsites.net/api/Values/v1/GetRoutes
+  response:
+    body:
+      string: '{"routes":[{"Number":"1","Name":"Gorey Pier","Colour":"#302F84"},
+        {"Number":"12","Name":"Corbiere","Colour":"#EE3823"},{"Number":"12A","Name":"Corbiere","Colour":"#FFDE00"},
+        {"Number":"13","Name":"Durrell","Colour":"#00627C"},{"Number":"14","Name":"St Brelade''s Bay","Colour":"#56615D"},
+        {"Number":"15","Name":"Jersey Airport","Colour":"#00BDF2"},{"Number":"16","Name":"Le Marais","Colour":"#025B30"},
+        {"Number":"19","Name":"La Pouquelaye ","Colour":"#707AB7"},{"Number":"1A","Name":"Gorey Pier","Colour":"#F5E248"},
+        {"Number":"1G","Name":"Gorey Pier","Colour":"#302F84"},{"Number":"2","Name":"St Catherine","Colour":"#BA006F"},
+        {"Number":"20","Name":"Maufant Village","Colour":"#707AB7"},{"Number":"21","Name":"Maufant Village","Colour":"#9D4423"},
+        {"Number":"22","Name":"L''Etacq","Colour":"#ADAE0B"},{"Number":"23","Name":"Durrell","Colour":"#96DCFD"},
+        {"Number":"27","Name":"La Mare Wine Estate","Colour":"#E6418E"},{"Number":"28","Name":"La Mare Wine Estate","Colour":"#00A99B"},
+        {"Number":"2A","Name":"St Catherine","Colour":"#BA006F"},{"Number":"3","Name":"Durrell","Colour":"#F36F21"},
+        {"Number":"4","Name":"Bonne Nuit Bay","Colour":"#60BD62"},{"Number":"5","Name":"St John''s Church","Colour":"#DFDB00"},
+        {"Number":"7","Name":"St John''s Church","Colour":"#E6418E"},{"Number":"7A","Name":"St John''s Church","Colour":"#E6418E"},
+        {"Number":"8","Name":"Portinfer Junction","Colour":"#F6A3BF"},{"Number":"9","Name":"Greve de Lecq","Colour":"#7F3F98"},
+        {"Number":"X22","Name":"L''Etacq","Colour":"#ADAE0C"}]}'
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '636'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Wed, 15 Oct 2025 09:34:47 GMT
+    status:
+      code: 200
+      message: OK
+version: 1

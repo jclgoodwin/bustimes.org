@@ -1,13 +1,14 @@
-import os
+from pathlib import Path
 import time_machine
 import datetime
-from vcr import use_cassette
+import vcr
 from django.test import TestCase
-from busstops.models import Region, Operator, DataSource
+from django.core.management import call_command
+from busstops.models import Region, Operator, DataSource, StopPoint
 from ..commands import import_live_jersey
 
 
-DIR = os.path.dirname(os.path.abspath(__file__))
+VCR_DIR = Path(__file__).resolve().parent / "vcr"
 
 
 class JerseyImportTest(TestCase):
@@ -16,8 +17,26 @@ class JerseyImportTest(TestCase):
         Region.objects.create(id="JE")
         Operator.objects.create(noc="libertybus", region_id="JE")
 
-    @use_cassette(
-        os.path.join(DIR, "vcr", "import_live_jersey.yaml"),
+    def test_stops(self):
+        call_command("jersey_stops")
+        self.assertEqual(StopPoint.objects.count(), 763)
+
+    def test_routes(self):
+        with vcr.use_cassette(str(VCR_DIR / "jersey_routes.yaml")):
+            call_command("jersey_routes")
+
+        response = self.client.get("/regions/JE")
+        self.assertContains(
+            response,
+            """{
+    background: #96DCFD;
+    border-color: #000;
+    color: #000;
+}""",
+        )
+
+    @vcr.use_cassette(
+        str(VCR_DIR / "import_live_jersey.yaml"),
         decode_compressed_response=True,
     )
     @time_machine.travel(datetime.datetime(2018, 8, 21, 0, 0, 9))

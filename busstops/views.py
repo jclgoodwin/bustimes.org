@@ -410,6 +410,7 @@ class RegionDetailView(UppercasePrimaryKeyMixin, DetailView):
                 .defer("geometry"),
                 key=Service.get_order,
             )
+            context["colours"] = get_colours(context["services"])
 
         return context
 
