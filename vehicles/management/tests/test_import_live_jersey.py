@@ -20,7 +20,10 @@ class JerseyImportTest(TestCase):
         Operator.objects.create(noc="libertybus", region_id="JE")
 
     def test_stops(self):
-        call_command("jersey_stops")
+        with self.assertNumQueries(5):
+            call_command("jersey_stops")
+        with self.assertNumQueries(2):
+            call_command("jersey_stops")
         self.assertEqual(StopPoint.objects.count(), 763)
 
     def test_routes(self):

@@ -35,9 +35,7 @@ class Command(ImportLiveVehiclesCommand):
         defaults = {
             "operator_id": self.operator,
         }
-        if vehicle_code.isdigit():
-            defaults["fleet_number"] = vehicle_code
-        else:
+        if vehicle_code[:1] == "J" and vehicle_code[1:].isdigit():
             defaults["reg"] = vehicle_code
         return self.vehicles.get_or_create(
             defaults, source=self.source, code=vehicle_code
