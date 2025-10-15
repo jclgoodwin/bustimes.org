@@ -232,6 +232,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             if latest_journey and same_journey(
                 journey, latest_journey, location.datetime
             ):
+                journey.uuid = latest_journey.uuid
                 journey.id = latest_journey.id
                 if journey.datetime and latest_journey.datetime != journey.datetime:
                     try:

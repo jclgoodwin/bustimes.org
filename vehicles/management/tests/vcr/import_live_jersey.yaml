@@ -7,23 +7,58 @@ interactions:
       Connection: [keep-alive]
       User-Agent: [python-requests/2.19.1]
     method: GET
-    uri: http://sojbuslivetimespublic.azurewebsites.net/api/Values/GetMin?secondsAgo=360
+    uri: http://sojbuslivetimespublic.azurewebsites.net/api/Values?secondsAgo=360
   response:
-    body: {string: '{"minimumInfoUpdates":[{"bus":"bus-12A-2130-330","line":"12A","cat":"Public
-        Bus","lat":49.1928980,"lon":-2.1661010,"bearing":43,"direction":"inbound","time":"23:59:00","age":69},{"bus":"bus-15-2035-Handheld_2","line":"15","cat":"Public
-        Bus","lat":49.2005550,"lon":-2.1963600,"bearing":204,"direction":"inbound","time":"00:00:04","age":5}],"stops":[]}'}
+    body: {string: '{"updates":[
+      {"DeviceId":"bus-12-1030-J143002","AssetType":"Public Bus","AssetRegistrationNumber":"J143002","ServiceNumber":"12","ServiceName":"12","ServiceOperator":"LibertyBus","OriginalStartTime":"2025-10-15T11:06:00","TimeOfUpdate":"2025-10-15T10:13:39","Direction":"inbound","Latitude":49.1942302,"Longitude":-2.1988764,"Bearing":193,"SecondsAgo":34},
+      {"DeviceId":"bus-12A-0720-J122024","AssetType":"Public Bus","AssetRegistrationNumber":"J122024","ServiceNumber":"12A","ServiceName":"12A","ServiceOperator":"LibertyBus","OriginalStartTime":"2025-10-15T11:05:00","TimeOfUpdate":"2025-10-15T10:13:46","Direction":"outbound","Latitude":49.1985241,"Longitude":-2.1397847,"Bearing":266,"SecondsAgo":27},
+      {"DeviceId":"bus-15-0545-J122039","AssetType":"Public Bus","AssetRegistrationNumber":"J122039","ServiceNumber":"15","ServiceName":"15","ServiceOperator":"LibertyBus","OriginalStartTime":"2025-10-15T10:45:00","TimeOfUpdate":"2025-10-15T10:13:42","Direction":"inbound","Latitude":49.1912802,"Longitude":-2.1213404,"Bearing":140,"SecondsAgo":31}]}'}
     headers:
-      Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
       Date: ['Mon, 21 Aug 2018 00:38:48 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Request-Context: ['appId=cid-v1:6d79247b-019e-48da-a1a8-6f9a30b589c5']
-      Server: [Microsoft-IIS/10.0]
-      Set-Cookie: [ARRAffinity=b90327019296386bedc5e2d5b86838e79f64c37441db2b297fe5a1597151171a;Path=/;HttpOnly;Domain=sojbuslivetimespublic.azurewebsites.net]
-      Vary: [Accept-Encoding]
-      X-AspNet-Version: [4.0.30319]
-      X-Powered-By: [ASP.NET]
-      content-length: ['1722']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.19.1]
+    method: GET
+    uri: http://sojbuslivetimespublic.azurewebsites.net/api/Values?secondsAgo=360
+  response:
+    body: {string: '{"updates":[{
+        "DeviceId": "bus-12-1030-J143002",
+        "AssetType": "Public Bus",
+        "AssetRegistrationNumber": "J143002",
+        "ServiceNumber": "12",
+        "ServiceName": "12",
+        "ServiceOperator": "LibertyBus",
+        "OriginalStartTime": "2025-10-15T11:06:00",
+        "TimeOfUpdate": "2025-10-15T10:16:36",
+        "Direction": "inbound",
+        "Latitude": 49.1901226,
+        "Longitude": -2.2063913,
+        "Bearing": 359,
+        "SecondsAgo": 52
+      },
+      {
+        "DeviceId": "bus-12A-0720-J122024",
+        "AssetType": "Public Bus",
+        "AssetRegistrationNumber": "J122024",
+        "ServiceNumber": "12A",
+        "ServiceName": "12A",
+        "ServiceOperator": "LibertyBus",
+        "OriginalStartTime": "2025-10-15T11:05:00",
+        "TimeOfUpdate": "2025-10-15T10:16:51",
+        "Direction": "outbound",
+        "Latitude": 49.1965592,
+        "Longitude": -2.157392,
+        "Bearing": 265,
+        "SecondsAgo": 37
+      }]}'}
+    headers:
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Mon, 21 Aug 2018 00:38:48 GMT']
     status: {code: 200, message: OK}
 version: 1

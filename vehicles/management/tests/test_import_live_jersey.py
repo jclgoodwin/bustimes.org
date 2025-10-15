@@ -1,11 +1,13 @@
 from pathlib import Path
+import fakeredis
 import time_machine
-import datetime
 import vcr
+from unittest.mock import patch
 from django.test import TestCase
 from django.core.management import call_command
-from busstops.models import Region, Operator, DataSource, StopPoint
-from ..commands import import_live_jersey
+from busstops.models import Region, Operator, StopPoint
+
+from ...models import VehicleJourney
 
 
 VCR_DIR = Path(__file__).resolve().parent / "vcr"
@@ -39,34 +41,36 @@ class JerseyImportTest(TestCase):
         str(VCR_DIR / "import_live_jersey.yaml"),
         decode_compressed_response=True,
     )
-    @time_machine.travel(datetime.datetime(2018, 8, 21, 0, 0, 9))
+    @time_machine.travel("2025-10-15T10:20:00Z")
     def test_handle(self):
-        command = import_live_jersey.Command()
-        items = command.get_items()
+        redis_client = fakeredis.FakeStrictRedis(version=7)
 
-        command.source = DataSource.objects.create(datetime="2018-08-06T22:41:15+01:00")
+        with (
+            patch(
+                "vehicles.management.import_live_vehicles.redis_client", redis_client
+            ),
+            patch(
+                "vehicles.management.import_live_vehicles.sleep",
+                side_effect=[None, None, Exception],
+            ),
+            self.assertRaises(Exception),
+        ):
+            call_command("import_live_jersey")
 
-        vehicle, created = command.get_vehicle(items[0])
-        self.assertEqual("330", str(vehicle))
-        self.assertTrue(created)
+        with patch("vehicles.views.redis_client", redis_client):
+            positions = self.client.get("/vehicles.json").json()
+            self.assertEqual(positions[0]["datetime"], "2025-10-15T11:16:36+01:00")
+            self.assertEqual(positions[1]["datetime"], "2025-10-15T11:16:51+01:00")
+            self.assertEqual(positions[2]["datetime"], "2025-10-15T11:13:42+01:00")
 
-        journey = command.get_journey(items[0], vehicle)
-        self.assertIsNone(journey.service)
+            journey = VehicleJourney.objects.get(route_name="12")
+            response = self.client.get(f"/journeys/{journey.id}.json")
+            self.assertEqual(2, len(response.json()["locations"]))
 
-        # test a time before midnight (yesterday)
-        location = command.create_vehicle_location(items[0])
-        self.assertEqual(43, location.heading)
+            journey = VehicleJourney.objects.get(route_name="12A")
+            response = self.client.get(f"/journeys/{journey.id}.json")
+            self.assertEqual(2, len(response.json()["locations"]))
 
-        self.assertEqual(
-            "2018-08-20 23:59:00+00:00", str(command.get_datetime(items[0]))
-        )
-
-        # test a time after midnight (today)
-        journey = command.get_journey(items[1], vehicle)
-
-        location = command.create_vehicle_location(items[1])
-        self.assertEqual(204, location.heading)
-
-        self.assertEqual(
-            "2018-08-21 00:00:04+00:00", str(command.get_datetime(items[1]))
-        )
+            journey = VehicleJourney.objects.get(route_name="15")
+            response = self.client.get(f"/journeys/{journey.id}.json")
+            self.assertEqual(1, len(response.json()["locations"]))
