@@ -8,7 +8,7 @@ from ...models import DataSource, StopPoint
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        source, _ = DataSource.objects.get_or_create(name="Jersey")
+        source, _ = DataSource.objects.get_or_create(name="jersey")
 
         with (
             Path(__file__).resolve().parent.parent.parent / "jersey-bus-stops.json"
