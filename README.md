@@ -33,6 +33,8 @@
 | busstops/management/\_\_init\_\_.py                             |        0 |        0 |    100% |           |
 | busstops/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
 | busstops/management/commands/import\_noc.py                     |      125 |        3 |     98% |155, 179, 238 |
+| busstops/management/commands/jersey\_routes.py                  |       14 |        0 |    100% |           |
+| busstops/management/commands/jersey\_stops.py                   |       12 |        0 |    100% |           |
 | busstops/management/commands/naptan\_new.py                     |      158 |       11 |     93% |41, 43, 167-176, 219, 268 |
 | busstops/management/commands/nptg\_new.py                       |       94 |        7 |     93% |148, 158, 163, 169-170, 172-173 |
 | busstops/management/commands/osm\_iom\_stops.py                 |       34 |       34 |      0% |      1-63 |
@@ -54,7 +56,7 @@
 | busstops/test\_views.py                                         |      280 |        0 |    100% |           |
 | busstops/urls.py                                                |       20 |        2 |     90% |   134-136 |
 | busstops/utils.py                                               |       11 |        0 |    100% |           |
-| busstops/views.py                                               |      648 |       43 |     93% |140, 481, 507, 545, 690, 708, 768-771, 773, 904-909, 922, 999, 1027-1028, 1033-1034, 1042-1051, 1112, 1208, 1229, 1231, 1310, 1389, 1419-1420, 1423-1427, 1577, 1589-1590, 1595, 1607-1608 |
+| busstops/views.py                                               |      649 |       43 |     93% |140, 482, 508, 546, 691, 709, 769-772, 774, 905-910, 923, 1000, 1028-1029, 1034-1035, 1043-1052, 1113, 1209, 1230, 1232, 1311, 1390, 1420-1421, 1424-1428, 1578, 1590-1591, 1596, 1608-1609 |
 | bustimes/\_\_init\_\_.py                                        |        0 |        0 |    100% |           |
 | bustimes/admin.py                                               |      136 |       14 |     90% |74, 77-78, 89-91, 94-96, 153-157, 180, 201, 204 |
 | bustimes/download\_utils.py                                     |       32 |        0 |    100% |           |
@@ -157,7 +159,7 @@
 | vehicles/management/tests/test\_bushub.py                       |       48 |        0 |    100% |           |
 | vehicles/management/tests/test\_edinburgh.py                    |       49 |        0 |    100% |           |
 | vehicles/management/tests/test\_first.py                        |       33 |        0 |    100% |           |
-| vehicles/management/tests/test\_import\_live\_jersey.py         |       31 |        0 |    100% |           |
+| vehicles/management/tests/test\_import\_live\_jersey.py         |       40 |        0 |    100% |           |
 | vehicles/management/tests/test\_listen.py                       |       15 |        0 |    100% |           |
 | vehicles/management/tests/test\_newport.py                      |       23 |        0 |    100% |           |
 | vehicles/management/tests/test\_polar.py                        |       33 |        0 |    100% |           |
@@ -185,7 +187,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16777** | **1137** | **93%** |           |
+|                                                       **TOTAL** | **16813** | **1137** | **93%** |           |
 
 
 ## Setup coverage badge
