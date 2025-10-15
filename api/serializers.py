@@ -177,6 +177,7 @@ class TripSerializer(serializers.ModelSerializer):
     operator = serializers.SerializerMethodField()
     times = serializers.SerializerMethodField()
     notes = NoteSerializer(many=True)
+    destination = serializers.SerializerMethodField()
 
     @staticmethod
     def get_service(obj):
@@ -245,6 +246,17 @@ class TripSerializer(serializers.ModelSerializer):
             }
             previous_stop_id = stop_time.stop_id
 
+    @staticmethod
+    def get_destination(obj):
+        if obj.destination:
+            locality = obj.destination.locality
+            if locality and locality.name:
+                return locality.name
+            common_name = obj.destination.common_name
+            if common_name:
+                return common_name
+        return obj.headsign
+
     class Meta:
         model = Trip
         fields = [
@@ -254,6 +266,7 @@ class TripSerializer(serializers.ModelSerializer):
             "block",
             "start",
             "end",
+            "destination",
             "headsign",
             "service",
             "operator",
