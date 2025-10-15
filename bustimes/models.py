@@ -346,14 +346,18 @@ class Note(models.Model):
 class Trip(models.Model):
     route = models.ForeignKey(Route, models.CASCADE, null=True, blank=True)
     inbound = models.BooleanField(default=False)
-    journey_pattern = models.CharField(max_length=100, blank=True)
-    vehicle_journey_code = models.CharField(max_length=100, blank=True, db_index=True)
-    ticket_machine_code = models.CharField(max_length=100, blank=True, db_index=True)
-    block = models.CharField(max_length=100, blank=True, db_index=True)
+    journey_pattern = models.CharField(max_length=100, null=True, blank=True)
+    vehicle_journey_code = models.CharField(
+        max_length=100, null=True, blank=True, db_index=True
+    )
+    ticket_machine_code = models.CharField(
+        max_length=100, null=True, blank=True, db_index=True
+    )
+    block = models.CharField(max_length=100, null=True, blank=True, db_index=True)
     destination = models.ForeignKey(
         "busstops.StopPoint", models.DO_NOTHING, null=True, blank=True
     )
-    headsign = models.CharField(max_length=255, blank=True)
+    headsign = models.CharField(null=True, blank=True)
     calendar = models.ForeignKey(Calendar, models.DO_NOTHING, null=True, blank=True)
     sequence = models.PositiveSmallIntegerField(null=True, blank=True)
     notes = models.ManyToManyField(Note, blank=True)

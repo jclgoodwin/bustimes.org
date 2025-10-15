@@ -146,7 +146,7 @@ class Command(BaseCommand):
                 calendar=calendars[row.service_id],
                 inbound=getattr(row, "direction_id", 0) == 1,
                 vehicle_journey_code=row.trip_id,
-                headsign=row.trip_headsign if pd.notna(row.trip_headsign) else "",
+                headsign=row.trip_headsign if pd.notna(row.trip_headsign) else None,
                 operator=operator,
                 journey_pattern=row.shape_id,
             )
