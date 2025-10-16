@@ -649,7 +649,7 @@ class VehicleJourney(models.Model):
     # block = models.ForeignKey("bustimes.Block", models.SET_NULL, null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     date = models.DateField(null=True, blank=True)
-    inbound = models.BooleanField(null=True)
+    # inbound = models.BooleanField(null=True)
 
     def get_absolute_url(self):
         date = timezone.localtime(self.datetime).date()
