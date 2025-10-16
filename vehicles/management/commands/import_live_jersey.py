@@ -1,5 +1,6 @@
 from ciso8601 import parse_datetime
 from django.contrib.gis.geos import Point
+from django.utils.timezone import make_aware
 from busstops.models import Service
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 from ...models import VehicleLocation, VehicleJourney
@@ -48,7 +49,7 @@ class Command(ImportLiveVehiclesCommand):
         journey = VehicleJourney()
         journey.route_name = item["ServiceName"]
         journey.direction = item["Direction"]
-        journey.datetime = parse_datetime(item["OriginalStartTime"] + "Z")
+        journey.datetime = make_aware(parse_datetime(item["OriginalStartTime"]))
         journey.service = Service.objects.filter(
             line_name=journey.route_name, operator=self.operator, current=True
         ).first()
