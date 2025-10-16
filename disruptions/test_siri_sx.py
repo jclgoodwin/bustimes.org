@@ -12,7 +12,7 @@ from busstops.models import (
     StopUsage,
 )
 
-from .siri_sx import bods_disruptions
+from .tasks import bods_disruptions
 from .models import Situation
 
 VCR_DIR = settings.BASE_DIR / "fixtures" / "vcr"
