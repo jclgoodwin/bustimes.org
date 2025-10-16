@@ -642,12 +642,14 @@ class VehicleJourney(models.Model):
     source = models.ForeignKey(DataSource, models.CASCADE)
     vehicle = models.ForeignKey(Vehicle, models.CASCADE, null=True, blank=True)
     code = models.CharField(max_length=255, blank=True)
-    destination = models.CharField(max_length=255, blank=True)
-    direction = models.CharField(max_length=13, blank=True)
+    destination = models.CharField(max_length=255, null=True, blank=True)
+    direction = models.CharField(max_length=13, null=True, blank=True)
     trip = models.ForeignKey("bustimes.Trip", models.SET_NULL, null=True, blank=True)
     # trip_matched = models.BooleanField(default=True)
     # block = models.ForeignKey("bustimes.Block", models.SET_NULL, null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+    date = models.DateField(null=True, blank=True)
+    inbound = models.BooleanField(null=True)
 
     def get_absolute_url(self):
         date = timezone.localtime(self.datetime).date()
