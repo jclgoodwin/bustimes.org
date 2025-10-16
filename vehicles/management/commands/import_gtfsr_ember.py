@@ -70,7 +70,7 @@ class Command(GTFSRCommand):
             journey.service = trip.route.service
 
             journey.route_name = journey.service.line_name
-            journey.destination = trip.headsign
+            journey.destination = trip.headsign or ""
 
         vehicle.latest_journey_data = json_format.MessageToDict(item)
 

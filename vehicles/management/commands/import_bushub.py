@@ -149,7 +149,7 @@ class Command(ImportLiveVehiclesCommand):
                 departure_time=datetime, destination_ref=item["DestinationRef"]
             )
             if journey.trip and not journey.destination:
-                journey.destination = journey.trip.headsign
+                journey.destination = journey.trip.headsign or ""
 
         return journey
 

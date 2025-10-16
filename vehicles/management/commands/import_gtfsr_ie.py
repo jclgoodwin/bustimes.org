@@ -156,7 +156,7 @@ class Command(ImportLiveVehiclesCommand):
                 journey.service = trip.route.service
             journey.trip = trip
 
-            journey.destination = trip.headsign
+            journey.destination = trip.headsign or ""
             if trip.operator_id and not vehicle.operator_id:
                 vehicle.operator_id = trip.operator_id
                 vehicle.save(update_fields=["operator"])
