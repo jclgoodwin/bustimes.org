@@ -552,7 +552,7 @@ def trip_block(request, pk: int):
             "destination__locality__name",
             "destination__common_name",
         ),
-    ).select_related("route", "destination__locality")
+    ).select_related("route")
 
     if trips := list(trips):
         tz = timezone.get_current_timezone()
