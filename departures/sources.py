@@ -280,9 +280,9 @@ class TimetableDepartures(Departures):
             .select_related("trip")
             .annotate(
                 destination=Coalesce(
+                    "trip__headsign",
                     "trip__destination__locality__name",
                     "trip__destination__common_name",
-                    "trip__headsign",
                 ),
                 order=ExpressionWrapper(
                     F("departure") + day_shift * 86400, output_field=IntegerField()

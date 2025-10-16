@@ -177,15 +177,17 @@ class TripSerializer(serializers.ModelSerializer):
     operator = serializers.SerializerMethodField()
     times = serializers.SerializerMethodField()
     notes = NoteSerializer(many=True)
+    headsign = serializers.CharField(source="destination_name")
 
     @staticmethod
     def get_service(obj):
-        return {
-            "id": obj.route.service_id,
-            "line_name": obj.route.line_name,
-            "slug": obj.route.service and obj.route.service.slug,
-            "mode": obj.route.service and obj.route.service.mode,
-        }
+        if obj.route:
+            return {
+                "id": obj.route.service_id,
+                "line_name": obj.route.line_name,
+                "slug": obj.route.service and obj.route.service.slug,
+                "mode": obj.route.service and obj.route.service.mode,
+            }
 
     @staticmethod
     def get_operator(obj):

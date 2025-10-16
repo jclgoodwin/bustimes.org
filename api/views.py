@@ -5,6 +5,7 @@ from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Q, Subquery, OuterRef
+from django.db.models.functions import Coalesce
 
 from vehicles.time_aware_polyline import encode_time_aware_polyline
 
@@ -90,9 +91,15 @@ class StopViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class TripViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Trip.objects.select_related(
-        "route__service", "operator"
-    ).prefetch_related("notes")
+    queryset = (
+        Trip.objects.select_related("route__service", "operator")
+        .prefetch_related("notes")
+        .annotate(
+            destination_name=Coalesce(
+                "headsign", "destination__locality__name", "destination__common_name"
+            )
+        )
+    )
     serializer_class = serializers.TripSerializer
     pagination_class = CursorPagination
     filter_backends = [DjangoFilterBackend]

@@ -21,6 +21,7 @@ from django.db.models import (
     ExpressionWrapper,
     IntegerField,
 )
+from django.db.models.functions import Coalesce
 from django.http import (
     FileResponse,
     Http404,
@@ -516,6 +517,7 @@ class TripDetailView(DetailView):
         context["stops"] = stops
         self.object.stops = stops
         trip_serializer = TripSerializer(self.object)
+        self.object.destination_name = self.object.headsign
         stops_json = JSONRenderer().render(trip_serializer.data)
 
         context["stops_json"] = mark_safe(stops_json.decode())
@@ -544,7 +546,12 @@ def trip_block(request, pk: int):
         datetime=ExpressionWrapper(
             F("start") + int(midnight.timestamp()),
             output_field=IntegerField(),
-        )
+        ),
+        destination_name=Coalesce(
+            "headsign",
+            "destination__locality__name",
+            "destination__common_name",
+        ),
     ).select_related("route", "destination__locality")
 
     if trips := list(trips):

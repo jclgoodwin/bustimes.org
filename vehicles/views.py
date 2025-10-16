@@ -614,7 +614,8 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
                         )
                         .annotate(
                             destination_name=Coalesce(
-                                F("destination__locality__name"),
+                                "headsign",
+                                "destination__locality__name",
                                 "destination__common_name",
                             ),
                             line_name=F("route__line_name"),

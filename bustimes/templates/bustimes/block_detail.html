@@ -34,7 +34,7 @@
                 <a href="{{ trip.get_absolute_url }}">{{ trip }}</a>
             </td>
             <td>{{ trip.ticket_machine_code }}</td>
-            <td>{% firstof trip.headsign trip.destination.locality %}</td>
+            <td>{{ trip.destination_name }}</td>
             <td class="link">
                 {% for j in trip.vehicle_journeys %}
                     <a href="{{ j.get_absolute_url }}">{{ j.vehicle }}</a>
