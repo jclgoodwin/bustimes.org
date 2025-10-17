@@ -8,15 +8,16 @@ image: jclgoodwin/bustimes-org
 servers:
   web:
     hosts:
-      - 10.131.240.99
-      - 10.131.240.98
-      - 10.131.240.109
+      - 10.131.240.113
+      - 10.131.240.116
+      - 10.131.240.117
+      - 10.131.240.118
     env:
       clear:
-        WEB_CONCURRENCY: 13
+        WEB_CONCURRENCY: 8
         EMAIL_HOST: email-smtp.eu-west-1.amazonaws.com
         READ_ONLY_DB_HOST: private-jumbo-replica-do-user-1296332-0.d.db.ondigitalocean.com
-        ALLOWED_HOSTS: bustimes.org staging.bustimes.org cloud.digitalocean.com
+        ALLOWED_HOSTS: bustimes.org
       secret:
         - SECRET_KEY
         - DATABASE_URL
@@ -65,5 +66,6 @@ proxy:
   buffering:
     responses: false
   logging:
-    request_headers: []
+    request_headers:
+      - Referer
     response_headers: []
