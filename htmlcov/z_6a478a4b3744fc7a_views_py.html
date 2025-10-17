@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_2c17191315bcbf2a_admin_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.7">coverage.py v7.10.7</a>,
-            created at 2025-10-17 08:58 +0000
+            created at 2025-10-17 09:26 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -595,10 +595,10 @@
     <p class="run"><span class="n"><a id="t513" href="#t513">513</a></span><span class="t">    <span class="nam">journeys</span> <span class="op">=</span> <span class="nam">vehicle</span><span class="op">.</span><span class="nam">vehiclejourney_set</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t514" href="#t514">514</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t515" href="#t515">515</a></span><span class="t">    <span class="nam">dates</span> <span class="op">=</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t516" href="#t516">516</a></span><span class="t">        <span class="nam">journeys</span><span class="op">.</span><span class="nam">annotate</span><span class="op">(</span><span class="nam">date</span><span class="op">=</span><span class="nam">TruncDate</span><span class="op">(</span><span class="str">"datetime"</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t517" href="#t517">517</a></span><span class="t">        <span class="op">.</span><span class="nam">values_list</span><span class="op">(</span><span class="str">"date"</span><span class="op">,</span> <span class="nam">flat</span><span class="op">=</span><span class="key">True</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t518" href="#t518">518</a></span><span class="t">        <span class="op">.</span><span class="nam">order_by</span><span class="op">(</span><span class="str">"date"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t519" href="#t519">519</a></span><span class="t">        <span class="op">.</span><span class="nam">distinct</span><span class="op">(</span><span class="str">"date"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t516" href="#t516">516</a></span><span class="t">        <span class="nam">journeys</span><span class="op">.</span><span class="nam">annotate</span><span class="op">(</span><span class="nam">datetime_date</span><span class="op">=</span><span class="nam">TruncDate</span><span class="op">(</span><span class="str">"datetime"</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t517" href="#t517">517</a></span><span class="t">        <span class="op">.</span><span class="nam">values_list</span><span class="op">(</span><span class="str">"datetime_date"</span><span class="op">,</span> <span class="nam">flat</span><span class="op">=</span><span class="key">True</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t518" href="#t518">518</a></span><span class="t">        <span class="op">.</span><span class="nam">order_by</span><span class="op">(</span><span class="str">"datetime_date"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t519" href="#t519">519</a></span><span class="t">        <span class="op">.</span><span class="nam">distinct</span><span class="op">(</span><span class="str">"datetime_date"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t520" href="#t520">520</a></span><span class="t">    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t521" href="#t521">521</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t522" href="#t522">522</a></span><span class="t">    <span class="key">return</span> <span class="nam">list</span><span class="op">(</span><span class="nam">dates</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -1358,7 +1358,7 @@
             <a class="nav" href="z_2c17191315bcbf2a_admin_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.7">coverage.py v7.10.7</a>,
-            created at 2025-10-17 08:58 +0000
+            created at 2025-10-17 09:26 +0000
         </p>
     </div>
 </footer>
