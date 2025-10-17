@@ -513,10 +513,10 @@ def get_dates(vehicle=None, service=None):
     journeys = vehicle.vehiclejourney_set
 
     dates = (
-        journeys.annotate(date=TruncDate("datetime"))
-        .values_list("date", flat=True)
-        .order_by("date")
-        .distinct("date")
+        journeys.annotate(datetime_date=TruncDate("datetime"))
+        .values_list("datetime_date", flat=True)
+        .order_by("datetime_date")
+        .distinct("datetime_date")
     )
 
     return list(dates)
