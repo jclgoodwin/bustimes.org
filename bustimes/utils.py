@@ -383,6 +383,8 @@ def get_trip(
             if filtered_trips:
                 trips = filtered_trips
 
+        journey.date = date
+
         return trips[0]
 
 

@@ -252,6 +252,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
             journey.source = self.source
             if not journey.datetime:
                 journey.datetime = location.datetime
+            if not journey.date:
+                journey.date = timezone.localdate(journey.datetime)
 
             if journey.service_id and VehicleJourney.service.is_cached(journey):
                 if not journey.service.tracking:

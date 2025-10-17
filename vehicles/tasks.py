@@ -182,6 +182,8 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
         journey.trip = journey.get_trip(
             departure_time=time, destination_ref=data.get("DestinationRef")
         )
+    if not journey.date:
+        journey.date = timezone.localdate(time)
 
     try:
         journey.save()

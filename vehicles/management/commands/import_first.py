@@ -93,10 +93,16 @@ class Command(ImportLiveVehiclesCommand):
                 departure_time=departure_time,
                 destination_ref=item["stops"][-1]["atcocode"],
             )
+            if not journey.date:
+                journey.date = timezone.localdate(departure_time)
             journey.save()
-            if journey.trip and journey.trip.garage_id and journey.trip.garage_id != vehicle.garage_id:
-               vehicle.garage_id = journey.trip.garage_id
-               vehicle.save(update_fields=["garage"])
+            if (
+                journey.trip
+                and journey.trip.garage_id
+                and journey.trip.garage_id != vehicle.garage_id
+            ):
+                vehicle.garage_id = journey.trip.garage_id
+                vehicle.save(update_fields=["garage"])
 
         if vehicle.latest_journey != journey:
             vehicle.latest_journey = journey
