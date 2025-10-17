@@ -3,7 +3,7 @@
 import busstops.fields
 import vehicles.models
 from django.db import migrations, models
-
+from django.contrib.postgres.operations import AddIndexConcurrently
 
 class Migration(migrations.Migration):
 
@@ -29,12 +29,14 @@ class Migration(migrations.Migration):
             name='style',
             field=models.CharField(blank=True, choices=[('', 'single decker'), ('double decker', 'double decker'), ('minibus', 'minibus'), ('coach', 'coach'), ('decker coach', 'double decker coach'), ('articulated', 'bendy bus'), ('train', 'train'), ('tram', 'tram'), ('amphibious', 'amphibious')], max_length=13),
         ),
-        migrations.AddIndex(
+        AddIndexConcurrently(
             model_name='vehiclejourney',
             index=models.Index(models.F('service'), models.F('date'), condition=models.Q(('date__isnull', False)), name='service_date'),
         ),
-        migrations.AddIndex(
+        AddIndexConcurrently(
             model_name='vehiclejourney',
             index=models.Index(models.F('vehicle'), models.F('date'), condition=models.Q(('date__isnull', False), ('vehicle__isnull', False)), name='vehicle_date'),
         ),
     ]
+
+    atomic = False
