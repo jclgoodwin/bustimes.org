@@ -637,10 +637,14 @@ class VehicleRevision(models.Model):
 
 class VehicleJourney(models.Model):
     datetime = models.DateTimeField()
-    service = models.ForeignKey(Service, models.SET_NULL, null=True, blank=True)
+    service = models.ForeignKey(
+        Service, models.SET_NULL, null=True, blank=True, db_index=False
+    )
     route_name = models.CharField(max_length=64, blank=True)
     source = models.ForeignKey(DataSource, models.CASCADE)
-    vehicle = models.ForeignKey(Vehicle, models.CASCADE, null=True, blank=True)
+    vehicle = models.ForeignKey(
+        Vehicle, models.CASCADE, null=True, blank=True, db_index=False
+    )
     code = models.CharField(max_length=255, blank=True)
     destination = models.CharField(max_length=255, blank=True)
     direction = models.CharField(max_length=13, blank=True)
@@ -648,6 +652,7 @@ class VehicleJourney(models.Model):
     # trip_matched = models.BooleanField(default=True)
     # block = models.ForeignKey("bustimes.Block", models.SET_NULL, null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+    date = models.DateField(null=True, blank=True)
 
     def get_absolute_url(self):
         date = timezone.localtime(self.datetime).date()
@@ -667,6 +672,15 @@ class VehicleJourney(models.Model):
             ),
             models.Index(
                 "vehicle", TruncDate("datetime").asc(), name="vehicle_datetime_date"
+            ),
+            models.Index(
+                "service", "date", name="service_date", condition=Q(date__isnull=False)
+            ),
+            models.Index(
+                "vehicle",
+                "date",
+                name="vehicle_date",
+                condition=Q(vehicle__isnull=False, date__isnull=False),
             ),
         ]
         unique_together = (("vehicle", "datetime"),)
