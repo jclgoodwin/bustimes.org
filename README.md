@@ -152,7 +152,7 @@
 | vehicles/management/commands/listen.py                          |       22 |        0 |    100% |           |
 | vehicles/management/commands/newport.py                         |       43 |        2 |     95% |    45, 61 |
 | vehicles/management/commands/signalr.py                         |       79 |        0 |    100% |           |
-| vehicles/management/commands/siri\_vm\_subscribe.py             |       27 |        7 |     74% |     29-58 |
+| vehicles/management/commands/siri\_vm\_subscribe.py             |       34 |       13 |     62% |     30-76 |
 | vehicles/management/import\_live\_vehicles.py                   |      306 |       32 |     90% |112, 128, 134-136, 138, 160, 169, 183, 192-195, 204, 225, 230, 238-241, 248, 311-312, 353, 356-357, 378-379, 481, 519-520, 530, 550 |
 | vehicles/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | vehicles/management/tests/test\_bod\_avl.py                     |      290 |        0 |    100% |           |
@@ -187,7 +187,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16820** | **1129** | **93%** |           |
+|                                                       **TOTAL** | **16827** | **1135** | **93%** |           |
 
 
 ## Setup coverage badge
