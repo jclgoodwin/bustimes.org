@@ -13,23 +13,41 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("source_address", type=str)
         parser.add_argument("consumer_address", type=str)
+        parser.add_argument("terminate", type=str, nargs="?")
 
-    def handle(self, source_address, consumer_address, *args, **options):
+    def handle(self, source_address, consumer_address, terminate=None, *args, **options):
         endpoint = "https://obst-s2s.tfw.vix-its.com"
         requestor_ref = "TFW_Bustimes_VM"
 
         subscription = SiriSubscription.objects.get(name="Transport for Wales")
 
         now = datetime.now(timezone.utc)
-        stats = cache.get(subscription.get_status_key())
-        if stats:
-            if (now - stats[-1][0]) < timedelta(minutes=5):
-                return
-        else:
-            print(f"no {subscription} history, subscribing")
+        if not terminate:
+            if stats := cache.get(subscription.get_status_key()):
+                if (now - stats[-1][0]) < timedelta(minutes=5):
+                    return
+            else:
+                print(f"no {subscription} history, subscribing")
 
         session = requests.Session()
         session.mount("https://", SourceAddressAdapter(source_address))
+
+        if terminate:
+            data = f"""<Siri xmlns="http://www.siri.org.uk/siri" version="1.3">
+    <TerminateSubscriptionRequest>
+        <RequestTimestamp>{now.isoformat()}</RequestTimestamp>
+        <RequestorRef>{requestor_ref}</RequestorRef>
+        <SubscriptionRef>{terminate}</SubscriptionRef>
+    </TerminateSubscriptionRequest>
+</Siri>"""
+            print(data)
+            res = session.post(
+                endpoint,
+                data=data,
+                headers={"content-type": "text/xml"},
+            )
+            print(res.text)
+            return
 
         consumer_address = f"{consumer_address}/siri/{subscription.uuid}"
 
