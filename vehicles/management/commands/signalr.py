@@ -6,6 +6,7 @@ import requests
 from ciso8601 import parse_datetime
 from django.contrib.gis.geos import GEOSGeometry
 from django.db.models import Q
+from django.utils import timezone
 
 from busstops.models import DataSource, Service
 
@@ -77,7 +78,7 @@ class Command(ImportLiveVehiclesCommand):
                     service.save(update_fields=["tracking"])
 
             journey = vehicle.vehiclejourney_set.filter(
-                Q(code=journey_code, datetime__date=recorded_at_time)
+                Q(code=journey_code, date=recorded_at_time)
                 | Q(datetime=recorded_at_time)
             ).first()
 
@@ -91,6 +92,8 @@ class Command(ImportLiveVehiclesCommand):
             if service:
                 journey.trip = journey.get_trip(journey_code=journey_code)
 
+            if not journey.date:
+                journey.date = timezone.localdate(journey.datetime)
             journey.route_name = route
             journey.source = self.source
             journey.direction = direction

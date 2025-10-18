@@ -8,7 +8,6 @@ from django.contrib.postgres.operations import AddIndexConcurrently
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('busstops', '0011_alter_locality_slug_alter_operator_slug_and_more'),
         ('bustimes', '0009_alter_trip_block_alter_trip_headsign_and_more'),
         ('vehicles', '0014_alter_sirisubscription_name_and_more'),
     ]

@@ -330,9 +330,7 @@ class TimetableDepartures(Departures):
             [time["stop_time"].trip for time in times],
             Prefetch(
                 "vehiclejourney_set",
-                VehicleJourney.objects.filter(datetime__date=date).select_related(
-                    "vehicle"
-                ),
+                VehicleJourney.objects.filter(date=date).select_related("vehicle"),
                 to_attr="vehicle_journeys",
             ),
         )

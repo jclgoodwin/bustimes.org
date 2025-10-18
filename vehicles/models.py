@@ -10,7 +10,7 @@ from urllib.parse import quote
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.db.models import Q, UniqueConstraint
-from django.db.models.functions import TruncDate, Upper
+from django.db.models.functions import Upper
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import escape, format_html
@@ -637,14 +637,20 @@ class VehicleRevision(models.Model):
 
 class VehicleJourney(models.Model):
     datetime = models.DateTimeField()
-    service = models.ForeignKey(Service, models.SET_NULL, null=True, blank=True)
+    service = models.ForeignKey(
+        Service, models.SET_NULL, null=True, blank=True, db_index=False
+    )
     route_name = models.CharField(max_length=64, blank=True)
     source = models.ForeignKey(DataSource, models.CASCADE)
-    vehicle = models.ForeignKey(Vehicle, models.CASCADE, null=True, blank=True)
+    vehicle = models.ForeignKey(
+        Vehicle, models.CASCADE, null=True, blank=True, db_index=False
+    )
     code = models.CharField(max_length=255, blank=True)
     destination = models.CharField(max_length=255, blank=True)
     direction = models.CharField(max_length=13, blank=True)
-    trip = models.ForeignKey("bustimes.Trip", models.SET_NULL, null=True, blank=True)
+    trip = models.ForeignKey(
+        "bustimes.Trip", models.SET_NULL, null=True, blank=True, db_index=False
+    )
     # trip_matched = models.BooleanField(default=True)
     # block = models.ForeignKey("bustimes.Block", models.SET_NULL, null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
@@ -663,20 +669,18 @@ class VehicleJourney(models.Model):
     class Meta:
         ordering = ("id",)
         indexes = [
-            models.Index(
-                "service", TruncDate("datetime").asc(), name="service_datetime_date"
-            ),
-            models.Index(
-                "vehicle", TruncDate("datetime").asc(), name="vehicle_datetime_date"
-            ),
-            models.Index(
-                "service", "date", name="service_date", condition=Q(date__isnull=False)
-            ),
+            models.Index("service", "date", name="vehiclejourney_service_date"),
             models.Index(
                 "vehicle",
                 "date",
-                name="vehicle_date",
-                condition=Q(vehicle__isnull=False, date__isnull=False),
+                name="vehiclejourney_vehicle_date",
+                condition=Q(vehicle__isnull=False),
+            ),
+            models.Index(
+                "trip",
+                "date",
+                name="vehiclejourney_trip_date",
+                condition=Q(trip__isnull=False),
             ),
         ]
         unique_together = (("vehicle", "datetime"),)

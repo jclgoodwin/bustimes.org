@@ -163,7 +163,7 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
     if (
         journey_ref
         and journeys.filter(
-            route_name=route_name, code=journey_ref, datetime__date=time.date()
+            route_name=route_name, code=journey_ref, date=timezone.localdate(time)
         ).exists()
     ):
         return

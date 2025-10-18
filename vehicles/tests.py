@@ -106,6 +106,7 @@ class VehiclesTests(TestCase):
         cls.journey = VehicleJourney.objects.create(
             vehicle=cls.vehicle_1,
             datetime=cls.datetime,
+            date="2020-10-20",
             source=source,
             service=service,
             route_name="2",
@@ -113,6 +114,7 @@ class VehiclesTests(TestCase):
         VehicleJourney.objects.create(
             vehicle=cls.vehicle_1,
             datetime="2020-10-16 12:00:00+00:00",
+            date="2020-10-16",
             source=source,
             service=service,
             route_name="2",
@@ -120,6 +122,7 @@ class VehiclesTests(TestCase):
         VehicleJourney.objects.create(
             vehicle=cls.vehicle_1,
             datetime="2020-10-20 12:00:00+00:00",
+            date="2020-10-20",
             source=source,
             service=service,
             route_name="2",

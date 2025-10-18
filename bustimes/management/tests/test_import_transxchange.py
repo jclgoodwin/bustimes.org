@@ -1546,6 +1546,7 @@ class ImportTransXChangeTest(TestCase):
             trip=trip_1,
             service=trip.route.service,
             datetime="2025-10-12T08:05:00+01:00",
+            date="2025-10-12",
             source_id=service.source_id,
             vehicle=v,
         )
@@ -1553,6 +1554,7 @@ class ImportTransXChangeTest(TestCase):
             trip=trip_2,
             service=trip.route.service,
             datetime="2025-10-12T09:00:00+01:00",
+            date="2025-10-12",
             source_id=service.source_id,
             vehicle=v,
         )

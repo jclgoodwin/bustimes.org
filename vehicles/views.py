@@ -16,7 +16,7 @@ from django.core.exceptions import PermissionDenied, BadRequest
 from django.core.paginator import Paginator
 from django.db import IntegrityError, OperationalError, connection, transaction
 from django.db.models import Case, F, Max, OuterRef, Q, When
-from django.db.models.functions import Coalesce, Now, TruncDate
+from django.db.models.functions import Coalesce, Now
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
@@ -513,10 +513,10 @@ def get_dates(vehicle=None, service=None):
     journeys = vehicle.vehiclejourney_set
 
     dates = (
-        journeys.annotate(datetime_date=TruncDate("datetime"))
-        .values_list("datetime_date", flat=True)
-        .order_by("datetime_date")
-        .distinct("datetime_date")
+        journeys.filter(date__isnull=False)
+        .values_list("date", flat=True)
+        .order_by("date")
+        .distinct()
     )
 
     return list(dates)
@@ -526,7 +526,7 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
     """list of VehicleJourneys (and dates) for a service or vehicle"""
 
     if vehicle and vehicle.latest_journey:
-        last_date = timezone.localdate(vehicle.latest_journey.datetime)
+        last_date = vehicle.latest_journey.date
         dates = cache.get_or_set(
             f"vehicle{vehicle.id}dates{last_date}",
             partial(get_dates, vehicle=vehicle),
@@ -547,7 +547,7 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
         if vehicle and vehicle.latest_journey:
             date = last_date
         else:
-            date = journeys.aggregate(max_date=Max("datetime__date"))["max_date"]
+            date = journeys.aggregate(max_date=Max("date"))["max_date"]
 
     if dates:
         context["dates"] = dates
@@ -557,9 +557,7 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
     if date:
         context["date"] = date
 
-        journeys = (
-            journeys.filter(datetime__date=date).select_related("trip").order_by("id")
-        )
+        journeys = journeys.filter(date=date).select_related("trip").order_by("id")
 
         if dates:
             if date not in dates:
@@ -1121,7 +1119,7 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
     elif service_id:
         next_previous_filter = {
             "service_id": service_id,
-            "datetime__date": journey.datetime,
+            "date": journey.datetime,
         }
         data["vehicle"] = str(journey.vehicle)
     else:
