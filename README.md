@@ -97,7 +97,7 @@
 | departures/avl.py                                               |       12 |        1 |     92% |        14 |
 | departures/gtfsr.py                                             |       91 |        2 |     98% |   91, 111 |
 | departures/live.py                                              |      134 |       14 |     90% |44, 59, 61, 63, 80-85, 146, 157, 169, 183 |
-| departures/sources.py                                           |      224 |       34 |     85% |34, 58, 63, 67, 100, 116, 126, 129-131, 141-148, 153-154, 168-169, 177-178, 245, 324, 341, 414, 418-419, 425-426, 429, 437 |
+| departures/sources.py                                           |      224 |       34 |     85% |34, 58, 63, 67, 100, 116, 126, 129-131, 141-148, 153-154, 168-169, 177-178, 245, 324, 339, 412, 416-417, 423-424, 427, 435 |
 | departures/test\_gtfsr\_trip\_updates.py                        |       45 |        0 |    100% |           |
 | departures/test\_gtfsr\_vehicle\_positions.py                   |       33 |        0 |    100% |           |
 | departures/test\_live.py                                        |      111 |        0 |    100% |           |
@@ -138,7 +138,7 @@
 | vehicles/forms.py                                               |       94 |        3 |     97% |129, 167, 205 |
 | vehicles/management/\_\_init\_\_.py                             |        0 |        0 |    100% |           |
 | vehicles/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
-| vehicles/management/commands/compute\_blocks.py                 |       27 |       27 |      0% |      1-47 |
+| vehicles/management/commands/compute\_blocks.py                 |       27 |       27 |      0% |      1-45 |
 | vehicles/management/commands/import\_bod\_avl.py                |      400 |       55 |     86% |51, 126, 142, 152-153, 196-199, 202-205, 248, 264, 279-280, 302-320, 371, 373, 379, 410, 416, 431-432, 473-486, 514, 521-522, 537, 566, 600, 696, 708, 712 |
 | vehicles/management/commands/import\_bushub.py                  |       87 |       18 |     79% |23-24, 28-29, 32-33, 37, 41, 49, 60, 63, 79-80, 89, 99, 118, 126, 152 |
 | vehicles/management/commands/import\_edinburgh.py               |       63 |        4 |     94% |44, 72, 78-79 |
@@ -151,7 +151,7 @@
 | vehicles/management/commands/import\_translink\_avl.py          |       58 |        7 |     88% |14, 68-71, 105-106 |
 | vehicles/management/commands/listen.py                          |       22 |        0 |    100% |           |
 | vehicles/management/commands/newport.py                         |       43 |        2 |     95% |    45, 61 |
-| vehicles/management/commands/signalr.py                         |       79 |        0 |    100% |           |
+| vehicles/management/commands/signalr.py                         |       82 |        0 |    100% |           |
 | vehicles/management/commands/siri\_vm\_subscribe.py             |       34 |       13 |     62% |     30-76 |
 | vehicles/management/import\_live\_vehicles.py                   |      308 |       32 |     90% |112, 128, 134-136, 138, 160, 169, 183, 192-195, 204, 225, 230, 238-241, 248, 313-314, 355, 358-359, 380-381, 483, 521-522, 532, 552 |
 | vehicles/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
@@ -168,7 +168,7 @@
 | vehicles/management/tests/test\_stagecoach\_avl.py              |       33 |        0 |    100% |           |
 | vehicles/management/tests/test\_stats.py                        |       24 |        0 |    100% |           |
 | vehicles/management/tests/test\_translink\_avl.py               |       22 |        0 |    100% |           |
-| vehicles/models.py                                              |      504 |       31 |     94% |75, 193, 218, 285, 304, 310, 382, 388, 439, 460, 575-576, 589, 597, 614-616, 624-625, 628-629, 634-635, 660, 693, 732-735, 790, 799, 815 |
+| vehicles/models.py                                              |      504 |       31 |     94% |75, 193, 218, 285, 304, 310, 382, 388, 439, 460, 575-576, 589, 597, 614-616, 624-625, 628-629, 634-635, 666, 697, 736-739, 794, 803, 819 |
 | vehicles/rtpi.py                                                |       76 |        1 |     99% |        28 |
 | vehicles/signals.py                                             |       11 |        0 |    100% |           |
 | vehicles/tasks.py                                               |      138 |       22 |     84% |80, 85, 95, 102-105, 108, 110, 119, 132, 136-137, 155, 169, 182, 190-191, 199, 251-252, 255 |
@@ -178,7 +178,7 @@
 | vehicles/time\_aware\_polyline.py                               |       56 |       28 |     50% |18, 36, 49, 54, 57, 87-98, 106-120 |
 | vehicles/urls.py                                                |        4 |        0 |    100% |           |
 | vehicles/utils.py                                               |      116 |        5 |     96% |41, 144, 156-157, 161 |
-| vehicles/views.py                                               |      600 |       42 |     93% |443-444, 463-464, 477, 495-496, 548, 566-567, 572, 588-589, 626-627, 711, 818, 820, 822, 827, 877-878, 890-892, 979, 982-983, 993, 1061-1063, 1082-1083, 1101-1111, 1115, 1117 |
+| vehicles/views.py                                               |      600 |       42 |     93% |443-444, 463-464, 477, 495-496, 548, 564-565, 570, 586-587, 624-625, 709, 816, 818, 820, 825, 875-876, 888-890, 977, 980-981, 991, 1059-1061, 1080-1081, 1099-1109, 1113, 1115 |
 | vosa/\_\_init\_\_.py                                            |        0 |        0 |    100% |           |
 | vosa/admin.py                                                   |       36 |        0 |    100% |           |
 | vosa/management/commands/\_\_init\_\_.py                        |        0 |        0 |    100% |           |
@@ -187,7 +187,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16835** | **1135** | **93%** |           |
+|                                                       **TOTAL** | **16838** | **1135** | **93%** |           |
 
 
 ## Setup coverage badge
