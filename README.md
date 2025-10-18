@@ -16,7 +16,7 @@
 | api/filters.py                                                  |       67 |        0 |    100% |           |
 | api/serializers.py                                              |      113 |        4 |     96% |   223-226 |
 | api/tests.py                                                    |        9 |        0 |    100% |           |
-| api/views.py                                                    |       95 |        0 |    100% |           |
+| api/views.py                                                    |       94 |        0 |    100% |           |
 | buses/\_\_init\_\_.py                                           |        0 |        0 |    100% |           |
 | buses/asgi.py                                                   |        4 |        0 |    100% |           |
 | buses/context\_processors.py                                    |        5 |        0 |    100% |           |
@@ -168,7 +168,7 @@
 | vehicles/management/tests/test\_stagecoach\_avl.py              |       33 |        0 |    100% |           |
 | vehicles/management/tests/test\_stats.py                        |       24 |        0 |    100% |           |
 | vehicles/management/tests/test\_translink\_avl.py               |       22 |        0 |    100% |           |
-| vehicles/models.py                                              |      504 |       31 |     94% |75, 193, 218, 285, 304, 310, 382, 388, 439, 460, 575-576, 589, 597, 614-616, 624-625, 628-629, 634-635, 666, 697, 736-739, 794, 803, 819 |
+| vehicles/models.py                                              |      500 |       30 |     94% |75, 193, 218, 285, 304, 310, 382, 388, 439, 460, 575-576, 589, 597, 614-616, 624-625, 628-629, 634-635, 666, 733-736, 791, 800, 816 |
 | vehicles/rtpi.py                                                |       76 |        1 |     99% |        28 |
 | vehicles/signals.py                                             |       11 |        0 |    100% |           |
 | vehicles/tasks.py                                               |      138 |       22 |     84% |80, 85, 95, 102-105, 108, 110, 119, 132, 136-137, 155, 169, 182, 190-191, 199, 251-252, 255 |
@@ -187,7 +187,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16838** | **1135** | **93%** |           |
+|                                                       **TOTAL** | **16833** | **1134** | **93%** |           |
 
 
 ## Setup coverage badge
