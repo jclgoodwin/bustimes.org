@@ -52,7 +52,7 @@ class Migration(migrations.Migration):
             )],
             database_operations=[migrations.RunSQL(
                 'DROP INDEX CONCURRENTLY IF EXISTS vehicles_vehiclejourney_service_id_b5ad5fe9',
-                'CREATE INDEX CONCURRENTLY vehicles_vehiclejourney_service_id_b5ad5fe9 ON "vehicles_vehicle" ("service_id")'
+                'CREATE INDEX CONCURRENTLY vehicles_vehiclejourney_service_id_b5ad5fe9 ON "vehicles_vehiclejourney" ("service_id")'
             )]
         ),
         migrations.operations.SeparateDatabaseAndState(
@@ -63,7 +63,7 @@ class Migration(migrations.Migration):
             )],
             database_operations=[migrations.RunSQL(
                 'DROP INDEX CONCURRENTLY IF EXISTS vehicles_vehiclejourney_trip_id_f6cf407e',
-                'CREATE INDEX CONCURRENTLY vehicles_vehiclejourney_trip_id_f6cf407e ON "vehicles_vehicle" ("trip_id")'
+                'CREATE INDEX CONCURRENTLY vehicles_vehiclejourney_trip_id_f6cf407e ON "vehicles_vehiclejourney" ("trip_id")'
             )]
         ),
         migrations.operations.SeparateDatabaseAndState(
@@ -74,7 +74,7 @@ class Migration(migrations.Migration):
             )],
             database_operations=[migrations.RunSQL(
                 'DROP INDEX CONCURRENTLY IF EXISTS vehicles_vehiclejourney_vehicle_id_41154c8a',
-                'CREATE INDEX CONCURRENTLY vehicles_vehiclejourney_vehicle_id_41154c8a ON "vehicles_vehicle" ("vehicle_id")'
+                'CREATE INDEX CONCURRENTLY vehicles_vehiclejourney_vehicle_id_41154c8a ON "vehicles_vehiclejourney" ("vehicle_id")'
             )]
         ),
     ]
