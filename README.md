@@ -16,7 +16,7 @@
 | api/filters.py                                                  |       67 |        0 |    100% |           |
 | api/serializers.py                                              |      113 |        4 |     96% |   223-226 |
 | api/tests.py                                                    |        9 |        0 |    100% |           |
-| api/views.py                                                    |       94 |        0 |    100% |           |
+| api/views.py                                                    |       93 |        0 |    100% |           |
 | buses/\_\_init\_\_.py                                           |        0 |        0 |    100% |           |
 | buses/asgi.py                                                   |        4 |        0 |    100% |           |
 | buses/context\_processors.py                                    |        5 |        0 |    100% |           |
@@ -187,7 +187,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16833** | **1134** | **93%** |           |
+|                                                       **TOTAL** | **16832** | **1134** | **93%** |           |
 
 
 ## Setup coverage badge
