@@ -28,10 +28,9 @@ class BadException(APIException):
 class CursorPagination(pagination.CursorPagination):
     ordering = "-pk"
     page_size = 50
-    max_page_size = 1000
 
 
-class CursorPaginationWithSmallerDefaultPageSize(CursorPagination):
+class CursorPaginationWithSmallerPageSize(CursorPagination):
     page_size = 10
 
 
@@ -139,7 +138,7 @@ class TripViewSet(viewsets.ReadOnlyModelViewSet):
 class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = VehicleJourney.objects.select_related("vehicle")
     serializer_class = serializers.VehicleJourneySerializer
-    pagination_class = CursorPaginationWithSmallerDefaultPageSize
+    pagination_class = CursorPaginationWithSmallerPageSize
     filter_backends = [DjangoFilterBackend]
     filterset_class = filters.VehicleJourneyFilter
 
