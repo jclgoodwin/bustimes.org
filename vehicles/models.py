@@ -657,8 +657,8 @@ class VehicleJourney(models.Model):
     date = models.DateField(null=True, blank=True)
 
     def get_absolute_url(self):
-        date = timezone.localdate(self.datetime)
-        return f"/vehicles/{self.vehicle_id}?date={date}#journey-{self.id}"
+        # TODO: change to "/journeys/{self.id}" (actually using `reverse()`)
+        return f"/vehicles/{self.vehicle_id}?date={self.date}#journey-{self.id}"
 
     def __str__(self):
         when = f"{self.datetime:%-d %b %y %H:%M} {self.route_name} {self.code} {self.direction}"
@@ -692,10 +692,7 @@ class VehicleJourney(models.Model):
 
     def get_trip_block_url(self):
         url = reverse("block_detail", args=(self.trip_id,))
-        date = timezone.localdate(self.datetime)
-        if self.trip.start >= datetime.timedelta(days=1):
-            date -= datetime.timedelta(days=1)
-        return f"{url}?date={date}"
+        return f"{url}?date={self.date}"
 
 
 class VehicleLocation:
