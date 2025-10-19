@@ -488,17 +488,20 @@ class TripDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        route = self.object.route
+
         if self.object.operator:
             operators = [self.object.operator]
-        elif self.object.route.service:
+        elif route and route.service:
             operators = list(self.object.route.service.operator.all())
         else:
             operators = []
 
-        if self.object.route.service:
-            self.object.route.service.line_name = self.object.route.line_name
+        context["breadcrumb"] = operators
 
-        context["breadcrumb"] = operators + [self.object.route.service]
+        if route and route.service:
+            route.service.line_name = route.line_name
+            context["breadcrumb"] += [route.service]
 
         stops = list(TripViewSet.get_stops(self.object))
 
@@ -508,7 +511,7 @@ class TripDetailView(DetailView):
             if stops[-1].stop:
                 context["destination"] = stops[-1].stop.locality
 
-            if self.object.route.source.name == "Realtime Transport Operators":
+            if route and route.source.name == "Realtime Transport Operators":
                 trip_update = gtfsr.get_trip_update(self.object)
                 if trip_update:
                     context["trip_update"] = trip_update
