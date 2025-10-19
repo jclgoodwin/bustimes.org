@@ -414,7 +414,7 @@ class Trip(models.Model):
         return reverse("trip_detail", args=(self.id,))
 
     def get_trips(self):
-        if self.ticket_machine_code and self.route.service_id:
+        if self.ticket_machine_code and self.route and self.route.service_id:
             # get other parts of this trip (if the service has been split into parts)
             # see also: merge_split_trips
 
