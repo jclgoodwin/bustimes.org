@@ -819,18 +819,10 @@ class Grouping:
 
         max_notes = max(len(trip.notes.all()) for trip in self.trips)
 
-        calendars = {calendar.id: calendar for calendar in self.parent.calendars}
-
         for i, trip in enumerate(self.trips):
             difference = None
             notes = trip.notes.all()
             note_ids = {note.id for note in notes}
-
-            if not notes:
-                calendar = calendars.get(trip.calendar_id)
-                if calendar and calendar.summary:
-                    notes = [Note(text=calendar.summary)]
-                    note_ids = {None}
 
             # add notes
             for note in notes:
