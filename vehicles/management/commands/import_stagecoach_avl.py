@@ -132,7 +132,9 @@ class Command(ImportLiveVehiclesCommand):
             ):
                 return vehicle.latest_journey
             try:
-                return vehicle.vehiclejourney_set.get(datetime=departure_time)
+                return vehicle.vehiclejourney_set.get(
+                    date=timezone.localdate(departure_time), datetime=departure_time
+                )
             except VehicleJourney.DoesNotExist:
                 pass
         elif item.get("eo"):  # expectedOriginStopDepartureTime

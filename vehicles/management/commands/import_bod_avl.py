@@ -428,11 +428,10 @@ class Command(ImportLiveVehiclesCommand):
                     if datetime - latest_journey.datetime < THREE_HOURS:
                         journey = latest_journey
                 else:
-                    three_hours_ago = datetime - THREE_HOURS
                     journey = journeys.filter(
                         route_name=route_name,
                         code=journey_ref,
-                        datetime__gt=three_hours_ago,
+                        date=timezone.localdate(datetime),
                     ).last()
 
         if not journey:
