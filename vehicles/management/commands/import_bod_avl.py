@@ -416,7 +416,8 @@ class Command(ImportLiveVehiclesCommand):
                     journey = latest_journey
                 else:
                     journey = journeys.filter(
-                        datetime=origin_aimed_departure_time
+                        datetime=origin_aimed_departure_time,
+                        date=timezone.localdate(datetime),
                     ).first()
             elif journey_ref:
                 datetime = self.get_datetime(item)
