@@ -1114,16 +1114,12 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
             elif inbound < outbound:
                 data["stops"] = [stop for stop in data["stops"] if not stop["inbound"]]
 
-    if vehicle_id:
-        next_previous_filter = {"vehicle_id": vehicle_id}
-    elif service_id:
-        next_previous_filter = {
-            "service_id": service_id,
-            "date": journey.datetime,
-        }
+    next_previous_filter = {"date": journey.date}
+    if service_id:
+        next_previous_filter["service_id"] = service_id
         data["vehicle"] = str(journey.vehicle)
     else:
-        next_previous_filter = {"vehicle_id": journey.vehicle_id}
+        next_previous_filter["vehicle_id"] = journey.vehicle_id
 
     try:
         next_journey = journey.get_next_by_datetime(**next_previous_filter)
