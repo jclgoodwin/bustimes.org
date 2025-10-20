@@ -125,14 +125,12 @@ class Command(ImportLiveVehiclesCommand):
         ):
             return latest_journey
 
-        if datetime:
-            date = timezone.localdate(datetime)
-            try:
-                return vehicle.vehiclejourney_set.select_related("service").get(
-                    date=date, datetime=datetime
-                )
-            except VehicleJourney.DoesNotExist:
-                pass
+        if datetime and (
+            journey := vehicle.vehiclejourney_set.filter(
+                date=timezone.localdate(datetime), datetime=datetime
+            ).first()
+        ):
+            return journey
 
         journey = VehicleJourney(
             datetime=datetime,

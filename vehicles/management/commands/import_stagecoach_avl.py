@@ -131,12 +131,11 @@ class Command(ImportLiveVehiclesCommand):
                 < 60
             ):
                 return vehicle.latest_journey
-            try:
-                return vehicle.vehiclejourney_set.get(
-                    date=localdate(departure_time), datetime=departure_time
-                )
-            except VehicleJourney.DoesNotExist:
-                pass
+
+            if journey := vehicle.vehiclejourney_set.filter(
+                date=localdate(departure_time), datetime=departure_time
+            ).first():
+                return journey
         elif item.get("eo"):  # expectedOriginStopDepartureTime
             departure_time = parse_timestamp(item["eo"])
 

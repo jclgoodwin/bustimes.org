@@ -1,5 +1,6 @@
 from ciso8601 import parse_datetime
 from django.contrib.gis.geos import GEOSGeometry
+from django.utils.timezone import localdate
 from ...models import VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
@@ -44,10 +45,12 @@ class Command(ImportLiveVehiclesCommand):
         if latest_journey and latest_journey.datetime == datetime:
             journey = latest_journey
         else:
-            try:
-                journey = vehicle.vehiclejourney_set.get(datetime=datetime)
-            except VehicleJourney.DoesNotExist:
-                journey = VehicleJourney(datetime=datetime)
+            date = localdate(datetime)
+            journey = vehicle.vehiclejourney_set.filter(
+                date=date, datetime=datetime
+            ).first()
+            if not journey:
+                journey = VehicleJourney(date=date, datetime=datetime)
 
         journey.route_name = item["routeName"]
         journey.destination = item.get("destination", "")
