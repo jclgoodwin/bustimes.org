@@ -1,7 +1,8 @@
-from datetime import datetime, timezone
+from datetime import datetime
 
 from django.contrib.gis.geos import GEOSGeometry
 from django.db.models import Exists, OuterRef, Q
+from django.utils import timezone
 
 from busstops.models import Operator, Service, StopPoint
 
