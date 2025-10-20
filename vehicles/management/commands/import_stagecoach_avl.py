@@ -1,8 +1,7 @@
-from datetime import datetime
-
+from datetime import datetime, timezone
 from django.contrib.gis.geos import GEOSGeometry
 from django.db.models import Exists, OuterRef, Q
-from django.utils import timezone
+from django.utils.timezone import localdate
 
 from busstops.models import Operator, Service, StopPoint
 
@@ -134,7 +133,7 @@ class Command(ImportLiveVehiclesCommand):
                 return vehicle.latest_journey
             try:
                 return vehicle.vehiclejourney_set.get(
-                    date=timezone.localdate(departure_time), datetime=departure_time
+                    date=localdate(departure_time), datetime=departure_time
                 )
             except VehicleJourney.DoesNotExist:
                 pass
