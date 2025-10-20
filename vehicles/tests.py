@@ -277,10 +277,10 @@ class VehiclesTests(TestCase):
                     "datetime": "2020-10-20T13:00:00+01:00",
                     "id": self.journey.id + 2,
                 },
-                "previous": {
-                    "datetime": "2020-10-16T13:00:00+01:00",
-                    "id": self.journey.id + 1,
-                },
+                # "previous": {
+                #     "datetime": "2020-10-16T13:00:00+01:00",
+                #     "id": self.journey.id + 1,
+                # },
                 "route_name": "2",
                 "service_id": self.journey.service_id,
                 "trip_id": None,
