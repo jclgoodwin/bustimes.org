@@ -286,18 +286,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
             "source",
         )
 
-        VehicleJourney.objects.bulk_update(
-            self.journeys_to_update,
-            update_fields,
-        )
+        VehicleJourney.objects.bulk_update(self.journeys_to_update, update_fields)
         self.journeys_to_update = []
 
-        VehicleJourney.objects.bulk_create(
-            self.journeys_to_create.values(),
-            update_conflicts=True,
-            unique_fields=["vehicle", "datetime"],
-            update_fields=update_fields,
-        )
+        VehicleJourney.objects.bulk_create(self.journeys_to_create.values())
         self.journeys_to_create = {}
 
         # update vehicle records if necessary
