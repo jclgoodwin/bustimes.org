@@ -637,6 +637,7 @@ class VehicleRevision(models.Model):
 
 class VehicleJourney(models.Model):
     datetime = models.DateTimeField()
+    date = models.DateField()
     service = models.ForeignKey(
         Service, models.SET_NULL, null=True, blank=True, db_index=False
     )
@@ -654,7 +655,6 @@ class VehicleJourney(models.Model):
     # trip_matched = models.BooleanField(default=True)
     # block = models.ForeignKey("bustimes.Block", models.SET_NULL, null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    date = models.DateField(null=True, blank=True)
 
     def get_absolute_url(self):
         # TODO: change to "/journeys/{self.id}" (actually using `reverse()`)
@@ -683,7 +683,6 @@ class VehicleJourney(models.Model):
                 condition=Q(trip__isnull=False),
             ),
         ]
-        unique_together = (("vehicle", "datetime"),)
 
     def get_redis_key(self):
         return self.uuid.bytes

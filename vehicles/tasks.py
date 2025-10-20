@@ -157,14 +157,12 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
     destination = destination or ""
     route_name = data.get("LineName") or data.get("LineRef")
 
-    journeys = vehicle.vehiclejourney_set
-    if journeys.filter(datetime=time).exists():
-        return
+    date = timezone.localdate(time)
+    journeys = vehicle.vehiclejourney_set.filter(date=date)
     if (
-        journey_ref
-        and journeys.filter(
-            route_name=route_name, code=journey_ref, date=timezone.localdate(time)
-        ).exists()
+        journeys.filter(datetime=time).exists()
+        or journey_ref
+        and journeys.filter(route_name=route_name, code=journey_ref).exists()
     ):
         return
 
@@ -183,7 +181,7 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
             departure_time=time, destination_ref=data.get("DestinationRef")
         )
     if not journey.date:
-        journey.date = timezone.localdate(time)
+        journey.date = date
 
     try:
         journey.save()

@@ -181,11 +181,7 @@ class VehicleAdmin(admin.ModelAdmin):
         vehicle = vehicles[0]
 
         for duplicate in vehicles[1:]:
-            vehicle.vehiclejourney_set.filter(
-                ~Exists(
-                    duplicate.vehiclejourney_set.filter(datetime=OuterRef("datetime"))
-                )
-            ).update(vehicle=duplicate)
+            vehicle.vehiclejourney_set.update(vehicle=duplicate)
             vehicle.vehiclecode_set.update(vehicle=duplicate)
             vehicle.vehiclerevision_set.update(vehicle=duplicate)
 
