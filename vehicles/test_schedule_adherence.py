@@ -182,10 +182,13 @@ class ScheduleAdherenceTest(TestCase):
             ]
         )
         cls.journey = VehicleJourney.objects.create(
-            trip=trip, datetime="2022-01-04T00:00:00Z", source=source
+            trip=trip, datetime="2022-01-04T00:00:00Z", date="2022-01-04", source=source
         )
         cls.journey_after_midnight = VehicleJourney.objects.create(
-            trip=trip_after_midnight, datetime="2022-01-04T00:00:00Z", source=source
+            trip=trip_after_midnight,
+            datetime="2022-01-04T00:00:00Z",
+            date="2022-01-04",
+            source=source,
         )
 
     def test(self):
