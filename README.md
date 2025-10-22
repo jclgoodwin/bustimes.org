@@ -16,7 +16,7 @@
 | api/filters.py                                                  |       67 |        0 |    100% |           |
 | api/serializers.py                                              |      113 |        4 |     96% |   223-226 |
 | api/tests.py                                                    |        9 |        0 |    100% |           |
-| api/views.py                                                    |       93 |        0 |    100% |           |
+| api/views.py                                                    |       92 |        0 |    100% |           |
 | buses/\_\_init\_\_.py                                           |        0 |        0 |    100% |           |
 | buses/asgi.py                                                   |        4 |        0 |    100% |           |
 | buses/context\_processors.py                                    |        5 |        0 |    100% |           |
@@ -89,7 +89,7 @@
 | bustimes/models.py                                              |      342 |        8 |     98% |111, 379, 382, 411, 456-459, 491 |
 | bustimes/test\_get\_trip.py                                     |       31 |        0 |    100% |           |
 | bustimes/tests.py                                               |      129 |        0 |    100% |           |
-| bustimes/timetables.py                                          |      621 |       64 |     90% |39-52, 162-173, 204-205, 222-234, 286, 298-301, 313, 327-332, 346, 365, 440, 443, 459-462, 464, 491, 603-618, 704-705, 776, 930-932 |
+| bustimes/timetables.py                                          |      615 |       64 |     90% |39-52, 162-173, 204-205, 222-234, 286, 298-301, 313, 327-332, 346, 365, 440, 443, 459-462, 464, 491, 603-618, 704-705, 776, 922-924 |
 | bustimes/urls.py                                                |        3 |        0 |    100% |           |
 | bustimes/utils.py                                               |      181 |       11 |     94% |156, 211, 237-239, 259-260, 329, 346-347, 397 |
 | bustimes/views.py                                               |      387 |       66 |     83% |196-197, 200-201, 217-219, 227-236, 238-246, 253, 275, 365, 374, 410, 416, 498, 595, 619-621, 638, 642-670, 698-709, 718-724 |
@@ -97,7 +97,7 @@
 | departures/avl.py                                               |       12 |        1 |     92% |        14 |
 | departures/gtfsr.py                                             |       91 |        2 |     98% |   91, 111 |
 | departures/live.py                                              |      134 |       14 |     90% |44, 59, 61, 63, 80-85, 146, 157, 169, 183 |
-| departures/sources.py                                           |      224 |       34 |     85% |34, 58, 63, 67, 100, 116, 126, 129-131, 141-148, 153-154, 168-169, 177-178, 245, 324, 339, 412, 416-417, 423-424, 427, 435 |
+| departures/sources.py                                           |      223 |       34 |     85% |33, 57, 62, 66, 99, 115, 125, 128-130, 140-147, 152-153, 167-168, 176-177, 244, 323, 338, 411, 415-416, 422-423, 426, 434 |
 | departures/test\_gtfsr\_trip\_updates.py                        |       45 |        0 |    100% |           |
 | departures/test\_gtfsr\_vehicle\_positions.py                   |       33 |        0 |    100% |           |
 | departures/test\_live.py                                        |      111 |        0 |    100% |           |
@@ -129,7 +129,7 @@
 | transxchange/test\_txc.py                                       |       23 |        0 |    100% |           |
 | transxchange/txc.py                                             |      485 |       19 |     96% |54, 125, 131, 176, 236, 264, 310-317, 384, 386, 430, 451, 513, 546-547, 702, 733 |
 | vehicles/\_\_init\_\_.py                                        |        0 |        0 |    100% |           |
-| vehicles/admin.py                                               |      254 |       24 |     91% |32, 60, 87, 89, 205, 223-224, 233, 260-261, 264-265, 288, 294, 296, 298, 301, 330, 346, 352, 456, 516-518 |
+| vehicles/admin.py                                               |      254 |       24 |     91% |32, 60, 87, 89, 201, 219-220, 229, 256-257, 260-261, 284, 290, 292, 294, 297, 326, 342, 348, 452, 512-514 |
 | vehicles/apps.py                                                |        6 |        0 |    100% |           |
 | vehicles/context\_processors.py                                 |       14 |        0 |    100% |           |
 | vehicles/fields.py                                              |       23 |        0 |    100% |           |
@@ -139,21 +139,21 @@
 | vehicles/management/\_\_init\_\_.py                             |        0 |        0 |    100% |           |
 | vehicles/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
 | vehicles/management/commands/compute\_blocks.py                 |       27 |       27 |      0% |      1-45 |
-| vehicles/management/commands/import\_bod\_avl.py                |      400 |       55 |     86% |51, 126, 142, 152-153, 196-199, 202-205, 248, 264, 279-280, 302-320, 371, 373, 379, 410, 416, 431-432, 473-486, 514, 521-522, 537, 566, 600, 696, 708, 712 |
-| vehicles/management/commands/import\_bushub.py                  |       87 |       18 |     79% |23-24, 28-29, 32-33, 37, 41, 49, 60, 63, 79-80, 89, 99, 118, 126, 152 |
+| vehicles/management/commands/import\_bod\_avl.py                |      399 |       54 |     86% |51, 126, 142, 152-153, 196-199, 202-205, 248, 264, 279-280, 302-320, 371, 373, 379, 410, 416, 432, 473-486, 514, 521-522, 537, 566, 600, 696, 708, 712 |
+| vehicles/management/commands/import\_bushub.py                  |       84 |       19 |     77% |23-24, 28-29, 32-33, 37, 41, 49, 60, 63, 79-80, 89, 99, 118, 126, 133, 151 |
 | vehicles/management/commands/import\_edinburgh.py               |       63 |        4 |     94% |44, 72, 78-79 |
 | vehicles/management/commands/import\_first.py                   |      124 |       21 |     83% |28, 32, 52, 54, 75-76, 82, 104-105, 114, 136-148, 153, 212-213, 215 |
 | vehicles/management/commands/import\_gtfsr\_ember.py            |       44 |        1 |     98% |        53 |
 | vehicles/management/commands/import\_gtfsr\_ie.py               |       96 |        4 |     96% |94, 140, 149, 156 |
 | vehicles/management/commands/import\_live\_jersey.py            |       39 |        0 |    100% |           |
 | vehicles/management/commands/import\_polar.py                   |       84 |       28 |     67% |13-14, 25, 29, 33, 41, 44, 49-55, 61-63, 67, 77-78, 81, 95-98, 101, 114, 121 |
-| vehicles/management/commands/import\_stagecoach\_avl.py         |       72 |        5 |     93% |123, 133, 138-139, 171 |
+| vehicles/management/commands/import\_stagecoach\_avl.py         |       71 |        6 |     92% |123, 133, 138-140, 172 |
 | vehicles/management/commands/import\_translink\_avl.py          |       58 |        7 |     88% |14, 68-71, 105-106 |
 | vehicles/management/commands/listen.py                          |       22 |        0 |    100% |           |
-| vehicles/management/commands/newport.py                         |       43 |        2 |     95% |    45, 61 |
+| vehicles/management/commands/newport.py                         |       44 |        2 |     95% |    46, 64 |
 | vehicles/management/commands/signalr.py                         |       82 |        0 |    100% |           |
 | vehicles/management/commands/siri\_vm\_subscribe.py             |       34 |       13 |     62% |     30-76 |
-| vehicles/management/import\_live\_vehicles.py                   |      308 |       32 |     90% |112, 128, 134-136, 138, 160, 169, 183, 192-195, 204, 225, 230, 238-241, 248, 313-314, 355, 358-359, 380-381, 483, 521-522, 532, 552 |
+| vehicles/management/import\_live\_vehicles.py                   |      305 |       29 |     90% |112, 128, 134-136, 138, 160, 169, 183, 192-195, 204, 225, 230, 239, 244, 301-302, 343, 346-347, 368-369, 471, 509-510, 520, 540 |
 | vehicles/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | vehicles/management/tests/test\_bod\_avl.py                     |      290 |        0 |    100% |           |
 | vehicles/management/tests/test\_bushub.py                       |       48 |        0 |    100% |           |
@@ -168,17 +168,17 @@
 | vehicles/management/tests/test\_stagecoach\_avl.py              |       33 |        0 |    100% |           |
 | vehicles/management/tests/test\_stats.py                        |       24 |        0 |    100% |           |
 | vehicles/management/tests/test\_translink\_avl.py               |       22 |        0 |    100% |           |
-| vehicles/models.py                                              |      500 |       30 |     94% |75, 193, 218, 285, 304, 310, 382, 388, 439, 460, 575-576, 589, 597, 614-616, 624-625, 628-629, 634-635, 666, 733-736, 791, 800, 816 |
+| vehicles/models.py                                              |      499 |       30 |     94% |75, 193, 218, 285, 304, 310, 382, 388, 439, 460, 575-576, 589, 597, 614-616, 624-625, 628-629, 634-635, 666, 732-735, 790, 799, 815 |
 | vehicles/rtpi.py                                                |       76 |        1 |     99% |        28 |
 | vehicles/signals.py                                             |       11 |        0 |    100% |           |
-| vehicles/tasks.py                                               |      138 |       22 |     84% |80, 85, 95, 102-105, 108, 110, 119, 132, 136-137, 155, 169, 182, 190-191, 199, 251-252, 255 |
+| vehicles/tasks.py                                               |      137 |       21 |     85% |80, 85, 95, 102-105, 108, 110, 119, 132, 136-137, 155, 180, 188-189, 197, 249-250, 253 |
 | vehicles/test\_models.py                                        |       62 |        0 |    100% |           |
 | vehicles/test\_schedule\_adherence.py                           |       75 |        0 |    100% |           |
 | vehicles/tests.py                                               |      460 |        0 |    100% |           |
 | vehicles/time\_aware\_polyline.py                               |       56 |       28 |     50% |18, 36, 49, 54, 57, 87-98, 106-120 |
 | vehicles/urls.py                                                |        4 |        0 |    100% |           |
 | vehicles/utils.py                                               |      116 |        5 |     96% |41, 144, 156-157, 161 |
-| vehicles/views.py                                               |      600 |       42 |     93% |443-444, 463-464, 477, 495-496, 548, 564-565, 570, 586-587, 624-625, 709, 816, 818, 820, 825, 875-876, 888-890, 977, 980-981, 991, 1059-1061, 1080-1081, 1099-1109, 1113, 1115 |
+| vehicles/views.py                                               |      599 |       43 |     93% |443-444, 463-464, 477, 495-496, 548, 564-565, 570, 586-587, 624-625, 709, 816, 818, 820, 825, 875-876, 888-890, 977, 980-981, 991, 1059-1061, 1080-1081, 1099-1109, 1113, 1115, 1139 |
 | vosa/\_\_init\_\_.py                                            |        0 |        0 |    100% |           |
 | vosa/admin.py                                                   |       36 |        0 |    100% |           |
 | vosa/management/commands/\_\_init\_\_.py                        |        0 |        0 |    100% |           |
@@ -187,7 +187,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16834** | **1134** | **93%** |           |
+|                                                       **TOTAL** | **16816** | **1132** | **93%** |           |
 
 
 ## Setup coverage badge

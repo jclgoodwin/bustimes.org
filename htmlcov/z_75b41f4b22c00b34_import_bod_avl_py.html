@@ -54,9 +54,9 @@
             </div>
         </aside>
         <h2>
-            <span class="text">400 statements &nbsp;</span>
+            <span class="text">399 statements &nbsp;</span>
             <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">345<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">55<span class="text"> missing</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">54<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_75b41f4b22c00b34_import_bushub_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.7">coverage.py v7.10.7</a>,
-            created at 2025-10-19 10:52 +0000
+            created at 2025-10-22 11:13 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -498,23 +498,23 @@
     <p class="mis show_mis"><span class="n"><a id="t416" href="#t416">416</a></span><span class="t">                    <span class="nam">journey</span> <span class="op">=</span> <span class="nam">latest_journey</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t417" href="#t417">417</a></span><span class="t">                <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t418" href="#t418">418</a></span><span class="t">                    <span class="nam">journey</span> <span class="op">=</span> <span class="nam">journeys</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t419" href="#t419">419</a></span><span class="t">                        <span class="nam">datetime</span><span class="op">=</span><span class="nam">origin_aimed_departure_time</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t420" href="#t420">420</a></span><span class="t">                    <span class="op">)</span><span class="op">.</span><span class="nam">first</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t421" href="#t421">421</a></span><span class="t">            <span class="key">elif</span> <span class="nam">journey_ref</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t422" href="#t422">422</a></span><span class="t">                <span class="nam">datetime</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">get_datetime</span><span class="op">(</span><span class="nam">item</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t423" href="#t423">423</a></span><span class="t">                <span class="nam">THREE_HOURS</span> <span class="op">=</span> <span class="nam">timedelta</span><span class="op">(</span><span class="nam">hours</span><span class="op">=</span><span class="num">3</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t424" href="#t424">424</a></span><span class="t">                <span class="key">if</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t425" href="#t425">425</a></span><span class="t">                    <span class="nam">route_name</span> <span class="op">==</span> <span class="nam">latest_journey</span><span class="op">.</span><span class="nam">route_name</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t426" href="#t426">426</a></span><span class="t">                    <span class="key">and</span> <span class="nam">journey_ref</span> <span class="op">==</span> <span class="nam">latest_journey</span><span class="op">.</span><span class="nam">code</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t427" href="#t427">427</a></span><span class="t">                <span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t428" href="#t428">428</a></span><span class="t">                    <span class="key">if</span> <span class="nam">datetime</span> <span class="op">-</span> <span class="nam">latest_journey</span><span class="op">.</span><span class="nam">datetime</span> <span class="op">&lt;</span> <span class="nam">THREE_HOURS</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t429" href="#t429">429</a></span><span class="t">                        <span class="nam">journey</span> <span class="op">=</span> <span class="nam">latest_journey</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t430" href="#t430">430</a></span><span class="t">                <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t431" href="#t431">431</a></span><span class="t">                    <span class="nam">three_hours_ago</span> <span class="op">=</span> <span class="nam">datetime</span> <span class="op">-</span> <span class="nam">THREE_HOURS</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t419" href="#t419">419</a></span><span class="t">                        <span class="nam">datetime</span><span class="op">=</span><span class="nam">origin_aimed_departure_time</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t420" href="#t420">420</a></span><span class="t">                        <span class="nam">date</span><span class="op">=</span><span class="nam">timezone</span><span class="op">.</span><span class="nam">localdate</span><span class="op">(</span><span class="nam">datetime</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t421" href="#t421">421</a></span><span class="t">                    <span class="op">)</span><span class="op">.</span><span class="nam">first</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t422" href="#t422">422</a></span><span class="t">            <span class="key">elif</span> <span class="nam">journey_ref</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t423" href="#t423">423</a></span><span class="t">                <span class="nam">datetime</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">get_datetime</span><span class="op">(</span><span class="nam">item</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t424" href="#t424">424</a></span><span class="t">                <span class="nam">THREE_HOURS</span> <span class="op">=</span> <span class="nam">timedelta</span><span class="op">(</span><span class="nam">hours</span><span class="op">=</span><span class="num">3</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t425" href="#t425">425</a></span><span class="t">                <span class="key">if</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t426" href="#t426">426</a></span><span class="t">                    <span class="nam">route_name</span> <span class="op">==</span> <span class="nam">latest_journey</span><span class="op">.</span><span class="nam">route_name</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t427" href="#t427">427</a></span><span class="t">                    <span class="key">and</span> <span class="nam">journey_ref</span> <span class="op">==</span> <span class="nam">latest_journey</span><span class="op">.</span><span class="nam">code</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t428" href="#t428">428</a></span><span class="t">                <span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t429" href="#t429">429</a></span><span class="t">                    <span class="key">if</span> <span class="nam">datetime</span> <span class="op">-</span> <span class="nam">latest_journey</span><span class="op">.</span><span class="nam">datetime</span> <span class="op">&lt;</span> <span class="nam">THREE_HOURS</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t430" href="#t430">430</a></span><span class="t">                        <span class="nam">journey</span> <span class="op">=</span> <span class="nam">latest_journey</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t431" href="#t431">431</a></span><span class="t">                <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t432" href="#t432">432</a></span><span class="t">                    <span class="nam">journey</span> <span class="op">=</span> <span class="nam">journeys</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis mis2 show_mis"><span class="n"><a id="t433" href="#t433">433</a></span><span class="t">                        <span class="nam">route_name</span><span class="op">=</span><span class="nam">route_name</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis mis2 show_mis"><span class="n"><a id="t434" href="#t434">434</a></span><span class="t">                        <span class="nam">code</span><span class="op">=</span><span class="nam">journey_ref</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t435" href="#t435">435</a></span><span class="t">                        <span class="nam">datetime__gt</span><span class="op">=</span><span class="nam">three_hours_ago</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis mis2 show_mis"><span class="n"><a id="t435" href="#t435">435</a></span><span class="t">                        <span class="nam">date</span><span class="op">=</span><span class="nam">timezone</span><span class="op">.</span><span class="nam">localdate</span><span class="op">(</span><span class="nam">datetime</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis mis2 show_mis"><span class="n"><a id="t436" href="#t436">436</a></span><span class="t">                    <span class="op">)</span><span class="op">.</span><span class="nam">last</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t437" href="#t437">437</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t438" href="#t438">438</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">journey</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -803,7 +803,7 @@
             <a class="nav" href="z_75b41f4b22c00b34_import_bushub_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.7">coverage.py v7.10.7</a>,
-            created at 2025-10-19 10:52 +0000
+            created at 2025-10-22 11:13 +0000
         </p>
     </div>
 </footer>
