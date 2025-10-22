@@ -12,12 +12,11 @@ from django.core.cache import cache
 from django.db.models import Prefetch, prefetch_related_objects, IntegerField
 
 from django.db.models.functions import Coalesce
-from django.db.models import F, ExpressionWrapper, OuterRef, Exists
+from django.db.models import F, ExpressionWrapper
 from django.utils import timezone
 
 from bustimes.utils import get_stop_times
 from vehicles.models import Vehicle, VehicleJourney
-from disruptions.models import Call
 
 
 TIMEZONE = ZoneInfo("Europe/London")
@@ -271,7 +270,7 @@ class TimetableDepartures(Departures):
             "destination": stop_time.destination,
             "link": trip.get_absolute_url(),
             "stop_time": stop_time,
-            "cancelled": stop_time.cancelled,
+            # "cancelled": stop_time.cancelled,
         }
 
     def get_times(self, date, time=None, trips=None, day_shift=0):
@@ -287,14 +286,14 @@ class TimetableDepartures(Departures):
                 order=ExpressionWrapper(
                     F("departure") + day_shift * 86400, output_field=IntegerField()
                 ),
-                cancelled=Exists(
-                    Call.objects.filter(
-                        journey__situation__current=True,
-                        journey__trip=OuterRef("trip"),
-                        stop_time=OuterRef("id"),
-                        condition="notStopping",
-                    )
-                ),
+                # cancelled=Exists(
+                #     Call.objects.filter(
+                #         journey__situation__current=True,
+                #         journey__trip=OuterRef("trip"),
+                #         stop_time=OuterRef("id"),
+                #         condition="notStopping",
+                #     )
+                # ),
             )
         ).order_by("departure")
 

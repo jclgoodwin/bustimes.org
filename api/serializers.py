@@ -243,7 +243,7 @@ class TripSerializer(serializers.ModelSerializer):
                 "expected_departure_time": getattr(
                     stop_time, "expected_departure", None
                 ),
-                "call_condition": stop_time.call_condition,
+                # "call_condition": stop_time.call_condition,
             }
             previous_stop_id = stop_time.stop_id
 
