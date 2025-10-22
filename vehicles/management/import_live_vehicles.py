@@ -234,13 +234,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
             ):
                 journey.uuid = latest_journey.uuid
                 journey.id = latest_journey.id
-                if journey.datetime and latest_journey.datetime != journey.datetime:
-                    try:
-                        journey.save()
-                    except IntegrityError:
-                        self.journeys_to_update.append(journey)
-                else:
-                    self.journeys_to_update.append(journey)
+                self.journeys_to_update.append(journey)
+            elif journey.id:
+                self.journeys_to_update.append(journey)
             else:
                 key = (vehicle.id, journey.datetime)
                 if key in self.journeys_to_create:
