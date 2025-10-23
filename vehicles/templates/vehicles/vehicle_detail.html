@@ -69,19 +69,43 @@
 
 {% if date %}
     <script src="{% static 'js/htmx.org/htmx.min.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <!-- Custom styles for date picker -->
+    <link rel="stylesheet" href="{% static 'dist/css/flatpickr.css' %}">
 
     <form class="timetable-date" autocomplete="off" hx-trigger="change" hx-get="{{ request.path }}" hx-select="#journeys" hx-target="#journeys" hx-indicator="#journeys" hx-swap="outerHTML" hx-push-url="true">
-        {% if dates %}
-            <select name="date" aria-label="Date">
-                {% for option in dates %}
-                    <option{% if option == date %} selected{% endif %} value="{{ option.isoformat }}">{{ option|date:"l j F Y" }}</option>
-                {% endfor %}
-            </select>
-        {% else %}
-            <input type="date" name="date" aria-label="Date" value="{{ date.isoformat }}">
-        {% endif %}
+        <input id="date-picker" type="text" name="date" aria-label="Date" value="{{ date.isoformat }}" placeholder="Select a date">
         <noscript><input type="submit" value="Go"></noscript>
     </form>
+
+    <script>
+    function initDatePicker() {
+        const availableDates = [
+            {% for d in dates %}
+                "{{ d|date:'Y-m-d' }}"{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ];
+
+        // Enable only available dates if any are provided
+        flatpickr("#date-picker", {
+            dateFormat: "Y-m-d",
+            {% if dates %}
+            enable: availableDates,
+            {% endif %}
+            defaultDate: "{{ date|date:'Y-m-d' }}",
+            disableMobile: true,
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", initDatePicker);
+
+    document.body.addEventListener("htmx:afterSwap", (event) => {
+        if (event.target.querySelector("#date-picker") || event.target.id === "journeys") {
+            initDatePicker();
+        }
+    });
+    </script>
 {% endif %}
 
 {% if journeys %}
