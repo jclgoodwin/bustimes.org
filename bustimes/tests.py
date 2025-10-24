@@ -193,6 +193,11 @@ class BusTimesTest(TestCase):
 
         self.assertEqual(str(trip), "01:47")
 
+        trip.save()
+
+        response = self.client.get(trip.get_absolute_url())
+        self.assertContains(response, '"11:00:00"')
+
     def test_stop_time(self):
         time = StopTime(departure=timedelta(hours=10, minutes=47, seconds=30))
         self.assertEqual(str(time), "10:47")
