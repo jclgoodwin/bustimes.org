@@ -286,9 +286,11 @@ https://bustimes.org/admin/busstops/service/?operator__noc__in={",".join(operato
             url__startswith=f"{url_prefix}/timetable/",
         )
         if to_delete:
-            logger.info(to_delete)
+            logger.info(f"{to_delete=}")
             for source in to_delete:  # one by one to use less memory
-                source.delete()
+                logger.info(source.calendar_set.exclude(trip=None).update(source=None))
+                logger.info(source.stoppoint_set.all().delete())
+                logger.info(source.delete())
 
 
 def ticketer(specific_operator=None):
