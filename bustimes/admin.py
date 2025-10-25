@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.gis.admin import GISModelAdmin
 from django.contrib.gis.db.models import GeometryField
+from django.forms import ModelForm, Textarea
 from django.db.models import Func
 from django.contrib.postgres.aggregates import StringAgg
 from django.db.models import Exists, OuterRef, F, CharField
@@ -61,6 +62,11 @@ class VersionInline(admin.TabularInline):
     model = Version
 
 
+class TimetableDataSourceAdminForm(ModelForm):
+    class Meta:
+        widgets = {"notes": Textarea()}
+
+
 @admin.register(TimetableDataSource)
 class TimetableDataSourceAdmin(admin.ModelAdmin):
     autocomplete_fields = ["operators"]
@@ -69,6 +75,7 @@ class TimetableDataSourceAdmin(admin.ModelAdmin):
     search_fields = ["url", "name", "search"]
     actions = ["activate", "deactivate"]
     inlines = [VersionInline]
+    form = TimetableDataSourceAdminForm
 
     def nocs(self, obj):
         return obj.nocs

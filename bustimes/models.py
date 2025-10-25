@@ -30,6 +30,7 @@ class TimetableDataSource(models.Model):
     region = models.ForeignKey(
         "busstops.Region", models.SET_NULL, null=True, blank=True
     )
+    notes = models.CharField(null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -42,6 +43,7 @@ class Version(models.Model):
     datetime = models.DateTimeField(null=True, blank=True)
     name = models.CharField(null=True, blank=True)
     url = models.URLField(null=True, blank=True)
+    current = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
