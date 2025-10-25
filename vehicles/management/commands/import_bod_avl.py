@@ -499,7 +499,7 @@ class Command(ImportLiveVehiclesCommand):
                 if arrival_time:
                     arrival_time = parse_datetime(arrival_time)
 
-                journey.trip = journey.get_trip(
+                if trip := journey.get_trip(
                     datetime=datetime,
                     operator_ref=operator_ref,
                     origin_ref=monitored_vehicle_journey.get("OriginRef"),
@@ -508,9 +508,13 @@ class Command(ImportLiveVehiclesCommand):
                     arrival_time=arrival_time,
                     journey_code=journey_code,
                     block_ref=block_ref,
-                )
+                ):
+                    journey.trip = trip
 
-                if trip := journey.trip:
+                    if operator_ref in ("NATX", "SNDR") and trip.block != block_ref:
+                        trip.block = block_ref
+                        trip.save(update_fields=["block"])
+
                     if (
                         not (destination_ref and journey.destination)
                         and trip.destination_id
