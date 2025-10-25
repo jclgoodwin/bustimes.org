@@ -58,7 +58,7 @@
 | busstops/utils.py                                               |       11 |        0 |    100% |           |
 | busstops/views.py                                               |      649 |       43 |     93% |140, 482, 508, 546, 691, 709, 769-772, 774, 905-910, 923, 1000, 1028-1029, 1034-1035, 1043-1052, 1113, 1209, 1230, 1232, 1311, 1390, 1420-1421, 1424-1428, 1578, 1590-1591, 1596, 1608-1609 |
 | bustimes/\_\_init\_\_.py                                        |        0 |        0 |    100% |           |
-| bustimes/admin.py                                               |      136 |       14 |     90% |74, 77-78, 89-91, 94-96, 153-157, 180, 201, 204 |
+| bustimes/admin.py                                               |      141 |       14 |     90% |81, 84-85, 96-98, 101-103, 160-164, 187, 208, 211 |
 | bustimes/download\_utils.py                                     |       32 |        0 |    100% |           |
 | bustimes/fields.py                                              |       31 |        1 |     97% |        12 |
 | bustimes/formatting.py                                          |       19 |        0 |    100% |           |
@@ -86,7 +86,7 @@
 | bustimes/management/tests/test\_import\_passenger.py            |       23 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_transxchange.py         |      769 |        0 |    100% |           |
 | bustimes/management/tests/test\_tnds.py                         |       19 |        0 |    100% |           |
-| bustimes/models.py                                              |      342 |        8 |     98% |111, 379, 382, 411, 456-459, 491 |
+| bustimes/models.py                                              |      344 |        8 |     98% |113, 381, 384, 413, 458-461, 493 |
 | bustimes/test\_get\_trip.py                                     |       31 |        0 |    100% |           |
 | bustimes/tests.py                                               |      132 |        0 |    100% |           |
 | bustimes/timetables.py                                          |      615 |       64 |     90% |39-52, 162-173, 204-205, 222-234, 286, 298-301, 313, 327-332, 346, 365, 440, 443, 459-462, 464, 491, 603-618, 704-705, 776, 922-924 |
@@ -187,7 +187,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16826** | **1134** | **93%** |           |
+|                                                       **TOTAL** | **16833** | **1134** | **93%** |           |
 
 
 ## Setup coverage badge
