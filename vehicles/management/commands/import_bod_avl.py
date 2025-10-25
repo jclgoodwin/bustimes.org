@@ -167,6 +167,10 @@ class Command(ImportLiveVehiclesCommand):
                 vehicles = self.vehicles.filter(operator=operator)
         else:
             defaults["operator"] = operators[0]
+            for operator in operators:
+                if operator.noc == operator_ref:
+                    # National Express rather than Dublin Express for example
+                    defaults["operator"] = operator
             vehicles = self.vehicles.filter(operator__in=operators)
 
         condition = Q(code__iexact=vehicle_ref)
