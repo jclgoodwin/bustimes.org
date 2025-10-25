@@ -38,17 +38,22 @@ Status = namedtuple(
 def same_journey(journey, last_journey, now):
     if journey.datetime == last_journey.datetime:
         return True
+    if journey.datetime and not last_journey.datetime.second:
+        # seems safe to assume that last journey had a different departure time
+        return False
     return (
         journey.service_id,
         journey.route_name,
         journey.code,
         journey.direction,
+        # journey.trip_id,
         now.date(),
     ) == (
         last_journey.service_id,
         last_journey.route_name,
         last_journey.code,
         last_journey.direction,
+        # last_journey.trip_id or journey.trip_id,
         last_journey.datetime.date(),
     )
 

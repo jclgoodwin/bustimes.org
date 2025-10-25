@@ -437,6 +437,7 @@ class Command(ImportLiveVehiclesCommand):
                         route_name=route_name,
                         code=journey_ref,
                         date=timezone.localdate(datetime),
+                        datetime__gt=datetime - THREE_HOURS,
                     ).last()
 
         if not journey:
