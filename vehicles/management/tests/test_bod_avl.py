@@ -756,6 +756,81 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         }
         command.handle_item(item)
 
+    @time_machine.travel("2025-10-23T13:25:45.093+00:00")
+    @patch_redis_client()
+    def test_natx(self):
+        command = import_bod_avl.Command()
+        command.source = self.source
+
+        command.handle_item(
+            {
+                "ItemIdentifier": "15707406X",
+                "RecordedAtTime": "2025-10-23T04:32:29+00:00",
+                "ValidUntilTime": "2025-10-23T04:37:55.104+00:00",
+                "MonitoredVehicleJourney": {
+                    "Bearing": "56",
+                    "LineRef": "727",
+                    "BlockRef": "727804",
+                    "Monitored": "true",
+                    "OriginRef": "900038174",
+                    "OriginName": "Great Yarmouth Regent Road outside Market Gates",
+                    "VehicleRef": "BV72XGA",
+                    "OperatorRef": "NATX",
+                    "DirectionRef": "outbound",
+                    "DestinationRef": "900057230",
+                    "DestinationName": "Heathrow Airport (T5) Arrivals forecourt Stops 11-15",
+                    "VehicleLocation": {"Latitude": "52.59", "Longitude": "1.706"},
+                    "PublishedLineName": "727",
+                    "FramedVehicleJourneyRef": {
+                        "DataFrameRef": "2025-10-23",
+                        "DatedVehicleJourneyRef": "727804",
+                    },
+                    "OriginAimedDepartureTime": "2025-10-23T05:30:00+00:00",
+                    "DestinationAimedArrivalTime": "2025-10-23T11:00:00+00:00",
+                },
+            }
+        )
+        command.save()
+
+        vj = VehicleJourney.objects.get()
+        self.assertEqual(str(vj.datetime), "2025-10-23 05:30:00+00:00")
+
+        # OriginAimedDepsrtureTime has changed,
+        # but DatedVehicleJourneyRef has not - it's more like a BlockRef here
+        command.handle_item(
+            {
+                "ItemIdentifier": "157073930",
+                "RecordedAtTime": "2025-10-23T13:19:49+00:00",
+                "ValidUntilTime": "2025-10-23T13:25:45.093+00:00",
+                "MonitoredVehicleJourney": {
+                    "Bearing": "99",
+                    "LineRef": "727",
+                    "BlockRef": "727804",
+                    "Monitored": "true",
+                    "OriginRef": "900057230",
+                    "OriginName": "Heathrow Airport (T5) Arrivals forecourt Stops 11-15",
+                    "VehicleRef": "BV72XGA",
+                    "OperatorRef": "NATX",
+                    "DirectionRef": "inbound",
+                    "DestinationRef": "900038174",
+                    "DestinationName": "Great Yarmouth Regent Road outside Market Gates",
+                    "VehicleLocation": {"Latitude": "51.48", "Longitude": "-0.452"},
+                    "PublishedLineName": "727",
+                    "FramedVehicleJourneyRef": {
+                        "DataFrameRef": "2025-10-23",
+                        "DatedVehicleJourneyRef": "727804",
+                    },
+                    "OriginAimedDepartureTime": "2025-10-23T13:10:00+00:00",
+                    "DestinationAimedArrivalTime": "2025-10-23T19:00:00+00:00",
+                },
+            }
+        )
+        command.save()
+
+        self.assertEqual(2, VehicleJourney.objects.all().count())
+        vj = VehicleJourney.objects.last()
+        self.assertEqual(str(vj.datetime), "2025-10-23 13:10:00+00:00")
+
     def test_tfl(self):
         command = import_bod_avl.Command()
         command.source = self.source
