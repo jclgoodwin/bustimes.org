@@ -108,7 +108,7 @@
                     {% if journey.vehicle %}
                         <a href="{{ journey.vehicle.get_absolute_url }}?date={{ date.isoformat }}" rel="nofollow">{{ journey.vehicle }}</a>
                     {% endif %}
-                {% elif journey.service %}
+                {% elif journey.service or journey.route_name %}
                     <a href="{{ journey.get_service_link }}" rel="nofollow">{{ journey.line_name }}</a>
                 {% else %}
                     {{ journey.line_name }}
