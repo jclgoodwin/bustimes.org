@@ -22,6 +22,14 @@ from ...models import Livery, Vehicle, VehicleJourney
 from ..commands import import_bod_avl
 
 
+def patch_redis_client(redis_client=None):
+    if redis_client is None:
+        redis_client = fakeredis.FakeStrictRedis(version=7)
+    return mock.patch(
+        "vehicles.management.import_live_vehicles.redis_client", redis_client
+    )
+
+
 class BusOpenDataVehicleLocationsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -131,13 +139,8 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 }
             }
         ):
-            redis_client = fakeredis.FakeStrictRedis(version=7)
-
             with (
-                mock.patch(
-                    "vehicles.management.import_live_vehicles.redis_client",
-                    redis_client,
-                ),
+                patch_redis_client(),
                 use_cassette(str(self.vcr_path / "bod_avl.yaml")) as cassette,
             ):
                 command.update()
@@ -269,12 +272,8 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         command.get_operator.cache_clear()
         import_bod_avl.get_destination_name.cache_clear()
 
-        redis_client = fakeredis.FakeStrictRedis(version=7)
-
         with (
-            mock.patch(
-                "vehicles.management.import_live_vehicles.redis_client", redis_client
-            ),
+            patch_redis_client() as redis_client,
             mock.patch(
                 "vehicles.management.commands.import_bod_avl.Command.get_items",
                 return_value=items,
@@ -413,11 +412,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         command = import_bod_avl.Command()
         command.source = self.source
 
-        redis_client = fakeredis.FakeStrictRedis(version=7)
-
-        with mock.patch(
-            "vehicles.management.import_live_vehicles.redis_client", redis_client
-        ):
+        with patch_redis_client() as redis_client:
             command.handle_item(
                 {
                     "Extensions": {
@@ -672,11 +667,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             },
         }
 
-        redis_client = fakeredis.FakeStrictRedis(version=7)
-
-        with mock.patch(
-            "vehicles.management.import_live_vehicles.redis_client", redis_client
-        ):
+        with patch_redis_client() as redis_client:
             command.handle_item(item)
             command.save()
 
@@ -708,10 +699,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         )
 
     @time_machine.travel("2021-05-08T13:00+00:00")
-    @mock.patch(
-        "vehicles.management.import_live_vehicles.redis_client",
-        fakeredis.FakeStrictRedis(version=7),
-    )
+    @patch_redis_client()
     def test_invalid_location(self):
         command = import_bod_avl.Command()
         command.source = self.source
@@ -814,10 +802,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             "Extensions": None,
         }
 
-        redis_client = fakeredis.FakeStrictRedis(version=7)
-        with mock.patch(
-            "vehicles.management.import_live_vehicles.redis_client", redis_client
-        ):
+        with patch_redis_client():
             command.handle_item(item)
             command.save()
 
@@ -830,10 +815,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertEqual(vehicle.livery, livery)
         self.assertEqual(vehicle.reg, "SN16OLO")
 
-    @mock.patch(
-        "vehicles.management.import_live_vehicles.redis_client",
-        fakeredis.FakeStrictRedis(version=7),
-    )
+    @patch_redis_client()
     def test_nottingham(self):
         command = import_bod_avl.Command()
         command.source = self.source
@@ -914,10 +896,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertEqual(vj.service, service)
         self.assertEqual(vj.trip, t_2)
 
-    @mock.patch(
-        "vehicles.management.import_live_vehicles.redis_client",
-        fakeredis.FakeStrictRedis(version=7),
-    )
+    @patch_redis_client()
     def test_ambiguous_operator(self):
         command = import_bod_avl.Command()
         command.source = self.source
