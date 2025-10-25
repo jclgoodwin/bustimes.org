@@ -1,6 +1,6 @@
 {% extends 'page.html' %}
 
-{% block title %}{% if not vehicle %}Vehicles – {{ object.get_line_name_and_brand }}{% else %}{{ title }}{% if vehicle.operator %} – {{ vehicle.operator }}{% endif %}{% endif %} – bustimes.org{% endblock %}
+{% block title %}{{ title }}{% if vehicle.operator %} – {{ vehicle.operator }}{% endif %} – bustimes.org{% endblock %}
 
 {% block canonical %}
     {% if vehicle and not request.GET.date %}
@@ -54,7 +54,7 @@
     {% endif %}
 
     <ul class="tabs">
-        <li><a href="{{ object.get_absolute_url }}">Timetable</a></li>
+        {% if service %}<li><a href="{{ object.get_absolute_url }}">Timetable</a></li>{% endif %}
         <li>Vehicles</li>
     </ul>
 {% endif %}
@@ -109,7 +109,7 @@
                         <a href="{{ journey.vehicle.get_absolute_url }}?date={{ date.isoformat }}" rel="nofollow">{{ journey.vehicle }}</a>
                     {% endif %}
                 {% elif journey.service %}
-                    <a href="{{ journey.service.get_absolute_url }}/vehicles?date={{ date.isoformat }}" rel="nofollow">{{ journey.line_name }}</a>
+                    <a href="{{ journey.get_service_link }}" rel="nofollow">{{ journey.line_name }}</a>
                 {% else %}
                     {{ journey.line_name }}
                 {% endif %}

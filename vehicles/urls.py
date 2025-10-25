@@ -10,7 +10,12 @@ urlpatterns = [
     ),
     path("operators/<slug>/map", views.operator_map, name="operator_map"),
     path("operators/<slug>/debug", views.operator_debug),
-    path("services/<slug>/vehicles", views.service_vehicles_history),
+    path("services/<noc>:<line_name>/vehicles", views.service_vehicles_history),
+    path(
+        "services/<slug>/vehicles",
+        views.service_vehicles_history,
+        name="service_vehicles",
+    ),
     path("vehicles", views.vehicles),
     path("vehicles.json", views.vehicles_json),
     path("vehicles/debug", views.debug),

@@ -693,6 +693,15 @@ class VehicleJourney(models.Model):
         url = reverse("block_detail", args=(self.trip_id,))
         return f"{url}?date={self.date}"
 
+    def get_service_link(self):
+        if self.service:
+            slug = self.service.slug
+        else:
+            slug = f"{self.vehicle.operator_id}:{self.route_name}"
+        return (
+            reverse("service_vehicles", args=(slug,)) + "?date=" + self.date.isoformat()
+        )
+
 
 class VehicleLocation:
     """This used to be a model,

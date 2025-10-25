@@ -628,22 +628,39 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
 
 
 @require_safe
-def service_vehicles_history(request, slug):
-    service: Service = get_object_or_404(Service.objects.with_line_names(), slug=slug)
+def service_vehicles_history(request, slug=None, noc=None, line_name=None):
+    if slug:
+        service: Service = get_object_or_404(
+            Service.objects.with_line_names(), slug=slug
+        )
+        operator = service.operator.first()
+        journeys = service.vehiclejourney_set
+    else:
+        service = None
+        operator = get_object_or_404(Operator, noc=noc)
+        journeys = VehicleJourney.objects.filter(
+            service=None, route_name=line_name, vehicle__operator=operator
+        )
 
     context = journeys_list(
-        request, service.vehiclejourney_set.select_related("vehicle"), service=service
+        request, journeys.select_related("vehicle"), service=service
     )
 
-    operator = service.operator.select_related("region").first()
+    if service:
+        context["garages"] = Garage.objects.filter(
+            trip__route__service=service
+        ).distinct()
+        context["title"] = f"Vehicles \u2013 {service.get_line_name_and_brand()}"
+    else:
+        context["title"] = f"Vehicles \u2013 {line_name}"
+
     return render(
         request,
         "vehicles/vehicle_detail.html",
         {
             **context,
-            "garages": Garage.objects.filter(trip__route__service=service).distinct(),
             "breadcrumb": [operator, service],
-            "object": service,
+            "object": service or line_name,
         },
     )
 
