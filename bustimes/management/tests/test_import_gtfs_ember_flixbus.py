@@ -106,22 +106,25 @@ class FlixbusTest(TestCase):
         )
         self.assertContains(response, "/stops/3390C11")
 
+        # Uni of Nottm
         response = self.client.get(
-            "/stops/89251c5e-72da-49e5-9077-e8549874c710?date=2024-04-01"
-        )  # Uni of Nottm
+            "/stops/89251c5e-72da-49e5-9077-e8549874c710", [("date", "2024-04-01")]
+        )
         self.assertContains(
             response, ">University of Nottingham - North Entrance (Stop UN15)<"
         )
         self.assertEqual(7, len(response.context["departures"]))
 
+        # Vicky Coach Stn
         response = self.client.get(
-            "/stops/dcc0f769-9603-11e6-9066-549f350fcb0c?date=2024-04-01"
-        )  # Vicky Coach Stn
+            "/stops/dcc0f769-9603-11e6-9066-549f350fcb0c", [("date", "2024-04-01")]
+        )
         self.assertContains(response, ">London Victoria Coach Station<")
-        # self.assertEqual(0, len(response.context["departures"]))  # no departures, only arrivals
+        # no departures, only arrivals
+        self.assertEqual(7, len(response.context["departures"]))
 
         # British Summer Time:
-        response = self.client.get(f"{service.get_absolute_url()}?date=2024-04-01")
+        response = self.client.get(service.get_absolute_url(), [("date", "2024-04-01")])
         self.assertContains(
             response, "<td>10:30</td><td>15:00</td><td>19:15</td><td>23:40</td>"
         )
