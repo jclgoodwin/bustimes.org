@@ -20,6 +20,7 @@ class TimetableDataSource(models.Model):
     )
     url = models.URLField(
         blank=True,
+        verbose_name="URL",
         help_text="for non-BODS sources, i.e. Stagecoach, Passenger, or Ticketer",
     )
     modified_at = models.DateTimeField(null=True, blank=True, auto_now=True)

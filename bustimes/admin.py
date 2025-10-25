@@ -70,11 +70,22 @@ class TimetableDataSourceAdminForm(ModelForm):
 @admin.register(TimetableDataSource)
 class TimetableDataSourceAdmin(admin.ModelAdmin):
     autocomplete_fields = ["operators"]
-    list_display = ["id", "name", "url", "nocs", "active", "complete", "sources"]
-    list_filter = ["active", "complete"]
+    list_display = [
+        "id",
+        "name",
+        "url",
+        "nocs",
+        "active",
+        "complete",
+        "region_id",
+        "sources",
+        "modified_at",
+    ]
+    list_filter = ["modified_at", "active", "complete"]
     search_fields = ["url", "name", "search"]
     actions = ["activate", "deactivate"]
     inlines = [VersionInline]
+    readonly_fields = ["modified_at"]
     form = TimetableDataSourceAdminForm
 
     def nocs(self, obj):
