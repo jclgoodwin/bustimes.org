@@ -46,6 +46,10 @@
     </h1>
 
     {% include 'vehicle_info.html' %}
+
+    {% if tracking %}
+        <p><a href="{{ tracking }}" class="button">Track this bus</a></p>
+    {% endif %}
 {% else %}
     <h1>{{ object }}</h1>
 
@@ -54,13 +58,9 @@
     {% endif %}
 
     <ul class="tabs">
-        {% if service %}<li><a href="{{ object.get_absolute_url }}">Timetable</a></li>{% endif %}
+        {% if object.id %}<li><a href="{{ object.get_absolute_url }}">Timetable</a></li>{% endif %}
         <li>Vehicles</li>
     </ul>
-{% endif %}
-
-{% if tracking %}
-    <p><a href="{{ tracking }}" class="button">Track this bus</a></p>
 {% endif %}
 
 {% load static %}
