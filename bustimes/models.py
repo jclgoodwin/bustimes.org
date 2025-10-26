@@ -350,13 +350,9 @@ class Trip(models.Model):
     route = models.ForeignKey(Route, models.CASCADE, null=True, blank=True)
     inbound = models.BooleanField(default=False)
     journey_pattern = models.CharField(max_length=100, null=True, blank=True)
-    vehicle_journey_code = models.CharField(
-        max_length=100, null=True, blank=True, db_index=True
-    )
-    ticket_machine_code = models.CharField(
-        max_length=100, null=True, blank=True, db_index=True
-    )
-    block = models.CharField(max_length=100, null=True, blank=True, db_index=True)
+    vehicle_journey_code = models.CharField(max_length=100, null=True, blank=True)
+    ticket_machine_code = models.CharField(max_length=100, null=True, blank=True)
+    block = models.CharField(max_length=100, null=True, blank=True)
     destination = models.ForeignKey(
         "busstops.StopPoint", models.DO_NOTHING, null=True, blank=True
     )
@@ -391,7 +387,24 @@ class Trip(models.Model):
         return time_datetime(self.end, date)
 
     class Meta:
-        indexes = [models.Index(fields=["route", "start", "end"])]
+        indexes = [
+            models.Index(fields=["route", "start", "end"]),
+            models.Index(
+                fields=["vehicle_journey_code"],
+                condition=Q(vehicle_journey_code__isnull=False),
+                name="bustimes_trip_vj_code",
+            ),
+            models.Index(
+                fields=["ticket_machine_code"],
+                condition=Q(ticket_machine_code__isnull=False),
+                name="bustimes_trip_tm_code",
+            ),
+            models.Index(
+                fields=["block"],
+                condition=Q(block__isnull=False),
+                name="bustimes_trip_block",
+            ),
+        ]
 
     def copy(self, start):
         difference = start - self.start
