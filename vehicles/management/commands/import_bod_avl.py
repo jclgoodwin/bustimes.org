@@ -512,7 +512,7 @@ class Command(ImportLiveVehiclesCommand):
                 ):
                     journey.trip = trip
 
-                    if operator_ref in ("NATX", "SNDR") and trip.block != block_ref:
+                    if operator_ref == "NATX" and trip.block != block_ref:
                         trip.block = block_ref
                         trip.save(update_fields=["block"])
 
