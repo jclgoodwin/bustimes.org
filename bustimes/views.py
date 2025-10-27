@@ -18,8 +18,6 @@ from django.db.models import (
     F,
     Q,
     FilteredRelation,
-    ExpressionWrapper,
-    IntegerField,
 )
 from django.db.models.functions import Coalesce
 from django.http import (
@@ -543,13 +541,7 @@ def trip_block(request, pk: int):
 
     trips = get_other_trips_in_block(trip, date)
 
-    # GTFS spec - times are represented as time since noon minus 12 hours (for leap day reasons)
-    midnight = parse_datetime(f"{date}T12:00:00") - timedelta(hours=12)
     trips = trips.annotate(
-        datetime=ExpressionWrapper(
-            F("start") + int(midnight.timestamp()),
-            output_field=IntegerField(),
-        ),
         destination_name=Coalesce(
             "headsign",
             "destination__locality__name",
@@ -558,16 +550,12 @@ def trip_block(request, pk: int):
     ).select_related("route")
 
     if trips := list(trips):
-        tz = timezone.get_current_timezone()
         prefetch_related_objects(
             trips,
             Prefetch(
                 "vehiclejourney_set",
                 VehicleJourney.objects.filter(
-                    datetime__range=(
-                        datetime.fromtimestamp(trips[0].datetime, tz=tz),
-                        datetime.fromtimestamp(trips[-1].datetime, tz=tz),
-                    )
+                    date=date,
                 ).select_related("vehicle"),
                 to_attr="vehicle_journeys",
             ),
