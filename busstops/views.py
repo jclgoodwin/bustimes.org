@@ -746,8 +746,8 @@ class StopAreaDetailView(DetailView):
         context = super().get_context_data(**kwargs)
 
         stops = (
-            self.object.stoppoint_set.annotate(line_names=stop_line_names)
-            .filter(service__current=True)
+            self.object.stoppoint_set.filter(service__current=True)
+            .annotate(line_names=stop_line_names)
             .order_by("common_name", "indicator")
         )
         context["children"] = stops
