@@ -1,6 +1,6 @@
 {% load humanize %}
 <li id="revision-{{ revision.id }}">
-    <p>
+    <form method="GET" action="/contact"><p>
         {% if not vehicle %}
             <a href="{{ revision.vehicle.get_absolute_url }}">{{ revision.vehicle }}</a> &centerdot;
         {% endif %}
@@ -12,7 +12,12 @@
             &centerdot; <a href="{% url 'admin:vehicles_vehiclerevision_change' revision.pk %}">✎</a>
         {% endif %}
         &centerdot;
-            <a href="/contact?message=I%20wish%20to%20report%20this%20content:%0A%0Ahttps://bustimes.org{% url 'admin:vehicles_vehiclerevision_change' revision.pk %}%0A%0A">Report</a>
+            <button class="button" type="submit" name="message" value="I wish to report this harmful or illegal content:
+
+https://bustimes.org{% url 'admin:vehicles_vehiclerevision_change' revision.pk %}
+
+">Report</button>
+    </p></form>
     <p>
         {% if revision.disapproved %}<s>{% endif %}
         {% include "vehicle_revision_changes.html" %}
