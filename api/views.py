@@ -80,7 +80,18 @@ class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class StopViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = StopPoint.objects.order_by("atco_code").select_related("locality")
+    queryset = (
+        StopPoint.objects.order_by("atco_code")
+        .select_related("locality")
+        .annotate(
+            line_names=ArrayAgg(
+                "stopusage__line_name",
+                filter=Q(stopusage__service__current=True),
+                distinct=True,
+                default=None,
+            )
+        )
+    )
     serializer_class = serializers.StopSerializer
     pagination_class = CursorPagination
     filter_backends = [DjangoFilterBackend]

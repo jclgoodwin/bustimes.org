@@ -105,12 +105,9 @@ class StopSerializer(serializers.ModelSerializer):
     long_name = serializers.SerializerMethodField()
     location = serializers.SerializerMethodField()
     icon = serializers.SerializerMethodField()
-
-    def get_name(self, obj):
-        return obj.get_name_for_timetable()
-
-    def get_long_name(self, obj):
-        return obj.get_long_name()
+    line_names = serializers.ListField()
+    get_name = staticmethod(StopPoint.get_name_for_timetable)
+    get_long_name = staticmethod(StopPoint.get_long_name)
 
     def get_location(self, obj):
         if obj.latlong:
@@ -130,6 +127,7 @@ class StopSerializer(serializers.ModelSerializer):
             "location",
             "indicator",
             "icon",
+            "line_names",
             "bearing",
             "heading",
             "stop_type",
