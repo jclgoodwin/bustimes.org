@@ -182,7 +182,6 @@ def bus_open_data(api_key, specific_operator):
                 dataset["params"] = params
                 datasets.append(dataset)
             url = json["next"]
-            params = None
 
     all_source_ids = []
 
