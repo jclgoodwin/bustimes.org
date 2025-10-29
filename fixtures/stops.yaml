@@ -69,10 +69,6 @@
 '260016604':
     latlong: POINT(-1.086786 52.609883)
 
-#Durham Bus Station
-'13005528L':
-    latlong: POINT(-1.581721 54.777160)
-
 '25001195':
     common_name: Tesco Express
 
