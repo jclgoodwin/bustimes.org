@@ -38,6 +38,7 @@ class NaptanTest(TestCase):
         Locality.objects.create(id="E0048995", name="Great Ayton", admin_area_id=92)
         Locality.objects.create(id="E0048637", name="Briningham", admin_area_id=91)
         StopPoint.objects.create(atco_code="07605395", active=True)
+        StopPoint.objects.create(atco_code="2900flex1", active=False)
 
     def test_download(self):
         fixtures_dir = Path(__file__).resolve().parent / "fixtures"
@@ -52,7 +53,7 @@ class NaptanTest(TestCase):
                 self.assertFalse((temp_dir_path / "NaPTAN.xml").exists())
 
                 with (
-                    self.assertNumQueries(24),
+                    self.assertNumQueries(25),
                     self.assertLogs(
                         "busstops.management.commands.naptan_new", "WARNING"
                     ),
@@ -79,7 +80,7 @@ class NaptanTest(TestCase):
                 self.assertEqual(str(source.datetime), "2022-01-19 12:56:29+00:00")
 
         # inactive stop in Wroxham
-        stop = StopPoint.objects.get(atco_code="2900FLEX1")
+        stop = StopPoint.objects.get(atco_code="2900flex1")
         self.assertEqual(str(stop), "Wroxham ↑")
         self.assertEqual(stop.get_qualified_name(), "Wroxham")
 

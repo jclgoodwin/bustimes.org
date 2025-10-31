@@ -160,14 +160,18 @@ class Command(BaseCommand):
                     value = GEOSGeometry(value)
                 setattr(stop, key, value)
 
-        if existing := self.existing_stops.get(atco_code):
+        if existing := self.existing_stops.get(atco_code.upper()):
+            stop.atco_code = existing.atco_code  # in case case is different
             for key in self.bulk_update_fields[1:]:
                 if getattr(stop, key) != getattr(existing, key):
                     if key == "latlong":
                         if stop.latlong:
                             if stop.latlong.srid and stop.latlong.srid != 4326:
                                 stop.latlong.transform(4326)
-                            if stop.latlong.distance(existing.latlong) < 0.00005:
+                            if (
+                                existing.latlong
+                                and stop.latlong.distance(existing.latlong) < 0.00005
+                            ):
                                 continue
                         # logger.info(
                         #     f"{atco_code}: {existing.latlong} → {stop.latlong}"
@@ -311,12 +315,14 @@ class Command(BaseCommand):
 
                     atco_code_prefix = atco_code[:3]
 
-                    self.existing_stops = (
-                        StopPoint.objects.filter(atco_code__startswith=atco_code_prefix)
+                    self.existing_stops = {
+                        stop.atco_code.upper(): stop
+                        for stop in StopPoint.objects.filter(
+                            atco_code__startswith=atco_code_prefix
+                        )
                         .order_by()
                         .defer("search_vector", "modified_at", "created_at")
-                        .in_bulk()
-                    )
+                    }
 
                 self.handle_stop(element)
 
