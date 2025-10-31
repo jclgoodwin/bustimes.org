@@ -2,6 +2,7 @@ from django.forms import ModelForm, Textarea, TextInput
 from django.contrib import admin, messages
 from django.contrib.auth import get_user_model
 from django.db.models import Exists, OuterRef, Q
+from django.db import IntegrityError
 from django.urls import reverse
 from django.utils.html import format_html
 from simple_history.admin import SimpleHistoryAdmin
@@ -199,6 +200,12 @@ class VehicleAdmin(admin.ModelAdmin):
             duplicate.fleet_number = vehicle.fleet_number
             if duplicate.withdrawn and not vehicle.withdrawn:
                 duplicate.withdrawn = False
+            try:
+                models.VehicleCode.objects.create(
+                    vehicle=duplicate, scheme="slug", code=vehicle.slug
+                )
+            except IntegrityError:
+                pass
             vehicle.delete()
             duplicate.save(
                 update_fields=["code", "fleet_code", "fleet_number", "reg", "withdrawn"]

@@ -671,6 +671,16 @@ class VehicleDetailView(DetailView):
         "operator", "operator__region", "vehicle_type", "livery", "latest_journey"
     ).prefetch_related("features")
 
+    def get_object(self, **kwargs):
+        try:
+            return super().get_object(**kwargs)
+        except Http404:
+            if slug := self.kwargs.get("slug"):
+                return get_object_or_404(
+                    self.queryset, vehiclecode__code=slug, vehiclecode__scheme="slug"
+                )
+            raise
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
