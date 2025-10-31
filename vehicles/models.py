@@ -627,6 +627,13 @@ class VehicleRevision(models.Model):
                     if vehicle.withdrawn and after == "Yes":
                         vehicle.withdrawn = False
                         fields.append("withdrawn")
+                elif key == "fleet number":
+                    vehicle.fleet_code = before
+                    if before.isdigit():
+                        vehicle.fleet_number = int(vehicle.fleet_number)
+                    else:
+                        vehicle.fleet_number = None
+                    fields += ["fleet_number", "fleet_code"]
                 else:
                     yield f"vehicle {vehicle.id} {key} not reverted"
 
