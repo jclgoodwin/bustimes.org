@@ -2,8 +2,12 @@
 
 {% block title %}Map – bustimes.org{% endblock %}
 
+{% load static %}
+
 {% block head %}
     <meta property="og:title" content="Map – bustimes.org">
+    <link rel="stylesheet" href="{% static 'dist/js/app.css' %}">
+    <link rel="stylesheet" media="print" href="/liveries.{{ liveries_css_version }}.css" onload="this.onload=null;this.removeAttribute('media')">
 {% endblock head %}
 
 {% block bodyclass %}no-scroll{% endblock %}
@@ -32,8 +36,6 @@
     </div>
 {% endblock content %}
 
-{% load static %}
-
 {% block footer %}
     <script>
         INITIAL_VIEW_STATE = {
@@ -46,16 +48,6 @@
         {% endif %}
             zoom: 5,
         };
-        OLD_JS = [
-            "{% static 'js/reqwest.min.js' %}",
-            "{% static 'dist/js/bigmap-classic.css' %}",
-            "{% static 'dist/js/bigmap-classic.js' %}"
-        ];
-        NEW_JS = [
-            "{% static 'dist/js/app.css' %}",
-            "{% static 'dist/js/app.js' %}",
-        ];
     </script>
-    <script src="{% static 'dist/js/bigmap.js' %}"></script>
-    <link rel="stylesheet" media="print" href="/liveries.{{ liveries_css_version }}.css" onload="this.onload=null;this.removeAttribute('media')">
+    <script src="{% static 'dist/js/app.js' %}"></script>
 {% endblock footer %}
