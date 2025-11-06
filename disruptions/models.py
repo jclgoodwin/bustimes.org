@@ -24,6 +24,7 @@ class Situation(models.Model):
                 "BODS disruptions",
                 "BODS cancellations",
                 "Bus Open Data",
+                "Translink",
             )
         },
         default=236,
