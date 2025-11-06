@@ -13,7 +13,7 @@ type RouteProps = {
 
 export const Route = React.memo(function Route({ times }: RouteProps) {
   const theme = React.useContext(ThemeContext);
-  const darkMode = theme.endsWith("_dark") || theme === "alidade_satellite";
+  const darkMode = theme.endsWith("_dark") || theme.endsWith("_satellite");
 
   const font = getFont(theme);
 

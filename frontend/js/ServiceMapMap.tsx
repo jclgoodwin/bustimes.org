@@ -34,7 +34,7 @@ export type ServiceMapMapProps = {
 
 function Geometry({ geometry }: { geometry: GeoJSON.MultiLineString }) {
   const theme = React.useContext(ThemeContext);
-  const darkMode = theme.endsWith("dark") || theme === "alidade_satellite";
+  const darkMode = theme.endsWith("_dark") || theme.endsWith("_satellite");
 
   const routeStyle: LayerProps = {
     type: "line",
@@ -53,7 +53,7 @@ function Geometry({ geometry }: { geometry: GeoJSON.MultiLineString }) {
 
 function Stops({ stops }: { stops: GeoJSON.FeatureCollection }) {
   const theme = React.useContext(ThemeContext);
-  const darkMode = theme.endsWith("_dark") || theme === "alidade_satellite";
+  const darkMode = theme.endsWith("_dark") || theme.endsWith("_satellite");
 
   const stopsStyle: LayerProps = {
     id: "stops",

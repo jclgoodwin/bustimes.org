@@ -39,8 +39,8 @@ export function getFont(theme: string) {
   if (theme.indexOf("os_") === 0) {
     return ["Source Sans Pro Regular", "Arial Unicode MS Regular"];
   }
-  if (theme.indexOf("_") === -1) {
-    return ["Noto Sans Regular"];
+  if (theme.indexOf("aws") === 0) {
+    return ["Amazon Ember Condensed RC Regular", "Noto Sans Regular"];
   }
   return ["Stadia Regular"];
 }

@@ -70,7 +70,7 @@ export const Locations = React.memo(function Locations({
   locations: VehicleJourneyLocation[];
 }) {
   const theme = React.useContext(ThemeContext);
-  const darkMode = theme.endsWith("_dark") || theme === "alidade_satellite";
+  const darkMode = theme.endsWith("_dark") || theme.endsWith("_satellite");
 
   const routeStyle: LayerProps = {
     type: "line",
@@ -163,7 +163,7 @@ export const JourneyStops = React.memo(function Stops({
   setClickedStop: (s: string | undefined) => void;
 }) {
   const theme = React.useContext(ThemeContext);
-  const darkMode = theme.endsWith("_dark") || theme === "alidade_satellite";
+  const darkMode = theme.endsWith("_dark") || theme.endsWith("_satellite");
 
   const features = React.useMemo(() => {
     return stops
