@@ -1522,7 +1522,7 @@ class ImportTransXChangeTest(TestCase):
 
         with self.assertNumQueries(2):
             response = self.client.get("/api/trips/").json()
-            self.assertEqual(len(response["results"]), 50)
+            self.assertEqual(len(response["results"]), 100)
 
         with self.assertNumQueries(2):
             response = self.client.get("/api/trips/?date=2025-10-12").json()
