@@ -14,4 +14,7 @@
 /manage.sh
 /credentials.sh
 
+# Sentry Auth Token
+.env.sentry-build-plugin
+
 /.parcel-cache/

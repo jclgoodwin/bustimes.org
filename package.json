@@ -23,6 +23,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "@sentry/react": "^8.33.1",
     "@types/lodash": "^4.14.197",
     "@types/node": "^24.6.1",
     "htmx.org": "^2.0.4",
