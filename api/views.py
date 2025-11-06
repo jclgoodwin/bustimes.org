@@ -26,7 +26,7 @@ class BadException(APIException):
 
 class CursorPagination(pagination.CursorPagination):
     ordering = "-pk"
-    page_size = 50
+    page_size = 100
 
 
 class CursorPaginationWithSmallerPageSize(CursorPagination):

@@ -53,6 +53,7 @@ class StopFilter(FilterSet):
             "naptan_code": ["exact", "iexact"],
             "stop_type": ["exact"],
             "modified_at": ["gte"],
+            "active": ["exact"],
         }
 
 
