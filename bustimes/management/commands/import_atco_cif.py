@@ -92,6 +92,7 @@ class Command(BaseCommand):
                     filename.endswith(".cif")
                     and "/archive/" not in filename.lower()
                     and "/Y20/" not in filename.upper()
+                    and "/old" not in filename.lower()
                 ):
                     with archive.open(filename) as open_file:
                         self.handle_file(open_file)
