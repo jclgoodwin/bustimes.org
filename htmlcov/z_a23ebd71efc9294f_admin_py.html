@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_a23ebd71efc9294f_fields_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.11.0">coverage.py v7.11.0</a>,
-            created at 2025-11-07 09:32 +0000
+            created at 2025-11-07 11:02 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -413,7 +413,7 @@
     <p class="run"><span class="n"><a id="t331" href="#t331">331</a></span><span class="t">        <span class="key">return</span> <span class="nam">super</span><span class="op">(</span><span class="op">)</span><span class="op">.</span><span class="nam">get_search_results</span><span class="op">(</span><span class="nam">request</span><span class="op">,</span> <span class="nam">queryset</span><span class="op">,</span> <span class="nam">search_term</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t332" href="#t332">332</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t333" href="#t333">333</a></span><span class="t">    <span class="key">def</span> <span class="nam">current_false</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">request</span><span class="op">,</span> <span class="nam">queryset</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t334" href="#t334">334</a></span><span class="t">        <span class="nam">result</span> <span class="op">=</span> <span class="nam">queryset</span><span class="op">.</span><span class="nam">update</span><span class="op">(</span><span class="nam">current</span><span class="op">=</span><span class="key">False</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t334" href="#t334">334</a></span><span class="t">        <span class="nam">result</span> <span class="op">=</span> <span class="nam">queryset</span><span class="op">.</span><span class="nam">order_by</span><span class="op">(</span><span class="op">)</span><span class="op">.</span><span class="nam">update</span><span class="op">(</span><span class="nam">current</span><span class="op">=</span><span class="key">False</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t335" href="#t335">335</a></span><span class="t">        <span class="nam">log_change</span><span class="op">(</span><span class="nam">request</span><span class="op">,</span> <span class="nam">queryset</span><span class="op">,</span> <span class="op">[</span><span class="str">"current"</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t336" href="#t336">336</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">message_user</span><span class="op">(</span><span class="nam">request</span><span class="op">,</span> <span class="fst">f"</span><span class="op">{</span><span class="nam">result</span><span class="op">}</span><span class="fst">"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t337" href="#t337">337</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -715,7 +715,7 @@
             <a class="nav" href="z_a23ebd71efc9294f_fields_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.11.0">coverage.py v7.11.0</a>,
-            created at 2025-11-07 09:32 +0000
+            created at 2025-11-07 11:02 +0000
         </p>
     </div>
 </footer>
