@@ -331,7 +331,7 @@ class ServiceAdmin(GISModelAdmin):
         return super().get_search_results(request, queryset, search_term)
 
     def current_false(self, request, queryset):
-        result = queryset.update(current=False)
+        result = queryset.order_by().update(current=False)
         log_change(request, queryset, ["current"])
         self.message_user(request, f"{result}")
 
