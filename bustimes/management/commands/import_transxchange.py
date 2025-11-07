@@ -894,8 +894,10 @@ class Command(BaseCommand):
                 trip.garage = self.garages.get(journey.garage_ref)
 
             blank = False
-            for cell in journey.get_times():
+            for i, cell in enumerate(journey.get_times()):
                 stop_time = get_stop_time(trip, cell, stops)
+                if stop_time.sequence is None:
+                    stop_time.sequence = i
                 stop_times.append(stop_time)
 
                 if not stop_time.timing_status:
