@@ -1,3 +1,8 @@
+# I use Kamal (https://kamal-deploy.org) for deploying and stuff, and this is the configuration for that.
+# (Secrets live in `.kamal/secrets`, quite rightly omitted from the git repo!)
+
+# (yes, DHH is a bellend. I'm sorry)
+
 # Name of your application. Used to uniquely configure containers.
 service: bustimes
 
@@ -33,7 +38,7 @@ servers:
 
 accessories:
   tileserver:
-    image: maptiler/tileserver-gl-light
+    image: maptiler/tileserver-gl-light:v5.4.0
     host: 138.68.161.218
     port: 80:8080
     volumes:
@@ -48,21 +53,17 @@ builder:
   cache:
     type: registry
 
-# Credentials for your image host.
 registry:
-  # Specify the registry server, if you're not using Docker Hub
-  server: registry.digitalocean.com/hobsbawm
-  # see https://github.com/settings/tokens
-  username:
-    - KAMAL_REGISTRY_PASSWORD
-  password:
-    - KAMAL_REGISTRY_PASSWORD
+  server: localhost:5000
 
 asset_path: /staticfiles
 
 proxy:
   app_port: 8000
   buffering:
+    # we go to great effort to _stream_ certain big slow responses (big timetables)
+    # to reduce the time-to-first-byte,
+    # so we disable response buffering which would undo all that hard work
     responses: false
   logging:
     request_headers:
