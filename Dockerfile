@@ -3,7 +3,7 @@ FROM node:20-slim
 WORKDIR /app/
 
 COPY package.json package-lock.json /app/
-RUN npm install
+RUN npm ci
 
 COPY frontend /app/frontend
 COPY .parcelrc tsconfig.json /app/
