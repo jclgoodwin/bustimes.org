@@ -17,7 +17,6 @@ def parse_date(date):
 class Command(ImportLiveVehiclesCommand):
     source_name = vehicle_code_scheme = "Translink"
     url = "https://vpos.translinkniplanner.co.uk/velocmap/vmi/VMI"
-    previous_locations = {}
 
     def do_source(self):
         self.operators = Operator.objects.filter(
