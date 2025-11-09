@@ -1,6 +1,6 @@
+import { captureException } from "@sentry/react";
 import React, { memo, useEffect, createContext } from "react";
 import { createRoot } from "react-dom/client";
-// import { captureException } from "@sentry/react";
 
 import MapGL, {
   NavigationControl,
@@ -250,7 +250,7 @@ export default function BusTimesMap(
         mapStyle={mapStyleURL}
         RTLTextPlugin={""}
         attributionControl={false}
-        // onError={(e) => captureException(e.error)}
+        onError={(e) => captureException(e.error)}
         onContextMenu={onContextMenu}
       >
         <NavigationControl showCompass={false} />
