@@ -52,7 +52,7 @@
       ],
       "distDir": "busstops/static/dist",
       "engines": {
-        "browsers": "Chrome 70"
+        "browsers": "Chrome 90"
       }
     },
     "bigmap": {
