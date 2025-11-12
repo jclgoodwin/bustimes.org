@@ -108,9 +108,10 @@
 | disruptions/tasks.py                                            |        5 |        0 |    100% |           |
 | disruptions/test\_siri\_sx.py                                   |       48 |        0 |    100% |           |
 | disruptions/test\_tfl\_disruptions.py                           |       34 |        0 |    100% |           |
+| disruptions/test\_translinkni.py                                |       25 |        0 |    100% |           |
 | disruptions/tests.py                                            |       16 |        0 |    100% |           |
 | disruptions/tfl\_disruptions.py                                 |       91 |        2 |     98% |    49, 85 |
-| disruptions/translinkni.py                                      |       69 |       69 |      0% |     1-119 |
+| disruptions/translinkni.py                                      |       74 |        5 |     93% | 59-62, 71 |
 | disruptions/urls.py                                             |        3 |        0 |    100% |           |
 | disruptions/views.py                                            |       23 |        0 |    100% |           |
 | fares/\_\_init\_\_.py                                           |        0 |        0 |    100% |           |
@@ -188,7 +189,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16957** | **1217** | **93%** |           |
+|                                                       **TOTAL** | **16987** | **1153** | **93%** |           |
 
 
 ## Setup coverage badge
