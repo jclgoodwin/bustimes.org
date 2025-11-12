@@ -1,0 +1,129 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.5
+    method: GET
+    uri: https://opendata.translinkniplanner.co.uk/Ext_API/XML_ADDINFO_REQUEST?ext_macro=dm
+  response:
+    body:
+      string: '{"version":"10.6.21.17","timestamp":"2025-11-12T09:13:25Z","infos":{"current":[{"type":"stopInfo","id":"ems-6965","version":79025,"priority":"normal","timestamps":{"creation":"2025-08-12T12:01:00Z","lastModification":"2025-08-13T09:58:00Z","availability":{"from":"2025-08-11T23:00:00Z","to":"2025-11-28T23:59:00Z"},"validity":[{"from":"2025-08-17T23:00:00Z","to":"2025-11-29T00:00:00Z"}],"expiration":"2025-11-29T00:00:59Z"},"infoLinks":[{"urlText":"Moira
+        Train Station - Temporary Change to Traffic Flow","url":"https://ems.translinkniplanner.co.uk/info-link/5bc8b1f6-0d54-5488-bb54-05e19bd629aa?_=EMS","content":"<div>Park
+        and Ride Car Park Upgrade - Temporary Road Closure</div>\n<div>&nbsp;</div>\n<div>A
+        series of initial works will be undertaken to facilitate the park and ride
+        upgrade project. Please note that diversions are in place effective from Monday
+        18th August 2025, for a period of approximately 12 weeks. These will be clearly
+        signposted.</div>\n<div>&nbsp;</div>\n<div>&bull; A one-way system will be
+        in place on Station Road<br />&bull; All entry to Moira station is now only
+        via A26 airport road or Chestnut Hill Road<br />&bull; Exit from Moira station
+        is one way via Station Road towards Moira / M1<br />&bull; Diversion signs
+        will be in place</div>\n<div>&nbsp;</div>\n<div>Moira Train Station and Moira
+        Park and Ride are available as usual. There will be no impact on train services.</div>\n<div>&nbsp;</div>\n<div>Passengers
+        are advised to plan their journey in advance. Please allow additional time
+        for your journey.</div>\n<div>&nbsp;</div>\n<div><a href=\"Moira Park and
+        Ride Upgrade Temporary Road Closure  A series of initial works will be undertaken
+        to facilitate the park and ride upgrade project.  Please note that diversions
+        are in place, as per above, effective from Monday, 18th August 2025, for a
+        period of approximately 12 weeks.  These will be clearly signposted.    &bull;\tA
+        one-way system will be in place on Station Road &bull;\tAll entry to Moira
+        station is now only via A26 airport road or Chestnut Hill Road &bull;\tExit
+        from Moira station is one way via Station Road towards Moira / M1 &bull;\tDiversion
+        signs will be in place  Moira Train Station and Moira Park and Ride are available
+        as usual.  There will be no impact on train services.    Passengers are advised
+        to plan their journey in advance. Please allow additional time for your journey.  https:/www.translink.co.uk/corporate/media/improvementsandprojects/moira\"
+        target=\"_blank\" rel=\"noopener\">Moira Park and Ride Upgrade Temporary Road
+        Closure</a></div>","subtitle":"Moira Train Station - Temporary Change to Traffic
+        Flow","title":"Moira Train Station - Temporary Change to Traffic Flow"}],"properties":{"source":{"id":"ems.live.efa.4","name":"EMS","type":"EMS"},"producerRef":"MENTZ-EMS","deviceRef":"38c8961808f04856828bc2a86b510ae6","messageRef":"5bc8b1f6-0d54-5488-bb54-05e19bd629aa","eventRef":"d34d4e0685f4e3ccb37813e48fe201e0","publisher":"ems.comm.addinfo","providerCode":"EMS"},"affected":{"lines":[{"id":"rai:92005:
+        :H:","destination":{"name":"Connolly Rail Station","type":"stop"},"name":"Rail
+        Belfast - Dublin (Enterprise)","number":"Belfast - Dublin (Enterprise)","product":{"id":4,"class":0,"iconId":6},"operator":{"id":"ENT","name":"Enterprise"}},{"id":"rai:90004:
+        :R:","destination":{"name":"Belfast, Grand Central Station","type":"stop"},"name":"Rail
+        Portadown Line","number":"Portadown Line","product":{"id":4,"class":0,"iconId":6},"operator":{"id":"RailNI","name":"NIRailways"}},{"id":"rai:90004:
+        :H:","destination":{"name":"Newry Train Station","type":"stop"},"name":"Rail
+        Portadown Line","number":"Portadown Line","product":{"id":4,"class":0,"iconId":6},"operator":{"id":"RailNI","name":"NIRailways"}}],"stops":[{"id":"MR","isGlobalId":true,"name":"Moira,
+        Moira Train Station","type":"stop","parent":{"id":"placeID:31400123:1","name":"Moira","type":"locality"}}]}},{"type":"lineInfo","id":"ems-7415","version":1,"priority":"normal","timestamps":{"creation":"2025-09-25T12:30:00Z","lastModification":"2025-09-25T12:31:00Z","availability":{"from":"2025-09-25T12:00:00Z","isOpenEnd":true},"validity":[{"from":"2025-09-25T12:00:00Z","isOpenEnd":true}],"expiration":"2500-12-31T00:00:59Z"},"infoLinks":[{"urlText":"Dromara
+        - Service Update","url":"https://ems.translinkniplanner.co.uk/info-link/ebbdc275-dd8c-588c-9be2-bfd903319030?_=EMS","content":"<div>\n<div>From
+        Monday 6 October 2025 the 07:45&nbsp; 26 service from Dromara will be rescheduled
+        to leave at 07:35</div>\n<div>&nbsp;</div>\n</div>","subtitle":"Dromara -
+        Service Update","title":"Dromara - Service Update"}],"properties":{"source":{"id":"ems.live.efa.4","name":"EMS","type":"EMS"},"producerRef":"MENTZ-EMS","deviceRef":"38c8961808f04856828bc2a86b510ae6","messageRef":"ebbdc275-dd8c-588c-9be2-bfd903319030","eventRef":"7966ab7f35e5a8091c3aab263dc510fe","publisher":"ems.comm.addinfo","providerCode":"EMS"},"affected":{"lines":[{"id":"nir:13026:
+        :R:","destination":{"name":"Lisburn, Smithfield Street Bus Shelter","type":"stop"},"name":"Bus
+        26","number":"26","description":"Dromara - Lisburn","product":{"id":0,"class":5,"iconId":3},"operator":{"id":"ULB","name":"Ulsterbus"}}]}},{"type":"lineInfo","id":"ems-7787","version":420588,"priority":"normal","timestamps":{"creation":"2025-10-30T17:45:00Z","lastModification":"2025-11-04T14:35:00Z","availability":{"from":"2025-11-04T14:00:00Z","to":"2025-11-28T06:00:00Z"},"validity":[{"from":"2025-11-17T19:00:00Z","to":"2025-11-28T06:00:00Z"}],"expiration":"2025-11-28T06:00:59Z"},"infoLinks":[{"urlText":"Strand
+        Road, Derry Londonderry - Service Diversion","url":"https://ems.translinkniplanner.co.uk/info-link/465c3ce8-36e0-590c-882f-071e99ce2e66?_=EMS","content":"<div>Strand
+        Road Junction from Clarendon street to Queens Quay Roundabout will be closed
+        daily from the 17 November to the 28 November 2025 between 1900 &amp; 0600.</div>\n<div>&nbsp;</div>\n<div>1a,11a,12a,13a,&nbsp;
+        services will follow the diversion signs in place and operate via Queens Quay
+        after leaving Foyle Street depot onto Strand Road.</div>\n<div>&nbsp;</div>\n<div>Quayside
+        &amp; Northwest Regional College bus stops will not be served at this time
+        for these services.</div>\n<div>&nbsp;</div>\n<div>There is a temporary stop
+        outside Mandarin Palace on Queens Quay during this diversion.</div>","subtitle":"Strand
+        Road, Derry Londonderry - Service Diversion","title":"Strand Road, Derry Londonderry
+        - Service Diversion"}],"properties":{"source":{"id":"ems.live.efa.4","name":"EMS","type":"EMS"},"producerRef":"MENTZ-EMS","deviceRef":"38c8961808f04856828bc2a86b510ae6","messageRef":"465c3ce8-36e0-590c-882f-071e99ce2e66","eventRef":"9c5fa8ab46fa1ea4c7bd214658aa59b9","publisher":"ems.comm.addinfo","providerCode":"EMS"},"affected":{"lines":[{"id":"nir:21F1A:
+        :H:","destination":{"name":"Kilderry, Wheatfield","type":"stop"},"name":"Bus
+        1a","number":"1a","description":"City Centre - Wheatfield (Muff)","product":{"id":0,"class":5,"iconId":3},"operator":{"id":"FY","name":"Foyle
+        Metro"}},{"id":"nir:21F11:A:H:","destination":{"name":"Shantallow, Skeoge
+        Community Hub","type":"stop"},"name":"Bus 11a","number":"11a","description":"City
+        Centre - Woodbrook","product":{"id":0,"class":5,"iconId":3},"operator":{"id":"FY","name":"Foyle
+        Metro"}},{"id":"nir:21F12:A:H:","destination":{"name":"Shantallow, Slievemore
+        Park","type":"stop"},"name":"Bus 12a","number":"12a","description":"City Centre
+        - Carnhill - Slievemore","product":{"id":0,"class":5,"iconId":3},"operator":{"id":"FY","name":"Foyle
+        Metro"}},{"id":"nir:21F13:A:R:","destination":{"name":"Derry Londonderry,
+        Foyle Street","type":"stop"},"name":"Bus 13a","number":"13a","description":"Glenabbey
+        - Carnhill - City Centre","product":{"id":0,"class":5,"iconId":3},"operator":{"id":"FY","name":"Foyle
+        Metro"}},{"id":"nir:21F1A: :R:","destination":{"name":"Derry Londonderry,
+        Foyle Street","type":"stop"},"name":"Bus 1a","number":"1a","description":"Wheatfield
+        (Muff) - City Centre","product":{"id":0,"class":5,"iconId":3},"operator":{"id":"FY","name":"Foyle
+        Metro"}},{"id":"nir:21F12:A:R:","destination":{"name":"Derry Londonderry,
+        Foyle Street","type":"stop"},"name":"Bus 12a","number":"12a","description":"Slievemore
+        - Carnhill - City Centre","product":{"id":0,"class":5,"iconId":3},"operator":{"id":"FY","name":"Foyle
+        Metro"}},{"id":"nir:21F13:A:H:","destination":{"name":"Shantallow, Skeoge
+        Community Hub","type":"stop"},"name":"Bus 13a","number":"13a","description":"City
+        Centre - Shantallow - Glenabbey","product":{"id":0,"class":5,"iconId":3},"operator":{"id":"FY","name":"Foyle
+        Metro"}}]}},{"type":"lineInfo","id":"ems-7885","version":1,"priority":"normal","timestamps":{"creation":"2025-11-11T08:50:00Z","lastModification":"2025-11-11T08:50:00Z","availability":{"from":"2025-11-11T06:30:00Z","to":"2025-11-22T19:30:00Z"},"validity":[{"from":"2025-11-22T06:30:00Z","to":"2025-11-22T19:30:00Z"}],"expiration":"2025-11-22T19:30:59Z"},"infoLinks":[{"urlText":"Strabane
+        Christmas Lights - Service Information","url":"https://ems.translinkniplanner.co.uk/info-link/057369c7-857a-5fec-980e-008ef956c2dd?_=EMS","content":"<div>\n<div>Due
+        to events and Christmas light switch on in Strabane Town Centre on Saturday
+        22 November 2025, Canal Street bus stop will be closed from 07:00 - 19:00.</div>\n<div>&nbsp;</div>\n<div>During
+        this time, all 98 and 102 services will depart from the Strabane Bus Station
+        on Bradley Way.</div>\n</div>","subtitle":"Strabane Christmas Lights - Service
+        Information","title":"Strabane Christmas Lights - Service Information"}],"properties":{"source":{"id":"ems.live.efa.4","name":"EMS","type":"EMS"},"producerRef":"MENTZ-EMS","deviceRef":"38c8961808f04856828bc2a86b510ae6","messageRef":"057369c7-857a-5fec-980e-008ef956c2dd","eventRef":"d2486c23983f62f7a45d4326521d60f4","publisher":"ems.comm.addinfo","providerCode":"EMS"},"affected":{"lines":[{"id":"nir:07098:
+        :R:","destination":{"name":"Derry Londonderry, Foyle Street Bus Station","type":"stop"},"name":"Bus
+        98","number":"98","description":"Strabane - Derry~Londonderry","product":{"id":0,"class":5,"iconId":3},"operator":{"id":"ULB","name":"Ulsterbus"}},{"id":"nir:07102:A:R:","destination":{"name":"Derry
+        Londonderry, Foyle Street Bus Station","type":"stop"},"name":"Bus 102a","number":"102a","description":"Strabane
+        - Derry~Londonderry","product":{"id":0,"class":5,"iconId":3},"operator":{"id":"ULB","name":"Ulsterbus"}},{"id":"nir:07102:C:R:","destination":{"name":"Artigarvan,
+        Glenmornan","type":"stop"},"name":"Bus 102c","number":"102c","description":"Artigarvan
+        - Glenmornan","product":{"id":0,"class":5,"iconId":3},"operator":{"id":"ULB","name":"Ulsterbus"}},{"id":"nir:07102:
+        :R:","destination":{"name":"Derry Londonderry, Foyle Street Bus Station","type":"stop"},"name":"Bus
+        102","number":"102","description":"Strabane - Derry~Londonderry","product":{"id":0,"class":5,"iconId":3},"operator":{"id":"ULB","name":"Ulsterbus"}}]}},{"type":"lineInfo","id":"ems-7682","version":1,"priority":"normal","timestamps":{"creation":"2025-10-16T07:38:00Z","lastModification":"2025-10-16T07:38:00Z","availability":{"from":"2025-10-16T07:40:00Z","to":"2025-11-21T23:59:00Z"},"validity":[{"from":"2025-10-20T05:00:00Z","to":"2025-11-22T00:00:00Z"}],"expiration":"2025-11-22T00:00:59Z"},"infoLinks":[{"urlText":"Newry
+        Area - Service Alteration","url":"https://ems.translinkniplanner.co.uk/info-link/da152905-a993-5075-80c2-a795445644b5?_=EMS","content":"<div>Due
+        to road words commencing Monday 20th October 2025, for 4 weeks, the following
+        Ulsterbus Town services will be affected:</div>\n<div>&nbsp;</div>\n<div>Town
+        services&nbsp;338a and 338d will be affected.&nbsp;</div>\n<div>\n<div>High
+        Street Newry will be closed for 4 weeks.</div>\n<div>&nbsp;</div>\n<div>High
+        Street and Stream Street will <strong>not</strong> be served.</div>\n<div>&nbsp;</div>\n<div>Diversion
+        will operate via Sandy Street, Talbot Street and Cowan Street.</div>\n<div>&nbsp;</div>\n<div>Subject
+        to change.</div>\n</div>","subtitle":"Newry Area - Service Alteration","title":"Newry
+        Area - Service Alteration"}],"properties":{"source":{"id":"ems.live.efa.4","name":"EMS","type":"EMS"},"producerRef":"MENTZ-EMS","deviceRef":"38c8961808f04856828bc2a86b510ae6","messageRef":"da152905-a993-5075-80c2-a795445644b5","eventRef":"8247137d993b072b811ec32d883d0206","publisher":"ems.comm.addinfo","providerCode":"EMS"},"affected":{"lines":[{"id":"nir:17338:A:H:","destination":{"name":"Newry,
+        Newry Bus Station","type":"stop"},"name":"Bus 338a","number":"338a","description":"Newry
+        City Service Damolly & Fiveways","product":{"id":0,"class":5,"iconId":3},"operator":{"id":"UTS","name":"Ulsterbus
+        Town Services"}},{"id":"nir:17338:D:H:","destination":{"name":"Newry, Newry
+        Bus Station","type":"stop"},"name":"Bus 338d","number":"338d","description":"Newry
+        City Service Damolly & Downshire Road","product":{"id":0,"class":5,"iconId":3},"operator":{"id":"UTS","name":"Ulsterbus
+        Town Services"}}]}}]}}'
+    headers:
+      Accept-Ranges:
+      - none
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 12 Nov 2025 09:13:25 GMT
+    status:
+      code: 200
+      message: OK
+version: 1

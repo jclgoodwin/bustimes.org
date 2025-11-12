@@ -2,6 +2,7 @@ import logging
 from django.db.backends.postgresql.psycopg_any import DateTimeTZRange
 from django.db.models import Q
 
+from bs4 import BeautifulSoup
 
 import requests
 
@@ -20,7 +21,6 @@ def get_period(element: dict):
 
 def handle_item(item: dict, source: DataSource, current_situations: dict):
     situation_number = item["id"]
-    print(situation_number)
 
     situation = current_situations.get(situation_number)
 
@@ -47,6 +47,8 @@ def handle_item(item: dict, source: DataSource, current_situations: dict):
         == item["infoLinks"][0]["subtitle"]
     )
     situation.text = item["infoLinks"][0]["content"]
+    soup = BeautifulSoup(situation.text, "lxml")
+    situation.text = soup.get_text().strip().replace("\n\xa0\n", "\n\n")
     situation.save()
 
     for i, period_element in enumerate(item["timestamps"]["validity"]):
@@ -70,27 +72,30 @@ def handle_item(item: dict, source: DataSource, current_situations: dict):
         except Consequence.DoesNotExist:
             pass
 
-    consequence.save()
-
-    consequence.services.clear()
+    if consequence.id:
+        consequence.services.clear()
 
     services = Service.objects.filter(current=True)
 
-    for line in item["affected"]["lines"]:
-        line_name = line["number"]
-        line_filter = Q(route__line_name__iexact=line_name) | Q(
-            line_name__iexact=line_name
-        )
-        operator_ref = line["operator"]["id"]
+    if "lines" in item["affected"]:
+        for line in item["affected"]["lines"]:
+            line_name = line["number"]
+            line_filter = Q(route__line_name__iexact=line_name) | Q(
+                line_name__iexact=line_name
+            )
+            operator_ref = line["operator"]["id"]
 
-        matching_services = services.filter(
-            line_filter, operator=operator_ref
-        ).distinct()
+            matching_services = services.filter(
+                line_filter, operator=operator_ref
+            ).distinct()
 
-        if matching_services:
-            consequence.services.add(*matching_services)
-        else:
-            logger.info(f"{situation_number=} {operator_ref=} {line_name=}")
+            if matching_services:
+                if not consequence.id:
+                    consequence.save()
+
+                consequence.services.add(*matching_services)
+            else:
+                logger.info(f"{situation_number=} {operator_ref=} {line_name=}")
 
     return situation.id
 
