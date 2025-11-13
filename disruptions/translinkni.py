@@ -94,8 +94,6 @@ def handle_item(item: dict, source: DataSource, current_situations: dict):
                     consequence.save()
 
                 consequence.services.add(*matching_services)
-            else:
-                logger.info(f"{situation_number=} {operator_ref=} {line_name=}")
 
     return situation.id
 
