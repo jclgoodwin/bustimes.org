@@ -41,6 +41,9 @@ def handle_item(item: dict, source: DataSource, current_situations: dict):
 
     situation.summary = item["infoLinks"][0]["urlText"]
 
+    if "content" not in item["infoLinks"][0]:
+        return
+
     assert (
         item["infoLinks"][0]["urlText"]
         == item["infoLinks"][0]["title"]
@@ -117,8 +120,8 @@ def translink_disruptions(api_key):
     }
 
     for element in elements:
-        situations.append(handle_item(element, source, current_situations))
-
+        if situation_id := handle_item(element, source, current_situations):
+            situations.append(situation_id)
     source.situation_set.filter(current=True).exclude(id__in=situations).update(
         current=False
     )
