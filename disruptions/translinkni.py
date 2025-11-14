@@ -102,7 +102,7 @@ def handle_item(item: dict, source: DataSource, current_situations: dict):
 
 
 def translink_disruptions(api_key):
-    url = "https://opendata.translinkniplanner.co.uk/Ext_API/XML_ADDINFO_REQUEST?ext_macro=dm"
+    url = "https://opendata.translinkniplanner.co.uk/Ext_API/XML_ADDINFO_REQUEST?ext_macro=addinfo"
 
     source = DataSource.objects.get_or_create(name="Translink")[0]
 
