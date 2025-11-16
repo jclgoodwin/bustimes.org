@@ -60,9 +60,6 @@ class Command(BaseCommand):
 
     def handle_localities(self, element):
         for locality_element in element:
-            district_id = locality_element.findtext("NptgDistrictRef")
-            if district_id == "310":
-                district_id = None
             lon = locality_element.findtext("Location/Translation/Longitude")
             lat = locality_element.findtext("Location/Translation/Latitude")
             yield Locality(
@@ -73,7 +70,7 @@ class Command(BaseCommand):
                 ),
                 created_at=get_datetime(locality_element.attrib["CreationDateTime"]),
                 admin_area_id=locality_element.findtext("AdministrativeAreaRef"),
-                district_id=district_id,
+                district_id=locality_element.findtext("NptgDistrictRef"),
                 parent_id=locality_element.findtext("ParentNptgLocalityRef"),
                 modified_at=get_datetime(
                     locality_element.attrib["ModificationDateTime"]
@@ -154,12 +151,19 @@ class Command(BaseCommand):
                 localities_with_parents = []
 
                 for item in self.handle_localities(element):
+                    if item.district_id and int(item.district_id) not in districts:
+                        if item.district_id != "310":
+                            logger.warning(
+                                f"{item} district {item.district_id} does not exist"
+                            )
+                        item.district_id = None
                     if item.parent_id and item.parent_id not in localities:
                         localities_with_parents.append(item)
                     else:
                         if item.pk not in localities:
                             item.save(force_insert=True)
                         elif localities[item.pk].modified_at != item.modified_at:
+                            item.slug = localities[item.pk].slug
                             item.save(force_update=True)
                         localities[item.id] = item
 
