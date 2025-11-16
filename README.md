@@ -36,7 +36,7 @@
 | busstops/management/commands/jersey\_routes.py                  |       14 |        0 |    100% |           |
 | busstops/management/commands/jersey\_stops.py                   |       12 |        0 |    100% |           |
 | busstops/management/commands/naptan\_new.py                     |      159 |        5 |     97% |41, 43, 175, 223, 272 |
-| busstops/management/commands/nptg\_new.py                       |       94 |        7 |     93% |148, 158, 163, 169-170, 172-173 |
+| busstops/management/commands/nptg\_new.py                       |       96 |        9 |     91% |145, 156, 161, 166-167, 173-174, 176-177 |
 | busstops/management/commands/osm\_iom\_stops.py                 |       34 |       34 |      0% |      1-63 |
 | busstops/management/commands/update\_search\_indexes.py         |       11 |        0 |    100% |           |
 | busstops/management/commands/update\_slugs.py                   |       20 |       20 |      0% |      1-29 |
@@ -86,7 +86,7 @@
 | bustimes/management/tests/test\_import\_passenger.py            |       23 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_transxchange.py         |      769 |        0 |    100% |           |
 | bustimes/management/tests/test\_tnds.py                         |       19 |        0 |    100% |           |
-| bustimes/models.py                                              |      344 |        9 |     97% |114, 220, 378, 381, 427, 472-475, 507 |
+| bustimes/models.py                                              |      344 |        8 |     98% |114, 378, 381, 427, 472-475, 507 |
 | bustimes/test\_get\_trip.py                                     |       31 |        0 |    100% |           |
 | bustimes/tests.py                                               |      132 |        0 |    100% |           |
 | bustimes/timetables.py                                          |      613 |       64 |     90% |39-52, 162-173, 204-205, 222-234, 286, 298-301, 313, 327-332, 346, 365, 440, 443, 459-462, 464, 491, 603-618, 704-705, 776, 922-924 |
@@ -189,7 +189,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16989** | **1155** | **93%** |           |
+|                                                       **TOTAL** | **16991** | **1156** | **93%** |           |
 
 
 ## Setup coverage badge
