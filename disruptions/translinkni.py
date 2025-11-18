@@ -43,12 +43,6 @@ def handle_item(item: dict, source: DataSource, current_situations: dict):
 
     if "content" not in item["infoLinks"][0]:
         return
-
-    assert (
-        item["infoLinks"][0]["urlText"]
-        == item["infoLinks"][0]["title"]
-        == item["infoLinks"][0]["subtitle"]
-    )
     situation.text = item["infoLinks"][0]["content"]
     soup = BeautifulSoup(situation.text, "lxml")
     situation.text = soup.get_text().strip().replace("\n\xa0\n", "\n\n")
