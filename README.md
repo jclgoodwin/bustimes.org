@@ -154,7 +154,7 @@
 | vehicles/management/commands/listen.py                          |       22 |        0 |    100% |           |
 | vehicles/management/commands/newport.py                         |       44 |        2 |     95% |    46, 64 |
 | vehicles/management/commands/signalr.py                         |       82 |        0 |    100% |           |
-| vehicles/management/commands/siri\_vm\_subscribe.py             |       38 |       17 |     55% |     37-89 |
+| vehicles/management/commands/siri\_vm\_subscribe.py             |       38 |       17 |     55% |     37-90 |
 | vehicles/management/import\_live\_vehicles.py                   |      307 |       29 |     91% |117, 133, 139-141, 143, 165, 174, 188, 197-200, 209, 230, 235, 244, 249, 306-307, 348, 351-352, 373-374, 476, 514-515, 525, 545 |
 | vehicles/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | vehicles/management/tests/test\_bod\_avl.py                     |      303 |        0 |    100% |           |
