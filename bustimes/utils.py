@@ -350,9 +350,7 @@ def get_trip(
             return
 
     if journey.code:
-        code = Q(ticket_machine_code=journey.code) | Q(
-            vehicle_journey_code=journey.code
-        )
+        code = Q(ticket_machine_code=journey.code)
     else:
         code = Q()
 
