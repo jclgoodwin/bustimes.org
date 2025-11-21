@@ -54,8 +54,8 @@
             </div>
         </aside>
         <h2>
-            <span class="text">510 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">475<span class="text"> run</span></button>
+            <span class="text">514 statements &nbsp;</span>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">479<span class="text"> run</span></button>
             <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">35<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_6a478a4b3744fc7a_rtpi_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.11.3">coverage.py v7.11.3</a>,
-            created at 2025-11-20 17:46 +0000
+            created at 2025-11-21 16:30 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -914,12 +914,16 @@
     <p class="run run2"><span class="n"><a id="t832" href="#t832">832</a></span><span class="t">    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t833" href="#t833">833</a></span><span class="t">    <span class="nam">uuid</span> <span class="op">=</span> <span class="nam">models</span><span class="op">.</span><span class="nam">UUIDField</span><span class="op">(</span><span class="nam">default</span><span class="op">=</span><span class="nam">uuid</span><span class="op">.</span><span class="nam">uuid4</span><span class="op">,</span> <span class="nam">editable</span><span class="op">=</span><span class="key">False</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t834" href="#t834">834</a></span><span class="t">    <span class="nam">sample</span> <span class="op">=</span> <span class="nam">models</span><span class="op">.</span><span class="nam">TextField</span><span class="op">(</span><span class="nam">null</span><span class="op">=</span><span class="key">True</span><span class="op">,</span> <span class="nam">blank</span><span class="op">=</span><span class="key">True</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t835" href="#t835">835</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t836" href="#t836">836</a></span><span class="t">    <span class="key">def</span> <span class="nam">__str__</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t837" href="#t837">837</a></span><span class="t">        <span class="key">return</span> <span class="nam">self</span><span class="op">.</span><span class="nam">name</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t838" href="#t838">838</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t839" href="#t839">839</a></span><span class="t">    <span class="key">def</span> <span class="nam">get_status_key</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t840" href="#t840">840</a></span><span class="t">        <span class="key">return</span> <span class="fst">f"</span><span class="op">{</span><span class="nam">self</span><span class="op">.</span><span class="nam">name</span><span class="op">.</span><span class="nam">replace</span><span class="op">(</span><span class="str">' '</span><span class="op">,</span> <span class="str">'_'</span><span class="op">)</span><span class="op">}</span><span class="fst">_status</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t835" href="#t835">835</a></span><span class="t">    <span class="nam">producer_url</span> <span class="op">=</span> <span class="nam">models</span><span class="op">.</span><span class="nam">URLField</span><span class="op">(</span><span class="nam">null</span><span class="op">=</span><span class="key">True</span><span class="op">,</span> <span class="nam">blank</span><span class="op">=</span><span class="key">True</span><span class="op">,</span> <span class="nam">max_length</span><span class="op">=</span><span class="num">64</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t836" href="#t836">836</a></span><span class="t">    <span class="nam">username</span> <span class="op">=</span> <span class="nam">models</span><span class="op">.</span><span class="nam">CharField</span><span class="op">(</span><span class="nam">null</span><span class="op">=</span><span class="key">True</span><span class="op">,</span> <span class="nam">blank</span><span class="op">=</span><span class="key">True</span><span class="op">,</span> <span class="nam">max_length</span><span class="op">=</span><span class="num">64</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t837" href="#t837">837</a></span><span class="t">    <span class="nam">password</span> <span class="op">=</span> <span class="nam">models</span><span class="op">.</span><span class="nam">CharField</span><span class="op">(</span><span class="nam">null</span><span class="op">=</span><span class="key">True</span><span class="op">,</span> <span class="nam">blank</span><span class="op">=</span><span class="key">True</span><span class="op">,</span> <span class="nam">max_length</span><span class="op">=</span><span class="num">64</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t838" href="#t838">838</a></span><span class="t">    <span class="nam">requestor_ref</span> <span class="op">=</span> <span class="nam">models</span><span class="op">.</span><span class="nam">CharField</span><span class="op">(</span><span class="nam">null</span><span class="op">=</span><span class="key">True</span><span class="op">,</span> <span class="nam">blank</span><span class="op">=</span><span class="key">True</span><span class="op">,</span> <span class="nam">max_length</span><span class="op">=</span><span class="num">64</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t839" href="#t839">839</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t840" href="#t840">840</a></span><span class="t">    <span class="key">def</span> <span class="nam">__str__</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t841" href="#t841">841</a></span><span class="t">        <span class="key">return</span> <span class="nam">self</span><span class="op">.</span><span class="nam">name</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t842" href="#t842">842</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t843" href="#t843">843</a></span><span class="t">    <span class="key">def</span> <span class="nam">get_status_key</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t844" href="#t844">844</a></span><span class="t">        <span class="key">return</span> <span class="fst">f"</span><span class="op">{</span><span class="nam">self</span><span class="op">.</span><span class="nam">name</span><span class="op">.</span><span class="nam">replace</span><span class="op">(</span><span class="str">' '</span><span class="op">,</span> <span class="str">'_'</span><span class="op">)</span><span class="op">}</span><span class="fst">_status</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
 </main>
 <footer>
     <div class="content">
@@ -929,7 +933,7 @@
             <a class="nav" href="z_6a478a4b3744fc7a_rtpi_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.11.3">coverage.py v7.11.3</a>,
-            created at 2025-11-20 17:46 +0000
+            created at 2025-11-21 16:30 +0000
         </p>
     </div>
 </footer>
