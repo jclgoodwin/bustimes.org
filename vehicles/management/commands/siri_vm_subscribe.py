@@ -36,12 +36,12 @@ class Command(BaseCommand):
             else:
                 print(f"no {subscription} history, subscribing")
 
-        if subscription.auth:
-            auth = requests.auth.HTTPBasicAuth("user", "pass")
+        if subscription.username and subscription.password:
+            auth = requests.auth.HTTPBasicAuth(subscription.username, subscription.password)
         else:
             auth = None
 
-        session = requests.Session(auth=auth)
+        session = requests.Session()
         if source_address:
             session.mount("https://", SourceAddressAdapter(source_address))
 
@@ -58,6 +58,7 @@ class Command(BaseCommand):
                 subscription.producer_url,
                 data=data,
                 headers={"content-type": "text/xml"},
+                auth=auth
             )
             print(res.text)
             return
@@ -90,4 +91,5 @@ class Command(BaseCommand):
             subscription.producer_url,
             data=data,
             headers={"content-type": "text/xml"},
+            auth=auth
         )
