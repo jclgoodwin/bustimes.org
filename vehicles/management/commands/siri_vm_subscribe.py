@@ -13,13 +13,20 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("source_address", type=str)
         parser.add_argument("consumer_address", type=str)
+        parser.add_argument("subscription_name", type=str)
         parser.add_argument("terminate", type=str, nargs="?")
 
-    def handle(self, source_address, consumer_address, terminate=None, *args, **options):
-        endpoint = "https://obst-s2s.tfw.vix-its.com"
-        requestor_ref = "TFW_Bustimes_VM"
-
-        subscription = SiriSubscription.objects.get(name="Transport for Wales")
+    def handle(
+        self,
+        source_address,
+        consumer_address,
+        subscription_name,
+        terminate=None,
+        *args,
+        **options,
+    ):
+        subscription = SiriSubscription.objects.get(name=subscription_name)
+        assert subscription.producer_url
 
         now = datetime.now(timezone.utc)
         if not terminate:
@@ -29,20 +36,26 @@ class Command(BaseCommand):
             else:
                 print(f"no {subscription} history, subscribing")
 
-        session = requests.Session()
-        session.mount("https://", SourceAddressAdapter(source_address))
+        if subscription.auth:
+            auth = requests.auth.HTTPBasicAuth("user", "pass")
+        else:
+            auth = None
+
+        session = requests.Session(auth=auth)
+        if source_address:
+            session.mount("https://", SourceAddressAdapter(source_address))
 
         if terminate:
             data = f"""<Siri xmlns="http://www.siri.org.uk/siri" version="1.3">
     <TerminateSubscriptionRequest>
         <RequestTimestamp>{now.isoformat()}</RequestTimestamp>
-        <RequestorRef>{requestor_ref}</RequestorRef>
+        <RequestorRef>{subscription.requestor_ref}</RequestorRef>
         <SubscriptionRef>{terminate}</SubscriptionRef>
     </TerminateSubscriptionRequest>
 </Siri>"""
             print(data)
             res = session.post(
-                endpoint,
+                subscription.producer_url,
                 data=data,
                 headers={"content-type": "text/xml"},
             )
@@ -56,7 +69,7 @@ class Command(BaseCommand):
         data = f"""<Siri xmlns="http://www.siri.org.uk/siri" version="1.3">
     <SubscriptionRequest>
         <RequestTimestamp>{now.isoformat()}</RequestTimestamp>
-        <RequestorRef>{requestor_ref}</RequestorRef>
+        <RequestorRef>{subscription.requestor_ref}</RequestorRef>
         <ConsumerAddress>{consumer_address}</ConsumerAddress>
         <VehicleMonitoringSubscriptionRequest>
             <SubscriptionIdentifier>{uuid.uuid4()}</SubscriptionIdentifier>
@@ -74,7 +87,7 @@ class Command(BaseCommand):
 </Siri>"""
 
         session.post(
-            endpoint,
+            subscription.producer_url,
             data=data,
             headers={"content-type": "text/xml"},
         )

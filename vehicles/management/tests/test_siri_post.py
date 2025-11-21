@@ -21,7 +21,9 @@ class SiriPostTest(TestCase):
     def setUpTestData(cls):
         DataSource.objects.create(name="Transport for Wales")
         SiriSubscription.objects.create(
-            name="Transport for Wales", uuid="475d1d1f-5708-4ee1-8f51-c63d948bc0b9"
+            name="Transport for Wales",
+            uuid="475d1d1f-5708-4ee1-8f51-c63d948bc0b9",
+            producer_url="https://obst-s2s.tfw.vix-its.com/",
         )
 
     @time_machine.travel("2023-12-15T08:24:05Z")
@@ -33,9 +35,19 @@ class SiriPostTest(TestCase):
                 "vehicles.management.commands.siri_vm_subscribe.cache.get",
                 return_value=[[datetime(2023, 12, 15, 8, 20, tzinfo=timezone.utc)]],
             ):
-                call_command("siri_vm_subscribe", "198.51.100.0", "http://example.com")
+                call_command(
+                    "siri_vm_subscribe",
+                    "198.51.100.0",
+                    "http://example.com",
+                    "Transport for Wales",
+                )
 
-            call_command("siri_vm_subscribe", "198.51.100.0", "http://example.com")
+            call_command(
+                "siri_vm_subscribe",
+                "198.51.100.0",
+                "http://example.com",
+                "Transport for Wales",
+            )
 
     def test_siri_post_404(self):
         response = self.client.post("/siri/7e491d62-e9de-44eb-b197-ab0419bb033d")
