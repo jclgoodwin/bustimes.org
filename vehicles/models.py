@@ -832,6 +832,10 @@ class SiriSubscription(models.Model):
     )
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     sample = models.TextField(null=True, blank=True)
+    producer_url = models.URLField(null=True, blank=True, max_length=64)
+    username = models.CharField(null=True, blank=True, max_length=64)
+    password = models.CharField(null=True, blank=True, max_length=64)
+    requestor_ref = models.CharField(null=True, blank=True, max_length=64)
 
     def __str__(self):
         return self.name
