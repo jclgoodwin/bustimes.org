@@ -96,14 +96,16 @@ def handle_item(item: dict, source: DataSource, current_situations: dict):
 
 
 def translink_disruptions(api_key):
-    url = "https://opendata.translinkniplanner.co.uk/Ext_API/XML_ADDINFO_REQUEST?ext_macro=addinfo"
+    url = "https://opendata.translinkniplanner.co.uk/Ext_API/XML_ADDINFO_REQUEST?outputFormat=rapidJSON&filterPublicationStatus=current"
 
     source = DataSource.objects.get_or_create(name="Translink")[0]
 
     situations = []
 
     response = requests.get(url, headers={"x-api-token": api_key}, timeout=61)
-
+    response.raise_for_status()
+    if not response.content:
+        return
     elements = response.json()["infos"]["current"]
 
     situation_numbers = [element["id"] for element in elements]

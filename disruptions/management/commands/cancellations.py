@@ -143,6 +143,7 @@ class Command(BaseCommand):
 
         response = requests.get(url, params={"api_key": api_key}, stream=True)
         response.raw.decode_content = True
+        response.raise_for_status()
 
         current_situations = {
             s.situation_number: s for s in source.situation_set.filter(current=True)
