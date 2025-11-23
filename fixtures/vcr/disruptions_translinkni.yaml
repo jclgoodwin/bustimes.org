@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - python-requests/2.32.5
     method: GET
-    uri: https://opendata.translinkniplanner.co.uk/Ext_API/XML_ADDINFO_REQUEST?ext_macro=addinfo
+    uri: https://opendata.translinkniplanner.co.uk/Ext_API/XML_ADDINFO_REQUEST?outputFormat=rapidJSON&filterPublicationStatus=current
   response:
     body:
       string: '{"version":"10.6.21.17","timestamp":"2025-11-12T09:13:25Z","infos":{"current":[{"type":"stopInfo","id":"ems-6965","version":79025,"priority":"normal","timestamps":{"creation":"2025-08-12T12:01:00Z","lastModification":"2025-08-13T09:58:00Z","availability":{"from":"2025-08-11T23:00:00Z","to":"2025-11-28T23:59:00Z"},"validity":[{"from":"2025-08-17T23:00:00Z","to":"2025-11-29T00:00:00Z"}],"expiration":"2025-11-29T00:00:59Z"},"infoLinks":[{"urlText":"Moira
