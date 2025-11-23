@@ -111,7 +111,7 @@
 | disruptions/test\_translinkni.py                                |       25 |        0 |    100% |           |
 | disruptions/tests.py                                            |       16 |        0 |    100% |           |
 | disruptions/tfl\_disruptions.py                                 |       91 |        2 |     98% |    49, 85 |
-| disruptions/translinkni.py                                      |       75 |        6 |     92% |45, 56-59, 68 |
+| disruptions/translinkni.py                                      |       78 |        7 |     91% |45, 56-59, 68, 108 |
 | disruptions/urls.py                                             |        3 |        0 |    100% |           |
 | disruptions/views.py                                            |       23 |        0 |    100% |           |
 | fares/\_\_init\_\_.py                                           |        0 |        0 |    100% |           |
@@ -189,7 +189,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **16998** | **1160** | **93%** |           |
+|                                                       **TOTAL** | **17001** | **1161** | **93%** |           |
 
 
 ## Setup coverage badge
