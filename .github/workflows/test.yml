@@ -33,7 +33,7 @@ jobs:
 
   test-backend:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 8
     needs: test-frontend
     container:
       image: ghcr.io/jclgoodwin/bustimes.org/bustimes-base:test
@@ -81,15 +81,16 @@ jobs:
       env:
         DATABASE_URL: postgis://postgres:postgres@postgres/postgres
         SECRET_KEY: secret
-        # COVERAGE_CORE: ctrace
       run: |
         uv run ./manage.py collectstatic --noinput && \
-        uv run ./manage.py test --parallel 2 --keepdb
+        uv run coverage run ./manage.py test --keepdb
 
-    # - name: generate coverage report
-    #   run: uv run coverage combine && uv run coverage html
+    - name: generate coverage report
+      run: |
+        # uv run coverage combine && \
+        uv run coverage html
 
-    # - name: Coverage comment
-    #   uses: py-cov-action/python-coverage-comment-action@v3
-    #   with:
-    #     GITHUB_TOKEN: ${{ github.token }}
+    - name: Coverage comment
+      uses: py-cov-action/python-coverage-comment-action@v3
+      with:
+        GITHUB_TOKEN: ${{ github.token }}
