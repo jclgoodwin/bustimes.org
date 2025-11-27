@@ -28,9 +28,9 @@ I try to document things for "future me", but invariably this documentation will
 
 ## License note
 
-Some of the test data in this repository is public sector information licensed under the [Open Government Licence v3.0](https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/).
+Some of the **test data** in this repository is public sector information licensed under the [Open Government Licence v3.0](https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/).
 
-This repository also contains some font files which are copyrighted and not covered by the main [licence](LICENSE).
+This repository also contains some **font files** which are copyrighted and not covered by the main [licence](LICENSE).
 
 ## Installing
 
@@ -42,7 +42,7 @@ I don't know. These days, I only use Docker for running the production site (see
 
 These need to be available:
 
-- Python 3.12+
+- Python 3.14
 - `uv` to install necessary Python packages (Django, etc)
 - PostgreSQL with PostGIS
     - On my Macintosh computer I use [Postgres.app](https://postgresapp.com/)
@@ -94,4 +94,4 @@ I use supervisord (see [config/supervisor.conf](config/supervisor.conf)).
 
 ## Deploying
 
-Uses Kamal (see [config/deploy.yml](config/deploy.yml))
+Uses [Kamal](https://kamal-deploy.org/  ) (see [config/deploy.yml](config/deploy.yml))
