@@ -36,7 +36,7 @@ jobs:
     timeout-minutes: 8
     needs: test-frontend
     container:
-      image: ghcr.io/jclgoodwin/bustimes.org/bustimes-base:test
+      image: ghcr.io/jclgoodwin/bustimes.org/bustimes-base:3.14
 
     permissions:
       # Gives the action the necessary permissions for publishing new

@@ -10,7 +10,7 @@ COPY .parcelrc tsconfig.json /app/
 RUN npm run lint && npm run build
 
 
-FROM ghcr.io/jclgoodwin/bustimes.org/bustimes-base:latest
+FROM ghcr.io/jclgoodwin/bustimes.org/bustimes-base:3.14
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
