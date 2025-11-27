@@ -40,12 +40,10 @@ dependencies = [
     "lightningcss-cli>=1.29.2,<2",
     "websockets>=14.2",
     "django-multidb-router>=0.10",
-    "django-debug-toolbar>=6.0.0,<7",
-    "django-debug-toolbar-force>=0.2,<0.3",
-    "django-debug-toolbar-template-profiler>=2.1.0,<3",
     "folium>=0.20.0",
     "xmltodict>=1.0.2",
     "django-csp>=4.0",
+    "django-http-compression>=1.2.0",
 ]
 
 [dependency-groups]
@@ -63,6 +61,9 @@ test = [
     "coverage>=7.6.1,<8",
 ]
 dev = [
+    "django-debug-toolbar>=6.0.0,<7",
+    "django-debug-toolbar-force>=0.2,<0.3",
+    "django-debug-toolbar-template-profiler>=2.1.0,<3",
     "django-watchfiles>=1.4.0",
     "ipdb>=0.13.9,<0.14",
     "ipython>=9.0.2,<10",
