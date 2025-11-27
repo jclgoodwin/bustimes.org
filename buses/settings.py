@@ -138,9 +138,6 @@ if "runserver" in sys.argv:
     # local development server - reset to the default (i.e. no persistent connections)
     del DATABASES["default"]["CONN_MAX_AGE"]
 
-TEST_RUNNER = "django_slowtests.testrunner.DiscoverSlowestTestsRunner"
-NUM_SLOW_TESTS = 10
-
 AUTH_USER_MODEL = "accounts.User"
 LOGIN_REDIRECT_URL = "/vehicles"
 

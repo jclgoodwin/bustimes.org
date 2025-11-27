@@ -83,7 +83,7 @@ jobs:
         SECRET_KEY: secret
       run: |
         uv run ./manage.py collectstatic --noinput && \
-        uv run coverage run ./manage.py test --keepdb
+        uv run coverage run ./manage.py test --keepdb --durations 10
 
     - name: generate coverage report
       run: |
