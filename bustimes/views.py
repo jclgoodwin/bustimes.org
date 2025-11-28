@@ -566,6 +566,7 @@ def trip_block(request, pk: int):
         "bustimes/block_detail.html",
         {
             "object": trip.block,
+            "breadcrumb": [trip.operator],
             "form": form,
             "date": date,
             "trips": trips,
