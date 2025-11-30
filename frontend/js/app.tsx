@@ -52,7 +52,9 @@ if (typeof window.globalThis === "undefined") {
   window.globalThis = window;
 }
 
-const error = <LoadingSorry text="Sorry, something has gone wrong" />;
+function error({ error, componentStack, resetError }) {
+  return <LoadingSorry text={error.toString()} />;
+}
 
 let rootElement: HTMLElement | null;
 if ((rootElement = document.getElementById("history"))) {

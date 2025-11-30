@@ -250,7 +250,7 @@ export default function BusTimesMap(
         mapStyle={mapStyleURL}
         RTLTextPlugin={""}
         attributionControl={false}
-        onError={(e) => captureException(e.error)}
+        onError={(e) => captureException(e)}
         onContextMenu={onContextMenu}
       >
         <NavigationControl showCompass={false} />
