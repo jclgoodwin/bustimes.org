@@ -24,7 +24,7 @@
             {% endif %}{% endifchanged %}
         {% endfor %}
         {% for link in situation.link_set.all %}
-            {{ link.url|urlise }}
+            <p>{{ link.url|urlise }}</p>
         {% endfor %}
     {% endif %}
     {% if situation.summary and situation.show_summary %}</details>{% else %}</div>{% endif %}

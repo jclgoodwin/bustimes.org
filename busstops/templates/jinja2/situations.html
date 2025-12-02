@@ -22,12 +22,12 @@
             {% endif %}{% endif %}
         {% endfor %}
         {% for link in situation.link_set.all() %}
-            {{ link.url|urlize }}
+            <p>{{ link.url|urlize }}</p>
         {% endfor %}
     {% endif %}
 
     {% if request.user.has_perm('disruptions.change_situation') %}
-        <a href="{{ url('admin:disruptions_situation_change', args=[situation.id]) }}">✎</a>
+        <p><a href="{{ url('admin:disruptions_situation_change', args=[situation.id]) }}">✎</a></p>
     {% endif %}
 
     {% if situation.summary and situation.show_summary %}</details>{% else %}</div>{% endif %}
