@@ -52,8 +52,12 @@ if (typeof window.globalThis === "undefined") {
   window.globalThis = window;
 }
 
-function error({ error, componentStack, resetError }) {
-  return <LoadingSorry text={error.toString()} />;
+function error(error: { error?: unknown }) {
+  return (
+    <LoadingSorry
+      text={error.error?.toString() || "Sorry, something has gone wrong"}
+    />
+  );
 }
 
 let rootElement: HTMLElement | null;
