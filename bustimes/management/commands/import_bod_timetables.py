@@ -26,14 +26,30 @@ from .import_transxchange import Command as TransXChangeCommand
 logger = logging.getLogger(__name__)
 
 
-def clean_up(timetable_data_source, sources, incomplete=False):
+# delete routes from any sources that have been made inactive
+def clean_up(timetable_data_source, current_sources, incomplete=False):
+    # if there's no current data, it's probably an error, so don't automatically delete
+    if not Service.objects.filter(
+        Q(source__in=current_sources) | Q(route__source__in=current_sources),
+        current=True,
+    ).exists():
+        if Service.objects.filter(
+            current=True,
+            route__source__source=timetable_data_source,
+        ).exists():
+            logger.warning(
+                f"""{timetable_data_source} has no current data
+https://bustimes.org/admin/busstops/service/?route__source__source={timetable_data_source.id}"""
+            )
+        return
+
     service_operators = Service.operator.through.objects.filter(
         service=OuterRef("service")
     )
     operators = timetable_data_source.operators.values_list("noc", flat=True)
 
     routes = Route.objects.filter(
-        ~Q(source__in=sources),
+        ~Q(source__in=current_sources),
         Q(source__source=timetable_data_source)
         | Q(
             ~Q(source__name="L"),
@@ -259,20 +275,7 @@ def bus_open_data(api_key, specific_operator):
 
                 service_ids |= command.service_ids
 
-        # delete routes from any sources that have been made inactive
-        if Service.objects.filter(
-            Q(source__in=sources) | Q(route__source__in=sources),
-            current=True,
-        ).exists():
-            clean_up(source, sources, not source.complete)
-        elif Service.objects.filter(
-            current=True,
-            route__source__source=source,
-        ).exists():
-            logger.warning(
-                f"""{operators} has no current data
-https://bustimes.org/admin/busstops/service/?operator__noc__in={",".join(operators)}"""
-            )
+        clean_up(source, sources, not source.complete)
 
         command.service_ids = service_ids
         command.finish_services()
