@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for busstops/models.py: 97%</title>
+    <title>Coverage for busstops/models.py: 96%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_58284776.png">
     <link rel="stylesheet" href="style_cb_8432e98f.css" type="text/css">
     <script src="coverage_html_cb_bcae5fc4.js" defer></script>
@@ -12,7 +12,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>busstops&#8201;/&#8201;models.py</b>:
-            <span class="pc_cov">97%</span>
+            <span class="pc_cov">96%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -55,8 +55,8 @@
         </aside>
         <h2>
             <span class="text">620 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">599<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">21<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">598<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">22<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_b8e363a838fda594_date_range_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.12.0">coverage.py v7.12.0</a>,
-            created at 2025-12-02 14:20 +0000
+            created at 2025-12-03 04:18 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -1117,7 +1117,7 @@
     <p class="run"><span class="n"><a id="t1035" href="#t1035">1035</a></span><span class="t">        <span class="key">if</span> <span class="nam">existing_hash</span> <span class="op">!=</span> <span class="nam">proposed_hash</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1036" href="#t1036">1036</a></span><span class="t">            <span class="key">if</span> <span class="nam">len</span><span class="op">(</span><span class="nam">existing_hash</span><span class="op">)</span> <span class="op">>=</span> <span class="nam">len</span><span class="op">(</span><span class="nam">proposed_hash</span><span class="op">)</span><span class="op">:</span>  <span class="com"># reuse ids</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1037" href="#t1037">1037</a></span><span class="t">                <span class="key">for</span> <span class="nam">proposed_su</span><span class="op">,</span> <span class="nam">existing_su</span> <span class="key">in</span> <span class="nam">zip</span><span class="op">(</span><span class="nam">proposed</span><span class="op">,</span> <span class="nam">existing</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t1038" href="#t1038">1038</a></span><span class="t">                    <span class="nam">proposed_su</span><span class="op">.</span><span class="nam">id</span> <span class="op">=</span> <span class="nam">existing_su</span><span class="op">.</span><span class="nam">id</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t1038" href="#t1038">1038</a></span><span class="t">                    <span class="nam">proposed_su</span><span class="op">.</span><span class="nam">id</span> <span class="op">=</span> <span class="nam">existing_su</span><span class="op">.</span><span class="nam">id</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1039" href="#t1039">1039</a></span><span class="t">                <span class="nam">StopUsage</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">bulk_update</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t1040" href="#t1040">1040</a></span><span class="t">                    <span class="nam">proposed</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t1041" href="#t1041">1041</a></span><span class="t">                    <span class="op">[</span><span class="str">"stop_id"</span><span class="op">,</span> <span class="str">"timing_point"</span><span class="op">,</span> <span class="str">"inbound"</span><span class="op">,</span> <span class="str">"order"</span><span class="op">,</span> <span class="str">"line_name"</span><span class="op">]</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
@@ -1234,7 +1234,7 @@
             <a class="nav" href="z_b8e363a838fda594_date_range_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.12.0">coverage.py v7.12.0</a>,
-            created at 2025-12-02 14:20 +0000
+            created at 2025-12-03 04:18 +0000
         </p>
     </div>
 </footer>
