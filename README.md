@@ -28,7 +28,7 @@
 | buses/wsgi.py                                                   |        4 |        0 |    100% |           |
 | busstops/\_\_init\_\_.py                                        |        0 |        0 |    100% |           |
 | busstops/admin.py                                               |      321 |       14 |     96% |104-110, 185, 244-252, 334-336, 382, 457, 461, 510, 593, 621 |
-| busstops/fields.py                                              |        6 |        0 |    100% |           |
+| busstops/fields.py                                              |       27 |        1 |     96% |        42 |
 | busstops/forms.py                                               |       46 |        0 |    100% |           |
 | busstops/management/\_\_init\_\_.py                             |        0 |        0 |    100% |           |
 | busstops/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
@@ -189,7 +189,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       59 |        0 |    100% |           |
-|                                                       **TOTAL** | **17002** | **1164** | **93%** |           |
+|                                                       **TOTAL** | **17023** | **1165** | **93%** |           |
 
 
 ## Setup coverage badge
