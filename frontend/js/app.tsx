@@ -13,7 +13,7 @@ const MapRouter = lazy(() => import("./MapRouter"));
 if (process.env.NODE_ENV === "production") {
   Sentry.init({
     dsn: "https://0d628b6fff45463bb803d045b99aa542@o55224.ingest.sentry.io/1379883",
-    allowUrls: [/bustimes\.org\/static\/js/, /bustimes\.org\/static\/dist\/js/],
+    // allowUrls: [/bustimes\.org\/static\/js/, /bustimes\.org\/static\/dist\/js/],
   });
 }
 
@@ -38,10 +38,21 @@ function error(error: { error?: unknown }) {
   );
 }
 
+const createRootOptions = {
+  // Callback called when an error is thrown and not caught by an ErrorBoundary.
+  onUncaughtError: Sentry.reactErrorHandler((error, errorInfo) => {
+    console.warn("Uncaught error", error, errorInfo.componentStack);
+  }),
+  // Callback called when React catches an error in an ErrorBoundary.
+  onCaughtError: Sentry.reactErrorHandler(),
+  // Callback called when React automatically recovers from errors.
+  onRecoverableError: Sentry.reactErrorHandler(),
+};
+
 let rootElement: HTMLElement | null;
 if ((rootElement = document.getElementById("history"))) {
   // vehicle journey history
-  const root = createRoot(rootElement);
+  const root = createRoot(rootElement, createRootOptions);
   root.render(
     <React.StrictMode>
       <Sentry.ErrorBoundary fallback={error}>
@@ -53,7 +64,7 @@ if ((rootElement = document.getElementById("history"))) {
   window.SERVICE_ID &&
   (rootElement = document.getElementById("map-link"))
 ) {
-  const root = createRoot(rootElement);
+  const root = createRoot(rootElement, createRootOptions);
   root.render(
     <React.StrictMode>
       <Sentry.ErrorBoundary fallback={error}>
@@ -65,7 +76,7 @@ if ((rootElement = document.getElementById("history"))) {
     </React.StrictMode>,
   );
 } else if ((rootElement = document.getElementById("hugemap"))) {
-  const root = createRoot(rootElement);
+  const root = createRoot(rootElement, createRootOptions);
   root.render(
     <React.StrictMode>
       <Sentry.ErrorBoundary fallback={error}>
