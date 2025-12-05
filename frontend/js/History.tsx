@@ -74,15 +74,24 @@ export default function History() {
       }
       url += `${journeyId}.json`;
 
-      fetch(url).then((response) => {
-        if (response.ok) {
-          response.json().then((data) => {
-            data.id = journeyId;
-            setLoading(false);
-            setJourney(data);
-          });
-        }
-      });
+      fetch(url)
+        .then(
+          (response) => {
+            if (response.ok) {
+              response.json().then((data) => {
+                data.id = journeyId;
+                setLoading(false);
+                setJourney(data);
+              });
+            }
+          },
+          // () => {
+          //   // never mind
+          // }
+        )
+        .catch(() => {
+          // never mind
+        });
     } else {
       document.body.classList.remove("has-overlay");
     }
