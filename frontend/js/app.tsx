@@ -13,13 +13,19 @@ const MapRouter = lazy(() => import("./MapRouter"));
 if (process.env.NODE_ENV === "production") {
   Sentry.init({
     dsn: "https://0d628b6fff45463bb803d045b99aa542@o55224.ingest.sentry.io/1379883",
-    allowUrls: [/bustimes\.org/],
+    allowUrls: [/https:\/\/bustimes\.org\/static\//],
+    ignoreErrors: [
+      "Failed to fetch dynamically imported module",
+      "Load failed",
+      "AbortError: The user aborted a request.",
+    ],
     integrations: [
       Sentry.globalHandlersIntegration({
         onerror: false,
         onunhandledrejection: false,
       }),
     ],
+    release: process.env.KAMAL_CONTAINER_NAME,
   });
 }
 
