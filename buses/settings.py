@@ -8,7 +8,6 @@ from warnings import filterwarnings
 import dj_database_url
 import sentry_sdk
 
-# from csp.constants import SELF, NONE
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.huey import HueyIntegration
 from sentry_sdk.integrations.logging import ignore_logger
@@ -64,7 +63,6 @@ INSTALLED_APPS = [
     "simple_history",
     "huey.contrib.djhuey",
     "corsheaders",
-    "csp",
     "turnstile",
     "django_http_compression",
 ]
@@ -74,7 +72,7 @@ MIDDLEWARE = [
     "busstops.middleware.HealthCheckMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "corsheaders.middleware.CorsMiddleware",
-    "csp.middleware.CSPMiddleware",
+    "django.middleware.csp.ContentSecurityPolicyMiddleware",
     "django_http_compression.middleware.HttpCompressionMiddleware",
     "busstops.middleware.WhiteNoiseWithFallbackMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -95,13 +93,8 @@ SECURE_HSTS_PRELOAD = True
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_REDIRECT_EXEMPT = [r"^version$"]
 
-CONTENT_SECURITY_POLICY = {
-    "DIRECTIVES": {
-        "default-src": None,
-        # "font-src": [SELF],
-        # "media-src": [NONE],
-        "upgrade-insecure-requests": True,
-    },
+SECURE_CSP = {
+    "upgrade-insecure-requests": True,
 }
 
 CORS_ALLOW_ALL_ORIGINS = True

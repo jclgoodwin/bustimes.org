@@ -42,7 +42,6 @@ dependencies = [
     "django-multidb-router>=0.10",
     "folium>=0.20.0",
     "xmltodict>=1.0.2",
-    "django-csp>=4.0",
     "django-http-compression>=1.2.0",
 ]
 
