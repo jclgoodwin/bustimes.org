@@ -241,7 +241,7 @@ export default function BusTimesMap(
       <ThemeContext.Provider value={mapStyle}>
         <MapGL
           {...props}
-          reuseMaps
+          // reuseMaps
           crossSourceCollisions={false}
           touchPitch={false}
           pitchWithRotate={false}
