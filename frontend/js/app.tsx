@@ -5,7 +5,7 @@ import { createRoot } from "react-dom/client";
 import "./maps.css";
 import "maplibre-gl/dist/maplibre-gl.css";
 
-import LoadingSorry from "./LoadingSorry";
+import { ErrorFallback } from "./LoadingSorry";
 import ServiceMap from "./ServiceMap";
 const History = lazy(() => import("./History"));
 const MapRouter = lazy(() => import("./MapRouter"));
@@ -42,14 +42,6 @@ if (typeof window.globalThis === "undefined") {
   window.globalThis = window;
 }
 
-function error(error: { error?: unknown }) {
-  return (
-    <LoadingSorry
-      text={error.error?.toString() || "Sorry, something has gone wrong"}
-    />
-  );
-}
-
 const createRootOptions = {
   // Callback called when an error is thrown and not caught by an ErrorBoundary.
   onUncaughtError: Sentry.reactErrorHandler((error, errorInfo) => {
@@ -67,7 +59,7 @@ if ((rootElement = document.getElementById("history"))) {
   const root = createRoot(rootElement, createRootOptions);
   root.render(
     <React.StrictMode>
-      <Sentry.ErrorBoundary fallback={error}>
+      <Sentry.ErrorBoundary fallback={ErrorFallback}>
         <History />
       </Sentry.ErrorBoundary>
     </React.StrictMode>,
@@ -79,7 +71,7 @@ if ((rootElement = document.getElementById("history"))) {
   const root = createRoot(rootElement, createRootOptions);
   root.render(
     <React.StrictMode>
-      <Sentry.ErrorBoundary fallback={error}>
+      <Sentry.ErrorBoundary fallback={ErrorFallback}>
         <ServiceMap
           serviceId={window.SERVICE_ID}
           buttonText={rootElement.innerText}
@@ -91,7 +83,7 @@ if ((rootElement = document.getElementById("history"))) {
   const root = createRoot(rootElement, createRootOptions);
   root.render(
     <React.StrictMode>
-      <Sentry.ErrorBoundary fallback={error}>
+      <Sentry.ErrorBoundary fallback={ErrorFallback}>
         <MapRouter />
       </Sentry.ErrorBoundary>
     </React.StrictMode>,

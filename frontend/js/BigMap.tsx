@@ -878,10 +878,12 @@ export default function BigMap(
       return (
         <LoadingSorry
           text={
-            <p>
-              Sorry, no buses are tracking at the moment.{" "}
-              <a href="/map">Go to the main map?</a>
-            </p>
+            <>
+              <p>Sorry, no buses are tracking at the moment</p>
+              <p>
+                <a href="/map">Go to the main map?</a>
+              </p>
+            </>
           }
         />
       );

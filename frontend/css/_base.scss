@@ -805,9 +805,16 @@ table {
 
 .sorry {  // "Loading..." or "Sorry no buses tracking"
     display: flex;
-    align-items: center;
     height: 100%;
     justify-content: center;
+    text-align: center;
+    padding: 0 1em;
+    flex-direction: column;
+    gap: 1em;
+
+    p {
+        margin: 0;
+    }
 }
 
 .livery {
