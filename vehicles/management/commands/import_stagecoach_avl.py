@@ -169,8 +169,11 @@ class Command(ImportLiveVehiclesCommand):
                 print(journey.route_name, item.get("or"), vehicle.get_absolute_url())
 
         if departure_time and journey.service and not journey.id:
+            journey.direction = item["dn"].lower()
             journey.trip = journey.get_trip(
-                destination_ref=item.get("fr"), departure_time=departure_time
+                destination_ref=item.get("fr"),
+                origin_ref=item.get("or"),
+                departure_time=departure_time,
             )
 
         return journey

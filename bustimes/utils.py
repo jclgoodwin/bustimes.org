@@ -313,6 +313,11 @@ def get_trip(
     else:
         destination = Q()
 
+    if origin_ref and " " not in origin_ref and origin_ref[:3].isdigit():
+        origin = Exists("stoptime", filter=Q(stop=origin_ref))
+    else:
+        origin = Q()
+
     if journey.direction == "outbound":
         direction = Q(inbound=False)
     elif journey.direction == "inbound":
@@ -380,6 +385,8 @@ def get_trip(
         score += Case(When(direction, then=1), default=0)
     if destination:
         score += Case(When(destination, then=1), default=0)
+    if origin:
+        score += Case(When(origin, then=1), default=0)
 
     condition = code | start
     if direction:
