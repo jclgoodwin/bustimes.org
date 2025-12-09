@@ -1047,7 +1047,7 @@ class ImportTransXChangeTest(TestCase):
             "Glossop - Piccadilly Gardens, Manchester City Centre or Ashton Under Lyne",
         )
 
-        with time_machine.travel("1 October 2017"), self.assertNumQueries(10):
+        with time_machine.travel("1 October 2017"), self.assertNumQueries(9):
             timetable = service.get_timetable(date(2017, 10, 3)).render()
         self.assertEqual(str(timetable.date), "2017-10-03")
         self.assertEqual(27, len(timetable.groupings[1].trips))
