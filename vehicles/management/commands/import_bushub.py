@@ -3,10 +3,11 @@ import ciso8601
 
 from django.contrib.gis.geos import GEOSGeometry
 from django.utils import timezone
+from django.db.models import Q
 
 from busstops.models import Service
 
-from ...models import VehicleJourney, VehicleLocation
+from ...models import VehicleJourney, VehicleLocation, Operator
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 from .import_bod_avl import get_line_name_query
 
@@ -52,6 +53,12 @@ class Command(ImportLiveVehiclesCommand):
     def get_datetime(item):
         return parse_datetime(item["RecordedAtTime"])
 
+    def get_operators(self, item):
+        code = item["OperatorRef"]
+        return Operator.objects.filter(
+            Q(noc=code) | Q(operatorcode__code=code, operatorcode__source=self.source)
+        )
+
     def get_vehicle(self, item):
         code = item["VehicleRef"]
         if code.isdigit():
@@ -59,16 +66,12 @@ class Command(ImportLiveVehiclesCommand):
         else:
             fleet_number = None
 
-        if self.source.settings and "OperatorRef" in self.source.settings:
-            item["OperatorRef"] = self.source.settings["OperatorRef"]
-        else:
-            item["OperatorRef"] = [item["OperatorRef"]]
+        operators = self.get_operators(item)
 
-        operators = item["OperatorRef"]
         defaults = {
             "fleet_number": fleet_number,
             "source": self.source,
-            "operator_id": operators[0],
+            "operator": operators[0],
             "code": code,
         }
 
@@ -82,15 +85,14 @@ class Command(ImportLiveVehiclesCommand):
                 False,
             )
 
-    @classmethod
-    def get_service(cls, item):
+    def get_service(self, item):
         line_name = item["PublishedLineName"]
         if not line_name:
             return
         services = Service.objects.filter(
             get_line_name_query(line_name),
             current=True,
-            operator__in=item["OperatorRef"],
+            operator__in=self.get_operators(item),
         )
         try:
             try:

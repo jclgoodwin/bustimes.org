@@ -79,15 +79,13 @@ class BusHubTest(TestCase):
             "Destination": None,
         }
 
-        with self.assertNumQueries(9), patch("builtins.print") as mocked_print:
+        with self.assertNumQueries(10), patch("builtins.print") as mocked_print:
             command.handle_item(item)
             command.save()
 
         mocked_print.assert_called()
 
-        item["OperatorRef"] = "DIAM"
-
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(2):
             command.handle_item(item)
             command.save()
 
@@ -100,7 +98,7 @@ class BusHubTest(TestCase):
         item["OperatorRef"] = "WNGS"
         item["VehicleRef"] = "20052"
         item["Bearing"] = "-1"
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(8):
             command.handle_item(item)
             command.save()
         self.assertEqual(2, Vehicle.objects.count())
