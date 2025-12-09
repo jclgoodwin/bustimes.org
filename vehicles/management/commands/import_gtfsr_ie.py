@@ -120,24 +120,13 @@ class Command(ImportLiveVehiclesCommand):
         trip = None
 
         if not (trips or service) and "_" in journey.code:
-            route_suffix = item.vehicle.trip.route_id
-            if "_" in route_suffix:
-                route_suffix = route_suffix.split("_", 1)[1]
-            try:
-                service = Service.objects.filter(
-                    route__source=self.source,
-                    route__code__endswith=f"_{route_suffix}",
-                ).get()
-            except (Service.MultipleObjectsReturned, Service.DoesNotExist):
-                pass
-
+            trip_suffix = journey.code.split("_", 1)[1]
             trips = Trip.objects.filter(
+                ticket_machine_code__endswith=f"_{trip_suffix}",
                 route__source=self.source,
                 start=start_time,
                 inbound=item.vehicle.trip.direction_id == 1,
             )
-            if service:
-                trips = trips.filter(route__service=service)
 
         if trips:
             if len(trips) > 1:
