@@ -12,7 +12,9 @@ from django.db.models import (
     Value,
     When,
     OuterRef,
+    IntegerField,
 )
+from django.db.models.functions import Abs
 from django.utils import timezone
 from sql_util.utils import Exists
 
@@ -292,6 +294,8 @@ def get_trip(
     arrival_time=None,
     journey_code="",
     block_ref=None,
+    approximate_datetime=False,
+    next_stop=None,
 ):
     if not journey.service:
         return
@@ -388,7 +392,31 @@ def get_trip(
     if origin:
         score += Case(When(origin, then=1), default=0)
 
-    condition = code | start
+    if approximate_datetime and next_stop:
+        start_time = timezone.localtime(datetime)
+        start_time = timedelta(hours=start_time.hour, minutes=start_time.minute)
+        start_range = (
+            start_time - timedelta(minutes=10),
+            start_time + timedelta(minutes=5),
+        )
+        condition = Q(
+            Exists(
+                "stoptime",
+                filter=Q(
+                    stop__naptan_code=next_stop,
+                    departure__range=start_range,
+                ),
+            ),
+            start__range=start_range,
+        )
+        # score = F("start")
+        score = ExpressionWrapper(
+            -Abs(int(start_time.total_seconds()) - F("start")),
+            output_field=IntegerField(),
+        )
+    else:
+        condition = code | start
+
     if direction:
         condition &= destination | direction
 

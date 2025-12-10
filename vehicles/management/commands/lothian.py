@@ -3,7 +3,6 @@ from django.db.models import Q
 from django.contrib.gis.geos import GEOSGeometry
 
 from busstops.models import Service
-from bustimes.models import Trip
 
 from ...models import Vehicle, VehicleJourney, VehicleLocation
 from ..import_live_vehicles import ImportLiveVehiclesCommand
@@ -41,7 +40,6 @@ class Command(ImportLiveVehiclesCommand):
     def get_datetime(item):
         timestamp = item["lastUpdated"]
         if not timestamp:
-            print(item)
             return
         if len(timestamp) == 19:
             # we don't know yet, but assume it's in UTC
@@ -69,17 +67,8 @@ class Command(ImportLiveVehiclesCommand):
             destination=item["destination"] or "",
         )
 
-        # if not journey.route_name and vehicle.operator_id == "EDTR":
-        #     journey.route_name = "T50"
         if journey.route_name == "Tram":
             journey.route_name = "T50"
-
-        if (latest := vehicle.latest_journey) and (
-            latest.route_name == journey.route_name
-            and latest.code == journey.code
-            and latest.destination == journey.destination
-        ):
-            return latest
 
         if not journey.route_name:
             return journey
@@ -94,13 +83,12 @@ class Command(ImportLiveVehiclesCommand):
                 vehicle.operator = operator
                 vehicle.save(update_fields=["operator"])
 
-        if journey.service_id and journey.code:
-            try:
-                journey.trip = Trip.objects.get(
-                    route__service=journey.service_id, ticket_machine_code=journey.code
-                )
-            except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
-                pass
+        if journey.service_id:
+            journey.trip = journey.get_trip(
+                next_stop=item["nextStopCode"],
+                approximate_datetime=True,
+                datetime=self.get_datetime(item),
+            )
 
         return journey
 

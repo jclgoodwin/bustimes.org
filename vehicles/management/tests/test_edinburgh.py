@@ -53,7 +53,7 @@ class EdinburghImportTest(TestCase):
                 # make it think 1 vehicle has moved
                 del command.identifiers["454"]
 
-                with self.assertNumQueries(3):
+                with self.assertNumQueries(6):
                     command.update()
 
         journey = command.source.vehiclejourney_set.first()

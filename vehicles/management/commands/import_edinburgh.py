@@ -49,6 +49,9 @@ class Command(ImportLiveVehiclesCommand):
         return super().get_items()["vehicles"]
 
     def get_vehicle(self, item):
+        if item["longitude"] < -7 and item["latitude"] < 50:
+            return None, None
+
         vehicle_code = item["vehicle_id"].removeprefix("T")
 
         return Vehicle.objects.filter(
@@ -67,13 +70,6 @@ class Command(ImportLiveVehiclesCommand):
 
         if not journey.route_name and vehicle.operator_id == "EDTR":
             journey.route_name = "T50"
-
-        if (latest := vehicle.latest_journey) and (
-            latest.route_name == journey.route_name
-            and latest.code == journey.code
-            and latest.destination == journey.destination
-        ):
-            return latest
 
         if not journey.route_name:
             return journey
