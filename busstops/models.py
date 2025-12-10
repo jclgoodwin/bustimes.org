@@ -894,7 +894,7 @@ class Service(models.Model):
         )
 
         if ":" not in self.service_code:
-            if match := re.match(r"^(?P<number>\d+)\w?$", self.line_name):
+            if match := re.match(r"^(?P<number>\d+)[A-Za-z]?$", self.line_name):
                 number = match.group("number")
                 ids = ids.union(
                     Service.objects.filter(
