@@ -236,6 +236,7 @@ class LiveDeparturesTest(TestCase):
                 "fixtures/vcr/edinburgh.yaml", decode_compressed_response=True
             ),
             self.assertNumQueries(10),
+            override_settings(TFE_OPERATORS={"Lothian Buses"}),
         ):
             response = self.client.get(stop.get_absolute_url())
         self.assertContains(response, '<a href="/vehicles/none-686#journeys/None">')

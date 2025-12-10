@@ -303,10 +303,10 @@ TFL = {  # London
     "app_key": os.environ.get("TFL_APP_KEY"),
 }
 TFE_OPERATORS = {
-    "Lothian Buses",
-    "Lothian Country Buses",
-    "East Coast Buses",
-    "Edinburgh Trams",
+    # "Lothian Buses",
+    # "Lothian Country Buses",
+    # "East Coast Buses",
+    # "Edinburgh Trams",
 }
 
 NTA_API_KEY = os.environ.get("NTA_API_KEY")  # Ireland
