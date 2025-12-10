@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_b8e363a838fda594_date_range_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.12.0">coverage.py v7.12.0</a>,
-            created at 2025-12-09 17:28 +0000
+            created at 2025-12-10 04:25 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -976,7 +976,7 @@
     <p class="run run2"><span class="n"><a id="t894" href="#t894">894</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t895" href="#t895">895</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t896" href="#t896">896</a></span><span class="t">        <span class="key">if</span> <span class="str">":"</span> <span class="key">not</span> <span class="key">in</span> <span class="nam">self</span><span class="op">.</span><span class="nam">service_code</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t897" href="#t897">897</a></span><span class="t">            <span class="key">if</span> <span class="nam">match</span> <span class="op">:=</span> <span class="nam">re</span><span class="op">.</span><span class="nam">match</span><span class="op">(</span><span class="str">r"^(?P&lt;number>\d+)\w?$"</span><span class="op">,</span> <span class="nam">self</span><span class="op">.</span><span class="nam">line_name</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t897" href="#t897">897</a></span><span class="t">            <span class="key">if</span> <span class="nam">match</span> <span class="op">:=</span> <span class="nam">re</span><span class="op">.</span><span class="nam">match</span><span class="op">(</span><span class="str">r"^(?P&lt;number>\d+)[A-Za-z]?$"</span><span class="op">,</span> <span class="nam">self</span><span class="op">.</span><span class="nam">line_name</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t898" href="#t898">898</a></span><span class="t">                <span class="nam">number</span> <span class="op">=</span> <span class="nam">match</span><span class="op">.</span><span class="nam">group</span><span class="op">(</span><span class="str">"number"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t899" href="#t899">899</a></span><span class="t">                <span class="nam">ids</span> <span class="op">=</span> <span class="nam">ids</span><span class="op">.</span><span class="nam">union</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t900" href="#t900">900</a></span><span class="t">                    <span class="nam">Service</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
@@ -984,7 +984,7 @@
     <p class="run run2"><span class="n"><a id="t902" href="#t902">902</a></span><span class="t">                        <span class="nam">source</span><span class="op">=</span><span class="nam">self</span><span class="op">.</span><span class="nam">source_id</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t903" href="#t903">903</a></span><span class="t">                        <span class="nam">current</span><span class="op">=</span><span class="key">True</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t904" href="#t904">904</a></span><span class="t">                        <span class="nam">operator__service</span><span class="op">=</span><span class="nam">self</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t905" href="#t905">905</a></span><span class="t">                        <span class="nam">line_name__regex</span><span class="op">=</span><span class="fst">rf"</span><span class="fst">^</span><span class="op">{</span><span class="nam">number</span><span class="op">}</span><span class="fst">\w?$</span><span class="fst">"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t905" href="#t905">905</a></span><span class="t">                        <span class="nam">line_name__regex</span><span class="op">=</span><span class="fst">rf"</span><span class="fst">^</span><span class="op">{</span><span class="nam">number</span><span class="op">}</span><span class="fst">[A-Za-z]?$</span><span class="fst">"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t906" href="#t906">906</a></span><span class="t">                    <span class="op">)</span><span class="op">.</span><span class="nam">values</span><span class="op">(</span><span class="str">"id"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t907" href="#t907">907</a></span><span class="t">                <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t908" href="#t908">908</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -1242,7 +1242,7 @@
             <a class="nav" href="z_b8e363a838fda594_date_range_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.12.0">coverage.py v7.12.0</a>,
-            created at 2025-12-09 17:28 +0000
+            created at 2025-12-10 04:25 +0000
         </p>
     </div>
 </footer>
