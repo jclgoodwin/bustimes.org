@@ -902,7 +902,7 @@ class Service(models.Model):
                         source=self.source_id,
                         current=True,
                         operator__service=self,
-                        line_name__regex=rf"^{number}\w?$",
+                        line_name__regex=rf"^{number}[A-Za-z]?$",
                     ).values("id")
                 )
 
