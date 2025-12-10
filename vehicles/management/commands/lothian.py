@@ -1,5 +1,4 @@
-from datetime import datetime, timezone
-
+from ciso8601 import parse_datetime
 from django.db.models import Q
 from django.contrib.gis.geos import GEOSGeometry
 
@@ -13,7 +12,7 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 class Command(ImportLiveVehiclesCommand):
     operators = ("LOTH", "EDTR", "ECBU", "NELB", "ETOR")
     source_name = vehicle_code_scheme = "TfE"
-    url = "https://tfe-opendata.com/api/v1/vehicle_locations"
+    url = "https://lothianapi.com/vehicles/all"
     wait = 39
     services = Service.objects.filter(operator__in=operators, current=True).defer(
         "geometry", "search_vector"
@@ -21,35 +20,40 @@ class Command(ImportLiveVehiclesCommand):
 
     @staticmethod
     def get_vehicle_identity(item):
-        return item["vehicle_id"]
+        return item["vehicleID"]
 
     @staticmethod
     def get_journey_identity(item):
         return (
-            item["service_name"],
-            item["journey_id"],
+            item["routeName"],
+            item["tripID"],
             item["destination"],
         )
 
     @staticmethod
     def get_item_identity(item):
         return (
-            item["longitude"],
-            item["latitude"],
+            item["coordinate"]["longitude"],
+            item["coordinate"]["latitude"],
         )
 
     @staticmethod
     def get_datetime(item):
-        timestamp = item["last_gps_fix"]
-        if item["source"] == "MyBusTracker" and item["last_gps_fix_secs"] > 3600:
-            timestamp += 3600
-        return datetime.fromtimestamp(timestamp, timezone.utc)
+        timestamp = item["lastUpdated"]
+        if not timestamp:
+            print(item)
+            return
+        if len(timestamp) == 19:
+            # we don't know yet, but assume it's in UTC
+            # need to revisit next British Supper Time
+            timestamp += "Z"
+        return parse_datetime(timestamp)
 
     def get_items(self):
         return super().get_items()["vehicles"]
 
     def get_vehicle(self, item):
-        vehicle_code = item["vehicle_id"].removeprefix("T")
+        vehicle_code = item["vehicleID"]
 
         return Vehicle.objects.filter(
             Q(operator__in=self.operators) | Q(source=self.source)
@@ -60,12 +64,14 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_journey(self, item, vehicle):
         journey = VehicleJourney(
-            route_name=item["service_name"] or "",
-            code=item["journey_id"] or "",
+            route_name=item["routeName"] or "",
+            code=item["tripID"] or "",
             destination=item["destination"] or "",
         )
 
-        if not journey.route_name and vehicle.operator_id == "EDTR":
+        # if not journey.route_name and vehicle.operator_id == "EDTR":
+        #     journey.route_name = "T50"
+        if journey.route_name == "Tram":
             journey.route_name = "T50"
 
         if (latest := vehicle.latest_journey) and (
@@ -80,14 +86,13 @@ class Command(ImportLiveVehiclesCommand):
 
         try:
             journey.service = self.services.get(line_name__iexact=journey.route_name)
-            if journey.service:
-                operator = journey.service.operator.first()
-                if not vehicle.operator_id or vehicle.operator_id != operator.noc:
-                    vehicle.operator = operator
-                    vehicle.save(update_fields=["operator"])
-
         except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
-            print(e, item["service_name"])
+            print(e, item["routeName"], item)
+        else:
+            operator = journey.service.operator.first()
+            if not vehicle.operator_id or vehicle.operator_id != operator.noc:
+                vehicle.operator = operator
+                vehicle.save(update_fields=["operator"])
 
         if journey.service_id and journey.code:
             try:
@@ -100,9 +105,10 @@ class Command(ImportLiveVehiclesCommand):
         return journey
 
     def create_vehicle_location(self, item):
-        if item["longitude"] < -7 and item["latitude"] < 50:
+        coords = item["coordinate"]
+        if coords["longitude"] < -7 and coords["latitude"] < 50:
             return
         return VehicleLocation(
-            latlong=GEOSGeometry(f"POINT({item['longitude']} {item['latitude']})"),
-            heading=item["heading"] or None,
+            latlong=GEOSGeometry(f"POINT({coords['longitude']} {coords['latitude']})"),
+            heading=item["bearing"] or None,
         )
