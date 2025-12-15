@@ -190,7 +190,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       59 |        0 |    100% |           |
-|                                                       **TOTAL** | **17082** | **1225** | **93%** |           |
+| **TOTAL**                                                       | **17082** | **1225** | **93%** |           |
 
 
 ## Setup coverage badge
