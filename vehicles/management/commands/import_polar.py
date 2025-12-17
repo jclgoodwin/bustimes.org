@@ -36,6 +36,14 @@ class Command(ImportLiveVehiclesCommand):
     def get_items(self):
         return super().get_items()["features"]
 
+    def get_operators(self, item):
+        q = Q(operatorcode__source=self.source)
+        try:
+            q |= Q(noc=item["_embedded"]["transmodel:line"]["href"].split("/")[3])
+        except KeyError:
+            pass
+        return Operator.objects.filter(q)
+
     def get_vehicle(self, item):
         code = item["properties"]["vehicle"]
 
@@ -45,15 +53,13 @@ class Command(ImportLiveVehiclesCommand):
             if parts[0].islower():
                 code = parts[1]
 
-        default_operator = Operator.objects.filter(
-            operatorcode__source=self.source
-        ).first()
+        operators = self.get_operators(item)
+        defaults = {"source": self.source, "operator": operators[0], "code": code}
 
-        defaults = {"source": self.source, "operator": default_operator, "code": code}
-
-        if "meta" in item["properties"]:
-            if "number_plate" in item["properties"]["meta"]:
-                defaults["reg"] = item["properties"]["meta"]["number_plate"]
+        try:
+            defaults["reg"] = item["properties"]["meta"]["number_plate"]
+        except KeyError:
+            pass
 
         if len(code) > 4 and code[0].isalpha() and code[1] == "_":  # McGill
             defaults["fleet_code"] = code.replace("_", " ")
@@ -61,7 +67,7 @@ class Command(ImportLiveVehiclesCommand):
             defaults["fleet_code"] = code
 
         vehicles = self.vehicles.filter(
-            Q(operator__operatorcode__source=self.source) | Q(source=self.source)
+            Q(operator__in=operators) | Q(source=self.source)
         )
         vehicle = vehicles.filter(code__iexact=code).first()
 
@@ -86,7 +92,7 @@ class Command(ImportLiveVehiclesCommand):
         services = Service.objects.filter(
             get_line_name_query(journey.route_name),
             current=True,
-            operator__operatorcode__source=self.source,
+            operator__in=self.get_operators(item),
         )
 
         try:
