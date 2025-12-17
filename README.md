@@ -46,7 +46,7 @@
 | busstops/management/tests/test\_import\_nptg.py                 |       31 |        0 |    100% |           |
 | busstops/management/tests/test\_import\_operators.py            |       64 |        0 |    100% |           |
 | busstops/middleware.py                                          |       31 |        0 |    100% |           |
-| busstops/models.py                                              |      622 |       22 |     96% |271, 296, 322, 440, 477, 527, 553, 609, 643, 681, 833, 866, 945, 957-961, 1046, 1055, 1095, 1110, 1147 |
+| busstops/models.py                                              |      622 |       21 |     97% |271, 296, 322, 440, 477, 527, 553, 609, 643, 681, 833, 866, 945, 957-961, 1055, 1095, 1110, 1147 |
 | busstops/templatetags/\_\_init\_\_.py                           |        0 |        0 |    100% |           |
 | busstops/templatetags/date\_range.py                            |       25 |        3 |     88% | 9, 22, 28 |
 | busstops/templatetags/urlise.py                                 |       16 |        0 |    100% |           |
@@ -148,7 +148,7 @@
 | vehicles/management/commands/import\_gtfsr\_ember.py            |       44 |        1 |     98% |        53 |
 | vehicles/management/commands/import\_gtfsr\_ie.py               |       88 |        3 |     97% |94, 138, 145 |
 | vehicles/management/commands/import\_live\_jersey.py            |       39 |        0 |    100% |           |
-| vehicles/management/commands/import\_polar.py                   |       59 |       14 |     76% |13-14, 37, 44-46, 55-56, 59, 69-72, 75 |
+| vehicles/management/commands/import\_polar.py                   |       67 |       12 |     82% |13-14, 37, 52-54, 65, 75-78, 81 |
 | vehicles/management/commands/import\_stagecoach\_avl.py         |       72 |        7 |     90% |123, 133, 138-140, 172-173 |
 | vehicles/management/commands/import\_translink\_avl.py          |       57 |        7 |     88% |14, 67-70, 104-105 |
 | vehicles/management/commands/listen.py                          |       22 |        0 |    100% |           |
@@ -190,7 +190,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       59 |        0 |    100% |           |
-| **TOTAL**                                                       | **17057** | **1212** | **93%** |           |
+| **TOTAL**                                                       | **17065** | **1209** | **93%** |           |
 
 
 ## Setup coverage badge
