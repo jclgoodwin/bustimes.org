@@ -124,13 +124,15 @@ class ImportLiveVehiclesCommand(BaseCommand):
         latest: dict | None = None,
         keep_journey=False,
     ):
-        datetime = self.get_datetime(item)
-        if now and datetime and now < datetime:
-            difference = datetime - now
-            if difference > twelve_hours:
-                datetime = None  # datetime more than 12 hours in the future (probably The Green Bus)
-            if 3000 < difference.total_seconds() <= 600:
-                logger.warning("datetime %s is in the future", datetime)
+        if datetime := self.get_datetime(item):
+            if datetime.year == 1970:
+                datetime = None
+            elif now and now < datetime:
+                difference = datetime - now
+                if difference > twelve_hours:
+                    datetime = None  # datetime more than 12 hours in the future (probably The Green Bus)
+                if 3000 < difference.total_seconds() <= 600:
+                    logger.warning("datetime %s is in the future", datetime)
 
         location = None
         if vehicle is None:
