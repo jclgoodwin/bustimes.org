@@ -12,7 +12,13 @@ from huey.contrib.djhuey import db_periodic_task, db_task
 from busstops.models import DataSource, Operator
 
 from .management.commands import import_bod_avl
-from .models import SiriSubscription, Vehicle, VehicleJourney, VehicleRevision
+from .models import (
+    SiriSubscription,
+    Vehicle,
+    VehicleJourney,
+    VehicleRevision,
+    VehicleCode,
+)
 
 
 @functools.cache
@@ -109,32 +115,44 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
     elif operator.parent == "Stagecoach" or operator.noc == "MCGL":
         return
 
+    vehicle_code_code = f"{operator_ref}:{vehicle}"
+    vehicle_code = VehicleCode.objects.filter(
+        scheme=source_name, code=vehicle_code_code
+    ).first()
+
     data_source, _ = DataSource.objects.get_or_create({"url": url}, name=source_name)
 
-    # get or create vehicle
-    defaults = {"source": data_source, "operator": operator, "code": vehicle}
-
-    operator_query = Q(operator=operator)
-    if operator.parent:
-        operator_query |= Q(operator__parent=operator.parent)
-    vehicles = Vehicle.objects.filter(
-        operator_query | Q(source=data_source)
-    ).select_related("latest_journey")
-
-    if vehicle.isdigit():
-        defaults["fleet_number"] = vehicle
-        vehicles = vehicles.filter(
-            Q(code=vehicle)
-            | Q(code__endswith=f"-{vehicle}")
-            | Q(code__startswith=f"{vehicle}_-_")
-        )
+    if vehicle_code:
+        vehicle = vehicle_code.vehicle
     else:
-        vehicles = vehicles.filter(code__iexact=vehicle)
+        # get or create vehicle
+        defaults = {"source": data_source, "operator": operator, "code": vehicle}
 
-    try:
-        vehicle, _ = vehicles.get_or_create(defaults)
-    except Vehicle.MultipleObjectsReturned:
-        vehicle = vehicles.filter(operator=operator).first()
+        operator_query = Q(operator=operator)
+        if operator.parent:
+            operator_query |= Q(operator__parent=operator.parent)
+        vehicles = Vehicle.objects.filter(
+            operator_query | Q(source=data_source)
+        ).select_related("latest_journey")
+
+        if vehicle.isdigit():
+            defaults["fleet_number"] = vehicle
+            vehicles = vehicles.filter(
+                Q(code=vehicle)
+                | Q(code__endswith=f"-{vehicle}")
+                | Q(code__startswith=f"{vehicle}_-_")
+            )
+        else:
+            vehicles = vehicles.filter(code__iexact=vehicle)
+
+        try:
+            vehicle, _ = vehicles.get_or_create(defaults)
+        except Vehicle.MultipleObjectsReturned:
+            vehicle = vehicles.filter(operator=operator).first()
+
+        VehicleCode.objects.create(
+            scheme=source_name, code=vehicle_code_code, vehicle=vehicle
+        )
 
     time = parse_datetime(time)
 
