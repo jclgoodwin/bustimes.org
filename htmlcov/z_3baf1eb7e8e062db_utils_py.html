@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for bustimes/utils.py: 91%</title>
+    <title>Coverage for bustimes/utils.py: 94%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_58284776.png">
     <link rel="stylesheet" href="style_cb_a5a05ca4.css" type="text/css">
     <script src="coverage_html_cb_bcae5fc4.js" defer></script>
@@ -12,7 +12,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>bustimes&#8201;/&#8201;utils.py</b>:
-            <span class="pc_cov">91%</span>
+            <span class="pc_cov">94%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -55,8 +55,8 @@
         </aside>
         <h2>
             <span class="text">195 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">178<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">17<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">183<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">12<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_3baf1eb7e8e062db_views_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.0">coverage.py v7.13.0</a>,
-            created at 2025-12-17 13:26 +0000
+            created at 2025-12-18 11:52 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -475,27 +475,27 @@
     <p class="run"><span class="n"><a id="t393" href="#t393">393</a></span><span class="t">        <span class="nam">score</span> <span class="op">+=</span> <span class="nam">Case</span><span class="op">(</span><span class="nam">When</span><span class="op">(</span><span class="nam">origin</span><span class="op">,</span> <span class="nam">then</span><span class="op">=</span><span class="num">1</span><span class="op">)</span><span class="op">,</span> <span class="nam">default</span><span class="op">=</span><span class="num">0</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t394" href="#t394">394</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t395" href="#t395">395</a></span><span class="t">    <span class="key">if</span> <span class="nam">approximate_datetime</span> <span class="key">and</span> <span class="nam">next_stop</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t396" href="#t396">396</a></span><span class="t">        <span class="nam">start_time</span> <span class="op">=</span> <span class="nam">timezone</span><span class="op">.</span><span class="nam">localtime</span><span class="op">(</span><span class="nam">datetime</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t397" href="#t397">397</a></span><span class="t">        <span class="nam">start_time</span> <span class="op">=</span> <span class="nam">timedelta</span><span class="op">(</span><span class="nam">hours</span><span class="op">=</span><span class="nam">start_time</span><span class="op">.</span><span class="nam">hour</span><span class="op">,</span> <span class="nam">minutes</span><span class="op">=</span><span class="nam">start_time</span><span class="op">.</span><span class="nam">minute</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t398" href="#t398">398</a></span><span class="t">        <span class="nam">start_range</span> <span class="op">=</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t399" href="#t399">399</a></span><span class="t">            <span class="nam">start_time</span> <span class="op">-</span> <span class="nam">timedelta</span><span class="op">(</span><span class="nam">minutes</span><span class="op">=</span><span class="num">10</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t400" href="#t400">400</a></span><span class="t">            <span class="nam">start_time</span> <span class="op">+</span> <span class="nam">timedelta</span><span class="op">(</span><span class="nam">minutes</span><span class="op">=</span><span class="num">5</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t401" href="#t401">401</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t402" href="#t402">402</a></span><span class="t">        <span class="nam">condition</span> <span class="op">=</span> <span class="nam">Q</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t403" href="#t403">403</a></span><span class="t">            <span class="nam">Exists</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t404" href="#t404">404</a></span><span class="t">                <span class="str">"stoptime"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t405" href="#t405">405</a></span><span class="t">                <span class="nam">filter</span><span class="op">=</span><span class="nam">Q</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t406" href="#t406">406</a></span><span class="t">                    <span class="nam">stop__naptan_code</span><span class="op">=</span><span class="nam">next_stop</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t407" href="#t407">407</a></span><span class="t">                    <span class="nam">departure__range</span><span class="op">=</span><span class="nam">start_range</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t408" href="#t408">408</a></span><span class="t">                <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t409" href="#t409">409</a></span><span class="t">            <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t410" href="#t410">410</a></span><span class="t">            <span class="nam">start__range</span><span class="op">=</span><span class="nam">start_range</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t411" href="#t411">411</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t396" href="#t396">396</a></span><span class="t">        <span class="nam">start_time</span> <span class="op">=</span> <span class="nam">timezone</span><span class="op">.</span><span class="nam">localtime</span><span class="op">(</span><span class="nam">datetime</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t397" href="#t397">397</a></span><span class="t">        <span class="nam">start_time</span> <span class="op">=</span> <span class="nam">timedelta</span><span class="op">(</span><span class="nam">hours</span><span class="op">=</span><span class="nam">start_time</span><span class="op">.</span><span class="nam">hour</span><span class="op">,</span> <span class="nam">minutes</span><span class="op">=</span><span class="nam">start_time</span><span class="op">.</span><span class="nam">minute</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t398" href="#t398">398</a></span><span class="t">        <span class="nam">start_range</span> <span class="op">=</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t399" href="#t399">399</a></span><span class="t">            <span class="nam">start_time</span> <span class="op">-</span> <span class="nam">timedelta</span><span class="op">(</span><span class="nam">minutes</span><span class="op">=</span><span class="num">10</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t400" href="#t400">400</a></span><span class="t">            <span class="nam">start_time</span> <span class="op">+</span> <span class="nam">timedelta</span><span class="op">(</span><span class="nam">minutes</span><span class="op">=</span><span class="num">5</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t401" href="#t401">401</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t402" href="#t402">402</a></span><span class="t">        <span class="nam">condition</span> <span class="op">=</span> <span class="nam">Q</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t403" href="#t403">403</a></span><span class="t">            <span class="nam">Exists</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t404" href="#t404">404</a></span><span class="t">                <span class="str">"stoptime"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t405" href="#t405">405</a></span><span class="t">                <span class="nam">filter</span><span class="op">=</span><span class="nam">Q</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t406" href="#t406">406</a></span><span class="t">                    <span class="nam">stop__naptan_code</span><span class="op">=</span><span class="nam">next_stop</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t407" href="#t407">407</a></span><span class="t">                    <span class="nam">departure__range</span><span class="op">=</span><span class="nam">start_range</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t408" href="#t408">408</a></span><span class="t">                <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t409" href="#t409">409</a></span><span class="t">            <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t410" href="#t410">410</a></span><span class="t">            <span class="nam">start__range</span><span class="op">=</span><span class="nam">start_range</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t411" href="#t411">411</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t412" href="#t412">412</a></span><span class="t">        <span class="com"># score = F("start")</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t413" href="#t413">413</a></span><span class="t">        <span class="nam">score</span> <span class="op">=</span> <span class="nam">ExpressionWrapper</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t414" href="#t414">414</a></span><span class="t">            <span class="op">-</span><span class="nam">Abs</span><span class="op">(</span><span class="nam">int</span><span class="op">(</span><span class="nam">start_time</span><span class="op">.</span><span class="nam">total_seconds</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">-</span> <span class="nam">F</span><span class="op">(</span><span class="str">"start"</span><span class="op">)</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t415" href="#t415">415</a></span><span class="t">            <span class="nam">output_field</span><span class="op">=</span><span class="nam">IntegerField</span><span class="op">(</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t416" href="#t416">416</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t413" href="#t413">413</a></span><span class="t">        <span class="nam">score</span> <span class="op">=</span> <span class="nam">ExpressionWrapper</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t414" href="#t414">414</a></span><span class="t">            <span class="op">-</span><span class="nam">Abs</span><span class="op">(</span><span class="nam">int</span><span class="op">(</span><span class="nam">start_time</span><span class="op">.</span><span class="nam">total_seconds</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">-</span> <span class="nam">F</span><span class="op">(</span><span class="str">"start"</span><span class="op">)</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t415" href="#t415">415</a></span><span class="t">            <span class="nam">output_field</span><span class="op">=</span><span class="nam">IntegerField</span><span class="op">(</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t416" href="#t416">416</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t417" href="#t417">417</a></span><span class="t">    <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t418" href="#t418">418</a></span><span class="t">        <span class="nam">condition</span> <span class="op">=</span> <span class="nam">code</span> <span class="op">|</span> <span class="nam">start</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t419" href="#t419">419</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -541,7 +541,7 @@
             <a class="nav" href="z_3baf1eb7e8e062db_views_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.0">coverage.py v7.13.0</a>,
-            created at 2025-12-17 13:26 +0000
+            created at 2025-12-18 11:52 +0000
         </p>
     </div>
 </footer>
