@@ -128,6 +128,7 @@ class OperatorAdmin(admin.ModelAdmin):
         "twitter",
     ]
     list_filter = (
+        "modified_at",
         DuplicateOperatorFilter,
         "region",
         "vehicle_mode",
