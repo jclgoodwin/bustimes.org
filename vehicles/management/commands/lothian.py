@@ -75,8 +75,8 @@ class Command(ImportLiveVehiclesCommand):
 
         try:
             journey.service = self.services.get(line_name__iexact=journey.route_name)
-        except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
-            print(e, item["routeName"], item)
+        except (Service.DoesNotExist, Service.MultipleObjectsReturned):
+            pass
         else:
             operator = journey.service.operator.first()
             if not vehicle.operator_id or vehicle.operator_id != operator.noc:
