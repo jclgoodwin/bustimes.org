@@ -460,6 +460,12 @@ class VehicleCode(models.Model):
         return f"{self.scheme} {self.code}"
 
     class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=["code", "scheme"],
+                name="unique_vehicle_code",
+            ),
+        ]
         indexes = [models.Index(fields=("code", "scheme"))]
 
 
