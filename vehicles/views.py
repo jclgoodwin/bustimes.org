@@ -646,6 +646,9 @@ def service_vehicles_history(request, slug=None, noc=None, line_name=None):
         request, journeys.select_related("vehicle"), service=service
     )
 
+    if not context:
+        raise Http404
+
     if service:
         context["garages"] = Garage.objects.filter(
             trip__route__service=service
