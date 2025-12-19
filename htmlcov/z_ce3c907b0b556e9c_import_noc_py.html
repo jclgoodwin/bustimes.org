@@ -54,8 +54,8 @@
             </div>
         </aside>
         <h2>
-            <span class="text">125 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">122<span class="text"> run</span></button>
+            <span class="text">126 statements &nbsp;</span>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">123<span class="text"> run</span></button>
             <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">3<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_ce3c907b0b556e9c_jersey_routes_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.0">coverage.py v7.13.0</a>,
-            created at 2025-12-18 13:23 +0000
+            created at 2025-12-19 11:41 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -310,30 +310,35 @@
     <p class="run run2"><span class="n"><a id="t228" href="#t228">228</a></span><span class="t">                        <span class="nam">operator</span><span class="op">,</span> <span class="nam">noc_line</span><span class="op">,</span> <span class="nam">licences_by_number</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t229" href="#t229">229</a></span><span class="t">                    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t230" href="#t230">230</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t231" href="#t231">231</a></span><span class="t">            <span class="key">try</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t232" href="#t232">232</a></span><span class="t">                <span class="nam">operator</span><span class="op">.</span><span class="nam">clean_fields</span><span class="op">(</span><span class="nam">exclude</span><span class="op">=</span><span class="op">[</span><span class="str">"noc"</span><span class="op">,</span> <span class="str">"slug"</span><span class="op">,</span> <span class="str">"region"</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t233" href="#t233">233</a></span><span class="t">            <span class="key">except</span> <span class="nam">Exception</span> <span class="key">as</span> <span class="nam">e</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t234" href="#t234">234</a></span><span class="t">                <span class="key">if</span> <span class="str">"url"</span> <span class="key">in</span> <span class="nam">e</span><span class="op">.</span><span class="nam">message_dict</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t235" href="#t235">235</a></span><span class="t">                    <span class="com"># print(e, operator.url)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t236" href="#t236">236</a></span><span class="t">                    <span class="nam">operator</span><span class="op">.</span><span class="nam">url</span> <span class="op">=</span> <span class="str">""</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t237" href="#t237">237</a></span><span class="t">                <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t238" href="#t238">238</a></span><span class="t">                    <span class="nam">print</span><span class="op">(</span><span class="nam">noc</span><span class="op">,</span> <span class="nam">e</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t239" href="#t239">239</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t240" href="#t240">240</a></span><span class="t">        <span class="nam">Operator</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">bulk_create</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t241" href="#t241">241</a></span><span class="t">            <span class="nam">to_create</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t242" href="#t242">242</a></span><span class="t">            <span class="nam">update_fields</span><span class="op">=</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t243" href="#t243">243</a></span><span class="t">                <span class="str">"url"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t244" href="#t244">244</a></span><span class="t">                <span class="str">"name"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t245" href="#t245">245</a></span><span class="t">                <span class="str">"vehicle_mode"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t246" href="#t246">246</a></span><span class="t">                <span class="str">"slug"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t247" href="#t247">247</a></span><span class="t">                <span class="str">"region_id"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t248" href="#t248">248</a></span><span class="t">                <span class="str">"vehicle_mode"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t249" href="#t249">249</a></span><span class="t">            <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t250" href="#t250">250</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t251" href="#t251">251</a></span><span class="t">        <span class="nam">Operator</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">bulk_update</span><span class="op">(</span><span class="nam">to_update</span><span class="op">,</span> <span class="op">(</span><span class="str">"url"</span><span class="op">,</span> <span class="str">"name"</span><span class="op">,</span> <span class="str">"vehicle_mode"</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t252" href="#t252">252</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t253" href="#t253">253</a></span><span class="t">        <span class="nam">OperatorCode</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">bulk_create</span><span class="op">(</span><span class="nam">operator_codes</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t254" href="#t254">254</a></span><span class="t">        <span class="nam">Operator</span><span class="op">.</span><span class="nam">licences</span><span class="op">.</span><span class="nam">through</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">bulk_create</span><span class="op">(</span><span class="nam">operator_licences</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t231" href="#t231">231</a></span><span class="t">            <span class="nam">operator</span><span class="op">.</span><span class="nam">modified_at</span> <span class="op">=</span> <span class="nam">generation_date</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t232" href="#t232">232</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t233" href="#t233">233</a></span><span class="t">            <span class="key">try</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t234" href="#t234">234</a></span><span class="t">                <span class="nam">operator</span><span class="op">.</span><span class="nam">clean_fields</span><span class="op">(</span><span class="nam">exclude</span><span class="op">=</span><span class="op">[</span><span class="str">"noc"</span><span class="op">,</span> <span class="str">"slug"</span><span class="op">,</span> <span class="str">"region"</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t235" href="#t235">235</a></span><span class="t">            <span class="key">except</span> <span class="nam">Exception</span> <span class="key">as</span> <span class="nam">e</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t236" href="#t236">236</a></span><span class="t">                <span class="key">if</span> <span class="str">"url"</span> <span class="key">in</span> <span class="nam">e</span><span class="op">.</span><span class="nam">message_dict</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t237" href="#t237">237</a></span><span class="t">                    <span class="com"># print(e, operator.url)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t238" href="#t238">238</a></span><span class="t">                    <span class="nam">operator</span><span class="op">.</span><span class="nam">url</span> <span class="op">=</span> <span class="str">""</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t239" href="#t239">239</a></span><span class="t">                <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t240" href="#t240">240</a></span><span class="t">                    <span class="nam">print</span><span class="op">(</span><span class="nam">noc</span><span class="op">,</span> <span class="nam">e</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t241" href="#t241">241</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t242" href="#t242">242</a></span><span class="t">        <span class="nam">Operator</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">bulk_create</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t243" href="#t243">243</a></span><span class="t">            <span class="nam">to_create</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t244" href="#t244">244</a></span><span class="t">            <span class="nam">update_fields</span><span class="op">=</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t245" href="#t245">245</a></span><span class="t">                <span class="str">"url"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t246" href="#t246">246</a></span><span class="t">                <span class="str">"name"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t247" href="#t247">247</a></span><span class="t">                <span class="str">"vehicle_mode"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t248" href="#t248">248</a></span><span class="t">                <span class="str">"slug"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t249" href="#t249">249</a></span><span class="t">                <span class="str">"region_id"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t250" href="#t250">250</a></span><span class="t">                <span class="str">"vehicle_mode"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t251" href="#t251">251</a></span><span class="t">                <span class="str">"modified_at"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t252" href="#t252">252</a></span><span class="t">            <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t253" href="#t253">253</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t254" href="#t254">254</a></span><span class="t">        <span class="nam">Operator</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">bulk_update</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t255" href="#t255">255</a></span><span class="t">            <span class="nam">to_update</span><span class="op">,</span> <span class="op">(</span><span class="str">"url"</span><span class="op">,</span> <span class="str">"name"</span><span class="op">,</span> <span class="str">"vehicle_mode"</span><span class="op">,</span> <span class="str">"modified_at"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t256" href="#t256">256</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t257" href="#t257">257</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t258" href="#t258">258</a></span><span class="t">        <span class="nam">OperatorCode</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">bulk_create</span><span class="op">(</span><span class="nam">operator_codes</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t259" href="#t259">259</a></span><span class="t">        <span class="nam">Operator</span><span class="op">.</span><span class="nam">licences</span><span class="op">.</span><span class="nam">through</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">bulk_create</span><span class="op">(</span><span class="nam">operator_licences</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
 </main>
 <footer>
     <div class="content">
@@ -343,7 +348,7 @@
             <a class="nav" href="z_ce3c907b0b556e9c_jersey_routes_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.0">coverage.py v7.13.0</a>,
-            created at 2025-12-18 13:23 +0000
+            created at 2025-12-19 11:41 +0000
         </p>
     </div>
 </footer>
