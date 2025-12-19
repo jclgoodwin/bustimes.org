@@ -228,6 +228,8 @@ class Command(BaseCommand):
                         operator, noc_line, licences_by_number
                     )
 
+            operator.modified_at = generation_date
+
             try:
                 operator.clean_fields(exclude=["noc", "slug", "region"])
             except Exception as e:
@@ -246,9 +248,12 @@ class Command(BaseCommand):
                 "slug",
                 "region_id",
                 "vehicle_mode",
+                "modified_at",
             ),
         )
-        Operator.objects.bulk_update(to_update, ("url", "name", "vehicle_mode"))
+        Operator.objects.bulk_update(
+            to_update, ("url", "name", "vehicle_mode", "modified_at")
+        )
 
         OperatorCode.objects.bulk_create(operator_codes)
         Operator.licences.through.objects.bulk_create(operator_licences)
