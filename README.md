@@ -151,15 +151,15 @@
 | vehicles/management/commands/import\_stagecoach\_avl.py         |       72 |        7 |     90% |123, 133, 138-140, 172-173 |
 | vehicles/management/commands/import\_translink\_avl.py          |       57 |        7 |     88% |14, 67-70, 104-105 |
 | vehicles/management/commands/listen.py                          |       22 |        0 |    100% |           |
-| vehicles/management/commands/lothian.py                         |       56 |        6 |     89% |43, 71, 74, 83-84, 98 |
+| vehicles/management/commands/lothian.py                         |       56 |        0 |    100% |           |
 | vehicles/management/commands/newport.py                         |       44 |        2 |     95% |    46, 64 |
 | vehicles/management/commands/signalr.py                         |       82 |        0 |    100% |           |
 | vehicles/management/commands/siri\_vm\_subscribe.py             |       38 |       17 |     55% |     37-90 |
-| vehicles/management/import\_live\_vehicles.py                   |      309 |       30 |     90% |117, 129, 135, 141-143, 145, 167, 176, 190, 199-202, 211, 232, 237, 246, 251, 308-309, 350, 353-354, 375-376, 478, 516-517, 527, 547 |
+| vehicles/management/import\_live\_vehicles.py                   |      309 |       29 |     91% |117, 129, 135, 141-143, 145, 167, 176, 190, 199-202, 232, 237, 246, 251, 308-309, 350, 353-354, 375-376, 478, 516-517, 527, 547 |
 | vehicles/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | vehicles/management/tests/test\_bod\_avl.py                     |      303 |        0 |    100% |           |
 | vehicles/management/tests/test\_bushub.py                       |       47 |        0 |    100% |           |
-| vehicles/management/tests/test\_edinburgh.py                    |       41 |        0 |    100% |           |
+| vehicles/management/tests/test\_edinburgh.py                    |       43 |        0 |    100% |           |
 | vehicles/management/tests/test\_first.py                        |       33 |        0 |    100% |           |
 | vehicles/management/tests/test\_import\_live\_jersey.py         |       46 |        0 |    100% |           |
 | vehicles/management/tests/test\_listen.py                       |       15 |        0 |    100% |           |
@@ -189,7 +189,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       59 |        0 |    100% |           |
-| **TOTAL**                                                       | **17012** | **1152** | **93%** |           |
+| **TOTAL**                                                       | **17014** | **1145** | **93%** |           |
 
 
 ## Setup coverage badge
