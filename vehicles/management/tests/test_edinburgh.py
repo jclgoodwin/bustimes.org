@@ -6,7 +6,7 @@ import vcr
 from django.test import TestCase
 
 from busstops.models import DataSource, Operator, Region, Service
-
+from ...models import Vehicle
 from ..commands.lothian import Command
 
 
@@ -26,6 +26,7 @@ class EdinburghImportTest(TestCase):
         cls.service = Service.objects.create(line_name="N14", current=True)
         cls.service.operator.add(cls.operator_1)
         cls.source = source
+        Vehicle.objects.create(operator_id="EDTR", source=source, code="1120")
 
     def test_lothian_avl(self):
         redis_client = fakeredis.FakeStrictRedis(version=7)
@@ -43,7 +44,7 @@ class EdinburghImportTest(TestCase):
             with mock.patch(
                 "vehicles.management.import_live_vehicles.redis_client", redis_client
             ):
-                with self.assertNumQueries(154):
+                with self.assertNumQueries(150):
                     command.update()
 
                 cassette.rewind()
