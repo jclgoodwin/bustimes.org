@@ -1423,7 +1423,6 @@ class ImportTransXChangeTest(TestCase):
         element = ET.fromstring(
             """
     <Operator id="OId_BE">
-      <NationalOperatorCode>GAHL</NationalOperatorCode>
       <OperatorCode>BE</OperatorCode>
       <OperatorShortName>BLUE TRIANGLE BUSES LIM</OperatorShortName>
       <OperatorNameOnLicence>BLUE TRIANGLE BUSES LIMITED</OperatorNameOnLicence>

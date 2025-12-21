@@ -462,17 +462,10 @@ class Command(BaseCommand):
             operator_code = operator_element.findtext("OperatorCode")
 
         if operator_code:
-            if operator_code == "GAHL":
-                match operator_element.findtext("OperatorCode"):
-                    case "LC":
-                        operator_code = "LONC"
-                    case "LG":
-                        operator_code = "LGEN"
-                    case "BE":
-                        operator_code = "BTRI"
-
-            operator = get_operator_by("National Operator Codes", operator_code)
-            if operator:
+            if self.source.name == "L" and len(operator_code) == 2:
+                if operator := get_operator_by("L", operator_code):
+                    return operator
+            elif operator := get_operator_by("National Operator Codes", operator_code):
                 return operator
 
         licence_number = operator_element.findtext("LicenceNumber")
@@ -515,6 +508,7 @@ class Command(BaseCommand):
         operators = transxchange.operators
 
         if len(operators) > 1:
+            # if more than one operator listed, which ones listed actually operate any journeys?
             journey_operators = {
                 journey.operator
                 for journey in transxchange.journeys
