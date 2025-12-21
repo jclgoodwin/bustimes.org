@@ -458,8 +458,9 @@ class Command(BaseCommand):
         """
 
         operator_code = operator_element.findtext("NationalOperatorCode")
-        if not self.source.is_tnds() and not operator_code:
-            operator_code = operator_element.findtext("OperatorCode")
+        if not operator_code:
+            if not self.source.is_tnds() or self.source.name == "L":
+                operator_code = operator_element.findtext("OperatorCode")
 
         if operator_code:
             if self.source.name == "L" and len(operator_code) == 2:

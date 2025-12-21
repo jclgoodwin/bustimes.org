@@ -68,13 +68,13 @@ class ImportTransXChangeTest(TestCase):
         )
 
         cls.nocs = DataSource.objects.create(name="National Operator Codes")
+        london = DataSource.objects.create(name="L")
         OperatorCode.objects.create(operator=cls.megabus, source=cls.nocs, code="MEGA")
         OperatorCode.objects.create(operator=cls.fabd, source=cls.nocs, code="FABD")
         OperatorCode.objects.create(operator=cls.fabd, source=cls.nocs, code="SDVN")
         OperatorCode.objects.create(operator=cls.fabd, source=cls.nocs, code="CBNL")
-        OperatorCode.objects.create(operator=cls.fabd, source=cls.nocs, code="BTRI")
-        OperatorCode.objects.create(operator=cls.fabd, source=cls.nocs, code="LONC")
-        OperatorCode.objects.create(operator=cls.fabd, source=cls.nocs, code="LGEN")
+        OperatorCode.objects.create(operator=cls.fabd, source=london, code="LC")
+        OperatorCode.objects.create(operator=cls.fabd, source=london, code="BE")
 
         StopPoint.objects.bulk_create(
             StopPoint(
@@ -1420,6 +1420,7 @@ class ImportTransXChangeTest(TestCase):
         )
         self.assertEqual(2, len(command.missing_operators))
 
+        command.source.name = "L"
         element = ET.fromstring(
             """
     <Operator id="OId_BE">
@@ -1436,9 +1437,6 @@ class ImportTransXChangeTest(TestCase):
         self.assertIsNone(command.get_operator(element))
 
         element.find("OperatorCode").text = "LC"
-        self.assertEqual(self.fabd, command.get_operator(element))
-
-        element.find("OperatorCode").text = "LG"
         self.assertEqual(self.fabd, command.get_operator(element))
 
     def test_get_registration(self):
