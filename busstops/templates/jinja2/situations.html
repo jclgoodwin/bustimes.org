@@ -14,15 +14,15 @@
         {% else %}<div class="situation">{% endif %}
 
         {% if situation.text %}
-            {{ linebreaks(situation.text|urlize) }}
+            {{ urlise(linebreaks(situation.text)) }}
         {% endif %}
         {% for consequence in situation.consequences %}
             {% if not loop.previtem or consequence.text != loop.previtem.text %}{% if consequence.text and consequence.text != situation.text %}
-                {{ linebreaks(consequence.text|urlize) }}
+                {{ urlise(linebreaks(consequence.text)) }}
             {% endif %}{% endif %}
         {% endfor %}
         {% for link in situation.link_set.all() %}
-            <p>{{ link.url|urlize }}</p>
+            <p>{{ urlise(link.url) }}</p>
         {% endfor %}
     {% endif %}
 
