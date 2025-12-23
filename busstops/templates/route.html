@@ -1,6 +1,6 @@
 <div class="groupings">
 {% for stopusage in stopusages %}
-    {% ifchanged stopusage.direction %}
+    {% ifchanged stopusage.inbound %}
         {% if not forloop.first %}</ul></div>{% endif %}
         <div class="grouping">
         <h2>{% if stopusage.inbound %}In{% else %}Out{% endif %}bound</h2>
