@@ -1,3 +1,5 @@
+import re
+
 from django import template
 from django.template.defaultfilters import stringfilter
 from django.utils.html import urlize
@@ -35,4 +37,14 @@ def urlise(value, autoescape=None):
         if url in markup:
             markup = markup.replace(url, f'"{affiliate_url}"', 1)
             break
+
+    # find a string like ' href="https://www.nationalexpress.com/en/destinations/manchester"'
+    # (i.e. a deep link to any page on the national express website)
+    # and prefix the url...
+    markup = re.sub(
+        r' href="(https://www\.nationalexpress\.com/en/[^"]+)"',
+        r' href="https://nationalexpress.prf.hn/click/camref:1011ljPYw/destination:\1"',
+        markup,
+    )
+
     return mark_safe(markup)
