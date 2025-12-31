@@ -1254,7 +1254,7 @@ class ServiceDetailView(DetailView):
                 permanent=(type(context["redirect_to"]) is self.model),
             )
 
-        if not settings.TEST:
+        if not (settings.TEST or "debug-toolbar" in self.request.GET):
             template = get_template("busstops/service_detail.html")
             generator = template.template.generate(
                 **context, ad=True, request=self.request
