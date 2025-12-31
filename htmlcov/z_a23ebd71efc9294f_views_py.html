@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_3baf1eb7e8e062db_admin_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.0">coverage.py v7.13.0</a>,
-            created at 2025-12-25 15:33 +0000
+            created at 2025-12-31 21:35 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -1336,7 +1336,7 @@
     <p class="run run2"><span class="n"><a id="t1254" href="#t1254">1254</a></span><span class="t">                <span class="nam">permanent</span><span class="op">=</span><span class="op">(</span><span class="nam">type</span><span class="op">(</span><span class="nam">context</span><span class="op">[</span><span class="str">"redirect_to"</span><span class="op">]</span><span class="op">)</span> <span class="key">is</span> <span class="nam">self</span><span class="op">.</span><span class="nam">model</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t1255" href="#t1255">1255</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1256" href="#t1256">1256</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t1257" href="#t1257">1257</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">settings</span><span class="op">.</span><span class="nam">TEST</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t1257" href="#t1257">1257</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="op">(</span><span class="nam">settings</span><span class="op">.</span><span class="nam">TEST</span> <span class="key">or</span> <span class="str">"debug-toolbar"</span> <span class="key">in</span> <span class="nam">self</span><span class="op">.</span><span class="nam">request</span><span class="op">.</span><span class="nam">GET</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1258" href="#t1258">1258</a></span><span class="t">            <span class="nam">template</span> <span class="op">=</span> <span class="nam">get_template</span><span class="op">(</span><span class="str">"busstops/service_detail.html"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1259" href="#t1259">1259</a></span><span class="t">            <span class="nam">generator</span> <span class="op">=</span> <span class="nam">template</span><span class="op">.</span><span class="nam">template</span><span class="op">.</span><span class="nam">generate</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t1260" href="#t1260">1260</a></span><span class="t">                <span class="op">**</span><span class="nam">context</span><span class="op">,</span> <span class="nam">ad</span><span class="op">=</span><span class="key">True</span><span class="op">,</span> <span class="nam">request</span><span class="op">=</span><span class="nam">self</span><span class="op">.</span><span class="nam">request</span>&nbsp;</span><span class="r"></span></p>
@@ -1722,7 +1722,7 @@
             <a class="nav" href="z_3baf1eb7e8e062db_admin_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.0">coverage.py v7.13.0</a>,
-            created at 2025-12-25 15:33 +0000
+            created at 2025-12-31 21:35 +0000
         </p>
     </div>
 </footer>
