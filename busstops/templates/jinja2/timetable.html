@@ -120,6 +120,12 @@
                                         <td>{{ trip.route.revision_number }}</td>
                                     {% endfor %}
                                 </tr>
+                                <tr>
+                                    <th scope="row">Calendar</th>
+                                    {% for trip in grouping.trips %}
+                                        <td>{{ trip.calendar }}</td>
+                                    {% endfor %}
+                                </tr>
                                 {% if form.vehicles.value() %}{% for date, vjs in grouping.vehicles_by_date() %}
                                     <tr>
                                         <th scope="row">{{ date }}</th>
