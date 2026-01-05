@@ -80,11 +80,15 @@ def handle_item(item: dict, source: DataSource, current_situations: dict):
             line_filter = Q(route__line_name__iexact=line_name) | Q(
                 line_name__iexact=line_name
             )
-            operator_ref = line["operator"]["id"]
 
-            matching_services = services.filter(
-                line_filter, operator=operator_ref
-            ).distinct()
+            matching_services = services.filter(line_filter)
+
+            if operator_ref := line["operator"].get("id"):
+                matching_services = matching_services.filter(
+                    operator=operator_ref
+                )
+
+            matching_services = matching_services.distinct()
 
             if matching_services:
                 if not consequence.id:
