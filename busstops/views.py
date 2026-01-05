@@ -1100,6 +1100,7 @@ class ServiceDetailView(DetailView):
                         and context["timetable"].calendar_ids
                     )
                     and date < timezone.localdate()
+                    and not form.cleaned_data["detailed"]
                 ):
                     return {"redirect_to": self.object}
 
