@@ -95,6 +95,12 @@ def flixbus_affiliate_link(**kwargs) -> str:
     return f"https://www.awin1.com/cread.php?{urlencode(query)}"
 
 
+def flibco_affiliate_link(
+    ued="https://www.flibco.com/en/shuttle/bus-coach-london-stansted-airport", **kwargs
+):
+    return flixbus_affiliate_link(awinmid=53945, ued=ued, **kwargs)
+
+
 def index(request):
     def stats():
         return {
@@ -883,6 +889,8 @@ class OperatorDetailView(DetailView):
                 clickref="ot",
                 ued="https://www.flixbus.co.uk/bus-routes/london-london-stansted-airport",
             )
+        elif self.object.name == "Flibco":
+            context["tickets_link"] = flibco_affiliate_link(clickref="ot")
         elif self.object.name == "National Express":
             context["tickets_link"] = (
                 "https://nationalexpress.prf.hn/click/camref:1011ljPYw"
@@ -1219,6 +1227,15 @@ class ServiceDetailView(DetailView):
                         {
                             "url": context["tickets_link"],
                             "text": "Buy tickets at National Express",
+                        }
+                    )
+                    break
+                elif operator.name == "Flibco":
+                    context["tickets_link"] = flibco_affiliate_link()
+                    context["links"].append(
+                        {
+                            "url": context["tickets_link"],
+                            "text": "Buy tickets at Flibco",
                         }
                     )
                     break
