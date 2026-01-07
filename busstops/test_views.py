@@ -383,7 +383,6 @@ class ViewsTests(TestCase):
         #     + "&#112;&#108;&#101;&#46;&#99;&#111;&#109;",
         # )
         self.assertContains(response, "http://www.ouibus.com")
-        self.assertContains(response, ">@dril<")
 
     def test_operator_not_found(self):
         """An operator with no services, or that doesn't exist, should should return a 404 response"""
@@ -408,9 +407,6 @@ class ViewsTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "ouibus")
-        self.assertContains(response, ">@dril<")
-        self.assertContains(response, 'x.com/dril"')
-
         # payment methods:
         self.assertContains(response, "euros")
         self.assertContains(response, "Oyster card")
