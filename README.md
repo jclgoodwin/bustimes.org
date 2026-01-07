@@ -53,7 +53,7 @@
 | busstops/test\_admin.py                                         |       66 |        0 |    100% |           |
 | busstops/test\_middleware.py                                    |       25 |        0 |    100% |           |
 | busstops/test\_models.py                                        |      137 |        0 |    100% |           |
-| busstops/test\_views.py                                         |      280 |        0 |    100% |           |
+| busstops/test\_views.py                                         |      277 |        0 |    100% |           |
 | busstops/urls.py                                                |       20 |        2 |     90% |   134-136 |
 | busstops/utils.py                                               |       11 |        0 |    100% |           |
 | busstops/views.py                                               |      657 |       50 |     92% |101, 146, 488, 514, 552, 610-611, 697, 715, 775-778, 780, 893, 913-918, 931, 1008, 1036-1037, 1042-1043, 1051-1060, 1122, 1218, 1234-1241, 1248, 1250, 1329, 1408, 1438-1439, 1442-1446, 1596, 1608-1609, 1614, 1626-1627 |
@@ -189,7 +189,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       59 |        0 |    100% |           |
-| **TOTAL**                                                       | **17020** | **1150** | **93%** |           |
+| **TOTAL**                                                       | **17017** | **1150** | **93%** |           |
 
 
 ## Setup coverage badge
