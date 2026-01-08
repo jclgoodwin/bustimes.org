@@ -848,3 +848,6 @@ class SiriSubscription(models.Model):
 
     def get_status_key(self):
         return f"{self.name.replace(' ', '_')}_status"
+
+    def get_absolute_url(self):
+        return reverse("siri_post", args=(self.uuid,))

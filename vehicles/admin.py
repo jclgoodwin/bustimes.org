@@ -1,6 +1,7 @@
 from django.forms import ModelForm, Textarea, TextInput
 from django.contrib import admin, messages
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.db.models import Exists, OuterRef, Q
 from django.db import IntegrityError
 from django.urls import reverse
@@ -530,7 +531,10 @@ class VehicleCodeAdmin(admin.ModelAdmin):
 
 @admin.register(models.SiriSubscription)
 class SiriSubscriptionAdmin(admin.ModelAdmin):
-    readonly_fields = ["uuid", "sample"]
+    readonly_fields = ["uuid", "sample", "status"]
+
+    def status(self, obj):
+        return cache.get(obj.get_status_key())
 
 
 admin.site.register(models.VehicleFeature)

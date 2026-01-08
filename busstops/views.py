@@ -283,7 +283,8 @@ def status(request):
         "bod_avl_status": {},
     }
 
-    for key in ("bod_avl_status", "Transport_for_Wales_status", "Bus_Open_Data_status"):
+    for key in ("bod_avl", "Transport_for_Wales", "Bus_Open_Data", "Todd's_Travel"):
+        key = f"{key}_status"
         if status := cache.get(key):
             context["bod_avl_status"][key] = status
 
