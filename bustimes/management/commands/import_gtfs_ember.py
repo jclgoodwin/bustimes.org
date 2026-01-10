@@ -259,7 +259,7 @@ class Command(BaseCommand):
                     for stop_time in stop_times
                     if stop_time.stop_id in stop_ids
                 ]
-                note_trips = [stop_time.trip_id for stop_time in stop_times]
+                note_trips = [stop_time.trip_id for stop_time in note_stop_times]
                 note.stoptime_set.set(note_stop_times)
                 note.trip_set.set(note_trips)
 
