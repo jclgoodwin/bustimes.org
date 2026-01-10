@@ -154,7 +154,7 @@ class Command(BaseCommand):
 
         existing_route_links = {
             (rl.service.line_name, rl.from_stop_id, rl.to_stop_id): rl
-            for rl in RouteLink.objects.filter(service__source=source)
+            for rl in RouteLink.objects.filter(service__in=existing_services.values())
         }
         route_links = {}
 
@@ -173,12 +173,11 @@ class Command(BaseCommand):
             for a, b in pairwise(
                 feed.stop_times[feed.stop_times.trip_id == trip.trip_id].itertuples()
             ):
-                key = (trip.route_id, a.stop_id, b.stop_id)
+                from_stop = stops[a.stop_id]
+                to_stop = stops[b.stop_id]
+                key = (trip.route_id, from_stop.atco_code, to_stop.atco_code)
 
                 if key in route_links:
-                    continue
-
-                if (trip.route_id, a.stop_id, b.stop_id) in route_links:
                     continue
 
                 segment_gdf = shape_gdf[
@@ -193,13 +192,13 @@ class Command(BaseCommand):
                 else:
                     rl = RouteLink(
                         service=service,
-                        from_stop=stops[a.stop_id],
-                        to_stop=stops[b.stop_id],
+                        from_stop=from_stop,
+                        to_stop=to_stop,
                     )
                 rl.geometry = LineString(
                     *(Point(p.x, p.y) for p in segment_gdf.geometry.values)
                 )
-                route_links[(trip.route_id, a.stop_id, b.stop_id)] = rl
+                route_links[key] = rl
 
         RouteLink.objects.bulk_update(
             [rl for rl in route_links.values() if rl.id], fields=["geometry"]
