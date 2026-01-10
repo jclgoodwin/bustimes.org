@@ -10,10 +10,10 @@ import xmltodict
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models import Prefetch, prefetch_related_objects, IntegerField
-
 from django.db.models.functions import Coalesce
 from django.db.models import F, ExpressionWrapper
 from django.utils import timezone
+from xmltodict import unparse
 
 from bustimes.utils import get_stop_times
 from vehicles.models import Vehicle, VehicleJourney
@@ -426,27 +426,24 @@ class SiriSmDepartures(RemoteDepartures):
         return [self.get_row(data)]
 
     def get_response(self):
-        if self.source.requestor_ref:
-            username = "<RequestorRef>{}</RequestorRef>".format(
-                self.source.requestor_ref
-            )
-        else:
-            username = ""
-        timestamp = "<RequestTimestamp>{}</RequestTimestamp>".format(
-            datetime.datetime.utcnow().isoformat()
+        now = datetime.datetime.utcnow().isoformat()
+        request_xml = unparse(
+            {
+                "Siri": {
+                    "@version": "1.3",
+                    "@xmlns": "http://www.siri.org.uk/siri",
+                    "ServiceRequest": {
+                        "RequestTimestamp": now,
+                        "RequestorRef": self.source.requestor_ref,
+                        "StopMonitoringRequest": {
+                            "RequestTimestamp": now,
+                            "MonitoringRef": self.stop.atco_code,
+                        },
+                    },
+                }
+            }
         )
-        request_xml = """
-            <Siri version="1.3" xmlns="http://www.siri.org.uk/siri">
-                <ServiceRequest>
-                    {}
-                    {}
-                    <StopMonitoringRequest version="1.3">
-                        {}
-                        <MonitoringRef>{}</MonitoringRef>
-                    </StopMonitoringRequest>
-                </ServiceRequest>
-            </Siri>
-        """.format(timestamp, username, timestamp, self.stop.atco_code)
+
         headers = {"Content-Type": "application/xml"}
         return requests.post(
             self.source.url, data=request_xml, headers=headers, timeout=5
