@@ -40,18 +40,25 @@ class SiriPostTest(TestCase):
             ):
                 call_command(
                     "siri_vm_subscribe",
-                    "198.51.100.0",
+                    "",
                     "http://example.com",
                     "Transport for Wales",
                 )
 
             call_command(
                 "siri_vm_subscribe",
-                "198.51.100.0",
+                "",
                 "http://example.com",
                 "Transport for Wales",
             )
-        print("fuck!")
+
+            call_command(
+                "siri_vm_subscribe",
+                "",
+                "http://example.com",
+                "Transport for Wales",
+                "subscription-ref-to-terminate",
+            )
 
     def test_siri_post_404(self):
         response = self.client.post("/siri/7e491d62-e9de-44eb-b197-ab0419bb033d")

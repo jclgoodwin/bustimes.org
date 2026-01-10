@@ -1,15 +1,9 @@
 interactions:
 - request:
-    body: "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Siri xmlns=\"http://www.siri.org.uk/siri\"
-      version=\"1.3\">\n    <SubscriptionRequest>\n        <RequestTimestamp>2023-12-15T08:24:05+00:00</RequestTimestamp>\n
-      \       <RequestorRef></RequestorRef>\n        <ConsumerAddress>http://example.com/siri/475d1d1f-5708-4ee1-8f51-c63d948bc0b9</ConsumerAddress>\n
-      \       <VehicleMonitoringSubscriptionRequest>\n            <SubscriptionIdentifier>f4dbb1f2-fa40-4774-816d-909353136c6d</SubscriptionIdentifier>\n
-      \           <InitialTerminationTime>2023-12-16T04:18:05+00:00</InitialTerminationTime>\n
-      \           <VehicleMonitoringRequest>\n                <RequestTimestamp>2023-12-15T08:24:05+00:00</RequestTimestamp>\n
-      \           </VehicleMonitoringRequest>\n            <IncrementalUpdates>true</IncrementalUpdates>\n
-      \           <UpdateInterval>PT30S</UpdateInterval>\n        </VehicleMonitoringSubscriptionRequest>\n
-      \       <SubscriptionContext>\n            <HeartbeatInterval>PT5M</HeartbeatInterval>\n
-      \       </SubscriptionContext>\n    </SubscriptionRequest>\n</Siri>"
+    body: '<?xml version="1.0" encoding="utf-8"?>
+
+      <Siri xmlns="http://www.siri.org.uk/siri" version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.0/xsd/siri.xsd"><SubscriptionRequest><RequestTimestamp>2023-12-15T08:24:05+00:00</RequestTimestamp><RequestorRef></RequestorRef><ConsumerAddress>http://example.com/siri/475d1d1f-5708-4ee1-8f51-c63d948bc0b9</ConsumerAddress><VehicleMonitoringSubscriptionRequest><SubscriptionIdentifier>f4dbb1f2-fa40-4774-816d-909353136c6d</SubscriptionIdentifier><InitialTerminationTime>2023-12-16T04:18:05+00:00</InitialTerminationTime><VehicleMonitoringRequest><RequestTimestamp>2023-12-15T08:24:05+00:00</RequestTimestamp></VehicleMonitoringRequest><IncrementalUpdates>true</IncrementalUpdates><UpdateInterval>PT30S</UpdateInterval></VehicleMonitoringSubscriptionRequest><SubscriptionContext><HeartbeatInterval>PT5M</HeartbeatInterval></SubscriptionContext></SubscriptionRequest></Siri>'
     headers:
       Accept:
       - '*/*'
@@ -18,7 +12,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '998'
+      - '1001'
       User-Agent:
       - python-requests/2.32.5
       content-type:
@@ -42,3 +36,41 @@ interactions:
     status:
       code: 404
       message: Not Found
+- request:
+    body: '<?xml version="1.0" encoding="utf-8"?>
+
+      <Siri xmlns="http://www.siri.org.uk/siri" version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.0/xsd/siri.xsd"><TerminateSubscriptionRequest><RequestTimestamp>2023-12-15T08:24:05+00:00</RequestTimestamp><RequestorRef></RequestorRef><SubscriptionRef>subscription-ref-to-terminate</SubscriptionRef></TerminateSubscriptionRequest></Siri>'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, zstd
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '468'
+      User-Agent:
+      - python-requests/2.32.5
+      content-type:
+      - text/xml
+    method: POST
+    uri: https://bustimes.org/
+  response:
+    body:
+      string: Not Found
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '9'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Fri, 15 Mar 2024 08:22:38 GMT
+      Server:
+      - awselb/2.0
+    status:
+      code: 404
+      message: Not Found
+version: 1

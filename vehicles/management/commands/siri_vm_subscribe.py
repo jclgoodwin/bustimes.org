@@ -53,7 +53,9 @@ class Command(BaseCommand):
                 {
                     "Siri": {
                         "@xmlns": "http://www.siri.org.uk/siri",
-                        "@version": "1.3",
+                        "@version": "2.0",
+                        "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+                        "@xsi:schemaLocation": "http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.0/xsd/siri.xsd",
                         "TerminateSubscriptionRequest": {
                             "RequestTimestamp": now.isoformat(),
                             "RequestorRef": subscription.requestor_ref,
@@ -81,7 +83,9 @@ class Command(BaseCommand):
             {
                 "Siri": {
                     "@xmlns": "http://www.siri.org.uk/siri",
-                    "@version": "1.3",
+                    "@version": "2.0",
+                    "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+                    "@xsi:schemaLocation": "http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.0/xsd/siri.xsd",
                     "SubscriptionRequest": {
                         "RequestTimestamp": now.isoformat(),
                         "RequestorRef": subscription.requestor_ref,
@@ -100,9 +104,7 @@ class Command(BaseCommand):
                         },
                     },
                 }
-            },
-            pretty=True,
-            indent="    ",
+            }
         )
 
         print(data)
