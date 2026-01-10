@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for departures/sources.py: 84%</title>
+    <title>Coverage for departures/sources.py: 85%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_c827f16f.png">
     <link rel="stylesheet" href="style_cb_9ff733b0.css" type="text/css">
     <script src="coverage_html_cb_dd2e7eb5.js" defer></script>
@@ -12,7 +12,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>departures&#8201;/&#8201;sources.py</b>:
-            <span class="pc_cov">84%</span>
+            <span class="pc_cov">85%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -54,9 +54,9 @@
             </div>
         </aside>
         <h2>
-            <span class="text">223 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">188<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">35<span class="text"> missing</span></button>
+            <span class="text">221 statements &nbsp;</span>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">187<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">34<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_f5dba1c56a64fa65_test_gtfsr_trip_updates_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.1">coverage.py v7.13.1</a>,
-            created at 2026-01-10 11:29 +0000
+            created at 2026-01-10 12:45 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -92,10 +92,10 @@
     <p class="run"><span class="n"><a id="t10" href="#t10">10</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">conf</span> <span class="key">import</span> <span class="nam">settings</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t11" href="#t11">11</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">core</span><span class="op">.</span><span class="nam">cache</span> <span class="key">import</span> <span class="nam">cache</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t12" href="#t12">12</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">db</span><span class="op">.</span><span class="nam">models</span> <span class="key">import</span> <span class="nam">Prefetch</span><span class="op">,</span> <span class="nam">prefetch_related_objects</span><span class="op">,</span> <span class="nam">IntegerField</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t13" href="#t13">13</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t14" href="#t14">14</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">db</span><span class="op">.</span><span class="nam">models</span><span class="op">.</span><span class="nam">functions</span> <span class="key">import</span> <span class="nam">Coalesce</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t15" href="#t15">15</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">db</span><span class="op">.</span><span class="nam">models</span> <span class="key">import</span> <span class="nam">F</span><span class="op">,</span> <span class="nam">ExpressionWrapper</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t16" href="#t16">16</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">utils</span> <span class="key">import</span> <span class="nam">timezone</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t13" href="#t13">13</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">db</span><span class="op">.</span><span class="nam">models</span><span class="op">.</span><span class="nam">functions</span> <span class="key">import</span> <span class="nam">Coalesce</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t14" href="#t14">14</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">db</span><span class="op">.</span><span class="nam">models</span> <span class="key">import</span> <span class="nam">F</span><span class="op">,</span> <span class="nam">ExpressionWrapper</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t15" href="#t15">15</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">utils</span> <span class="key">import</span> <span class="nam">timezone</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t16" href="#t16">16</a></span><span class="t"><span class="key">from</span> <span class="nam">xmltodict</span> <span class="key">import</span> <span class="nam">unparse</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t17" href="#t17">17</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t18" href="#t18">18</a></span><span class="t"><span class="key">from</span> <span class="nam">bustimes</span><span class="op">.</span><span class="nam">utils</span> <span class="key">import</span> <span class="nam">get_stop_times</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t19" href="#t19">19</a></span><span class="t"><span class="key">from</span> <span class="nam">vehicles</span><span class="op">.</span><span class="nam">models</span> <span class="key">import</span> <span class="nam">Vehicle</span><span class="op">,</span> <span class="nam">VehicleJourney</span>&nbsp;</span><span class="r"></span></p>
@@ -508,31 +508,28 @@
     <p class="mis show_mis"><span class="n"><a id="t426" href="#t426">426</a></span><span class="t">        <span class="key">return</span> <span class="op">[</span><span class="nam">self</span><span class="op">.</span><span class="nam">get_row</span><span class="op">(</span><span class="nam">data</span><span class="op">)</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t427" href="#t427">427</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t428" href="#t428">428</a></span><span class="t">    <span class="key">def</span> <span class="nam">get_response</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t429" href="#t429">429</a></span><span class="t">        <span class="key">if</span> <span class="nam">self</span><span class="op">.</span><span class="nam">source</span><span class="op">.</span><span class="nam">requestor_ref</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t430" href="#t430">430</a></span><span class="t">            <span class="nam">username</span> <span class="op">=</span> <span class="str">"&lt;RequestorRef>{}&lt;/RequestorRef>"</span><span class="op">.</span><span class="nam">format</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t431" href="#t431">431</a></span><span class="t">                <span class="nam">self</span><span class="op">.</span><span class="nam">source</span><span class="op">.</span><span class="nam">requestor_ref</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t432" href="#t432">432</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t433" href="#t433">433</a></span><span class="t">        <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t434" href="#t434">434</a></span><span class="t">            <span class="nam">username</span> <span class="op">=</span> <span class="str">""</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t435" href="#t435">435</a></span><span class="t">        <span class="nam">timestamp</span> <span class="op">=</span> <span class="str">"&lt;RequestTimestamp>{}&lt;/RequestTimestamp>"</span><span class="op">.</span><span class="nam">format</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t436" href="#t436">436</a></span><span class="t">            <span class="nam">datetime</span><span class="op">.</span><span class="nam">datetime</span><span class="op">.</span><span class="nam">utcnow</span><span class="op">(</span><span class="op">)</span><span class="op">.</span><span class="nam">isoformat</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t437" href="#t437">437</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t438" href="#t438">438</a></span><span class="t">        <span class="nam">request_xml</span> <span class="op">=</span> <span class="str">"""</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t439" href="#t439">439</a></span><span class="t"><span class="str">            &lt;Siri version="1.3" xmlns="http://www.siri.org.uk/siri"></span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t440" href="#t440">440</a></span><span class="t"><span class="str">                &lt;ServiceRequest></span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t441" href="#t441">441</a></span><span class="t"><span class="str">                    {}</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t442" href="#t442">442</a></span><span class="t"><span class="str">                    {}</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t443" href="#t443">443</a></span><span class="t"><span class="str">                    &lt;StopMonitoringRequest version="1.3"></span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t444" href="#t444">444</a></span><span class="t"><span class="str">                        {}</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t445" href="#t445">445</a></span><span class="t"><span class="str">                        &lt;MonitoringRef>{}&lt;/MonitoringRef></span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t446" href="#t446">446</a></span><span class="t"><span class="str">                    &lt;/StopMonitoringRequest></span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t447" href="#t447">447</a></span><span class="t"><span class="str">                &lt;/ServiceRequest></span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t448" href="#t448">448</a></span><span class="t"><span class="str">            &lt;/Siri></span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t449" href="#t449">449</a></span><span class="t"><span class="str">        """</span><span class="op">.</span><span class="nam">format</span><span class="op">(</span><span class="nam">timestamp</span><span class="op">,</span> <span class="nam">username</span><span class="op">,</span> <span class="nam">timestamp</span><span class="op">,</span> <span class="nam">self</span><span class="op">.</span><span class="nam">stop</span><span class="op">.</span><span class="nam">atco_code</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t450" href="#t450">450</a></span><span class="t">        <span class="nam">headers</span> <span class="op">=</span> <span class="op">{</span><span class="str">"Content-Type"</span><span class="op">:</span> <span class="str">"application/xml"</span><span class="op">}</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t451" href="#t451">451</a></span><span class="t">        <span class="key">return</span> <span class="nam">requests</span><span class="op">.</span><span class="nam">post</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t452" href="#t452">452</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">source</span><span class="op">.</span><span class="nam">url</span><span class="op">,</span> <span class="nam">data</span><span class="op">=</span><span class="nam">request_xml</span><span class="op">,</span> <span class="nam">headers</span><span class="op">=</span><span class="nam">headers</span><span class="op">,</span> <span class="nam">timeout</span><span class="op">=</span><span class="num">5</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t453" href="#t453">453</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t429" href="#t429">429</a></span><span class="t">        <span class="nam">now</span> <span class="op">=</span> <span class="nam">datetime</span><span class="op">.</span><span class="nam">datetime</span><span class="op">.</span><span class="nam">utcnow</span><span class="op">(</span><span class="op">)</span><span class="op">.</span><span class="nam">isoformat</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t430" href="#t430">430</a></span><span class="t">        <span class="nam">request_xml</span> <span class="op">=</span> <span class="nam">unparse</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t431" href="#t431">431</a></span><span class="t">            <span class="op">{</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t432" href="#t432">432</a></span><span class="t">                <span class="str">"Siri"</span><span class="op">:</span> <span class="op">{</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t433" href="#t433">433</a></span><span class="t">                    <span class="str">"@version"</span><span class="op">:</span> <span class="str">"1.3"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t434" href="#t434">434</a></span><span class="t">                    <span class="str">"@xmlns"</span><span class="op">:</span> <span class="str">"http://www.siri.org.uk/siri"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t435" href="#t435">435</a></span><span class="t">                    <span class="str">"ServiceRequest"</span><span class="op">:</span> <span class="op">{</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t436" href="#t436">436</a></span><span class="t">                        <span class="str">"RequestTimestamp"</span><span class="op">:</span> <span class="nam">now</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t437" href="#t437">437</a></span><span class="t">                        <span class="str">"RequestorRef"</span><span class="op">:</span> <span class="nam">self</span><span class="op">.</span><span class="nam">source</span><span class="op">.</span><span class="nam">requestor_ref</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t438" href="#t438">438</a></span><span class="t">                        <span class="str">"StopMonitoringRequest"</span><span class="op">:</span> <span class="op">{</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t439" href="#t439">439</a></span><span class="t">                            <span class="str">"RequestTimestamp"</span><span class="op">:</span> <span class="nam">now</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t440" href="#t440">440</a></span><span class="t">                            <span class="str">"MonitoringRef"</span><span class="op">:</span> <span class="nam">self</span><span class="op">.</span><span class="nam">stop</span><span class="op">.</span><span class="nam">atco_code</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t441" href="#t441">441</a></span><span class="t">                        <span class="op">}</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t442" href="#t442">442</a></span><span class="t">                    <span class="op">}</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t443" href="#t443">443</a></span><span class="t">                <span class="op">}</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t444" href="#t444">444</a></span><span class="t">            <span class="op">}</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t445" href="#t445">445</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t446" href="#t446">446</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t447" href="#t447">447</a></span><span class="t">        <span class="nam">headers</span> <span class="op">=</span> <span class="op">{</span><span class="str">"Content-Type"</span><span class="op">:</span> <span class="str">"application/xml"</span><span class="op">}</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t448" href="#t448">448</a></span><span class="t">        <span class="key">return</span> <span class="nam">requests</span><span class="op">.</span><span class="nam">post</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t449" href="#t449">449</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">source</span><span class="op">.</span><span class="nam">url</span><span class="op">,</span> <span class="nam">data</span><span class="op">=</span><span class="nam">request_xml</span><span class="op">,</span> <span class="nam">headers</span><span class="op">=</span><span class="nam">headers</span><span class="op">,</span> <span class="nam">timeout</span><span class="op">=</span><span class="num">5</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t450" href="#t450">450</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
 </main>
 <footer>
     <div class="content">
@@ -542,7 +539,7 @@
             <a class="nav" href="z_f5dba1c56a64fa65_test_gtfsr_trip_updates_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.1">coverage.py v7.13.1</a>,
-            created at 2026-01-10 11:29 +0000
+            created at 2026-01-10 12:45 +0000
         </p>
     </div>
 </footer>
