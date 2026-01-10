@@ -1240,7 +1240,24 @@ def siri_post(request, uuid):
 
     cache.set(last_post_key, {"headers": request.headers, "body": body}, None)
 
-    return HttpResponse("")
+    return HttpResponse(
+        xmltodict.unparse(
+            {
+                "Siri": {
+                    "@xmlns": "http://www.siri.org.uk/siri",
+                    "@version": "2.0",
+                    "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+                    "@xsi:schemaLocation": "http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.0/xsd/siri.xsd",
+                    "DataReceivedAcknowledgement": {
+                        "ResponseTimestamp": timezone.now().isoformat(),
+                        "ConsumerRef": subscription.consumer_ref,
+                        "Status": True,
+                    },
+                }
+            }
+        ),
+        content_type="application/xml",
+    )
 
 
 @csrf_exempt
