@@ -154,7 +154,7 @@
 | vehicles/management/commands/lothian.py                         |       56 |        0 |    100% |           |
 | vehicles/management/commands/newport.py                         |       44 |        2 |     95% |    46, 64 |
 | vehicles/management/commands/signalr.py                         |       82 |        0 |    100% |           |
-| vehicles/management/commands/siri\_vm\_subscribe.py             |       38 |       17 |     55% |     37-90 |
+| vehicles/management/commands/siri\_vm\_subscribe.py             |       43 |        7 |     84% | 41, 52-74 |
 | vehicles/management/import\_live\_vehicles.py                   |      309 |       29 |     91% |117, 129, 135, 141-143, 145, 167, 176, 190, 199-202, 232, 237, 246, 251, 308-309, 350, 353-354, 375-376, 478, 516-517, 527, 547 |
 | vehicles/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | vehicles/management/tests/test\_bod\_avl.py                     |      303 |        0 |    100% |           |
@@ -166,11 +166,11 @@
 | vehicles/management/tests/test\_newport.py                      |       23 |        0 |    100% |           |
 | vehicles/management/tests/test\_polar.py                        |       31 |        0 |    100% |           |
 | vehicles/management/tests/test\_signalr.py                      |       28 |        0 |    100% |           |
-| vehicles/management/tests/test\_siri\_post.py                   |       51 |        0 |    100% |           |
+| vehicles/management/tests/test\_siri\_post.py                   |       50 |        0 |    100% |           |
 | vehicles/management/tests/test\_stagecoach\_avl.py              |       33 |        0 |    100% |           |
 | vehicles/management/tests/test\_stats.py                        |       24 |        0 |    100% |           |
 | vehicles/management/tests/test\_translink\_avl.py               |       22 |        0 |    100% |           |
-| vehicles/models.py                                              |      517 |       36 |     93% |75, 193, 218, 285, 304, 310, 382, 388, 439, 460, 581-582, 595, 603, 620-622, 630-631, 634-635, 637-642, 647-648, 679, 760-763, 818, 827, 847, 853 |
+| vehicles/models.py                                              |      517 |       35 |     93% |75, 193, 218, 285, 304, 310, 382, 388, 439, 460, 581-582, 595, 603, 620-622, 630-631, 634-635, 637-642, 647-648, 679, 760-763, 818, 827, 853 |
 | vehicles/rtpi.py                                                |       76 |        1 |     99% |        28 |
 | vehicles/signals.py                                             |       11 |        0 |    100% |           |
 | vehicles/tasks.py                                               |      142 |       21 |     85% |86, 91, 101, 108-111, 114, 116, 133, 146, 150-151, 173, 198, 206-207, 215, 267-268, 271 |
@@ -189,7 +189,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       59 |        0 |    100% |           |
-| **TOTAL**                                                       | **17023** | **1151** | **93%** |           |
+| **TOTAL**                                                       | **17027** | **1140** | **93%** |           |
 
 
 ## Setup coverage badge
