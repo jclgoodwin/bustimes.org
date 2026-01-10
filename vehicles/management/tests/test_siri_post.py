@@ -13,9 +13,6 @@ from busstops.models import DataSource
 from ...models import SiriSubscription, Vehicle
 
 
-@override_settings(
-    CACHES={"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
-)
 class SiriPostTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -23,14 +20,20 @@ class SiriPostTest(TestCase):
         SiriSubscription.objects.create(
             name="Transport for Wales",
             uuid="475d1d1f-5708-4ee1-8f51-c63d948bc0b9",
-            producer_url="https://obst-s2s.tfw.vix-its.com/",
+            producer_url="https://bustimes.org/",
         )
 
-    @time_machine.travel("2023-12-15T08:24:05Z")
     def test_subscribe(self):
         vcr_dir = Path(__file__).resolve().parent / "vcr"
 
-        with use_cassette(str(vcr_dir / "siri_vm_subscribe.yaml")):
+        with (
+            use_cassette(str(vcr_dir / "siri_vm_subscribe.yaml"), match_on=["body"]),
+            time_machine.travel("2023-12-15T08:24:05Z", tick=False),
+            mock.patch(
+                "vehicles.management.commands.siri_vm_subscribe.uuid.uuid4",
+                return_value="f4dbb1f2-fa40-4774-816d-909353136c6d",
+            ),
+        ):
             with mock.patch(
                 "vehicles.management.commands.siri_vm_subscribe.cache.get",
                 return_value=[[datetime(2023, 12, 15, 8, 20, tzinfo=timezone.utc)]],
@@ -48,6 +51,7 @@ class SiriPostTest(TestCase):
                 "http://example.com",
                 "Transport for Wales",
             )
+        print("fuck!")
 
     def test_siri_post_404(self):
         response = self.client.post("/siri/7e491d62-e9de-44eb-b197-ab0419bb033d")
@@ -114,6 +118,15 @@ class SiriPostTest(TestCase):
             mock.patch(
                 "vehicles.management.import_live_vehicles.redis_client", redis_client
             ),
+            override_settings(
+                CACHES={
+                    "default": {
+                        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+                        "LOCATION": "redis://",
+                        "OPTIONS": {"connection_class": fakeredis.FakeConnection},
+                    }
+                },
+            ),
         ):
             response = self.client.post(
                 "/siri/475d1d1f-5708-4ee1-8f51-c63d948bc0b9",
@@ -122,11 +135,11 @@ class SiriPostTest(TestCase):
             )
             self.assertEqual(200, response.status_code)
 
+            response = self.client.get("/siri/475d1d1f-5708-4ee1-8f51-c63d948bc0b9")
+            self.assertEqual(response.headers["Content-Type"], "text/xml")
+
         vehicle = Vehicle.objects.get()
         self.assertEqual(str(vehicle), "MB181")
-
-        response = self.client.get("/siri/475d1d1f-5708-4ee1-8f51-c63d948bc0b9")
-        self.assertEqual(response.headers["Content-Type"], "text/xml")
 
     @time_machine.travel("2023-12-15T08:24:05Z")
     def test_overland(self):
@@ -135,6 +148,15 @@ class SiriPostTest(TestCase):
         with (
             mock.patch(
                 "vehicles.management.import_live_vehicles.redis_client", redis_client
+            ),
+            override_settings(
+                CACHES={
+                    "default": {
+                        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+                        "LOCATION": "redis://",
+                        "OPTIONS": {"connection_class": fakeredis.FakeConnection},
+                    }
+                },
             ),
         ):
             response = self.client.post(
@@ -156,8 +178,8 @@ class SiriPostTest(TestCase):
             self.assertEqual(200, response.status_code)
             self.assertEqual(response.text, """{"result": "ok"}""")
 
+            response = self.client.get("/siri/475d1d1f-5708-4ee1-8f51-c63d948bc0b9")
+            self.assertEqual(response.headers["Content-Type"], "application/json")
+
         vehicle = Vehicle.objects.get()
         self.assertEqual(str(vehicle), "MB182")
-
-        response = self.client.get("/siri/475d1d1f-5708-4ee1-8f51-c63d948bc0b9")
-        self.assertEqual(response.headers["Content-Type"], "application/json")
