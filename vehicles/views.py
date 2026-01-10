@@ -1250,7 +1250,7 @@ def siri_post(request, uuid):
                     "@xsi:schemaLocation": "http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.0/xsd/siri.xsd",
                     "DataReceivedAcknowledgement": {
                         "ResponseTimestamp": timezone.now().isoformat(),
-                        "ConsumerRef": subscription.consumer_ref,
+                        "ConsumerRef": subscription.requestor_ref,
                         "Status": True,
                     },
                 }
