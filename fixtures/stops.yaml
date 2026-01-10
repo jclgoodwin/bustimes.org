@@ -88,3 +88,7 @@
     landmark: Sports Direct
 "370023314":
     landmark: ""
+
+#Chapel Lane Nether Broughton. Fix for Central Connect LCC2 until end of Jan
+'260080253':
+    latlong: POINT(-0.97150 52.82451)
