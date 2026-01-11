@@ -436,12 +436,13 @@ class SiriSmDepartures(RemoteDepartures):
                         "RequestTimestamp": now,
                         "RequestorRef": self.source.requestor_ref,
                         "StopMonitoringRequest": {
+                            "@version": "1.3",
                             "RequestTimestamp": now,
                             "MonitoringRef": self.stop.atco_code,
                         },
                     },
                 }
-            }
+            },
         )
 
         headers = {"Content-Type": "application/xml"}
