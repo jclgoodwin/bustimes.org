@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_f5dba1c56a64fa65_test_gtfsr_trip_updates_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.1">coverage.py v7.13.1</a>,
-            created at 2026-01-10 15:15 +0000
+            created at 2026-01-11 09:36 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -518,18 +518,19 @@
     <p class="run run2"><span class="n"><a id="t436" href="#t436">436</a></span><span class="t">                        <span class="str">"RequestTimestamp"</span><span class="op">:</span> <span class="nam">now</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t437" href="#t437">437</a></span><span class="t">                        <span class="str">"RequestorRef"</span><span class="op">:</span> <span class="nam">self</span><span class="op">.</span><span class="nam">source</span><span class="op">.</span><span class="nam">requestor_ref</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t438" href="#t438">438</a></span><span class="t">                        <span class="str">"StopMonitoringRequest"</span><span class="op">:</span> <span class="op">{</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t439" href="#t439">439</a></span><span class="t">                            <span class="str">"RequestTimestamp"</span><span class="op">:</span> <span class="nam">now</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t440" href="#t440">440</a></span><span class="t">                            <span class="str">"MonitoringRef"</span><span class="op">:</span> <span class="nam">self</span><span class="op">.</span><span class="nam">stop</span><span class="op">.</span><span class="nam">atco_code</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t441" href="#t441">441</a></span><span class="t">                        <span class="op">}</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t442" href="#t442">442</a></span><span class="t">                    <span class="op">}</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t443" href="#t443">443</a></span><span class="t">                <span class="op">}</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t444" href="#t444">444</a></span><span class="t">            <span class="op">}</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t445" href="#t445">445</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t446" href="#t446">446</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t447" href="#t447">447</a></span><span class="t">        <span class="nam">headers</span> <span class="op">=</span> <span class="op">{</span><span class="str">"Content-Type"</span><span class="op">:</span> <span class="str">"application/xml"</span><span class="op">}</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t448" href="#t448">448</a></span><span class="t">        <span class="key">return</span> <span class="nam">requests</span><span class="op">.</span><span class="nam">post</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t449" href="#t449">449</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">source</span><span class="op">.</span><span class="nam">url</span><span class="op">,</span> <span class="nam">data</span><span class="op">=</span><span class="nam">request_xml</span><span class="op">,</span> <span class="nam">headers</span><span class="op">=</span><span class="nam">headers</span><span class="op">,</span> <span class="nam">timeout</span><span class="op">=</span><span class="num">5</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t450" href="#t450">450</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t439" href="#t439">439</a></span><span class="t">                            <span class="str">"@version"</span><span class="op">:</span> <span class="str">"1.3"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t440" href="#t440">440</a></span><span class="t">                            <span class="str">"RequestTimestamp"</span><span class="op">:</span> <span class="nam">now</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t441" href="#t441">441</a></span><span class="t">                            <span class="str">"MonitoringRef"</span><span class="op">:</span> <span class="nam">self</span><span class="op">.</span><span class="nam">stop</span><span class="op">.</span><span class="nam">atco_code</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t442" href="#t442">442</a></span><span class="t">                        <span class="op">}</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t443" href="#t443">443</a></span><span class="t">                    <span class="op">}</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t444" href="#t444">444</a></span><span class="t">                <span class="op">}</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t445" href="#t445">445</a></span><span class="t">            <span class="op">}</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t446" href="#t446">446</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t447" href="#t447">447</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t448" href="#t448">448</a></span><span class="t">        <span class="nam">headers</span> <span class="op">=</span> <span class="op">{</span><span class="str">"Content-Type"</span><span class="op">:</span> <span class="str">"application/xml"</span><span class="op">}</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t449" href="#t449">449</a></span><span class="t">        <span class="key">return</span> <span class="nam">requests</span><span class="op">.</span><span class="nam">post</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t450" href="#t450">450</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">source</span><span class="op">.</span><span class="nam">url</span><span class="op">,</span> <span class="nam">data</span><span class="op">=</span><span class="nam">request_xml</span><span class="op">,</span> <span class="nam">headers</span><span class="op">=</span><span class="nam">headers</span><span class="op">,</span> <span class="nam">timeout</span><span class="op">=</span><span class="num">5</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t451" href="#t451">451</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
 </main>
 <footer>
     <div class="content">
@@ -539,7 +540,7 @@
             <a class="nav" href="z_f5dba1c56a64fa65_test_gtfsr_trip_updates_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.1">coverage.py v7.13.1</a>,
-            created at 2026-01-10 15:15 +0000
+            created at 2026-01-11 09:36 +0000
         </p>
     </div>
 </footer>
