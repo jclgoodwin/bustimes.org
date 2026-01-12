@@ -1433,6 +1433,12 @@ class Command(BaseCommand):
                     logger.warning(
                         f"{filename} has {operators} but unexpected filename format"
                     )
+            # detect TransMach data too, and do likewise
+            elif "_" in route_code and route_code.endswith(".xml"):
+                parts = route_code.split("_")
+                if len(parts) == 2 and parts[1][:-4].isdigit():
+                    route_defaults["revision_number_context"] = parts[0]
+                    logger.info(f"{filename} looks like TransMach")
 
             route, route_created = Route.objects.update_or_create(
                 route_defaults, source=self.source, code=route_code
