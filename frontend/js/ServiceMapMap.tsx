@@ -27,7 +27,7 @@ export type ServiceMapMapProps = {
   stopsAndGeometry: {
     [serviceId: number]: {
       stops?: GeoJSON.FeatureCollection;
-      geometry?: GeoJSON.MultiLineString;
+      geometry?: GeoJSON.MultiLineString | GeoJSON.LineString;
     };
   };
 };
@@ -146,7 +146,14 @@ export default function ServiceMapMap({
     return {
       type: "MultiLineString" as const,
       coordinates: Array.from(serviceIds).flatMap((serviceId) => {
-        return stopsAndGeometry[serviceId]?.geometry?.coordinates || [];
+        const geometry = stopsAndGeometry[serviceId]?.geometry;
+        if (!geometry) {
+          return [];
+        }
+        if (geometry?.type === "LineString") {
+          return [geometry.coordinates];
+        }
+        return geometry.coordinates;
       }),
     };
   }, [stopsAndGeometry, serviceIds]);
