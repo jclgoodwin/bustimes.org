@@ -1436,7 +1436,11 @@ class Command(BaseCommand):
             # detect TransMach data too, and do likewise
             elif "_" in route_code and route_code.endswith(".xml"):
                 parts = route_code.split("_")
-                if len(parts) == 2 and parts[1][:-4].isdigit():
+                if (
+                    len(parts) == 2
+                    and parts[1][:-4].isdigit()
+                    and parts[0] == line.line_name.upper()
+                ):
                     route_defaults["revision_number_context"] = parts[0]
                     logger.info(f"{filename} looks like TransMach")
 
