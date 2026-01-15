@@ -47,10 +47,11 @@ class Command(GTFSRCommand):
     def get_journey(self, item, vehicle):
         journey = VehicleJourney(code=item.vehicle.trip.trip_id)
 
-        if (
-            latest_journey := vehicle.latest_journey
-        ) and latest_journey.code == journey.code:
-            return latest_journey
+        start_date = datetime.strptime(
+            f"{item.vehicle.trip.start_date} 12:00:00",
+            "%Y%m%d %H:%M:%S",
+        )
+        journey.date = start_date.date()
 
         try:
             trip = Trip.objects.get(operator="EMBR", vehicle_journey_code=journey.code)
@@ -60,12 +61,13 @@ class Command(GTFSRCommand):
             journey.trip = trip
 
             journey.datetime = (
-                datetime.strptime(
-                    f"{item.vehicle.trip.start_date} 12", "%Y%m%d %H"
-                ).replace(tzinfo=self.tzinfo)
+                start_date.replace(tzinfo=self.tzinfo)
                 - timedelta(hours=12)
                 + trip.start
             )
+            now = self.get_datetime(item)
+            if journey.datetime - now > timedelta(hours=12):
+                journey.datetime = journey.datetime.replace(day=journey.date.day)
 
             journey.service = trip.route.service
 
