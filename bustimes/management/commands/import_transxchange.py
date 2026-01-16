@@ -1131,16 +1131,18 @@ class Command(BaseCommand):
 
             if operators:
                 q = Q(operator__in=operators.values())
+                # prevent certain seemingly-the-same services being merged
                 if (
                     description
                     and self.source.name.startswith("Stagecoach")
                     and (
                         line.line_name == "1"
                         and "Chester" in description
-                        or line.line_name == "59"
-                        and self.source.name == "Stagecoach East Scotland"
+                        or (
+                            line.line_name == "59"
+                            and self.source.name == "Stagecoach East Scotland"
+                        )
                         or line.line_name == "700"
-                        and "Stagecoach" in self.source.name
                     )
                 ):
                     q = (Q(source=self.source) | q) & Q(description=description)
@@ -1180,18 +1182,27 @@ class Command(BaseCommand):
                 if service_code is None:
                     service_code = txc_service.service_code
 
-                if service_code[:4] == "tfl_":
-                    # London: assume line_name is unique within region:
-                    existing = self.source.service_set.filter(
-                        Q(service_code=service_code)
-                        | Q(line_name__iexact=line.line_name)
-                    ).first()
-                elif not existing:
-                    # assume service code is at least unique within a TNDS region:
-                    existing = self.source.service_set.filter(
-                        Q(service_code=service_code, operator__in=operators.values())
-                        | Q(description=description, line_name__iexact=line.line_name)
-                    ).first()
+                if not existing:
+                    if service_code[:4] == "tfl_":
+                        existing = self.source.service_set.filter(
+                            Q(service_code=service_code)
+                            | Q(line_name__iexact=line.line_name)
+                            & (
+                                Q(description=description)
+                                | Q(operator__in=operators.values())
+                            )
+                        ).first()
+                    else:
+                        existing = self.source.service_set.filter(
+                            Q(
+                                service_code=service_code,
+                                operator__in=operators.values(),
+                            )
+                            | Q(
+                                description=description,
+                                line_name__iexact=line.line_name,
+                            )
+                        ).first()
             elif unique_service_code:
                 service_code = unique_service_code
 
