@@ -21,6 +21,7 @@ from django.urls import reverse
 from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
+from timezone_field import TimeZoneField
 
 from bustimes.models import Route, TimetableDataSource, StopTime
 from bustimes.timetables import Timetable
@@ -357,6 +358,7 @@ class StopPoint(models.Model):
 
     latlong = models.PointField(null=True, blank=True)
 
+    parents = models.ForeignKey("self", blank=True)
     stop_area = models.ForeignKey(StopArea, models.SET_NULL, null=True, blank=True)
     locality = models.ForeignKey("Locality", models.SET_NULL, null=True, blank=True)
     suburb = models.CharField(max_length=48, blank=True)
@@ -364,6 +366,11 @@ class StopPoint(models.Model):
     locality_centre = models.BooleanField(null=True)
 
     heading = models.PositiveIntegerField(null=True, blank=True)
+
+    timezone = TimeZoneField(null=True, blank=True)
+
+    description = models.CharField(null=True, blank=True)
+    notes = models.CharField(null=True, blank=True)
 
     BEARING_CHOICES = (
         ("N", "north \u2191"),

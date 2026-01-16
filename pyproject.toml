@@ -45,6 +45,7 @@ dependencies = [
     "django-http-compression>=1.2.0",
     "tqdm>=4.67.1",
     "polyline>=2.0.4",
+    "django-timezone-field>=7.2.1",
 ]
 
 [dependency-groups]

@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.db.models.functions import Upper
 from django.urls import reverse
 from django.utils.timezone import localdate
+from timezone_field import TimeZoneField
 
 from .fields import SecondsField
 from .formatting import format_timedelta, time_datetime
@@ -78,6 +79,7 @@ class Route(models.Model):
     )
     public_use = models.BooleanField(null=True)
     file_hash = models.CharField(max_length=40, null=True, blank=True, db_index=True)
+    timezone = TimeZoneField(null=True, blank=True)
 
     class Meta:
         unique_together = ("source", "code")
