@@ -60,6 +60,7 @@ class Progress:
 
 def get_progress(item, stop_time=None):
     point = Point(*item["coordinates"], srid=4326)
+    point_3857 = point.transform(3857, clone=True)
 
     if stop_time:
         stop_times = stop_time.trip.stoptime_set.all()  # prefetched earlier
@@ -71,23 +72,27 @@ def get_progress(item, stop_time=None):
 
     route_links = {}
     if "service_id" in item:
-        route_links = RouteLink.objects.filter(
+        for rl in RouteLink.objects.filter(
             service=item["service_id"],
         ).annotate(
             progress=LineLocatePoint("geometry", point),
             distance=Distance("geometry", point),
-        )
-        route_links = {(rl.from_stop_id, rl.to_stop_id): rl for rl in route_links}
+        ):
+            rl.distance = rl.distance.m  # convert to meters
+            route_links[(rl.from_stop_id, rl.to_stop_id)] = rl
 
     nearby_pairs = []
     for a, b in pairwise(stop_times):
         key = (a.stop_id, b.stop_id)
         if key in route_links:
-            nearby_pairs.append((a, b, route_links[key]))
+            rl = route_links[key]
+            if rl.distance < 1000:  # within ~1km
+                nearby_pairs.append((a, b, rl))
         else:
             geometry = LineString([a.stop.latlong, b.stop.latlong])
-            distance = geometry.distance(point)
-            if distance < 0.01:
+            geometry_3857 = geometry.transform(3857, clone=True)
+            distance = geometry_3857.distance(point_3857)  # in meters
+            if distance < 1000:  # within ~1km
                 rl = RouteLink(from_stop=a.stop, to_stop=b.stop, geometry=geometry)
                 rl.distance = distance
                 rl.progress = geometry.project_normalized(point)
@@ -108,7 +113,7 @@ def get_progress(item, stop_time=None):
         difference = (vehicle_heading - route_bearing + 180) % 360 - 180
         next_closest = nearby_pairs[1]
 
-        if not (abs(difference) < 90) and next_closest[2].distance < 0.001:
+        if not (abs(difference) < 90) and next_closest[2].distance < 100:
             # bus seems to be heading the wrong way - does the bus go both ways on this road?
             # try the next closest pair of stops:
             route_bearing = get_route_bearing(
