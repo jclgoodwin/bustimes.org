@@ -89,7 +89,7 @@ def get_progress(item, stop_time=None):
             if rl.distance < 1000:  # within ~1km
                 nearby_pairs.append((a, b, rl))
         else:
-            geometry = LineString([a.stop.latlong, b.stop.latlong])
+            geometry = LineString([a.stop.latlong, b.stop.latlong], srid=4326)
             geometry_3857 = geometry.transform(3857, clone=True)
             distance = geometry_3857.distance(point_3857)  # in meters
             if distance < 1000:  # within ~1km
