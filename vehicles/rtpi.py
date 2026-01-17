@@ -5,11 +5,20 @@ from itertools import pairwise
 
 from ciso8601 import parse_datetime
 from django.contrib.gis.geos import LineString, Point
+from django.contrib.gis.db.models.functions import Distance, LineLocatePoint
 from django.utils import timezone
 
 from bustimes.models import RouteLink, StopTime, Trip
 from bustimes.utils import contiguous_stoptimes_only
 from vehicles.utils import calculate_bearing
+
+
+def get_route_bearing(geometry: LineString, progress: float):
+    """Get the bearing of the route at a given progress point (0-1)."""
+    delta = 0.01
+    p1 = geometry.interpolate_normalized(max(0, progress - delta))
+    p2 = geometry.interpolate_normalized(min(1, progress + delta))
+    return calculate_bearing(p1, p2)
 
 
 def get_stop_times(item):
@@ -50,7 +59,7 @@ class Progress:
 
 
 def get_progress(item, stop_time=None):
-    point = Point(*item["coordinates"])
+    point = Point(*item["coordinates"], srid=4326)
 
     if stop_time:
         stop_times = stop_time.trip.stoptime_set.all()  # prefetched earlier
@@ -60,60 +69,60 @@ def get_progress(item, stop_time=None):
         except Trip.DoesNotExist:
             return
 
-    pairs = [
-        (a, b, LineString([a.stop.latlong, b.stop.latlong]))
-        for a, b in pairwise(stop_times)
-    ]
+    route_links = {}
+    if "service_id" in item:
+        route_links = RouteLink.objects.filter(
+            service=item["service_id"],
+        ).annotate(
+            progress=LineLocatePoint("geometry", point),
+            distance=Distance("geometry", point),
+        )
+        route_links = {(rl.from_stop_id, rl.to_stop_id): rl for rl in route_links}
 
-    # compute distances:
-    pairs = ((pair, pair[2].distance(point)) for pair in pairs)
-    # filter out pairs further about than 1.1 km:
-    nearby_pairs = [pair for pair in pairs if pair[1] < 0.01]
+    nearby_pairs = []
+    for a, b in pairwise(stop_times):
+        key = (a.stop_id, b.stop_id)
+        if key in route_links:
+            nearby_pairs.append((a, b, route_links[key]))
+        else:
+            geometry = LineString([a.stop.latlong, b.stop.latlong])
+            distance = geometry.distance(point)
+            if distance < 0.01:
+                rl = RouteLink(from_stop=a.stop, to_stop=b.stop, geometry=geometry)
+                rl.distance = distance
+                rl.progress = geometry.project_normalized(point)
+                nearby_pairs.append((a, b, rl))
 
     if not nearby_pairs:
         return
 
-    nearby_pairs.sort(key=lambda pair: pair[1])
+    nearby_pairs.sort(key=lambda p: p[2].distance)
 
-    closest, distance = nearby_pairs[0]
+    closest = nearby_pairs[0]
 
     if len(nearby_pairs) >= 2 and item["heading"] is not None:
         vehicle_heading = int(item["heading"])
 
-        # TODO: use RouteLink if there is one
-        route_bearing = calculate_bearing(
-            closest[0].stop.latlong, closest[1].stop.latlong
-        )
+        route_bearing = get_route_bearing(closest[2].geometry, closest[2].progress)
 
         difference = (vehicle_heading - route_bearing + 180) % 360 - 180
-        next_closest, next_closest_distance = nearby_pairs[1]
+        next_closest = nearby_pairs[1]
 
-        if not (abs(difference) < 90) and next_closest_distance < 0.001:
+        if not (abs(difference) < 90) and next_closest[2].distance < 0.001:
             # bus seems to be heading the wrong way - does the bus go both ways on this road?
             # try the next closest pair of stops:
-            route_bearing = calculate_bearing(
-                next_closest[0].stop.latlong, next_closest[1].stop.latlong
+            route_bearing = get_route_bearing(
+                next_closest[2].geometry, next_closest[2].progress
             )
 
             difference = (vehicle_heading - route_bearing + 180) % 360 - 180
             if abs(difference) < 90:
                 closest = next_closest
-                distance = next_closest_distance
+                distance = next_closest[2].distance
 
-    line_string = closest[2]
-    if "service_id" in item:
-        try:
-            line_string = RouteLink.objects.get(
-                service=item["service_id"],
-                from_stop=closest[0].stop_id,
-                to_stop=closest[1].stop_id,
-            ).geometry
-        except RouteLink.DoesNotExist:
-            pass
-
-    progress = line_string.project_normalized(point)
-
-    return Progress(stop_times, closest[0], closest[1], progress, distance)
+    return Progress(
+        stop_times, closest[0], closest[1], closest[2].progress, closest[2].distance
+    )
 
 
 def add_progress_and_delay(item, stop_time=None):
