@@ -7,10 +7,13 @@ Usage:
 import datetime
 import logging
 import os
+import sys
 from pathlib import Path
 import re
 import zipfile
 from functools import cache
+
+from tqdm import tqdm
 
 from django.core.management.base import BaseCommand
 from django.contrib.gis.geos import Point, LineString
@@ -411,6 +414,12 @@ class Command(BaseCommand):
     def add_arguments(parser):
         parser.add_argument("archives", nargs=1, type=str)
         parser.add_argument("files", nargs="*", type=str)
+        parser.add_argument(
+            "--progress",
+            action="store_true",
+            default=sys.stdout.isatty(),
+            help="Show progress bar (default: auto-detect based on terminal)",
+        )
 
     def set_up(self):
         self.calendar_cache = {}
@@ -420,6 +429,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.set_up()
+        self.show_progress = options["progress"]
 
         self.open_data_operators, self.incomplete_operators = get_open_data_operators()
 
@@ -587,7 +597,11 @@ class Command(BaseCommand):
             with zipfile.ZipFile(archive_path) as archive:
                 namelist = archive.namelist()
 
-                for filename in filenames or namelist:
+                items = filenames or namelist
+                if self.show_progress:
+                    items = tqdm(items, desc=basename)
+
+                for filename in items:
                     if filename.startswith("__MACOSX"):
                         continue
 
@@ -597,7 +611,7 @@ class Command(BaseCommand):
                     if filename.endswith(".xml"):
                         with archive.open(filename) as open_file:
                             self.handle_file(open_file, filename)
-        except zipfile.BadZipfile:
+        except zipfile.BadZipFile:
             with archive_path.open() as open_file:
                 self.handle_file(open_file, str(archive_path))
 

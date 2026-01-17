@@ -43,6 +43,7 @@ dependencies = [
     "folium>=0.20.0",
     "xmltodict>=1.0.2",
     "django-http-compression>=1.2.0",
+    "tqdm>=4.67.1",
 ]
 
 [dependency-groups]
