@@ -141,10 +141,14 @@ class Command(BaseCommand):
         }
         trips = {}
         for row in feed.trips.itertuples():
+            # evenness of the number after the first hyphen
+            # (e.g. "3" in "UK070-3-1910012026-...")
+            # determines direction
+            journey_number = int(row.trip_id.split("-")[1])
             trip = Trip(
                 route=existing_routes[row.route_id],
                 calendar=calendars[row.service_id],
-                inbound=getattr(row, "direction_id", 0) == 1,
+                inbound=journey_number % 2 == 0,
                 vehicle_journey_code=row.trip_id,
                 headsign=row.trip_headsign if pd.notna(row.trip_headsign) else None,
                 operator=operator,
