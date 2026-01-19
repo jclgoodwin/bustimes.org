@@ -112,9 +112,10 @@ def index(request):
             .count(),
         }
 
-    context = {
-        "stats": stats,
-    }
+    context = {"stats": stats, "popular_services": cache.get("popular_services")}
+
+    if context["popular_services"]:
+        context["colours"] = get_colours(context["popular_services"])
 
     return render(request, "index.html", context)
 
