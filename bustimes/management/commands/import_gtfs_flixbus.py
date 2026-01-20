@@ -321,13 +321,23 @@ def do_route_links(
                 continue
 
             # find the substring of rl.geometry between the stops a and b
+            stop_a = stops[a.stop_id]
+            point_a = so.Point(stop_a.stop_lon, stop_a.stop_lat)
             if not start_dist:
-                stop_a = stops[a.stop_id]
-                point_a = so.Point(stop_a.stop_lon, stop_a.stop_lat)
                 start_dist = trip.geometry.project(point_a)
             stop_b = stops[b.stop_id]
             point_b = so.Point(stop_b.stop_lon, stop_b.stop_lat)
             end_dist = trip.geometry.project(point_b)
+
+            # skip if either stop is too far from the route geometry (~1km at UK latitudes)
+            projected_a = trip.geometry.interpolate(start_dist)
+            projected_b = trip.geometry.interpolate(end_dist)
+            if (
+                point_a.distance(projected_a) > 0.01
+                or point_b.distance(projected_b) > 0.01
+            ):
+                start_dist = None
+                continue
 
             geom = so.substring(trip.geometry, start_dist, end_dist)
             if type(geom) is so.LineString:
