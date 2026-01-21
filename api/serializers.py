@@ -27,6 +27,7 @@ class VehicleTypeSerializer(serializers.ModelSerializer):
 class VehicleSerializer(serializers.ModelSerializer):
     operator = serializers.SerializerMethodField()
     livery = serializers.SerializerMethodField()
+    previous_reg = serializers.SerializerMethodField()
     vehicle_type = VehicleTypeSerializer()
     special_features = serializers.ListField()
 
@@ -47,6 +48,9 @@ class VehicleSerializer(serializers.ModelSerializer):
                 "left": obj.get_livery(),
                 "right": obj.get_livery(90),
             }
+            
+    def get_previous_reg(self, obj):
+        return obj.data_get(key="Previous reg")
 
     class Meta:
         model = Vehicle
@@ -57,6 +61,7 @@ class VehicleSerializer(serializers.ModelSerializer):
             "fleet_number",
             "fleet_code",
             "reg",
+            "previous_reg",
             "vehicle_type",
             "livery",
             "branding",
