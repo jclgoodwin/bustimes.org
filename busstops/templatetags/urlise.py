@@ -18,11 +18,11 @@ def urlise(value, autoescape=None):
 
     markup = (
         urlize(value, nofollow=True)
-        .replace('">https://', '">', 1)
-        .replace('">http://', '">', 1)
-        .replace('">www.', '">', 1)
+        .replace('">https://', '">')
+        .replace('">http://', '">')
+        .replace('">www.', '">')
     )
-    markup = markup.replace("/</a>", "</a>", 1)
+    markup = markup.replace("/</a>", "</a>")
     for url, affiliate_url in (
         (
             "http://www.nationalexpress.com",
