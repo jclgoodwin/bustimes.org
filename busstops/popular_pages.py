@@ -33,4 +33,4 @@ def get_popular_services():
         if item["x"].startswith("/services/") and len(item["x"].split("/")) >= 3
     ][:20]
 
-    return Service.objects.filter(slug__in=slugs)
+    return Service.objects.with_line_names().filter(slug__in=slugs)
