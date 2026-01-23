@@ -31,7 +31,7 @@
     "leaflet": "^1.9.4",
     "leaflet.locatecontrol": "^0.86.0",
     "loadjs": "^4.2.0",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "maplibre-gl": "^5.8.0",
     "process": "^0.11.10",
     "react": "^19.1.1",
