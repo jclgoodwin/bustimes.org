@@ -3,7 +3,9 @@
 {% block title %}Fleet list – {% firstof parent object %} – bustimes.org{% endblock %}
 
 {% block canonical %}
-    <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}/vehicles">
+    {% if not parent %}
+        <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}/vehicles">
+    {% endif %}
 {% endblock canonical %}
 
 {% block head %}
