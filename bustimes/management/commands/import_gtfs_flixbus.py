@@ -203,15 +203,16 @@ class Command(BaseCommand):
                     if row.stop_id not in missing_stops:
                         missing_stops[row.stop_id] = get_stoppoint(stop, source)
 
-                        logger.info(
-                            f"{stop.stop_name} {stop.stop_code} {stop.stop_timezone} {stop.platform_code}"
-                        )
-                        logger.info(
-                            f"https://bustimes.org/map#16/{stop.stop_lat}/{stop.stop_lon}"
-                        )
-                        logger.info(
-                            f"https://bustimes.org/admin/busstops/stopcode/add/?code={row.stop_id}\n"
-                        )
+                        if stop.stop_timezone == "Europe/London":
+                            # stop appears to be in the UK,
+                            # so we might want to link it to the corresponding NaPTAN stop
+                            logger.info(f"{stop.stop_name} {stop.stop_code}")
+                            logger.info(
+                                f"https://bustimes.org/map#16/{stop.stop_lat}/{stop.stop_lon}"
+                            )
+                            logger.info(
+                                f"https://bustimes.org/admin/busstops/stopcode/add/?code={row.stop_id}\n"
+                            )
 
                 stop_times.append(stop_time)
 
