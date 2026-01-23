@@ -932,6 +932,14 @@ class Row:
                 return True
 
     @cached_property
+    def set_down_only(self):
+        return all(cell.set_down_only() for cell in self.times if type(cell) is Cell)
+
+    @cached_property
+    def pick_up_only(self):
+        return all(cell.pick_up_only() for cell in self.times if type(cell) is Cell)
+
+    @cached_property
     def od(self):
         """is the origin or destination of any trip"""
         return any(cell.first or cell.last for cell in self.times if type(cell) is Cell)
