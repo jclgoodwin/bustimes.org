@@ -32,7 +32,13 @@ from sql_util.utils import Exists, SubqueryMax, SubqueryMin
 
 from accounts.models import User
 from buses.utils import cdn_cache_control
-from busstops.models import SERVICE_ORDER_REGEX, Operator, Service, StopUsage
+from busstops.models import (
+    SERVICE_ORDER_REGEX,
+    Operator,
+    OperatorGroup,
+    Service,
+    StopUsage,
+)
 from busstops.utils import get_bounding_box
 from bustimes.models import Garage, Route, StopTime
 from bustimes.utils import contiguous_stoptimes_only, get_other_trips_in_block
@@ -164,11 +170,20 @@ def get_vehicle_order(vehicle) -> tuple[str, int, str]:
 
 
 @require_safe
-def operator_vehicles(request, slug=None, parent=None):
+def operator_vehicles(request, slug=None, group_slug=None):
     """fleet list"""
 
     operators = Operator.objects.select_related("region")
-    if slug:
+    if group_slug:
+        try:
+            group = OperatorGroup.objects.get(slug=group_slug)
+        except OperatorGroup.DoesNotExist:
+            # cool URIs don't change
+            group = get_object_or_404(OperatorGroup, name=group_slug)
+        operators = group.operator_set.in_bulk()
+        vehicles = Vehicle.objects.filter(operator__group=group)
+    elif slug:
+        group = None
         try:
             operator = operators.get(slug=slug.lower())
         except Operator.DoesNotExist:
@@ -176,20 +191,14 @@ def operator_vehicles(request, slug=None, parent=None):
                 operators, operatorcode__code=slug, operatorcode__source__name="slug"
             )
         vehicles = operator.vehicle_set
-    else:
-        assert parent
-        operators = operators.filter(parent=parent).in_bulk()
-        if not operators:
-            raise Http404
-        vehicles = Vehicle.objects.filter(operator__in=operators)
 
     if "withdrawn" not in request.GET:
         vehicles = vehicles.filter(withdrawn=False)
 
     vehicles = vehicles.order_by("fleet_number", "fleet_code", "reg", "code")
 
-    if parent:
-        context = {}
+    if group_slug:
+        context = {"object": group}
     else:
         vehicles = vehicles.annotate(feature_names=features_string_agg)
         vehicles = vehicles.annotate(
@@ -197,7 +206,10 @@ def operator_vehicles(request, slug=None, parent=None):
         )
         vehicles = vehicles.select_related("latest_journey")
 
-        context = {"object": operator, "breadcrumb": [operator.region, operator]}
+        context = {
+            "object": operator,
+            "breadcrumb": [operator.group or operator.region, operator],
+        }
 
     vehicles = vehicles.annotate(
         livery_name=Case(When(livery__show_name=True, then="livery__name")),
@@ -212,10 +224,10 @@ def operator_vehicles(request, slug=None, parent=None):
         raise Http404
 
     vehicles = sorted(vehicles, key=get_vehicle_order)
-    if not parent and operator.noc in settings.ALLOW_VEHICLE_NOTES_OPERATORS:
+    if not group and operator.noc in settings.ALLOW_VEHICLE_NOTES_OPERATORS:
         vehicles = sorted(vehicles, key=lambda v: v.notes)
 
-    if parent:
+    if group:
         paginator = Paginator(vehicles, 1000)
         page = request.GET.get("page")
         vehicles = paginator.get_page(page)
@@ -236,7 +248,7 @@ def operator_vehicles(request, slug=None, parent=None):
         ]
     context["columns"] = columns
 
-    if not parent:
+    if not group:
         now = timezone.localtime()
 
         # midnight or 12 hours ago, whichever happened first
@@ -268,7 +280,7 @@ def operator_vehicles(request, slug=None, parent=None):
 
     context = {
         **context,
-        "parent": parent,
+        "parent": group,
         "vehicles": vehicles,
         "branding_column": any(vehicle.branding for vehicle in vehicles),
         "name_column": any(vehicle.name for vehicle in vehicles),

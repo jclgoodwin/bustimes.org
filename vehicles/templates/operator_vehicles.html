@@ -1,11 +1,9 @@
 {% extends 'page.html' %}
 
-{% block title %}Fleet list – {% firstof parent object %} – bustimes.org{% endblock %}
+{% block title %}Fleet list – {{ object }} – bustimes.org{% endblock %}
 
 {% block canonical %}
-    {% if not parent %}
-        <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}/vehicles">
-    {% endif %}
+    <link rel="canonical" href="https://bustimes.org{% firstof group.get_vehicles_url object.get_absolute_url %}">
 {% endblock canonical %}
 
 {% block head %}
@@ -16,7 +14,7 @@
 
 {% block content %}
 
-<h1>{% firstof parent object %}</h1>
+<h1>{{ object }}</h1>
 
 <div class="ad-wrapper">
     <div id="AFM_inContentTop_ad"></div>

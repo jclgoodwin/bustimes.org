@@ -4,15 +4,19 @@ from django.views.generic.base import TemplateView
 from . import views
 
 urlpatterns = [
-    path("groups/<parent>/vehicles", views.operator_vehicles, name="operator_vehicles"),
     path(
-        "operators/<slug>/vehicles", views.operator_vehicles, name="operator_vehicles"
+        "groups/<group_slug>/vehicles", views.operator_vehicles, name="group_vehicles"
+    ),
+    path(
+        "operators/<slug:slug>/vehicles",
+        views.operator_vehicles,
+        name="operator_vehicles",
     ),
     path("operators/<slug>/map", views.operator_map, name="operator_map"),
-    path("operators/<slug>/debug", views.operator_debug),
+    path("operators/<slug:slug>/debug", views.operator_debug),
     path("services/<noc>:<line_name>/vehicles", views.service_vehicles_history),
     path(
-        "services/<slug>/vehicles",
+        "services/<slug:slug>/vehicles",
         views.service_vehicles_history,
         name="service_vehicles",
     ),
@@ -27,7 +31,9 @@ urlpatterns = [
         name="vehicle_revision_action",
     ),
     path("vehicles/<int:pk>", views.VehicleDetailView.as_view()),
-    path("vehicles/<slug>", views.VehicleDetailView.as_view(), name="vehicle_detail"),
+    path(
+        "vehicles/<slug:slug>", views.VehicleDetailView.as_view(), name="vehicle_detail"
+    ),
     path("vehicles/<int:id>/edit", views.edit_vehicle),
     path("vehicles/<slug>/edit", views.edit_vehicle, name="vehicle_edit"),
     path(

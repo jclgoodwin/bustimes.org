@@ -553,6 +553,9 @@ class OperatorGroup(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse("group_vehicles", args=(self.slug,))
+
 
 class OperatorManager(models.Manager):
     def with_documents(self):
@@ -605,6 +608,9 @@ class Operator(SearchMixin, models.Model):
 
     def get_absolute_url(self):
         return reverse("operator_detail", args=(self.slug or self.noc,))
+
+    def get_vehicles_url(self):
+        return reverse("operator_vehicles", args=(self.slug,))
 
     def mode(self):
         return self.vehicle_mode
