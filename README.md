@@ -27,7 +27,7 @@
 | buses/utils.py                                                  |       23 |        4 |     83% |     35-38 |
 | buses/wsgi.py                                                   |        4 |        0 |    100% |           |
 | busstops/\_\_init\_\_.py                                        |        0 |        0 |    100% |           |
-| busstops/admin.py                                               |      321 |       14 |     96% |104-110, 186, 245-253, 335-337, 383, 458, 462, 511, 594, 622 |
+| busstops/admin.py                                               |      321 |       14 |     96% |104-110, 186, 245-253, 335-337, 383, 458, 462, 511, 595, 623 |
 | busstops/fields.py                                              |       27 |        1 |     96% |        42 |
 | busstops/forms.py                                               |       46 |        0 |    100% |           |
 | busstops/management/\_\_init\_\_.py                             |        0 |        0 |    100% |           |
@@ -46,9 +46,9 @@
 | busstops/management/tests/test\_import\_nptg.py                 |       31 |        0 |    100% |           |
 | busstops/management/tests/test\_import\_operators.py            |       70 |        0 |    100% |           |
 | busstops/middleware.py                                          |       31 |        0 |    100% |           |
-| busstops/models.py                                              |      622 |       22 |     96% |271, 296, 322, 440, 477, 527, 553, 609, 643, 681, 833, 866, 945, 957-961, 1046, 1055, 1095, 1110, 1147 |
+| busstops/models.py                                              |      623 |       22 |     96% |272, 297, 323, 441, 478, 528, 554, 610, 644, 682, 834, 867, 946, 958-962, 1047, 1056, 1096, 1111, 1148 |
 | busstops/popular\_pages.py                                      |       12 |        0 |    100% |           |
-| busstops/tasks.py                                               |       11 |        0 |    100% |           |
+| busstops/tasks.py                                               |       12 |        0 |    100% |           |
 | busstops/templatetags/\_\_init\_\_.py                           |        0 |        0 |    100% |           |
 | busstops/templatetags/date\_range.py                            |       25 |        3 |     88% | 9, 22, 28 |
 | busstops/templatetags/urlise.py                                 |       18 |        0 |    100% |           |
@@ -118,7 +118,7 @@
 | disruptions/urls.py                                             |        3 |        0 |    100% |           |
 | disruptions/views.py                                            |       23 |        0 |    100% |           |
 | fares/\_\_init\_\_.py                                           |        0 |        0 |    100% |           |
-| fares/admin.py                                                  |       37 |        1 |     97% |        31 |
+| fares/admin.py                                                  |       38 |        1 |     97% |        32 |
 | fares/forms.py                                                  |       26 |        3 |     88% | 18, 41-42 |
 | fares/management/commands/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | fares/management/commands/import\_netex\_fares.py               |      353 |       59 |     83% |28, 69-70, 121, 128-130, 223-224, 323, 367-368, 449, 528-535, 555, 564-565, 583-588, 595-632, 652-653, 663-664, 670-679 |
@@ -185,14 +185,14 @@
 | vehicles/utils.py                                               |      116 |        5 |     96% |41, 144, 156-157, 161 |
 | vehicles/views.py                                               |      617 |       52 |     92% |443-444, 463-464, 477, 495-496, 548, 564-565, 570, 586-587, 624-625, 639-641, 650, 658, 680-685, 739, 846, 848, 850, 855, 905-906, 918-920, 1007, 1010-1011, 1021, 1089-1091, 1110-1111, 1129-1139, 1143, 1145, 1169 |
 | vosa/\_\_init\_\_.py                                            |        0 |        0 |    100% |           |
-| vosa/admin.py                                                   |       36 |        0 |    100% |           |
+| vosa/admin.py                                                   |       37 |        0 |    100% |           |
 | vosa/management/commands/\_\_init\_\_.py                        |        0 |        0 |    100% |           |
 | vosa/management/commands/import\_vosa.py                        |      162 |        3 |     98% |25-26, 206 |
 | vosa/models.py                                                  |       75 |        0 |    100% |           |
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       59 |        0 |    100% |           |
-| **TOTAL**                                                       | **17100** | **1130** | **93%** |           |
+| **TOTAL**                                                       | **17104** | **1130** | **93%** |           |
 
 
 ## Setup coverage badge
