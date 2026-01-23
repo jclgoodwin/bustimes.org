@@ -2,7 +2,8 @@ from django.core.cache import cache
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task
 
-from django.db.models.functions import Length
+from django.db.models.functions import Coalesce, Length
+from django.contrib.postgres.aggregates import StringAgg
 
 from .views import operator_names
 from . import popular_pages
@@ -12,7 +13,14 @@ from . import popular_pages
 def update_popular_services():
     popular_services = (
         popular_pages.get_popular_services()
-        .order_by(Length("description").desc())
-        .annotate(operators=operator_names)
+        .annotate(
+            line_names_str=StringAgg(Coalesce("route__line_name", "line_name"), " "),
+            operators=operator_names,
+        )
+        .order_by(
+            (
+                Length("line_names_str") + Length("line_brand") + Length("description")
+            ).desc()
+        )
     )
     cache.set("popular_services", popular_services, None)

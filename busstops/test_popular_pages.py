@@ -38,10 +38,12 @@ class PopularPagesTest(TestCase):
         with (
             time_machine.travel(1769141554.391, tick=False),
             vcr.use_cassette("fixtures/vcr/popular_services.yaml"),
+            self.assertNumQueries(1),
         ):
             update_popular_services()
 
-        response = self.client.get("/")
+        with self.assertNumQueries(3):
+            response = self.client.get("/")
         self.assertContains(response, "Popular pages")
         self.assertContains(response, "X40")
         self.assertContains(response, "840")
