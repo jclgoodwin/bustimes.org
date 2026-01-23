@@ -10,11 +10,12 @@ from botocore.exceptions import NoCredentialsError
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models import Extent
 from django.contrib.gis.geos import Polygon
-from django.contrib.postgres.aggregates import ArrayAgg, StringAgg
+from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.core.cache import cache
-from django.db.models import Q
+from django.db.models import Q, Value
+from django.db.models.aggregates import StringAgg
 from django.db.models.functions import Coalesce, Upper
 from django.urls import reverse
 from django.utils.html import escape, format_html
@@ -692,29 +693,29 @@ class ServiceColour(models.Model):
 class ServiceManager(models.Manager):
     def with_documents(self):
         vector = SearchVector(
-            StringAgg("route__line_name", delimiter=" ", distinct=True, default=""),
+            StringAgg("route__line_name", Value(" "), distinct=True, default=""),
             weight="A",
             config="english",
         )
         vector += SearchVector("line_brand", weight="A", config="english")
         vector += SearchVector("description", weight="B", config="english")
         vector += SearchVector(
-            StringAgg("operator__noc", delimiter=" ", default=""),
+            StringAgg("operator__noc", Value(" "), default=""),
             weight="B",
             config="english",
         )
         vector += SearchVector(
-            StringAgg("operator__name", delimiter=" ", default=""),
+            StringAgg("operator__name", Value(" "), default=""),
             weight="B",
             config="english",
         )
         vector += SearchVector(
-            StringAgg("stops__locality__name", delimiter=" ", default=""),
+            StringAgg("stops__locality__name", Value(" "), default=""),
             weight="C",
             config="english",
         )
         vector += SearchVector(
-            StringAgg("stops__common_name", delimiter=" ", default=""),
+            StringAgg("stops__common_name", Value(" "), default=""),
             weight="D",
             config="english",
         )

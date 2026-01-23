@@ -1,10 +1,10 @@
 from django.forms import ModelForm, Textarea
 from django.contrib import admin
 from django.contrib.gis.admin import GISModelAdmin
-from django.contrib.postgres.aggregates import StringAgg
+from django.db.models.aggregates import StringAgg
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db import transaction
-from django.db.models import CharField, Exists, F, OuterRef, Q
+from django.db.models import CharField, Exists, F, OuterRef, Q, Value
 from django.db.models.functions import Cast
 from django.urls import reverse
 from django.utils.html import format_html
@@ -311,7 +311,7 @@ class ServiceAdmin(GISModelAdmin):
             queryset = queryset.annotate(routes=SubqueryCount("route"))
 
             queryset = queryset.annotate(
-                service_codes=StringAgg("route__service_code", " ")
+                service_codes=StringAgg("route__service_code", Value(" "))
             )
 
         return queryset
@@ -584,7 +584,8 @@ class SIRISourceAdmin(admin.ModelAdmin):
         if "changelist" in request.resolver_match.view_name:
             queryset = queryset.annotate(
                 areas=StringAgg(
-                    Cast("admin_areas__atco_code", output_field=CharField()), ", "
+                    Cast("admin_areas__atco_code", output_field=CharField()),
+                    Value(", "),
                 )
             )
         return queryset
@@ -613,7 +614,7 @@ class PaymentMethodAdmin(admin.ModelAdmin):
         queryset = super().get_queryset(request)
         if "changelist" in request.resolver_match.view_name:
             queryset = queryset.annotate(
-                operators=StringAgg("operator", ", ", distinct=True)
+                operators=StringAgg("operator", Value(", "), distinct=True)
             )
         return queryset
 

@@ -10,12 +10,12 @@ from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.geos import GEOSException, Point
-from django.contrib.postgres.aggregates import StringAgg
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied, BadRequest
 from django.core.paginator import Paginator
 from django.db import IntegrityError, OperationalError, connection, transaction
-from django.db.models import Case, F, Max, OuterRef, Q, When
+from django.db.models import Case, F, Max, OuterRef, Q, When, Value
+from django.db.models.aggregates import StringAgg
 from django.db.models.functions import Coalesce, Now
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
@@ -132,7 +132,7 @@ def liveries_css(request, version=0):
 
 
 features_string_agg = StringAgg(
-    "features__name", ", ", order_by=["features__name"], default=""
+    "features__name", Value(", "), order_by=["features__name"], default=""
 )
 
 

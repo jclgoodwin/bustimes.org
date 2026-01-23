@@ -2,8 +2,8 @@ from django.contrib import admin
 from django.contrib.gis.admin import GISModelAdmin
 from django.contrib.gis.db.models import GeometryField
 from django.forms import ModelForm, Textarea
-from django.db.models import Func
-from django.contrib.postgres.aggregates import StringAgg
+from django.db.models import Func, Value
+from django.db.models.aggregates import StringAgg
 from django.db.models import Exists, OuterRef, F, CharField
 from django.db.models.functions import Cast
 from django.urls import reverse
@@ -99,7 +99,7 @@ class TimetableDataSourceAdmin(admin.ModelAdmin):
         queryset = super().get_queryset(request)
         if "changelist" in request.resolver_match.view_name:
             queryset = queryset.annotate(
-                nocs=StringAgg("operators", ", ", distinct=True)
+                nocs=StringAgg("operators", Value(", "), distinct=True)
             )
         return queryset
 
@@ -201,7 +201,7 @@ class GarageAdmin(GISModelAdmin):
         queryset = super().get_queryset(request)
         if "changelist" in request.resolver_match.view_name:
             queryset = queryset.annotate(
-                operators=StringAgg("vehicle__operator", ", ", distinct=True)
+                operators=StringAgg("vehicle__operator", Value(", "), distinct=True)
             )
         return queryset
 
@@ -226,7 +226,7 @@ class BankHolidayAdmin(admin.ModelAdmin):
         if "changelist" in request.resolver_match.view_name:
             queryset = queryset.annotate(
                 dates=StringAgg(
-                    Cast("bankholidaydate__date", output_field=CharField()), ", "
+                    Cast("bankholidaydate__date", output_field=CharField()), Value(", ")
                 ),
                 calendars=SubqueryCount("calendarbankholiday"),
             )
