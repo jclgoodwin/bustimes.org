@@ -121,7 +121,6 @@ class OperatorAdmin(admin.ModelAdmin):
         "operator_codes",
         "noc",
         "vehicle_mode",
-        "parent",
         "region_id",
         "services",
         "vehicles",
@@ -133,7 +132,6 @@ class OperatorAdmin(admin.ModelAdmin):
         "region",
         "vehicle_mode",
         "payment_methods",
-        "parent",
         "group",
     )
     search_fields = ("noc", "name")

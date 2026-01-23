@@ -234,6 +234,7 @@ def operator_vehicles(request, slug=None, group_slug=None):
 
         for v in vehicles:
             v.operator = operators[v.operator_id]
+            v.operator_name = v.operator.name.removeprefix(f"{group} ")
 
         context["paginator"] = paginator
     else:

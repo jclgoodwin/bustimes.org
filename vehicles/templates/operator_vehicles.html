@@ -47,8 +47,8 @@ ticket machines, a byproduct of the live bus tracking.</p>
     {% endif %}
 </ul>
 
-{% if not parent and object.parent %}
-    <p>There’s also <a href="/groups/{{ object.parent }}/vehicles">a list of all {{ object.parent }} vehicles</a>.</p>
+{% if object.group %}
+    <p>There’s also <a href="{{ object.group.get_absolute_url }}">a list of all {{ object.group }} vehicles</a>.</p>
 {% endif %}
 
 {% if not parent %}
@@ -122,7 +122,7 @@ ticket machines, a byproduct of the live bus tracking.</p>
                 {% if garage_column %}<td class="trivia">{{ vehicle.garage_name|default:'' }}</td>{% endif %}
                 {% for value in vehicle.column_values %}<td class="trivia">{{ value }}</td>{% endfor %}
                 {% if features_column %}<td class="trivia">{{ vehicle.feature_names }}</td>{% endif %}
-                {% if parent %}<td>{{ vehicle.operator }}</td>{% endif %}
+                {% if parent %}<td>{{ vehicle.operator_name }}</td>{% endif %}
                 <td>{{ vehicle.get_flickr_link }}</td>
                 {% if vehicle.is_editable %}
                     <td><a href="{{ vehicle.get_edit_url }}">Edit{% if vehicle.pending_edits %}<abbr title="pending edits">*</abbr>{% endif %}</a></td>
