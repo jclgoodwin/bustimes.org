@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_3baf1eb7e8e062db_admin_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.1">coverage.py v7.13.1</a>,
-            created at 2026-01-23 16:16 +0000
+            created at 2026-01-24 20:24 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -806,7 +806,7 @@
     <p class="run run2"><span class="n"><a id="t724" href="#t724">724</a></span><span class="t">                <span class="nam">current</span><span class="op">=</span><span class="key">True</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t725" href="#t725">725</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t726" href="#t726">726</a></span><span class="t">            <span class="op">.</span><span class="nam">distinct</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t727" href="#t727">727</a></span><span class="t">            <span class="op">.</span><span class="nam">order_by</span><span class="op">(</span><span class="str">"validityperiod__period"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t727" href="#t727">727</a></span><span class="t">            <span class="op">.</span><span class="nam">order_by</span><span class="op">(</span><span class="str">"publication_window"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t728" href="#t728">728</a></span><span class="t">            <span class="op">.</span><span class="nam">prefetch_related</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t729" href="#t729">729</a></span><span class="t">                <span class="nam">Prefetch</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t730" href="#t730">730</a></span><span class="t">                    <span class="str">"consequence_set"</span><span class="op">,</span> <span class="nam">queryset</span><span class="op">=</span><span class="nam">consequences</span><span class="op">,</span> <span class="nam">to_attr</span><span class="op">=</span><span class="str">"consequences"</span>&nbsp;</span><span class="r"></span></p>
@@ -915,7 +915,7 @@
     <p class="run run2"><span class="n"><a id="t833" href="#t833">833</a></span><span class="t">                <span class="nam">consequence__operators</span><span class="op">=</span><span class="nam">self</span><span class="op">.</span><span class="nam">object</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t834" href="#t834">834</a></span><span class="t">                <span class="nam">current</span><span class="op">=</span><span class="key">True</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t835" href="#t835">835</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t836" href="#t836">836</a></span><span class="t">            <span class="op">.</span><span class="nam">order_by</span><span class="op">(</span><span class="str">"validityperiod__period"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t836" href="#t836">836</a></span><span class="t">            <span class="op">.</span><span class="nam">order_by</span><span class="op">(</span><span class="str">"publication_window"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t837" href="#t837">837</a></span><span class="t">            <span class="op">.</span><span class="nam">distinct</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t838" href="#t838">838</a></span><span class="t">            <span class="op">.</span><span class="nam">prefetch_related</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t839" href="#t839">839</a></span><span class="t">                <span class="nam">Prefetch</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
@@ -1220,7 +1220,7 @@
     <p class="run run2"><span class="n"><a id="t1138" href="#t1138">1138</a></span><span class="t">                <span class="nam">publication_window__contains</span><span class="op">=</span><span class="nam">Now</span><span class="op">(</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t1139" href="#t1139">1139</a></span><span class="t">                <span class="nam">current</span><span class="op">=</span><span class="key">True</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t1140" href="#t1140">1140</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t1141" href="#t1141">1141</a></span><span class="t">            <span class="op">.</span><span class="nam">order_by</span><span class="op">(</span><span class="str">"validityperiod__period"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t1141" href="#t1141">1141</a></span><span class="t">            <span class="op">.</span><span class="nam">order_by</span><span class="op">(</span><span class="str">"publication_window"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t1142" href="#t1142">1142</a></span><span class="t">            <span class="op">.</span><span class="nam">prefetch_related</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t1143" href="#t1143">1143</a></span><span class="t">                <span class="nam">Prefetch</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t1144" href="#t1144">1144</a></span><span class="t">                    <span class="str">"consequence_set"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
@@ -1745,7 +1745,7 @@
             <a class="nav" href="z_3baf1eb7e8e062db_admin_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.1">coverage.py v7.13.1</a>,
-            created at 2026-01-23 16:16 +0000
+            created at 2026-01-24 20:24 +0000
         </p>
     </div>
 </footer>
