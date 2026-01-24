@@ -44,6 +44,7 @@ dependencies = [
     "xmltodict>=1.0.2",
     "django-http-compression>=1.2.0",
     "tqdm>=4.67.1",
+    "pugixml>=0.7.0",
 ]
 
 [dependency-groups]

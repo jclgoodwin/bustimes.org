@@ -157,6 +157,7 @@ dependencies = [
     { name = "lightningcss-cli" },
     { name = "numpy" },
     { name = "psycopg" },
+    { name = "pugixml" },
     { name = "pygments" },
     { name = "pyyaml" },
     { name = "redis" },
@@ -224,6 +225,7 @@ requires-dist = [
     { name = "lightningcss-cli", specifier = ">=1.29.2,<2" },
     { name = "numpy", specifier = "~=2.3.0" },
     { name = "psycopg", specifier = ">=3.1.8,<4" },
+    { name = "pugixml", specifier = ">=0.7.0" },
     { name = "pygments", specifier = ">=2.15.1,<3" },
     { name = "pyyaml", specifier = ">=6.0.0,<7" },
     { name = "redis", specifier = "~=7.1.0" },
@@ -1194,6 +1196,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/20/e5/16ff212c1e452235a90aeb09066144d0c5a6a8c0834397e03f5224495c4e/ptyprocess-0.7.0.tar.gz", hash = "sha256:5c5d0a3b48ceee0b48485e0c26037c0acd7d29765ca3fbb5cb3831d347423220", size = 70762, upload-time = "2020-12-28T15:15:30.155Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/22/a6/858897256d0deac81a172289110f31629fc4cee19b6f01283303e18c8db3/ptyprocess-0.7.0-py2.py3-none-any.whl", hash = "sha256:4b41f3967fce3af57cc7e94b888626c18bf37a083e3651ca8feeb66d492fef35", size = 13993, upload-time = "2020-12-28T15:15:28.35Z" },
+]
+
+[[package]]
+name = "pugixml"
+version = "0.7.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/ef/06/4e692989c0490cd6b786024225cc3cfe2feb54c59a62b6e390065163131d/pugixml-0.7.0.tar.gz", hash = "sha256:561011765e0fafb949bb6794e2506f19c9741917c3cd306c2192a931af9ff2ff", size = 359403, upload-time = "2025-01-14T15:13:12.828Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3f/37/ea0dc6d8f6add70f745e4976b574644b02c71c29b40358ddcb538830ef95/pugixml-0.7.0-cp313-cp313-macosx_12_0_arm64.whl", hash = "sha256:90182e6e7b759c7822b0041a557036e617b4e678d9c11b05931b5c43bf4f7422", size = 249251, upload-time = "2025-01-14T15:12:58.292Z" },
+    { url = "https://files.pythonhosted.org/packages/3c/de/8248ac4f220fbaf4e86fd6a24f3d712e729da11793863b64c229a8cb1c50/pugixml-0.7.0-cp313-cp313-macosx_12_0_x86_64.whl", hash = "sha256:db13262664b7492541128b630730cecb7ca16b36bf0873c7fd5082b12a986c8d", size = 277958, upload-time = "2025-01-14T15:13:00.002Z" },
+    { url = "https://files.pythonhosted.org/packages/6e/44/2c69fbe6774b5349ba25f144509a333140244abbd003aa15e9ef0f774e15/pugixml-0.7.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d6385d4b1a172148205b42400fd7bcb890c25743bad59967dd73603a84204273", size = 382795, upload-time = "2025-01-14T15:13:01.244Z" },
+    { url = "https://files.pythonhosted.org/packages/bd/67/17fd0f922bd42824ec5450a46135a77d56986175a2f63b48b96040a5eb24/pugixml-0.7.0-cp313-cp313-win_amd64.whl", hash = "sha256:fd4e15089dcf339a3fa30c646bd5937bb31743d8d801643b7910a45c0da0887e", size = 274932, upload-time = "2025-01-14T15:13:04.404Z" },
 ]
 
 [[package]]
