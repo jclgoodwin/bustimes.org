@@ -724,7 +724,7 @@ class StopPointDetailView(DetailView):
                 current=True,
             )
             .distinct()
-            .order_by("validityperiod__period")
+            .order_by("publication_window")
             .prefetch_related(
                 Prefetch(
                     "consequence_set", queryset=consequences, to_attr="consequences"
@@ -833,7 +833,7 @@ class OperatorDetailView(DetailView):
                 consequence__operators=self.object,
                 current=True,
             )
-            .order_by("validityperiod__period")
+            .order_by("publication_window")
             .distinct()
             .prefetch_related(
                 Prefetch(
@@ -1138,7 +1138,7 @@ class ServiceDetailView(DetailView):
                 publication_window__contains=Now(),
                 current=True,
             )
-            .order_by("validityperiod__period")
+            .order_by("publication_window")
             .prefetch_related(
                 Prefetch(
                     "consequence_set",
