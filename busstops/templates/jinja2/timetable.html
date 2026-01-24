@@ -51,7 +51,7 @@
                     {% if grouping.routes or timetable.detailed or timetable.has_multiple_operators %}
                         <thead>
                             {% if grouping.routes %}<tr class="link">
-                                <th colspan="2"></th>
+                                <th{% if grouping.has_notes_column %} colspan="2"{% endif %}></th>
                                 {% for head in grouping.routes %}
                                     <td{% if head.span > 1 %} colspan="{{ head.span }}"{% endif %}>
                                         {% if object.id != head.content.service_id %}
@@ -143,9 +143,11 @@
                                 <th{% if row.has_waittimes %} rowspan="2"{% endif %} class="stop-name" scope="row">
                                     {% if row.stop.pk %}<a href="{{ row.stop.get_absolute_url() }}">{% if row.stop.situation %}⚠️&#xfe0f; {% endif %}{{ row.stop.get_qualified_name() }}</a>{% else %}{{ row.stop }}{% endif %}
                                 </th>
-                                <td{% if row.has_waittimes %} rowspan="2"{% endif %} class="stop-name" scope="row">
-                                    {% if row.set_down_only %}<abbr title="set down only">s</abbr>{% elif row.pick_up_only %}<abbr title="pick up only">p</abbr>{% endif %}
-                                </td>
+                                {% if grouping.has_notes_column %}
+                                    <td{% if row.has_waittimes %} rowspan="2"{% endif %}>
+                                        {% if row.set_down_only %}<abbr title="set down only">s</abbr>{% elif row.pick_up_only %}<abbr title="pick up only">p</abbr>{% endif %}
+                                    </td>
+                                {% endif %}
                             {% for cell in row.times %}{% if cell.colspan %}<td{% if grouping.routes or grouping.column_feet or timetable.has_multiple_operators %} colspan="{{ cell.colspan }}"{% endif %} rowspan="{{ cell.rowspan }}" class="then-every">{{ cell }}</td>{% else %}<td{% if row.has_waittimes and not cell.wait_time and not cell.first and not cell.last %} rowspan="2"{% endif %}>{% if cell %}{% if not row.has_waittimes or cell.wait_time or not cell.first %}{{ cell }}{% if not row.set_down_only and cell.set_down_only() %}<abbr title="set down only">s</abbr>{% elif not row.pick_up_only and cell.pick_up_only() %}<abbr title="pick up only">p</abbr>{% endif %}{% endif %}{% if cell.stoptime.note %}<strong>{{ cell.stoptime.note.code }}</strong>{% endif %}{% endif %}</td>{% endif %}{% endfor %}
                             </tr>
                             {% if row.has_waittimes %}
@@ -158,7 +160,8 @@
                 {% if grouping.column_feet %}<tfoot>
                     {% for row in grouping.column_feet.values() %}
                         {% if (row|length) > 1 %}
-                            <tr><th colspan="2"></th>
+                            <tr>
+                            <th{% if grouping.has_notes_column %} colspan="2"{% endif %}></th>
                             {% for foot in row %}
                                 <td{% if foot.span > 1 %} colspan="{{ foot.span }}"{% endif %}>
                                     {% if foot.note %}{% if foot.note.stoptimes %}<strong>{{ foot.note.code }}</strong> {% endif %}{{ linebreaksbr(urlise(foot.note.text)) }}{% endif %}

@@ -517,6 +517,10 @@ class Grouping:
             for row in self.rows
         )
 
+    @cached_property
+    def has_notes_column(self):
+        return any(row.pick_up_only or row.set_down_only for row in self.rows)
+
     def has_minor_stops(self):
         return any(row.is_minor() for row in self.rows)
 

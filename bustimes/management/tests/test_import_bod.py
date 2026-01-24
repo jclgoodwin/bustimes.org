@@ -171,6 +171,7 @@ class ImportBusOpenDataTest(TestCase):
                 <th class="stop-name" scope="row">
                     <a href="/stops/2900w0321">Lion Store (opp)</a>
                 </th>
+                <td></td>
                 <td>12:19</td>
             </tr>""",
             html=True,
