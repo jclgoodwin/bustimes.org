@@ -18,6 +18,6 @@ def update_popular_services():
 
     # sort by string length for aesthetics
     popular_services = list(popular_services)
-    popular_services.sort(key=popular_pages.Service.__str__)
+    popular_services.sort(key=lambda service: len(str(service)))
 
     cache.set("popular_services", popular_services, None)
