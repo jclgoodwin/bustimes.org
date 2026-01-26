@@ -280,7 +280,7 @@ def stop_time_json(stop_time, date) -> dict:
             {
                 "id": trip.operator.noc,
                 "name": trip.operator.name,
-                "parent": trip.operator.parent,
+                "parent": trip.operator.group.name if trip.operator.group else "",
                 "vehicle_mode": trip.operator.vehicle_mode,
             }
         )

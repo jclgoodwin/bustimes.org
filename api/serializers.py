@@ -37,7 +37,7 @@ class VehicleSerializer(serializers.ModelSerializer):
                 "id": obj.operator_id,
                 "slug": obj.operator.slug,
                 "name": obj.operator.name,
-                "parent": obj.operator.parent,
+                "parent": obj.operator_parent,
             }
 
     def get_livery(self, obj):
@@ -48,7 +48,7 @@ class VehicleSerializer(serializers.ModelSerializer):
                 "left": obj.get_livery(),
                 "right": obj.get_livery(90),
             }
-            
+
     def get_previous_reg(self, obj):
         return obj.data_get(key="Previous reg")
 

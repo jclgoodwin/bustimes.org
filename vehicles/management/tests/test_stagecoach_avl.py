@@ -6,7 +6,7 @@ import time_machine
 import vcr
 from django.test import TestCase
 
-from busstops.models import DataSource, Operator, Region, Service
+from busstops.models import DataSource, Operator, OperatorGroup, Region, Service
 
 from ...models import VehicleJourney
 from ..commands.import_stagecoach_avl import Command
@@ -21,15 +21,16 @@ class StagecoachTest(TestCase):
             url="https://api.stagecoach-technology.net/vehicle-tracking/v1/vehicles?services=:*:::",
         )
 
-        r = Region.objects.create(pk="SE")
-        o = Operator.objects.create(
-            pk="SCOX", name="Oxford", parent="Stagecoach", vehicle_mode="bus", region=r
+        group = OperatorGroup.objects.create(name="Stagecoach", slug="stagecoach")
+        region = Region.objects.create(pk="SE")
+        operator = Operator.objects.create(
+            pk="SCOX", name="Oxford", vehicle_mode="bus", region=region, group=group
         )
-        s = Service.objects.create(
+        service = Service.objects.create(
             line_name="Oxford Tube",
             geometry="MULTILINESTRING((-0.1475818977 51.4928233539,-0.1460401487 51.496737716))",
         )
-        s.operator.add(o)
+        service.operator.add(operator)
 
     @patch(
         "vehicles.management.import_live_vehicles.redis_client",

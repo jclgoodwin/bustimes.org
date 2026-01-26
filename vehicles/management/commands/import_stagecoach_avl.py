@@ -64,11 +64,7 @@ class Command(ImportLiveVehiclesCommand):
     source_name = vehicle_code_scheme = "Stagecoach"
 
     def do_source(self):
-        self.operators = Operator.objects.filter(
-            Q(parent="Stagecoach")
-            # | Q(noc__in=["SCLK", "MEGA"])
-        ).in_bulk()
-
+        self.operators = Operator.objects.filter(group__name="Stagecoach").in_bulk()
         return super().do_source()
 
     @staticmethod

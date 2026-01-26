@@ -173,7 +173,7 @@ def get_vehicle_order(vehicle) -> tuple[str, int, str]:
 def operator_vehicles(request, slug=None, group_slug=None):
     """fleet list"""
 
-    operators = Operator.objects.select_related("region")
+    operators = Operator.objects.select_related("region", "group")
     if group_slug:
         try:
             group = OperatorGroup.objects.get(slug=group_slug)

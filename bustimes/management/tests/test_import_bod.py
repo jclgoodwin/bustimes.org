@@ -45,12 +45,8 @@ class ImportBusOpenDataTest(TestCase):
     def setUpTestData(cls):
         ea = Region.objects.create(pk="EA", name="East Anglia")
         lynx = Operator.objects.create(noc="LYNX", region=ea, name="Lynx")
-        scpb = Operator.objects.create(
-            noc="SCCM", region=ea, name="Stagecoach East", parent="Stagecoach"
-        )
-        schu = Operator.objects.create(
-            noc="SCHU", region=ea, name="Huntingdon", parent="Stagecoach"
-        )
+        scpb = Operator.objects.create(noc="SCCM", region=ea, name="Stagecoach East")
+        schu = Operator.objects.create(noc="SCHU", region=ea, name="Huntingdon")
         source = DataSource.objects.create(name="National Operator Codes")
         OperatorCode.objects.bulk_create(
             [

@@ -16,7 +16,7 @@ urlpatterns = [
     path("operators/<slug:slug>/debug", views.operator_debug),
     path("services/<noc>:<line_name>/vehicles", views.service_vehicles_history),
     path(
-        "services/<slug:slug>/vehicles",
+        "services/<slug>/vehicles",
         views.service_vehicles_history,
         name="service_vehicles",
     ),

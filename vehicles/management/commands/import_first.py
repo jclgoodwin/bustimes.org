@@ -157,7 +157,7 @@ class Command(ImportLiveVehiclesCommand):
         vehicle_codes = [self.split_vehicle_id(item)[1] for item in items]
         print(vehicle_codes)
         vehicles = Vehicle.objects.filter(
-            operator__parent="First", code__in=vehicle_codes
+            operator__group__name="First", code__in=vehicle_codes
         )
         vehicles = vehicles.select_related("latest_journey")
         vehicles = {vehicle.code: vehicle for vehicle in vehicles}

@@ -4,7 +4,7 @@ from rest_framework import pagination, viewsets
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 from django.contrib.postgres.aggregates import ArrayAgg
-from django.db.models import Q
+from django.db.models import Q, Value
 from django.db.models.functions import Coalesce
 
 from vehicles.time_aware_polyline import encode_time_aware_polyline
@@ -36,7 +36,10 @@ class CursorPaginationWithSmallerPageSize(CursorPagination):
 class VehicleViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = (
         Vehicle.objects.select_related("vehicle_type", "livery", "operator", "garage")
-        .annotate(special_features=ArrayAgg("features__name", filter=~Q(features=None)))
+        .annotate(
+            special_features=ArrayAgg("features__name", filter=~Q(features=None)),
+            operator_parent=Coalesce("operator__group__name", Value("")),
+        )
         .order_by("id")
     )
     serializer_class = serializers.VehicleSerializer
@@ -63,6 +66,7 @@ class OperatorViewSet(viewsets.ReadOnlyModelViewSet):
         Operator.objects.filter(
             Exists("vehicle") | Exists("service", filter=Q(service__current=True))
         )
+        .annotate(parent=Coalesce("group__name", Value("")))
         .order_by("noc")
         .defer("address", "email", "phone", "search_vector")
     )

@@ -160,8 +160,8 @@ class Command(ImportLiveVehiclesCommand):
             operator = operators[0]
 
             defaults["operator"] = operator
-            if operator.parent:
-                condition = Q(operator__parent=operator.parent)
+            if operator.group_id:
+                condition = Q(operator__group_id=operator.group_id)
                 vehicles = self.vehicles.filter(condition)
             else:
                 vehicles = self.vehicles.filter(operator=operator)
@@ -235,7 +235,7 @@ class Command(ImportLiveVehiclesCommand):
 
         if not operators:
             pass
-        elif len(operators) == 1 and operators[0].parent and destination_ref:
+        elif len(operators) == 1 and operators[0].group_id and destination_ref:
             operator = operators[0]
 
             # first try taking OperatorRef at face value
@@ -245,9 +245,9 @@ class Command(ImportLiveVehiclesCommand):
             except (Service.DoesNotExist, Service.MultipleObjectsReturned):
                 pass
 
-            condition = Q(parent=operator.parent)
+            condition = Q(group_id=operator.group_id)
 
-            # in case the vehicle operator has a different parent (e.g. HCTY)
+            # in case the vehicle operator has a different group (e.g. HCTY)
             if vehicle_operator_id != operator.noc:
                 condition |= Q(noc=vehicle_operator_id)
 

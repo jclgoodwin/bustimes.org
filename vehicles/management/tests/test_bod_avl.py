@@ -12,6 +12,7 @@ from busstops.models import (
     Locality,
     Operator,
     OperatorCode,
+    OperatorGroup,
     Region,
     Service,
     StopPoint,
@@ -34,6 +35,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         region = Region.objects.create(id="EA")
+        first_group = OperatorGroup.objects.create(name="First", slug="first")
         Operator.objects.bulk_create(
             [
                 Operator(noc="WHIP", region=region),
@@ -41,8 +43,8 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 Operator(noc="HAMS", region=region),
                 Operator(noc="UNOE", region=region),
                 Operator(noc="UNIB", region=region),
-                Operator(noc="FBRI", region=region, parent="First"),
-                Operator(noc="FECS", region=region, parent="First"),
+                Operator(noc="FBRI", region=region, group=first_group),
+                Operator(noc="FECS", region=region, group=first_group),
                 Operator(noc="NIBS", region=region),
                 Operator(noc="TCVW", region=region, name="National Express Coventry"),
                 Operator(

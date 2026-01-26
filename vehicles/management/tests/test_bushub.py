@@ -3,7 +3,14 @@ from unittest.mock import patch
 import fakeredis
 from django.test import TestCase
 
-from busstops.models import DataSource, Operator, Region, Service, ServiceCode
+from busstops.models import (
+    DataSource,
+    Operator,
+    OperatorGroup,
+    Region,
+    Service,
+    ServiceCode,
+)
 
 from ...models import Vehicle, VehicleJourney
 from ..commands import import_bushub
@@ -14,11 +21,15 @@ class BusHubTest(TestCase):
     def setUpTestData(cls):
         DataSource.objects.create()
         Region.objects.create(id="WM")
+        rotala_group = OperatorGroup.objects.create(name="Rotala", slug="rotala")
         Operator.objects.create(
-            noc="DIAM", name="Graphite Buses", region_id="WM", parent="Rotala"
+            noc="DIAM", name="Graphite Buses", region_id="WM", group=rotala_group
         )
         Operator.objects.create(
-            noc="WNGS", name="Paul McCartney & Wings", region_id="WM", parent="Rotala"
+            noc="WNGS",
+            name="Paul McCartney & Wings",
+            region_id="WM",
+            group=rotala_group,
         )
         service_a = Service.objects.create(
             service_code="44a", line_name="44", tracking=True

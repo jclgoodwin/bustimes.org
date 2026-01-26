@@ -112,7 +112,7 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
 
     if operator.noc == "FABD":  # Aberdeen
         vehicle = vehicle.removeprefix("111-").removeprefix("S-")
-    elif operator.parent == "Stagecoach" or operator.noc == "MCGL":
+    elif operator.name.startswith("Stagecoach ") or operator.noc == "MCGL":
         return
 
     vehicle_code_code = f"{operator_ref}:{vehicle}"
@@ -129,8 +129,8 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
         defaults = {"source": data_source, "operator": operator, "code": vehicle}
 
         operator_query = Q(operator=operator)
-        if operator.parent:
-            operator_query |= Q(operator__parent=operator.parent)
+        if operator.group_id:
+            operator_query |= Q(operator__group=operator.group_id)
         vehicles = Vehicle.objects.filter(
             operator_query | Q(source=data_source)
         ).select_related("latest_journey")
