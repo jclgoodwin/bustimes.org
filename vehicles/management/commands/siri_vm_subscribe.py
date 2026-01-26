@@ -77,7 +77,7 @@ class Command(BaseCommand):
 
         consumer_address = f"{consumer_address}/siri/{subscription.uuid}"
 
-        initial_termination_time = now + timedelta(hours=20) - timedelta(minutes=6)
+        initial_termination_time = now + timedelta(days=7) - timedelta(minutes=6)
 
         data = unparse(
             {
