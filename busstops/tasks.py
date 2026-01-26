@@ -3,7 +3,6 @@ from huey import crontab
 from huey.contrib.djhuey import db_periodic_task
 
 from django.db.models import Value
-from django.db.models.functions import Length
 from django.db.models.aggregates import StringAgg
 
 from .views import operator_names
@@ -20,10 +19,11 @@ def update_popular_services():
             ),
             operators=operator_names,
         )
-        .order_by(
-            (
-                Length("line_names_str") + Length("line_brand") + Length("description")
-            ).desc()
-        )
-    )
+        .order_by("?")
+    )[:10]
+
+    # sort by string length for aesthetics
+    popular_services = list(popular_services)
+    popular_services.sort(key=popular_pages.Service.__str__)
+
     cache.set("popular_services", popular_services, None)

@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - python-requests/2.32.5
     method: GET
-    uri: https://umami.bustimes.org.uk/api/websites/test-website-id/metrics?startAt=1769055154391&endAt=1769141554391&type=path&timezone=Europe%2FLondon&search=services&limit=10
+    uri: https://umami.bustimes.org.uk/api/websites/test-website-id/metrics?startAt=1769055154391&endAt=1769141554391&type=path&timezone=UTC&search=services&limit=20
   response:
     body:
       string: '[{"x":"/services/424-lettermullan-lettermullen-eyre-square-galway-b","y":640},{"x":"/services/376-bristol-bus-station-green-lane-avenue","y":568},{"x":"/services/v1-derby-etwall-hilton-hatton-tutbury-rolleston-2","y":525},{"x":"/services/x40-sheringham-cromer-norwich","y":505},{"x":"/services/840-leeds-whitby","y":488},{"x":"/services/231-bath-box-rudloe-corsham-chippenham","y":474},{"x":"/services/sky-skylink-derby-leicester-loughborough-east-midl","y":472},{"x":"/services/x34-frome-trowbridge-chippenham","y":457},{"x":"/services/28-taunton-minehead-via-bishops-lydeard-williton-w","y":412},{"x":"/services/19-north-shields-ashington","y":364}]'

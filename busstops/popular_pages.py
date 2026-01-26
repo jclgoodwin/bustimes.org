@@ -1,12 +1,12 @@
-import time
+from datetime import datetime, timedelta, timezone
 import requests
 from django.conf import settings
 from .models import Service
 
 
 def get_popular_services():
-    now = int(time.time() * 1000)
-    day_ago = now - 86400 * 1000
+    now = datetime.now(tz=timezone.utc)
+    day_ago = now - timedelta(days=1)
 
     endpoint = f"https://umami.bustimes.org.uk/api/websites/{settings.UMAMI_WEBSITE_ID}/metrics"
 
@@ -14,23 +14,18 @@ def get_popular_services():
         endpoint,
         headers={"Authorization": f"Bearer {settings.UMAMI_TOKEN}"},
         params={
-            "startAt": day_ago,
-            "endAt": now,
+            "startAt": int(day_ago.timestamp() * 1000),
+            "endAt": int(now.timestamp() * 1000),
             "type": "path",
-            "timezone": "Europe/London",
+            "timezone": "UTC",
             "search": "services",
-            "limit": 10,
+            "limit": 20,
         },
         timeout=10,
     )
 
     data = response.json()
 
-    # filter for /services/ paths and extract slugs
-    slugs = [
-        item["x"].split("/")[2]
-        for item in data
-        if item["x"].startswith("/services/") and len(item["x"].split("/")) >= 3
-    ][:20]
+    slugs = [item["x"].split("/")[2] for item in data]
 
     return Service.objects.with_line_names().filter(slug__in=slugs)
