@@ -84,7 +84,6 @@ class OperatorSerializer(serializers.ModelSerializer):
             "aka",
             "vehicle_mode",
             "region_id",
-            "parent",
             "url",
             "twitter",
         ]

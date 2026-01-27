@@ -66,7 +66,6 @@ class OperatorViewSet(viewsets.ReadOnlyModelViewSet):
         Operator.objects.filter(
             Exists("vehicle") | Exists("service", filter=Q(service__current=True))
         )
-        .annotate(parent=Coalesce("group__name", Value("")))
         .order_by("noc")
         .defer("address", "email", "phone", "search_vector")
     )
