@@ -576,7 +576,6 @@ class Operator(SearchMixin, models.Model):
     aka = models.CharField(max_length=100, blank=True)
     slug = AutoSlugField(populate_from=str, editable=True, unique=True)
     vehicle_mode = models.CharField(max_length=48, blank=True)
-    parent = models.CharField(max_length=48, blank=True, db_index=True)
     group = models.ForeignKey(OperatorGroup, models.SET_NULL, null=True, blank=True)
     siblings = models.ManyToManyField("self", blank=True)
     region = models.ForeignKey(Region, models.SET_NULL, null=True, blank=True)
