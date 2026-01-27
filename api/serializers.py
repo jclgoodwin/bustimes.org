@@ -37,7 +37,6 @@ class VehicleSerializer(serializers.ModelSerializer):
                 "id": obj.operator_id,
                 "slug": obj.operator.slug,
                 "name": obj.operator.name,
-                "parent": obj.operator_parent,
             }
 
     def get_livery(self, obj):

@@ -4,7 +4,7 @@ from rest_framework import pagination, viewsets
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 from django.contrib.postgres.aggregates import ArrayAgg
-from django.db.models import Q, Value
+from django.db.models import Q
 from django.db.models.functions import Coalesce
 
 from vehicles.time_aware_polyline import encode_time_aware_polyline
@@ -38,7 +38,6 @@ class VehicleViewSet(viewsets.ReadOnlyModelViewSet):
         Vehicle.objects.select_related("vehicle_type", "livery", "operator", "garage")
         .annotate(
             special_features=ArrayAgg("features__name", filter=~Q(features=None)),
-            operator_parent=Coalesce("operator__group__name", Value("")),
         )
         .order_by("id")
     )
