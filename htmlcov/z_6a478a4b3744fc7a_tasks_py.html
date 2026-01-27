@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_6a478a4b3744fc7a_test_models_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.1">coverage.py v7.13.1</a>,
-            created at 2026-01-27 00:06 +0000
+            created at 2026-01-27 14:41 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -194,7 +194,7 @@
     <p class="pln"><span class="n"><a id="t112" href="#t112">112</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t113" href="#t113">113</a></span><span class="t">    <span class="key">if</span> <span class="nam">operator</span><span class="op">.</span><span class="nam">noc</span> <span class="op">==</span> <span class="str">"FABD"</span><span class="op">:</span>  <span class="com"># Aberdeen</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t114" href="#t114">114</a></span><span class="t">        <span class="nam">vehicle</span> <span class="op">=</span> <span class="nam">vehicle</span><span class="op">.</span><span class="nam">removeprefix</span><span class="op">(</span><span class="str">"111-"</span><span class="op">)</span><span class="op">.</span><span class="nam">removeprefix</span><span class="op">(</span><span class="str">"S-"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t115" href="#t115">115</a></span><span class="t">    <span class="key">elif</span> <span class="nam">operator</span><span class="op">.</span><span class="nam">parent</span> <span class="op">==</span> <span class="str">"Stagecoach"</span> <span class="key">or</span> <span class="nam">operator</span><span class="op">.</span><span class="nam">noc</span> <span class="op">==</span> <span class="str">"MCGL"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t115" href="#t115">115</a></span><span class="t">    <span class="key">elif</span> <span class="nam">operator</span><span class="op">.</span><span class="nam">name</span><span class="op">.</span><span class="nam">startswith</span><span class="op">(</span><span class="str">"Stagecoach "</span><span class="op">)</span> <span class="key">or</span> <span class="nam">operator</span><span class="op">.</span><span class="nam">noc</span> <span class="op">==</span> <span class="str">"MCGL"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t116" href="#t116">116</a></span><span class="t">        <span class="key">return</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t117" href="#t117">117</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t118" href="#t118">118</a></span><span class="t">    <span class="nam">vehicle_code_code</span> <span class="op">=</span> <span class="fst">f"</span><span class="op">{</span><span class="nam">operator_ref</span><span class="op">}</span><span class="fst">:</span><span class="op">{</span><span class="nam">vehicle</span><span class="op">}</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
@@ -211,8 +211,8 @@
     <p class="run"><span class="n"><a id="t129" href="#t129">129</a></span><span class="t">        <span class="nam">defaults</span> <span class="op">=</span> <span class="op">{</span><span class="str">"source"</span><span class="op">:</span> <span class="nam">data_source</span><span class="op">,</span> <span class="str">"operator"</span><span class="op">:</span> <span class="nam">operator</span><span class="op">,</span> <span class="str">"code"</span><span class="op">:</span> <span class="nam">vehicle</span><span class="op">}</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t130" href="#t130">130</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t131" href="#t131">131</a></span><span class="t">        <span class="nam">operator_query</span> <span class="op">=</span> <span class="nam">Q</span><span class="op">(</span><span class="nam">operator</span><span class="op">=</span><span class="nam">operator</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t132" href="#t132">132</a></span><span class="t">        <span class="key">if</span> <span class="nam">operator</span><span class="op">.</span><span class="nam">parent</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t133" href="#t133">133</a></span><span class="t">            <span class="nam">operator_query</span> <span class="op">|=</span> <span class="nam">Q</span><span class="op">(</span><span class="nam">operator__parent</span><span class="op">=</span><span class="nam">operator</span><span class="op">.</span><span class="nam">parent</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t132" href="#t132">132</a></span><span class="t">        <span class="key">if</span> <span class="nam">operator</span><span class="op">.</span><span class="nam">group_id</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t133" href="#t133">133</a></span><span class="t">            <span class="nam">operator_query</span> <span class="op">|=</span> <span class="nam">Q</span><span class="op">(</span><span class="nam">operator__group</span><span class="op">=</span><span class="nam">operator</span><span class="op">.</span><span class="nam">group_id</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t134" href="#t134">134</a></span><span class="t">        <span class="nam">vehicles</span> <span class="op">=</span> <span class="nam">Vehicle</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t135" href="#t135">135</a></span><span class="t">            <span class="nam">operator_query</span> <span class="op">|</span> <span class="nam">Q</span><span class="op">(</span><span class="nam">source</span><span class="op">=</span><span class="nam">data_source</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t136" href="#t136">136</a></span><span class="t">        <span class="op">)</span><span class="op">.</span><span class="nam">select_related</span><span class="op">(</span><span class="str">"latest_journey"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -369,7 +369,7 @@
             <a class="nav" href="z_6a478a4b3744fc7a_test_models_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.1">coverage.py v7.13.1</a>,
-            created at 2026-01-27 00:06 +0000
+            created at 2026-01-27 14:41 +0000
         </p>
     </div>
 </footer>
