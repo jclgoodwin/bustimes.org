@@ -981,10 +981,10 @@ class Cell:
         return self.stoptime.departure_or_arrival()
 
     def __repr__(self):
-        return format_timedelta(self.arrival)
+        return format_timedelta(self.arrival, plus_one=True)
 
     def departure_time(self):
-        return format_timedelta(self.departure)
+        return format_timedelta(self.departure, plus_one=True)
 
     def set_down_only(self):
         if not self.last:
