@@ -14,7 +14,7 @@
 | api/\_\_init\_\_.py                                             |        0 |        0 |    100% |           |
 | api/api.py                                                      |       11 |        0 |    100% |           |
 | api/filters.py                                                  |       67 |        0 |    100% |           |
-| api/serializers.py                                              |      117 |        4 |     97% |   227-230 |
+| api/serializers.py                                              |      117 |        4 |     97% |   226-229 |
 | api/tests.py                                                    |        9 |        0 |    100% |           |
 | api/views.py                                                    |       92 |        0 |    100% |           |
 | buses/\_\_init\_\_.py                                           |        0 |        0 |    100% |           |
