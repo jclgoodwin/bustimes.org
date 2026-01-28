@@ -243,6 +243,10 @@ class Timetable:
 
             grouping.do_heads_and_feet(self.detailed)
 
+            # sort rows again
+            if all(len(row.sequence_numbers) == 1 for row in grouping.rows):
+                grouping.rows.sort(key=lambda r: r.sequence_numbers.pop())
+
         (
             self.inbound_outbound_descriptions,
             self.origins_and_destinations,
@@ -930,10 +934,11 @@ class Row:
         self.times = times or []
 
     @cached_property
-    def has_waittimes(self):
+    def has_waittimes(self) -> bool:
         for cell in self.times:
             if type(cell) is Cell and cell.wait_time:
                 return True
+        return False
 
     @cached_property
     def set_down_only(self):
@@ -943,10 +948,13 @@ class Row:
     def pick_up_only(self):
         return all(cell.pick_up_only() for cell in self.times if type(cell) is Cell)
 
-    @cached_property
-    def od(self):
+    def od(self) -> bool:
         """is the origin or destination of any trip"""
         return any(cell.first or cell.last for cell in self.times if type(cell) is Cell)
+
+    @cached_property
+    def sequence_numbers(self):
+        return set(cell.stoptime.sequence for cell in self.times if type(cell) is Cell)
 
     is_minor = StopTime.is_minor
 
