@@ -1145,6 +1145,11 @@ class Command(BaseCommand):
 
             if operators:
                 q = Q(operator__in=operators.values())
+
+                # try to deduplicate Go Ahead London services
+                if any(o.noc == "LGEN" for o in operators.values()):
+                    q |= Q(operator="MBGA")
+
                 # prevent certain seemingly-the-same services being merged
                 if (
                     description
