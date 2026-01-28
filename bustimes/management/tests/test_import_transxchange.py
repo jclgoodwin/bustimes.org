@@ -1346,8 +1346,8 @@ class ImportTransXChangeTest(TestCase):
 
         service = Service.objects.get()
         response = self.client.get(service.get_absolute_url())
-        self.assertContains(response, '<abbr title="set down only">s</abbr>')
-        self.assertContains(response, '<abbr title="pick up only">p</abbr>')
+        self.assertContains(response, '<abbr title="set down only">s</abbr>', 17)
+        self.assertContains(response, '<abbr title="pick up only">p</abbr>', 19)
 
     @time_machine.travel("2023-07-20")
     def test_stop_usage_notes(self):
@@ -1357,9 +1357,9 @@ class ImportTransXChangeTest(TestCase):
         service = Service.objects.get()
         response = self.client.get(service.get_absolute_url())
 
-        self.assertContains(response, '<abbr title="set down only">s</abbr>')
-        self.assertContains(response, "<strong>Sch</strong> Schooldays Only")
-        self.assertContains(response, "<td>07:56<strong>Sch</strong></td>")
+        self.assertContains(response, '<abbr title="set down only">s</abbr>', 10)
+        self.assertContains(response, "<strong>Sch</strong> Schooldays Only", 1)
+        self.assertContains(response, "<strong>Sch</strong>", 15)
 
     def test_get_operator_name(self):
         blue_triangle_element = ET.fromstring(
