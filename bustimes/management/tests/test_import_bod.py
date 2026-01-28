@@ -210,7 +210,6 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
                             {
                                 "id": "LYNX",
                                 "name": "Lynx",
-                                "parent": "",
                                 "vehicle_mode": "",
                             }
                         ],
