@@ -317,7 +317,6 @@ class Timetable:
         for grouping in self.groupings:
             grouping.apply_stops(stops)
 
-    @cached_property
     def has_multiple_operators(self) -> bool:
         if self.operators and len(self.operators) > 1:
             return True
@@ -521,9 +520,10 @@ class Grouping:
             for row in self.rows
         )
 
-    @cached_property
     def has_notes_column(self):
-        return any(row.pick_up_only or row.set_down_only for row in self.rows)
+        return any(
+            row.pick_up_only or row.set_down_only or row.note for row in self.rows
+        )
 
     def has_minor_stops(self):
         return any(row.is_minor() for row in self.rows)
@@ -947,6 +947,20 @@ class Row:
     @cached_property
     def pick_up_only(self) -> bool:
         return all(cell.pick_up_only() for cell in self.times if type(cell) is Cell)
+
+    @cached_property
+    def note(self):
+        note = None
+        for cell in self.times:
+            if type(cell) is Cell:
+                if hasattr(cell.stoptime, "note"):
+                    if note is None:
+                        note = cell.stoptime.note
+                    elif note != cell.stoptime.note:
+                        return
+                else:
+                    return
+        return note
 
     @cached_property
     def od(self) -> bool:
