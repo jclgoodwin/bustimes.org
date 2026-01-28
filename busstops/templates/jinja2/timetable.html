@@ -48,10 +48,10 @@
             {% endif %}
             <div class="timetable-wrapper{% if grouping.width() > 3 %} timetable-wrapper--wide{% endif %}">
                 <table class="timetable">
-                    {% if grouping.routes or timetable.detailed or timetable.has_multiple_operators %}
+                    {% if grouping.routes or timetable.detailed or timetable.has_multiple_operators() %}
                         <thead>
                             {% if grouping.routes %}<tr class="link">
-                                <th{% if grouping.has_notes_column %} colspan="2"{% endif %}></th>
+                                <th{% if grouping.has_notes_column() %} colspan="2"{% endif %}></th>
                                 {% for head in grouping.routes %}
                                     <td{% if head.span > 1 %} colspan="{{ head.span }}"{% endif %}>
                                         {% if object.id != head.content.service_id %}
@@ -63,7 +63,7 @@
                                 {% endfor %}
                             </tr>
                             {% endif %}
-                            {% if timetable.has_multiple_operators %}
+                            {% if timetable.has_multiple_operators() %}
                                 <tr>
                                     <th scope="row"{% if grouping.has_notes_column %} colspan="2"{% endif %}>Operator</th>
                                     {% for head in grouping.get_operators() %}
@@ -143,16 +143,17 @@
                                 <th{% if row.has_waittimes %} rowspan="2"{% endif %} class="stop-name" scope="row">
                                     {% if row.stop.pk %}<a href="{{ row.stop.get_absolute_url() }}">{% if row.stop.situation %}⚠️&#xfe0f; {% endif %}{{ row.stop.get_qualified_name() }}</a>{% else %}{{ row.stop }}{% endif %}
                                 </th>
-                                {% if grouping.has_notes_column %}
+                                {% if grouping.has_notes_column() %}
                                     <td{% if row.has_waittimes %} rowspan="2"{% endif %}>
                                         {% if row.set_down_only %}<abbr title="set down only">s</abbr>{% elif row.pick_up_only %}<abbr title="pick up only">p</abbr>{% endif %}
+                                        {% if row.note %}<strong>{{ row.note.code }}</strong>{% endif %}
                                     </td>
                                 {% endif %}
-                            {% for cell in row.times %}{% if cell.colspan %}<td{% if grouping.routes or grouping.column_feet or timetable.has_multiple_operators %} colspan="{{ cell.colspan }}"{% endif %} rowspan="{{ cell.rowspan }}" class="then-every">{{ cell }}</td>{% else %}<td{% if row.has_waittimes and not cell.wait_time and not cell.first and not cell.last %} rowspan="2"{% endif %}>{% if cell %}{% if not row.has_waittimes or cell.wait_time or not cell.first %}{{ cell }}{% if not row.set_down_only and cell.set_down_only() %}<abbr title="set down only">s</abbr>{% elif not row.pick_up_only and cell.pick_up_only() %}<abbr title="pick up only">p</abbr>{% endif %}{% endif %}{% if cell.stoptime.note %}<strong>{{ cell.stoptime.note.code }}</strong>{% endif %}{% endif %}</td>{% endif %}{% endfor %}
+                            {% for cell in row.times %}{% if cell.colspan %}<td{% if grouping.routes or grouping.column_feet or timetable.has_multiple_operators() %} colspan="{{ cell.colspan }}"{% endif %} rowspan="{{ cell.rowspan }}" class="then-every">{{ cell }}</td>{% else %}<td{% if row.has_waittimes and not cell.wait_time and not cell.first and not cell.last %} rowspan="2"{% endif %}>{% if cell %}{% if not row.has_waittimes or cell.wait_time or not cell.first %}{{ cell }}{% if not row.set_down_only and cell.set_down_only() %}<abbr title="set down only">s</abbr>{% elif not row.pick_up_only and cell.pick_up_only() %}<abbr title="pick up only">p</abbr>{% endif %}{% endif %}{% if cell.stoptime.note and not row.note %}<strong>{{ cell.stoptime.note.code }}</strong>{% endif %}{% endif %}</td>{% endif %}{% endfor %}
                             </tr>
                             {% if row.has_waittimes %}
                                 <tr class="{% if row.is_minor() %}minor {% if row.od %}od {% endif %}{% endif %}dep">
-                                    {% for cell in row.times %}{% if cell.wait_time or cell.first or cell.last %}<td>{% if cell %}{% if cell.wait_time or not cell.last %}{{ cell.departure_time() }}{% if not row.set_down_only and cell.set_down_only() %}<abbr title="set down only">s</abbr>{% elif not row.pick_up_only and cell.pick_up_only() %}<abbr title="pick up only">p</abbr>{% endif %}{% endif %}{% if cell.stoptime.note %}<strong>{{ cell.stoptime.note.code }}</strong>{% endif %}{% endif %}</td>{% endif %}{% endfor %}
+                                    {% for cell in row.times %}{% if cell.wait_time or cell.first or cell.last %}<td>{% if cell %}{% if cell.wait_time or not cell.last %}{{ cell.departure_time() }}{% if not row.set_down_only and cell.set_down_only() %}<abbr title="set down only">s</abbr>{% elif not row.pick_up_only and cell.pick_up_only() %}<abbr title="pick up only">p</abbr>{% endif %}{% endif %}{% if cell.stoptime.note and not row.note %}<strong>{{ cell.stoptime.note.code }}</strong>{% endif %}{% endif %}</td>{% endif %}{% endfor %}
                                 </tr>
                             {% endif %}
                         {% endfor %}
@@ -161,7 +162,7 @@
                     {% for row in grouping.column_feet.values() %}
                         {% if (row|length) > 1 %}
                             <tr>
-                            <th{% if grouping.has_notes_column %} colspan="2"{% endif %}></th>
+                            <th{% if grouping.has_notes_column() %} colspan="2"{% endif %}></th>
                             {% for foot in row %}
                                 <td{% if foot.span > 1 %} colspan="{{ foot.span }}"{% endif %}>
                                     {% if foot.note %}{% if foot.note.stoptimes %}<strong>{{ foot.note.code }}</strong> {% endif %}{{ linebreaksbr(urlise(foot.note.text)) }}{% endif %}
