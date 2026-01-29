@@ -245,7 +245,10 @@ class Timetable:
 
             # sort rows again
             if all(len(row.sequence_numbers) == 1 for row in grouping.rows):
-                grouping.rows.sort(key=lambda r: r.sequence_numbers.pop())
+                try:
+                    grouping.rows.sort(key=lambda r: r.sequence_numbers.pop())
+                except TypeError:
+                    pass
 
         (
             self.inbound_outbound_descriptions,
