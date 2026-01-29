@@ -919,6 +919,12 @@ th a,
     padding: 1.25em 0;
 }
 
+.stop-name .note {
+    float: right;
+    color: var(--text-color);
+    margin-left: .5em;
+}
+
 th,
 td {
     border-left: 1px solid var(--border-color);
