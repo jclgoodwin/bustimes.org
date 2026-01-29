@@ -65,7 +65,7 @@
                             {% endif %}
                             {% if timetable.has_multiple_operators %}
                                 <tr>
-                                    <th scope="row">Operator</th>
+                                    <th scope="row"{% if grouping.has_notes_column %} colspan="2"{% endif %}>Operator</th>
                                     {% for head in grouping.get_operators() %}
                                         <td{% if head.span > 1 %} colspan="{{ head.span }}"{% endif %}>
                                             {{ head.content }}
@@ -76,7 +76,7 @@
                             {% if timetable.detailed %}
                                 {% if timetable.any_trip_has("block") %}
                                     <tr class="link">
-                                        <th scope="row">Block</th>
+                                        <th scope="row"{% if grouping.has_notes_column %} colspan="2"{% endif %}>Block</th>
                                         {% for trip in grouping.trips %}
                                             <td><a href="{{ trip.get_absolute_url() }}/block{% if timetable.date %}?date={{ timetable.date }}{% endif %}">{{ trip.block }}</a></td>
                                         {% endfor %}
@@ -84,7 +84,7 @@
                                 {% endif %}
                                 {% if timetable.any_trip_has("vehicle_type_id") %}
                                     <tr>
-                                        <th scope="row">Vehicle type</th>
+                                        <th scope="row"{% if grouping.has_notes_column %} colspan="2"{% endif %}>Vehicle type</th>
                                         {% for head in grouping.get_vehicle_types() %}
                                             {{ head.get_html() }}
                                         {% endfor %}
@@ -92,7 +92,7 @@
                                 {% endif %}
                                 {% if timetable.any_trip_has("garage_id") %}
                                     <tr>
-                                        <th scope="row">Garage</th>
+                                        <th scope="row"{% if grouping.has_notes_column %} colspan="2"{% endif %}>Garage</th>
                                         {% for head in grouping.get_garages() %}
                                             {{ head.get_html() }}
                                         {% endfor %}
@@ -100,7 +100,7 @@
                                 {% endif %}
                                 {% if timetable.any_trip_has("ticket_machine_code") %}
                                     <tr class="link">
-                                        <th scope="row">Ticket machine code</th>
+                                        <th scope="row"{% if grouping.has_notes_column %} colspan="2"{% endif %}>Ticket machine code</th>
                                         {% for trip in grouping.trips %}
                                             <td><a href="{{ trip.get_absolute_url() }}">{{ trip.ticket_machine_code }}</a></td>
                                         {% endfor %}
@@ -108,27 +108,27 @@
                                 {% endif %}
                                 {% if timetable.any_trip_has("vehicle_journey_code") %}
                                     <tr>
-                                        <th scope="row">Vehicle journey code</th>
+                                        <th scope="row"{% if grouping.has_notes_column %} colspan="2"{% endif %}>Vehicle journey code</th>
                                         {% for trip in grouping.trips %}
                                             <td>{{ trip.vehicle_journey_code }}</td>
                                         {% endfor %}
                                     </tr>
                                 {% endif %}
                                 <tr>
-                                    <th scope="row">Revision number</th>
+                                    <th scope="row"{% if grouping.has_notes_column %} colspan="2"{% endif %}>Revision number</th>
                                     {% for trip in grouping.trips %}
                                         <td>{{ trip.route.revision_number }}</td>
                                     {% endfor %}
                                 </tr>
                                 <tr>
-                                    <th scope="row">Calendar</th>
+                                    <th scope="row"{% if grouping.has_notes_column %} colspan="2"{% endif %}>Calendar</th>
                                     {% for trip in grouping.trips %}
                                         <td>{{ trip.calendar }}</td>
                                     {% endfor %}
                                 </tr>
                                 {% if form.vehicles.value() %}{% for date, vjs in grouping.vehicles_by_date() %}
                                     <tr>
-                                        <th scope="row">{{ date }}</th>
+                                        <th scope="row"{% if grouping.has_notes_column %} colspan="2"{% endif %}>{{ date }}</th>
                                         {% for vj in vjs %}
                                             <td class="link">{% if vj %}<a href="{{ vj.get_absolute_url() }}">{{ vj.vehicle }}</a>{% endif %}</td>
                                         {% endfor %}
