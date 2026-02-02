@@ -2,6 +2,7 @@ import xml.etree.ElementTree as ET
 
 import requests
 import yaml
+import logging
 from ciso8601 import parse_datetime
 from django.conf import settings
 from django.core.management import BaseCommand
@@ -169,15 +170,21 @@ class Command(BaseCommand):
                 url = url.split("#")[-1]
 
             if noc in overrides:
-                override = overrides[noc]
+                override_data = overrides[noc]
 
-                if "url" in override:
-                    url = override["url"]
+                if "url" in override_data:
+                    if url == override_data["url"]:
+                        logging.warning(
+                            "%s url %s no longer needs overriding", noc, url
+                        )
+                    url = override_data["url"]
 
-                if "name" in override:
-                    if override["name"] == name:
-                        print(name)
-                    name = override["name"]
+                if "name" in override_data:
+                    if name == override_data["name"]:
+                        logging.warning(
+                            "%s name %s no longer needs overriding", noc, name
+                        )
+                    name = override_data["name"]
 
             if noc not in operators:
                 operators[noc] = Operator(

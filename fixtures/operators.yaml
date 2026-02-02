@@ -167,12 +167,6 @@ NUTT:
   url: https://www.transporabus.uk
 MDBC:
   url: ""
-BZCO:
-  url: https://www.beelinecoaches.co.uk/
-LNGS:
-  url: https://www.lylescoaches.co.uk/
-YSTN:
-  url: https://www.stationcoaches.co.uk/
 FCYM:
   name: First Cymru
 FSCE:
@@ -203,33 +197,14 @@ AJTX:
 COEV:
   name: Coach Events Services
   url: http://www.coacheventsservices.co.uk/
-NCRC:
-  url: https://www.wilsonsbuses.co.uk/
 ABCF:
   url: https://www.argyll-bute.gov.uk/roads-and-travel/public-transport/ferry-travel
 SLCS:
   url: https://www.selseytowncouncil.gov.uk/article/28402/Community-bus
 GCTG:
   url: https://glenfargct.co.uk/
-ZSIN:
-  url: https://www.zandstransport.co.uk/
-BLSF:
-  url: https://brightlingseaharbour.org/
-BTNA:
-  url: https://www.britanniabus.co.uk/
-BDOL:
-  url: https://www.bakersdolphin.com/
-BDVC:
-  name: Basildon Community Transport
-  url: https://www.basildoncts.co.uk/
-FACT:
-  url: https://fact-cambs.co.uk/
-YTNB:
-  url: https://www.yarrantons.com/
 SBLB:
   name: Stagecoach North Scotland
-RACB:
-  url: https://www.racb.co.uk/
 FHUD:
   name: First Huddersfield
 FLON:
@@ -258,8 +233,6 @@ AMGR:
   url: https://flexi-bus.co.uk/
 FBSM:
   url: https://www.1stbusstop.co.uk/
-WHTL:
-  url: https://whitelaws.co.uk/
 HCCT:
   url: https://www.hants.gov.uk/transport/alternativetransport/carshares/services
 TMST:
@@ -272,10 +245,6 @@ DGCB:
   url: https://www.dumfriesandgalloway.gov.uk/roads-transport-parking/public-transport/bus-ferry-timetables
 YSQU:
   url: https://www.squarepegbuses.co.uk/
-GOCH:
-  name: Go Bus
-KNCO:
-  url: https://kentcountrybuses.co.uk/
 ASHT:
   url: https://ashcrofttravel.co.uk/
 FXTX:
