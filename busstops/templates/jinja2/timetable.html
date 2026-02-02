@@ -51,7 +51,7 @@
                     {% if grouping.routes or timetable.detailed or timetable.has_multiple_operators() %}
                         <thead>
                             {% if grouping.routes %}<tr class="link">
-                                <th{% if grouping.has_notes_column() %} colspan="2"{% endif %}></th>
+                                <th></th>
                                 {% for head in grouping.routes %}
                                     <td{% if head.span > 1 %} colspan="{{ head.span }}"{% endif %}>
                                         {% if object.id != head.content.service_id %}
