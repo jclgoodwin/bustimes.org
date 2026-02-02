@@ -243,10 +243,6 @@ class Timetable:
 
             grouping.do_heads_and_feet(self.detailed)
 
-            # sort rows again
-            if all(len(row.sequence_numbers) == 1 for row in grouping.rows):
-                grouping.rows.sort(key=lambda r: r.sequence_numbers.pop())
-
         (
             self.inbound_outbound_descriptions,
             self.origins_and_destinations,
@@ -317,7 +313,6 @@ class Timetable:
         for grouping in self.groupings:
             grouping.apply_stops(stops)
 
-    @cached_property
     def has_multiple_operators(self) -> bool:
         if self.operators and len(self.operators) > 1:
             return True
@@ -520,10 +515,6 @@ class Grouping:
             f"{str(row.stop):<{width}}  {'  '.join(str(time) or '     ' for time in row.times)}"
             for row in self.rows
         )
-
-    @cached_property
-    def has_notes_column(self):
-        return any(row.pick_up_only or row.set_down_only for row in self.rows)
 
     def has_minor_stops(self):
         return any(row.is_minor() for row in self.rows)
@@ -947,6 +938,20 @@ class Row:
     @cached_property
     def pick_up_only(self) -> bool:
         return all(cell.pick_up_only() for cell in self.times if type(cell) is Cell)
+
+    @cached_property
+    def note(self):
+        note = None
+        for cell in self.times:
+            if type(cell) is Cell:
+                if hasattr(cell.stoptime, "note"):
+                    if note is None:
+                        note = cell.stoptime.note
+                    elif note != cell.stoptime.note:
+                        return
+                else:
+                    return
+        return note
 
     @cached_property
     def od(self) -> bool:
