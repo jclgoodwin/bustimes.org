@@ -210,6 +210,7 @@ Disallow: /fares/
 Disallow: /vehicles/tfl/
 Disallow: /vehicles/*?date=*
 Disallow: /stops/*?date=*
+Disallow: /services/*?date=*
 Disallow: /services/*/*
 Disallow: /sources
 Disallow: /*/debug
