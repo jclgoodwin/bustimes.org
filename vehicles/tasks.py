@@ -82,7 +82,7 @@ def handle_siri_post(uuid, data):
 @db_task()
 def log_vehicle_journey(service, data, time, destination, source_name, url, trip_id):
     operator_ref = data.get("OperatorRef")
-    if operator_ref in ("McG", "SWB", "MID", "MBLB"):  # McGills/Stagecoach/
+    if operator_ref == "SWB":  # Stagecoach
         return
 
     if not time:
@@ -112,7 +112,7 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
 
     if operator.noc == "FABD":  # Aberdeen
         vehicle = vehicle.removeprefix("111-").removeprefix("S-")
-    elif operator.name.startswith("Stagecoach ") or operator.noc == "MCGL":
+    elif operator.name.startswith("Stagecoach "):
         return
 
     vehicle_code_code = f"{operator_ref}:{vehicle}"
