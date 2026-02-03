@@ -77,6 +77,7 @@ class Route(models.Model):
         "busstops.Service", models.CASCADE, null=True, blank=True
     )
     public_use = models.BooleanField(null=True)
+    file_hash = models.CharField(max_length=40, null=True, blank=True, db_index=True)
 
     class Meta:
         unique_together = ("source", "code")
