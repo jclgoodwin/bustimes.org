@@ -6,7 +6,6 @@ Usage:
 
 import datetime
 import hashlib
-import io
 import logging
 import os
 import sys
@@ -1583,10 +1582,13 @@ class Command(BaseCommand):
                 self.garages[garage_code] = garage
 
     def handle_file(self, open_file, filename: str):
-        data = open_file.read()
-        file_hash = hashlib.sha1(data, usedforsecurity=False).hexdigest()
+        sha1 = hashlib.sha1(usedforsecurity=False)
+        while chunk := open_file.read(65536):
+            sha1.update(chunk)
+        file_hash = sha1.hexdigest()
+        open_file.seek(0)
 
-        transxchange = TransXChange(io.BytesIO(data))
+        transxchange = TransXChange(open_file)
 
         if not transxchange.journeys:
             logger.warning(f"{filename or open_file} has no journeys")
