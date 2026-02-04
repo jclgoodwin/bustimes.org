@@ -24,6 +24,10 @@ class BadException(APIException):
     status_code = 400
 
 
+class LimitOffsetPagination(pagination.LimitOffsetPagination):
+    max_limit = 1000
+
+
 class CursorPagination(pagination.CursorPagination):
     ordering = "-pk"
     page_size = 100
@@ -44,6 +48,7 @@ class VehicleViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = serializers.VehicleSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = filters.VehicleFilter
+    pagination_class = LimitOffsetPagination
 
 
 class LiveryViewSet(viewsets.ReadOnlyModelViewSet):
