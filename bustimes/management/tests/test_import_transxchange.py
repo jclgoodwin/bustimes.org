@@ -120,7 +120,7 @@ class ImportTransXChangeTest(TestCase):
         command.source.datetime = timezone.now()
         for filename in filenames:
             path = FIXTURES_DIR / filename
-            with open(path, "r") as open_file:
+            with open(path, "rb") as open_file:
                 command.handle_file(open_file, filename)
         command.finish_services()
 

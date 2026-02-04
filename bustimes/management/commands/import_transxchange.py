@@ -613,7 +613,7 @@ class Command(BaseCommand):
                         with archive.open(filename) as open_file:
                             self.handle_file(open_file, filename)
         except zipfile.BadZipFile:
-            with archive_path.open() as open_file:
+            with archive_path.open("rb") as open_file:
                 self.handle_file(open_file, str(archive_path))
 
         if not filenames:

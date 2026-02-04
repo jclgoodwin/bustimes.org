@@ -116,7 +116,7 @@ def handle_file(command, path, qualify_filename=False):
                             logger.exception(e)
     except zipfile.BadZipFile:
         # plain XML
-        with full_path.open() as open_file:
+        with full_path.open("rb") as open_file:
             if qualify_filename:
                 filename = path
             else:
