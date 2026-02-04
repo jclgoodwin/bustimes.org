@@ -1,6 +1,5 @@
 """Import timetable data "fresh from the cow" """
 
-import hashlib
 import logging
 import xml.etree.ElementTree as ET
 import zipfile
@@ -20,7 +19,7 @@ from busstops.models import DataSource, Service
 
 from ...download_utils import download, download_if_modified
 from ...models import Route, TimetableDataSource, Trip
-from ...utils import log_time_taken
+from ...utils import get_sha1, log_time_taken
 from .import_transxchange import Command as TransXChangeCommand
 
 logger = logging.getLogger(__name__)
@@ -94,14 +93,6 @@ def get_command():
     command = TransXChangeCommand()
     command.set_up()
     return command
-
-
-def get_sha1(path):
-    sha1 = hashlib.sha1(usedforsecurity=False)
-    with path.open("rb") as open_file:
-        while data := open_file.read(65536):
-            sha1.update(data)
-    return sha1.hexdigest()
 
 
 def handle_file(command, path, qualify_filename=False):

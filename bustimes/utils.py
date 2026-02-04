@@ -1,3 +1,4 @@
+import hashlib
 from datetime import date, datetime, timedelta
 from difflib import Differ
 from itertools import pairwise
@@ -29,6 +30,14 @@ from .models import (
 )
 
 differ = Differ(charjunk=lambda _: True)
+
+
+def get_sha1(path):
+    sha1 = hashlib.sha1(usedforsecurity=False)
+    with path.open("rb") as open_file:
+        while data := open_file.read(65536):
+            sha1.update(data)
+    return sha1.hexdigest()
 
 
 class log_time_taken:

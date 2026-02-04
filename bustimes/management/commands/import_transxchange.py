@@ -5,6 +5,8 @@ Usage:
 """
 
 import datetime
+import hashlib
+import io
 import logging
 import os
 import sys
@@ -1065,7 +1067,9 @@ class Command(BaseCommand):
             line_name__iexact=line_name,
         ).exists()
 
-    def handle_service(self, filename: str, transxchange, txc_service, today, stops):
+    def handle_service(
+        self, filename: str, transxchange, txc_service, today, stops, file_hash=None
+    ):
         skip_journeys = False
 
         if (
@@ -1474,6 +1478,9 @@ class Command(BaseCommand):
                     route_defaults["revision_number_context"] = parts[0]
                     logger.info(f"{filename} looks like TransMach")
 
+            if file_hash:
+                route_defaults["file_hash"] = file_hash
+
             route, route_created = Route.objects.update_or_create(
                 route_defaults, source=self.source, code=route_code
             )
@@ -1576,7 +1583,10 @@ class Command(BaseCommand):
                 self.garages[garage_code] = garage
 
     def handle_file(self, open_file, filename: str):
-        transxchange = TransXChange(open_file)
+        data = open_file.read()
+        file_hash = hashlib.sha1(data, usedforsecurity=False).hexdigest()
+
+        transxchange = TransXChange(io.BytesIO(data))
 
         if not transxchange.journeys:
             logger.warning(f"{filename or open_file} has no journeys")
@@ -1591,4 +1601,6 @@ class Command(BaseCommand):
         self.do_garages(transxchange.garages)
 
         for txc_service in transxchange.services.values():
-            self.handle_service(filename, transxchange, txc_service, today, stops)
+            self.handle_service(
+                filename, transxchange, txc_service, today, stops, file_hash
+            )

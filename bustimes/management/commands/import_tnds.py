@@ -4,8 +4,7 @@ from django.core.management.base import BaseCommand
 
 from busstops.models import DataSource
 
-from .import_bod_timetables import get_sha1
-from ...utils import log_time_taken
+from ...utils import get_sha1, log_time_taken
 
 
 class Command(BaseCommand):
