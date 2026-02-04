@@ -71,14 +71,14 @@
 | bustimes/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
 | bustimes/management/commands/bank\_holidays.py                  |       52 |        1 |     98% |       102 |
 | bustimes/management/commands/import\_atco\_cif.py               |      235 |       25 |     89% |28-35, 40, 43-44, 71, 204, 206, 209, 211, 219, 225, 289, 322-327, 367-368, 435 |
-| bustimes/management/commands/import\_bod\_timetables.py         |      275 |       28 |     90% |36-44, 64, 115, 119, 122-125, 130, 135-136, 160, 188, 198, 209-210, 277, 294-298, 321, 337-338, 354 |
+| bustimes/management/commands/import\_bod\_timetables.py         |      268 |       28 |     90% |35-43, 63, 106, 110, 113-116, 121, 126-127, 151, 179, 189, 200-201, 268, 285-289, 312, 328-329, 345 |
 | bustimes/management/commands/import\_gtfs.py                    |      227 |        6 |     97% |69, 122-123, 135, 142, 339 |
 | bustimes/management/commands/import\_gtfs\_ember.py             |      149 |        8 |     95% |82, 87, 105, 130, 171, 191, 268-269 |
 | bustimes/management/commands/import\_gtfs\_flixbus.py           |      181 |       10 |     94% |45, 110, 192, 296-297, 321-322, 340-341, 346 |
 | bustimes/management/commands/import\_ni.py                      |       31 |        0 |    100% |           |
 | bustimes/management/commands/import\_passenger.py               |      116 |       35 |     70% |51-54, 56-58, 64, 103, 113-117, 143-180 |
-| bustimes/management/commands/import\_tnds.py                    |       43 |        0 |    100% |           |
-| bustimes/management/commands/import\_transxchange.py            |      812 |       89 |     89% |88, 103, 149-150, 232-233, 240, 244, 270-274, 323-324, 334, 342-343, 398, 402, 404, 505, 568-582, 602, 606, 609, 721, 763-764, 801-802, 804-805, 849, 860, 883, 889, 913, 939, 943-945, 957-958, 1001-1005, 1046, 1056-1061, 1075, 1099, 1107, 1109-1112, 1133, 1151, 1167, 1206, 1246-1247, 1274-1276, 1283, 1288-1289, 1305, 1310, 1323, 1348, 1374-1375, 1411-1412, 1474-1475 |
+| bustimes/management/commands/import\_tnds.py                    |       42 |        0 |    100% |           |
+| bustimes/management/commands/import\_transxchange.py            |      820 |       89 |     89% |89, 104, 150-151, 233-234, 241, 245, 271-275, 324-325, 335, 343-344, 399, 403, 405, 506, 569-583, 603, 607, 610, 722, 764-765, 802-803, 805-806, 850, 861, 884, 890, 914, 940, 944-946, 958-959, 1002-1006, 1047, 1057-1062, 1078, 1102, 1110, 1112-1115, 1136, 1154, 1170, 1209, 1249-1250, 1277-1279, 1286, 1291-1292, 1308, 1313, 1326, 1351, 1377-1378, 1414-1415, 1477-1478 |
 | bustimes/management/commands/suggest\_bod.py                    |       36 |       36 |      0% |      1-51 |
 | bustimes/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | bustimes/management/tests/test\_bank\_holidays.py               |       20 |        0 |    100% |           |
@@ -95,7 +95,7 @@
 | bustimes/tests.py                                               |      132 |        0 |    100% |           |
 | bustimes/timetables.py                                          |      620 |       54 |     91% |39-52, 162-173, 204-205, 265, 277-280, 292, 306-311, 324, 343, 418, 421, 437-440, 442, 469, 581-596, 682-683, 754, 900-902, 951, 963 |
 | bustimes/urls.py                                                |        3 |        0 |    100% |           |
-| bustimes/utils.py                                               |      195 |       12 |     94% |158, 214, 243, 252-254, 275-276, 352, 369-370, 444 |
+| bustimes/utils.py                                               |      202 |       12 |     94% |167, 223, 252, 261-263, 284-285, 361, 378-379, 453 |
 | bustimes/views.py                                               |      385 |       65 |     83% |194-195, 198-199, 215-217, 225-234, 236-244, 251, 273, 362, 371, 407, 413, 583, 607-609, 626, 630-658, 686-697, 706-712 |
 | departures/\_\_init\_\_.py                                      |        0 |        0 |    100% |           |
 | departures/avl.py                                               |       12 |        1 |     92% |        14 |
@@ -193,7 +193,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       59 |        0 |    100% |           |
-| **TOTAL**                                                       | **17157** | **1134** | **93%** |           |
+| **TOTAL**                                                       | **17164** | **1134** | **93%** |           |
 
 
 ## Setup coverage badge
