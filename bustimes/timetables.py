@@ -596,28 +596,64 @@ class Grouping:
             yield date, [by_trip.get(trip.id) for trip in self.trips]
 
     def sort_rows(self):
-        sorter = graphlib.TopologicalSorter()
-
         stop_times = {}
+        successors = {}  # key -> set of successor keys
+        in_degree = {}  # key -> number of predecessors
+        # count how many trips have (prev, key) as an adjacent pair
+        adjacency_count = {}
+
         for trip in self.trips:
             prev = None
             for stop_time in trip.times:
                 key = stop_time.get_key()
-                if prev:
-                    sorter.add(key, prev)
-                prev = key
                 stop_times[key] = stop_time
+                successors.setdefault(key, set())
+                in_degree.setdefault(key, 0)
 
-        try:
-            self.rows = [
-                Row(Stop(stop_times[key].stop_id, stop_times[key].stop_code))
-                for key in sorter.static_order()
-            ]
-        except graphlib.CycleError:
+                if prev:
+                    if key not in successors[prev]:
+                        successors[prev].add(key)
+                        in_degree[key] += 1
+                    pair = (prev, key)
+                    adjacency_count[pair] = adjacency_count.get(pair, 0) + 1
+                prev = key
+
+        # Kahn's algorithm, but when multiple nodes are ready,
+        # prefer the direct successor of the last emitted node
+        # (with most trips using that edge as tie-break).
+        # This keeps variant-only stops grouped together
+        # instead of interleaving them.
+        ready = [key for key, deg in in_degree.items() if deg == 0]
+        result = []
+        last = None
+
+        while ready:
+            if last is not None:
+                best = max(
+                    ready,
+                    key=lambda k: adjacency_count.get((last, k), 0),
+                )
+            else:
+                best = ready[0]
+
+            ready.remove(best)
+            result.append(best)
+            last = best
+
+            for succ in successors.get(best, ()):
+                in_degree[succ] -= 1
+                if in_degree[succ] == 0:
+                    ready.append(succ)
+
+        if len(result) != len(stop_times):
             # cycle detected, so we will use difflib later
             # longest trips first, to minimise duplicate rows
             self.trips.sort(key=lambda t: -len(t.times))
         else:
+            self.rows = [
+                Row(Stop(stop_times[key].stop_id, stop_times[key].stop_code))
+                for key in result
+            ]
             for row in self.rows:
                 row.timing_status = stop_times[row.stop.stop_code].timing_status
 
