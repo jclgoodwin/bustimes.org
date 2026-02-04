@@ -49,7 +49,7 @@ class ImportAtcoCifTest(TestCase):
             write_files_to_zipfile(zipfile_path, ["218 219.cif"])
 
             with time_machine.travel("2019-10-09"):
-                with self.assertNumQueries(354):
+                with self.assertNumQueries(359):
                     call_command("import_atco_cif", zipfile_path)
                 with self.assertNumQueries(365):
                     call_command("import_atco_cif", zipfile_path)

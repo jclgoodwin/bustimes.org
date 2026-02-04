@@ -1,6 +1,9 @@
 import autoslug
 
 
+# this is almost the same as the autosplug package's generate_unique_slug,
+# but it uses `.exists()` to check for the existence of `rivals``,
+# which is a tiny bit more efficient
 def generate_unique_slug(field, instance, slug, manager):
     """
     Generates unique slug by adding a number to given value until no model

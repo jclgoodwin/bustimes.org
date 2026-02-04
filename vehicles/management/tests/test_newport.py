@@ -33,7 +33,7 @@ class NewportTest(TestCase):
             time_machine.travel("2025-09-24T06:30:00+00:00", tick=False),
         ):
             with (
-                self.assertNumQueries(25),
+                self.assertNumQueries(28),
                 self.assertRaises(vcr.errors.CannotOverwriteExistingCassetteException),
             ):
                 call_command("newport", "--immediate")

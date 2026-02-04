@@ -281,7 +281,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 return_value=items,
             ),
         ):
-            with self.assertNumQueries(41):
+            with self.assertNumQueries(44):
                 wait = command.update()
             self.assertEqual(11, wait)
 

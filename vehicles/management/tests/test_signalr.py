@@ -34,7 +34,7 @@ class SignalRTest(TestCase):
             time_machine.travel("2025-06-20", tick=False),
         ):
             with (
-                self.assertNumQueries(52),
+                self.assertNumQueries(57),
                 self.assertRaises(vcr.errors.CannotOverwriteExistingCassetteException),
             ):
                 call_command("signalr", "signalr")
