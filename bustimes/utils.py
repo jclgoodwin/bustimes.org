@@ -110,8 +110,16 @@ def get_routes(routes, when):
                 start_date__lte=when,
             )
         )
+    ).filter(
+        ~Exists(
+            Route.objects.filter(
+                file_hash=OuterRef("file_hash"),
+                file_hash__isnull=False,
+                code=OuterRef("code"),
+                id__gt=OuterRef("id"),
+            )
+        )
     )
-
     return routes
 
 
