@@ -391,7 +391,7 @@ def get_description(txc_service):
                 destination, callback=initialisms
             )
 
-        if not description:
+        if not description and origin not in STUPID_ORIGINS_DESTINATIONS:
             description = f"{origin} - {destination}"
             vias = txc_service.vias
             if vias:
