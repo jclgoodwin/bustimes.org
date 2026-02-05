@@ -1,7 +1,7 @@
 def ad(request):
     path = request.path
     if (
-        "/vehicles" in path
+        "/edit" in path
         or path.endswith("/debug")
         or path.startswith("/accounts/")
         or path.startswith("/fares/")
