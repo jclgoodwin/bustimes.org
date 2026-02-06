@@ -1,4 +1,5 @@
 import functools
+import json
 from datetime import timedelta
 
 from ciso8601 import parse_datetime
@@ -11,6 +12,7 @@ from huey.contrib.djhuey import db_periodic_task, db_task
 
 from busstops.models import DataSource, Operator
 
+from .utils import archive_avl_data
 from .management.commands import import_bod_avl
 from .models import (
     SiriSubscription,
@@ -22,7 +24,7 @@ from .models import (
 
 
 @functools.cache
-def get_bod_avl_command(source_name):
+def get_bod_avl_command(source_name: str):
     command = import_bod_avl.Command()
     command.source_name = source_name
     command.do_source()
@@ -30,7 +32,7 @@ def get_bod_avl_command(source_name):
 
 
 @db_task()
-def handle_siri_post(uuid, data):
+def handle_siri_post(uuid, data: dict):
     now = timezone.now()
 
     data = data["Siri"]
@@ -61,6 +63,12 @@ def handle_siri_post(uuid, data):
 
         command.handle_items(changed_items, changed_item_identities)
         command.handle_items(changed_journey_items, changed_journey_identities)
+
+        archive_avl_data(
+            command.source,
+            json.dumps(items),
+            timestamp.strftime("%Y-%m-%d_%H%M%S.json"),
+        )
 
     # stats for last 50 updates:
     key = subscription.get_status_key()

@@ -16,6 +16,7 @@ from sql_util.utils import Exists
 
 from busstops.models import Operator, Service
 from bustimes.utils import log_time_taken
+from vehicles.utils import filename_from_content_disposition
 
 from ... import models
 
@@ -575,9 +576,7 @@ class Command(BaseCommand):
                 content_type := response.headers["Content-Type"]
             ) == "text/xml" or content_type == "application/xml":
                 # maybe not fully RFC 6266 compliant
-                filename = response.headers["Content-Disposition"].split("filename", 1)[
-                    1
-                ][2:-1]
+                filename = filename_from_content_disposition(response)
                 self.handle_file(dataset, response.raw, filename)
             else:
                 assert content_type == "application/zip"

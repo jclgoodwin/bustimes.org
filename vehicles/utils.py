@@ -1,6 +1,7 @@
 import math
 
 from django.core.cache import caches
+from django.conf import settings
 from django.core.cache.backends.base import InvalidCacheBackendError
 
 from .models import VehicleRevision, VehicleRevisionFeature
@@ -9,6 +10,20 @@ try:
     redis_client = caches["redis"]._cache.get_client()
 except InvalidCacheBackendError:
     redis_client = None
+
+
+def filename_from_content_disposition(response) -> str:
+    # really not fully RFC 6266 compliant
+    return response.headers["Content-Disposition"].split("filename", 1)[1][2:-1]
+
+
+def archive_avl_data(source, data: bytes, filename: str):
+    if path := settings.AVL_ARCHIVE_DIR:
+        path = path / str(source.id)
+        if not path.exists():
+            path.mkdir(parents=True)
+        path /= filename
+        path.write_bytes(data)
 
 
 def calculate_bearing(a, b):
