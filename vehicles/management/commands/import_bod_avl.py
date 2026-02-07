@@ -593,7 +593,7 @@ class Command(ImportLiveVehiclesCommand):
                     data = open_file.read()
 
             archive_avl_data(
-                self.source, data, filename=filename_from_content_disposition(response)
+                self.source, response.content, filename=filename_from_content_disposition(response)
             )
         else:
             data = response.content

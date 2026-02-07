@@ -17,13 +17,16 @@ def filename_from_content_disposition(response) -> str:
     return response.headers["Content-Disposition"].split("filename", 1)[1][2:-1]
 
 
-def archive_avl_data(source, data: bytes, filename: str):
+def archive_avl_data(source, data: bytes | str, filename: str):
     if path := settings.AVL_ARCHIVE_DIR:
         path = path / str(source.id)
         if not path.exists():
             path.mkdir(parents=True)
         path /= filename
-        path.write_bytes(data)
+        if type(data) is str:
+            path.write_text(data)
+        else:
+            path.write_bytes(data)
 
 
 def calculate_bearing(a, b):
