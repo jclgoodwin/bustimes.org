@@ -548,6 +548,7 @@ class Command(ImportLiveVehiclesCommand):
         location = VehicleLocation(
             latlong=latlong,
             heading=bearing,
+            delay=delay,
             occupancy=occupancies.get(monitored_vehicle_journey.get("Occupancy")),
             block=monitored_vehicle_journey.get("BlockRef"),
         )
