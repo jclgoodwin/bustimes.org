@@ -94,7 +94,7 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_REDIRECT_EXEMPT = [r"^version$"]
 
 SECURE_CSP = {
-    "upgrade-insecure-requests": True,
+    "upgrade-insecure-requests": not DEBUG,
 }
 
 CORS_ALLOW_ALL_ORIGINS = True
