@@ -191,7 +191,7 @@ class BusTimesTest(TestCase):
             datetime(2021, 11, 1, 1, 47, 30, tzinfo=timezone(timedelta())),
         )
 
-        self.assertEqual(str(trip), "01:47")
+        self.assertEqual(str(trip), "01:47⁺¹")
 
         trip.save()
 
