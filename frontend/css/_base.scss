@@ -530,10 +530,10 @@ ol ::marker {
 
 .rules,
 .history {
+    padding-left: 2em;
+
     > li {
         list-style: decimal;
-        margin-left: 1.75em;
-        padding-left: .25em;
     }
 }
 
