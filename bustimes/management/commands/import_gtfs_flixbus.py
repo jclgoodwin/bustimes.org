@@ -101,7 +101,7 @@ class Command(BaseCommand):
             if row.geometry:
                 geometries[row.route_id] = row.geometry.wkt
             else:
-                logger.info(row)
+                logger.info("route %s has no geometry", row.route_id)
 
         for row in feed.routes.itertuples():
             line_name = row.route_id
@@ -208,10 +208,10 @@ class Command(BaseCommand):
                             # so we might want to link it to the corresponding NaPTAN stop
                             logger.info(f"{stop.stop_name} {stop.stop_code}")
                             logger.info(
-                                f"https://bustimes.org/map#16/{stop.stop_lat}/{stop.stop_lon}"
+                                f"    https://bustimes.org/map#16/{stop.stop_lat}/{stop.stop_lon}"
                             )
                             logger.info(
-                                f"https://bustimes.org/admin/busstops/stopcode/add/?code={row.stop_id}\n"
+                                f"    https://bustimes.org/admin/busstops/stopcode/add/?code={row.stop_id}"
                             )
 
                 stop_times.append(stop_time)
