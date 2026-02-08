@@ -319,7 +319,9 @@ class TimetableDepartures(Departures):
 
         # for eg Victoria Coach Station where there are so many departures at the same time:
         if len(today_times) == self.per_page:
-            while today_times[0].departure == today_times[-1].departure:
+            while all(
+                today_times[0].departure == time.departure for time in today_times[1:]
+            ):
                 today_times += all_today_times[len(today_times) : len(today_times) + 8]
 
         times = [self.get_row(stop_time) for stop_time in today_times]
