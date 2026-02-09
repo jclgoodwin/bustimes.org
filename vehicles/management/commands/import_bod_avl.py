@@ -24,7 +24,6 @@ from busstops.models import (
 )
 from bustimes.models import Route, Trip
 
-from ...utils import archive_avl_data, filename_from_content_disposition
 from ...models import Vehicle, VehicleJourney, VehicleLocation
 from ..import_live_vehicles import ImportLiveVehiclesCommand, logger, Status
 
@@ -590,10 +589,6 @@ class Command(ImportLiveVehiclesCommand):
                 assert len(namelist) == 1
                 with archive.open(namelist[0]) as open_file:
                     data = open_file.read()
-
-            archive_avl_data(
-                self.source, response.content, filename=filename_from_content_disposition(response)
-            )
         else:
             data = response.content
 
