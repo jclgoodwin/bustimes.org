@@ -893,6 +893,22 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(179, len(timetable.groupings[0].rows))
         self.assertEqual(179, len(timetable.groupings[1].rows))
 
+        # check row ordering near the end (sequence number tiebreaker)
+        codes = [r.stop.atco_code.split(":")[-1] for r in timetable.groupings[1].rows]
+        self.assertEqual(
+            codes[168:176],
+            [
+                "4400MS0425",
+                "4400MS0033",
+                "4400MS0031",
+                "4400MS0029",
+                "4400MS0028",
+                "4400MS0027",
+                "4400MS0051",
+                "4400MS0049",
+            ],
+        )
+
         self.assertNotContains(response, "set down only")
 
     @time_machine.travel("2021-06-28")
@@ -960,6 +976,21 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(response, '">904<')  # service
         self.assertContains(response, '<td colspan="2">LFDD</td>')  # vehicle type
         self.assertContains(response, "<td>LFDD</td>")
+
+        # check combined timetable row ordering (sequence number tiebreaker)
+        timetable = response.context_data["timetable"]
+        codes = [r.stop.atco_code.split(":")[-1] for r in timetable.groupings[1].rows]
+        self.assertEqual(
+            codes[2:8],
+            [
+                "1100DEA11187",
+                "1100DEA11186",
+                "1100DEA11184",
+                "1100DEZ05106",
+                "1100DEA56800",
+                "1100DEA09189",
+            ],
+        )
 
     @time_machine.travel("2021-07-07")
     def test_confusing_start_date(self):
@@ -1254,6 +1285,13 @@ class ImportTransXChangeTest(TestCase):
         groupings = res.context_data["timetable"].groupings
         self.assertEqual(len(groupings[0].rows), 15)
         self.assertEqual(len(groupings[1].rows), 15)
+
+        # check M12 row ordering (sequence number tiebreaker)
+        codes = [(r.stop.atco_code or "").split(":")[-1] for r in groupings[0].rows]
+        self.assertEqual(
+            codes[10:14], ["450014781", "450017590", "450017207", "3390BB01"]
+        )
+
         self.assertContains(
             res,
             """<td></td><td>06:15</td><td rowspan="2">09:20</td><td rowspan="2">10:20</td><td></td><td></td><td></td>
