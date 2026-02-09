@@ -145,7 +145,7 @@
 | vehicles/management/\_\_init\_\_.py                             |        0 |        0 |    100% |           |
 | vehicles/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
 | vehicles/management/commands/compute\_blocks.py                 |       27 |       27 |      0% |      1-45 |
-| vehicles/management/commands/import\_bod\_avl.py                |      407 |       56 |     86% |127, 143, 153-154, 174, 201-204, 207-210, 253, 269, 284-285, 307-325, 376, 378, 384, 415, 421, 437, 479-492, 517-518, 524, 531-532, 547, 577, 615, 711, 723, 727 |
+| vehicles/management/commands/import\_bod\_avl.py                |      407 |       56 |     86% |127, 143, 153-154, 174, 201-204, 207-210, 253, 269, 284-285, 307-325, 376, 378, 384, 414, 420, 436, 478-491, 516-517, 523, 530-531, 546, 576, 614, 710, 722, 726 |
 | vehicles/management/commands/import\_bushub.py                  |       84 |       18 |     79% |24-25, 29-30, 33-34, 38, 42, 50, 67, 82-83, 91, 101, 120, 128, 135, 153 |
 | vehicles/management/commands/import\_first.py                   |      124 |       21 |     83% |28, 32, 52, 54, 75-76, 82, 104-105, 114, 136-148, 153, 212-213, 215 |
 | vehicles/management/commands/import\_gtfsr\_ember.py            |       47 |        0 |    100% |           |
