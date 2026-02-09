@@ -399,11 +399,13 @@ class Command(ImportLiveVehiclesCommand):
         if (
             operator_ref == "NCTR"
             and origin_aimed_departure_time is None
-            and journey_ref.count("-") == 9
         ):
-            origin_aimed_departure_time = timezone.make_aware(
-                parse_datetime(journey_ref[-30:-11])
-            )
+            try:
+                origin_aimed_departure_time = timezone.make_aware(
+                    parse_datetime(journey_ref[-30:-11])
+                )
+            except ValueError:
+                pass
 
         if origin_aimed_departure_time:
             difference = origin_aimed_departure_time - datetime
