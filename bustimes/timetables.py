@@ -601,6 +601,8 @@ class Grouping:
         in_degree = {}  # key -> number of predecessors
         # count how many trips have (prev, key) as an adjacent pair
         adjacency_count = {}
+        # collect sequence numbers per stop key (can be null/wrong)
+        sequences = {}
 
         for trip in self.trips:
             prev = None
@@ -610,6 +612,9 @@ class Grouping:
                 successors.setdefault(key, set())
                 in_degree.setdefault(key, 0)
 
+                if stop_time.sequence is not None:
+                    sequences[key] = -stop_time.sequence
+
                 if prev:
                     if key not in successors[prev]:
                         successors[prev].add(key)
@@ -618,9 +623,18 @@ class Grouping:
                     adjacency_count[pair] = adjacency_count.get(pair, 0) + 1
                 prev = key
 
+        def sort_key(k):
+            # primary: prefer direct successor of last emitted stop
+            # secondary: prefer lower sequence number
+            return (
+                adjacency_count.get((last, k), 0),
+                sequences.get(k, 0),
+            )
+
         # Kahn's algorithm, but when multiple nodes are ready,
         # prefer the direct successor of the last emitted node
-        # (with most trips using that edge as tie-break).
+        # (with most trips using that edge as tie-break),
+        # then prefer lower sequence number.
         # This keeps variant-only stops grouped together
         # instead of interleaving them.
         ready = [key for key, deg in in_degree.items() if deg == 0]
@@ -628,13 +642,7 @@ class Grouping:
         last = None
 
         while ready:
-            if last is not None:
-                best = max(
-                    ready,
-                    key=lambda k: adjacency_count.get((last, k), 0),
-                )
-            else:
-                best = ready[0]
+            best = max(ready, key=sort_key)
 
             ready.remove(best)
             result.append(best)
@@ -993,10 +1001,6 @@ class Row:
     def od(self) -> bool:
         """is the origin or destination of any trip"""
         return any(cell.first or cell.last for cell in self.times if type(cell) is Cell)
-
-    @cached_property
-    def sequence_numbers(self):
-        return set(cell.stoptime.sequence for cell in self.times if type(cell) is Cell)
 
     is_minor = StopTime.is_minor
 
