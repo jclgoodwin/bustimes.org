@@ -2,7 +2,6 @@
 
 import datetime
 
-from django.conf import settings
 from django.db.models import Prefetch, prefetch_related_objects, Q
 from django.utils import timezone
 
@@ -14,7 +13,6 @@ from vehicles.tasks import log_vehicle_journey
 
 from . import avl, gtfsr
 from .sources import (
-    EdinburghDepartures,
     SiriSmDepartures,
     TflDepartures,
     TimetableDepartures,
@@ -207,21 +205,8 @@ def get_departures(stop, services, when) -> dict:
                 operator_names.update(service.operators)
 
         if departures:
-            # Edinburgh
-            if stop.naptan_code and not operator_names.isdisjoint(
-                settings.TFE_OPERATORS
-            ):
-                live_rows = EdinburghDepartures(stop, services, now).get_departures()
-                if live_rows:
-                    update_trip_ids(departures, live_rows)
-                    live_services = {r["service"] for r in live_rows}
-                    departures = [
-                        d for d in departures if d["service"] not in live_services
-                    ]
-
             source = None
 
-            # Aberdeen, Glasgow, Bristol?
             if stop.admin_area_id:
                 for possible_source in SIRISource.objects.filter(
                     Q(admin_areas=stop.admin_area_id)

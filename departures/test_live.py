@@ -197,50 +197,6 @@ class LiveDeparturesTest(TestCase):
         response = self.client.get(f"/stops/{self.london_stop.pk}/debug")
         self.assertContains(response, "<code>")
 
-    def test_edinburgh(self):
-        vehicle_source = DataSource.objects.create(name="TfE")
-        stop = StopPoint.objects.create(
-            atco_code="6200245070",
-            naptan_code="36238258",
-            common_name="Crewe Bank",
-            active=True,
-        )
-        operator = Operator.objects.create(noc="LOTH", name="Lothian Buses")
-        service = Service.objects.create(line_name="14")
-        service.operator.add(operator)
-        StopUsage.objects.create(stop=stop, service=service, order=1)
-        route = Route.objects.create(
-            line_name="14", service=service, source=self.source, start_date="2022-06-13"
-        )
-        calendar = Calendar.objects.create(
-            mon=True,
-            tue=True,
-            wed=True,
-            thu=True,
-            fri=True,
-            sat=True,
-            sun=True,
-            start_date="2022-06-13",
-        )
-        trip = Trip.objects.create(
-            calendar=calendar, route=route, destination=stop, start="0", end="24:00:00"
-        )
-        StopTime.objects.create(
-            trip=trip, sequence=0, arrival="13:18:00", departure="13:18:00", stop=stop
-        )
-        Vehicle.objects.create(source=vehicle_source, code="686")
-
-        with (
-            time_machine.travel(datetime(2022, 6, 14, 12)),
-            vcr.use_cassette(
-                "fixtures/vcr/edinburgh.yaml", decode_compressed_response=True
-            ),
-            self.assertNumQueries(10),
-            override_settings(TFE_OPERATORS={"Lothian Buses"}),
-        ):
-            response = self.client.get(stop.get_absolute_url())
-        self.assertContains(response, '<a href="/vehicles/none-686#journeys/None">')
-
     def test_blend(self):
         service = Service(line_name="X98")
         a = [
