@@ -474,7 +474,7 @@ class Command(BaseCommand):
                 operator_code = operator_element.findtext("OperatorCode")
 
         if operator_code:
-            if self.source.name == "L" and len(operator_code) == 2:
+            if self.source.name == "L":
                 if operator := get_operator_by("L", operator_code):
                     return operator
             elif operator := get_operator_by("National Operator Codes", operator_code):
