@@ -35,6 +35,7 @@
 | busstops/management/commands/import\_noc.py                     |      129 |        4 |     97% |156, 177, 184, 247 |
 | busstops/management/commands/jersey\_routes.py                  |       14 |        0 |    100% |           |
 | busstops/management/commands/jersey\_stops.py                   |       12 |        0 |    100% |           |
+| busstops/management/commands/lothian\_colours.py                |       17 |        1 |     94% |        19 |
 | busstops/management/commands/naptan\_new.py                     |      159 |        5 |     97% |41, 43, 175, 223, 272 |
 | busstops/management/commands/nptg\_new.py                       |       96 |        9 |     91% |145, 156, 161, 166-167, 173-174, 176-177 |
 | busstops/management/commands/osm\_iom\_stops.py                 |       34 |       34 |      0% |      1-63 |
@@ -90,7 +91,7 @@
 | bustimes/management/tests/test\_import\_passenger.py            |       23 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_transxchange.py         |      768 |        0 |    100% |           |
 | bustimes/management/tests/test\_tnds.py                         |       19 |        0 |    100% |           |
-| bustimes/models.py                                              |      341 |        7 |     98% |115, 221, 422, 467-470, 502 |
+| bustimes/models.py                                              |      341 |        6 |     98% |115, 422, 467-470, 502 |
 | bustimes/test\_get\_trip.py                                     |       31 |        0 |    100% |           |
 | bustimes/tests.py                                               |      132 |        0 |    100% |           |
 | bustimes/timetables.py                                          |      641 |       54 |     92% |39-52, 162-173, 204-205, 265, 277-280, 292, 306-311, 324, 343, 418, 421, 437-440, 442, 469, 581-596, 718-719, 790, 936-938, 987, 999 |
@@ -162,7 +163,7 @@
 | vehicles/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | vehicles/management/tests/test\_bod\_avl.py                     |      304 |        0 |    100% |           |
 | vehicles/management/tests/test\_bushub.py                       |       48 |        0 |    100% |           |
-| vehicles/management/tests/test\_edinburgh.py                    |       43 |        0 |    100% |           |
+| vehicles/management/tests/test\_edinburgh.py                    |       46 |        0 |    100% |           |
 | vehicles/management/tests/test\_first.py                        |       33 |        0 |    100% |           |
 | vehicles/management/tests/test\_import\_live\_jersey.py         |       46 |        0 |    100% |           |
 | vehicles/management/tests/test\_listen.py                       |       15 |        0 |    100% |           |
@@ -191,7 +192,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       59 |        0 |    100% |           |
-| **TOTAL**                                                       | **17080** | **1157** | **93%** |           |
+| **TOTAL**                                                       | **17100** | **1157** | **93%** |           |
 
 
 ## Setup coverage badge
