@@ -3,6 +3,7 @@ from unittest import mock
 
 import fakeredis
 import vcr
+from django.core.management import call_command
 from django.test import TestCase
 
 from busstops.models import DataSource, Operator, Region, Service
@@ -65,6 +66,10 @@ class EdinburghImportTest(TestCase):
         response = self.client.get(journey.service.get_absolute_url())
         self.assertContains(response, '/vehicles">Vehicles</a>')
 
+        call_command("lothian_colours")
+
         response = self.client.get(self.operator_1.get_absolute_url())
         self.assertContains(response, '/map">Map</a>')
         self.assertContains(response, '/vehicles">Vehicles</a>')
+
+        self.assertContains(response, "background: #0C1436;")
