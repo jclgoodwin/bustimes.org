@@ -23,9 +23,12 @@ from ...gtfs_utils import get_calendars, MODES
 logger = logging.getLogger(__name__)
 
 
+note_codes = ["‡", "†", "*"]
+
+
 @cache
-def get_note(note_code, note_text):
-    return Note.objects.get_or_create(code=note_code or "", text=note_text[:255])[0]
+def get_note(note_text):
+    return Note.objects.get_or_create(code=note_codes.pop(), text=note_text[:255])[0]
 
 
 class Command(BaseCommand):
@@ -222,7 +225,7 @@ class Command(BaseCommand):
                 description = item.alert.description_text.translation[0].text
                 if header == "Pre-booking":
                     stop_id = item.alert.informed_entity[0].stop_id
-                    note = get_note("b", description)
+                    note = get_note(description)
                     if note in stop_notes:
                         stop_notes[note].append(stop_id)
                     else:
