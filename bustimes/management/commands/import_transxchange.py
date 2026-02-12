@@ -186,7 +186,7 @@ def get_calendar_date(
 
 
 def get_registration(service_code: str) -> Registration | None:
-    parts = service_code.split("_")[0].split(":")
+    parts = service_code.split(":")
     if len(parts[0]) != 9:
         prefix = parts[0][:2]
         suffix = str(int(parts[0][2:]))
@@ -194,7 +194,8 @@ def get_registration(service_code: str) -> Registration | None:
     if parts[1] and parts[1].isdigit():
         try:
             return Registration.objects.get(
-                registration_number=f"{parts[0]}/{int(parts[1])}"
+                Q(registration_number=f"{parts[0]}/{int(parts[1])}")
+                | Q(registration_number=service_code.replace(":", "/"))
             )
         except Registration.DoesNotExist:
             pass
