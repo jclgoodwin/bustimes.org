@@ -23,7 +23,7 @@ from ...gtfs_utils import get_calendars, MODES
 logger = logging.getLogger(__name__)
 
 
-note_codes = ["‡", "†", "*"]
+note_codes = ["¶", "‖", "§", "‡", "†", "*"]
 
 
 @cache
@@ -39,9 +39,8 @@ class Command(BaseCommand):
         source.url = "https://cdn.ember.to/gtfs/static/Ember_GTFS_latest.zip"
 
         modified, last_modified = download_if_modified(path, source)
-        assert last_modified
 
-        if source.datetime == last_modified:
+        if not modified:
             return  # no new data to import
         source.datetime = last_modified
 

@@ -142,6 +142,8 @@ class TripViewSet(viewsets.ReadOnlyModelViewSet):
             #     )
             # )
         )
+        if obj.notes.all():
+            stops = stops.annotate(note_codes=ArrayAgg("notes__code"))
         if len(trips) > 1:
             stops = contiguous_stoptimes_only(stops, obj.id)
         return stops

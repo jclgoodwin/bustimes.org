@@ -226,6 +226,10 @@ class TripSerializer(serializers.ModelSerializer):
                 bearing = None
                 location = None
                 icon = None
+            if hasattr(stop_time, "note_codes"):
+                notes = stop_time.note_codes
+            else:
+                notes = None
             yield {
                 "id": stop_time.id,
                 "stop": {
@@ -246,6 +250,7 @@ class TripSerializer(serializers.ModelSerializer):
                     stop_time, "expected_departure", None
                 ),
                 # "call_condition": stop_time.call_condition,
+                "note_codes": notes,
             }
             previous_stop_id = stop_time.stop_id
 
