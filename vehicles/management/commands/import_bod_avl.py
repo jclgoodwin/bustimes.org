@@ -25,7 +25,7 @@ from busstops.models import (
 from bustimes.models import Route, Trip
 
 from ...models import Vehicle, VehicleJourney, VehicleLocation
-from ..import_live_vehicles import ImportLiveVehiclesCommand, logger, Status
+from ..import_live_vehicles import ImportLiveVehiclesCommand, Status
 
 
 occupancies = {
@@ -90,7 +90,6 @@ class Command(ImportLiveVehiclesCommand):
         .filter(current=True)
         .defer("geometry", "search_vector")
     )
-    fallback_mode = False
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -396,10 +395,7 @@ class Command(ImportLiveVehiclesCommand):
         operator_ref = monitored_vehicle_journey["OperatorRef"]
 
         # treat the weird Nottingham City Transport data specially
-        if (
-            operator_ref == "NCTR"
-            and origin_aimed_departure_time is None
-        ):
+        if operator_ref == "NCTR" and origin_aimed_departure_time is None:
             try:
                 origin_aimed_departure_time = timezone.make_aware(
                     parse_datetime(journey_ref[-30:-11])
@@ -572,11 +568,7 @@ class Command(ImportLiveVehiclesCommand):
         return location
 
     def get_items(self):
-        url = self.source.url
-        if self.fallback_mode:
-            url = self.source.settings.get("fallback_url") or url
-
-        response = self.session.get(url, timeout=61)
+        response = self.session.get(self.source.url, timeout=61)
 
         if not response.ok:
             print(response.headers, response.content, response)
@@ -664,11 +656,12 @@ class Command(ImportLiveVehiclesCommand):
                 ) = self.get_changed_items()
 
             age = int((now - self.source.datetime).total_seconds())
-            self.hist[now.second % 10] = age
-            print(self.hist)
-            print(
-                f"{now.second=} {age=}  {total_items=}  {len(changed_items)=}  {len(changed_journey_items)=}"
-            )
+            if age > 0:
+                self.hist[now.second % 10] = age
+                print(self.hist)
+                print(
+                    f"{now.second=} {age=}  {total_items=}  {len(changed_items)=}  {len(changed_journey_items)=}"
+                )
 
             with sentry_sdk.start_span(name="handle quick items") as span:
                 span.set_data("count", len(changed_items))
@@ -696,13 +689,6 @@ class Command(ImportLiveVehiclesCommand):
 
             print(f"{time_taken=}")
 
-            if self.fallback_mode:
-                self.fallback_mode = False
-                return 30  # wait
-            elif age > 150 and not changed_items:
-                self.fallback_mode = True
-                logger.warning("falling back")
-
             if time_taken > 11:
                 return 0
 
@@ -711,15 +697,16 @@ class Command(ImportLiveVehiclesCommand):
             # before the next fetch
             # for maximum freshness:
 
-            witching_hour = min(self.hist, key=self.hist.get)
-            worst_hour = max(self.hist, key=self.hist.get)
-            now = timezone.now().second % 10
-            wait = witching_hour - now
-            if wait < 0:
-                wait += 10
-            diff = worst_hour - witching_hour
-            print(f"{witching_hour=} {worst_hour=} {diff=} {now=} {wait=}\n")
-            if diff % 10 == 9:
-                return wait
+            if age > 1:
+                witching_hour = min(self.hist, key=self.hist.get)
+                worst_hour = max(self.hist, key=self.hist.get)
+                now = timezone.now().second % 10
+                wait = witching_hour - now
+                if wait <= 0:
+                    wait += 10
+                diff = worst_hour - witching_hour
+                print(f"{witching_hour=} {worst_hour=} {diff=} {now=} {wait=}\n")
+                if diff % 10 == 9:
+                    return wait
 
             return max(11 - time_taken, 0)
