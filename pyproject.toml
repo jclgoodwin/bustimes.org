@@ -49,7 +49,6 @@ dependencies = [
 [dependency-groups]
 test = [
     "lxml>=6.0.0,<7",
-    "pyrosm>=0.6.2",
     "govuk-bank-holidays>=0.15",
     "asgiref>=3.4.1,<4",
     "gtfs-kit>=11.0.0",
