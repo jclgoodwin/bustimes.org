@@ -156,7 +156,13 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
             if datetime and latest_datetime >= datetime:
                 # timestamp isn't newer
-                return
+                # but allow if the latest journey from another source has no service info
+                if not (
+                    vehicle.latest_journey_id
+                    and vehicle.latest_journey.source_id != self.source.id
+                    and not vehicle.latest_journey.service_id
+                ):
+                    return
             else:
                 location = self.create_vehicle_location(item)
                 if not location or location.latlong.equals_exact(latest_latlong):
