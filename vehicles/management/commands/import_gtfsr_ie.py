@@ -101,11 +101,11 @@ class Command(ImportLiveVehiclesCommand):
             route__source=self.source,
             route__code=item.vehicle.trip.route_id,
         ).distinct()
-        if not services:
+        if not services and "_" not in item.vehicle.trip.route_id:
             services = Service.objects.filter(
                 current=True,
                 route__source=self.source,
-                route__trip__ticket_machine_code=journey.code,
+                route__code__endswith=f"_{item.vehicle.trip.route_id}"
             ).distinct()
 
         if services:
@@ -114,15 +114,12 @@ class Command(ImportLiveVehiclesCommand):
         trips = Trip.objects.filter(ticket_machine_code=journey.code)
         if service:
             trips = trips.filter(route__service=service)
-        else:
-            trips = trips.filter(route__source=self.source)
 
         trip = None
 
-        if not (trips or service) and "_" in journey.code:
-            trip_suffix = journey.code.split("_", 1)[1]
+        if service and not trips:
             trips = Trip.objects.filter(
-                ticket_machine_code__endswith=f"_{trip_suffix}",
+                route__service=service,
                 route__source=self.source,
                 start=start_time,
                 inbound=item.vehicle.trip.direction_id == 1,
