@@ -1113,3 +1113,76 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         with use_cassette(str(self.vcr_path / "bod_avl_error.yaml")):
             items = command.get_items()
             self.assertEqual(items, [])
+
+    def test_tfw_bods_coexistence(self):
+        tfw = DataSource.objects.create(name="Transport for Wales")
+        bods = self.source
+
+        bods_command = import_bod_avl.Command()
+        bods_command.source = bods
+
+        tfw_command = import_bod_avl.Command()
+        tfw_command.source = tfw
+
+        bods_data = {
+            "Extensions": {
+                "VehicleJourney": {
+                    "Operational": {
+                        "TicketMachine": {
+                            "JourneyCode": "0732",
+                            "TicketMachineServiceCode": "60T3",
+                        }
+                    },
+                    "VehicleUniqueId": "YW25 DDN",
+                }
+            },
+            "RecordedAtTime": "2026-02-07T07:25:36+00:00",
+            "MonitoredVehicleJourney": {
+                "Bearing": "320",
+                "LineRef": "T3",
+                "BlockRef": "C303",
+                "OriginRef": "5400AWD70018",
+                "OriginName": "Jubilee_Road",
+                "VehicleRef": "YW25_DDN",
+                "OperatorRef": "LLCO",
+                "DirectionRef": "outbound",
+                "DestinationRef": "5140WDB25304",
+                "DestinationName": "Bus_Station",
+                "VehicleLocation": {"Latitude": "52.720813", "Longitude": "-4.054096"},
+                "PublishedLineName": "T3",
+                "FramedVehicleJourneyRef": {
+                    "DataFrameRef": "2026-02-07",
+                    "DatedVehicleJourneyRef": "0732",
+                },
+                "OriginAimedDepartureTime": "2026-02-07T07:32:00+00:00",
+                "DestinationAimedArrivalTime": "2026-02-07T10:10:00+00:00",
+            },
+        }
+        tfw_data = {
+            "RecordedAtTime": "2026-02-07T07:25:36+00:00",
+            "VehicleMonitoringRef": "LLCO-YW25_DDN",
+            "MonitoredVehicleJourney": {
+                "Bearing": "0",
+                "InPanic": "false",
+                "BlockRef": "Unknown",
+                "Monitored": "false",
+                "VehicleRef": "LLCO-YW25_DDN",
+                "OperatorRef": "LLCO",
+                "VehicleLocation": {"Latitude": "52.720813", "Longitude": "-4.054096"},
+                "VehicleFeatureRef": "lowFloor",
+                "VehicleJourneyRef": None,
+            },
+        }
+
+        with patch_redis_client():
+            tfw_command.handle_item(tfw_data)
+            tfw_command.save()
+
+            bods_command.handle_item(bods_data)
+            bods_command.save()
+
+        vehicle = Vehicle.objects.get(reg="YW25DDN")
+        journey = vehicle.latest_journey
+        self.assertEqual(journey.route_name, "T3")
+        self.assertEqual(journey.source, bods)
+        self.assertEqual(journey.code, "0732")
