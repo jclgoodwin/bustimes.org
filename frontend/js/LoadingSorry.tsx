@@ -13,14 +13,20 @@ export function ErrorFallback(error: { error?: unknown }) {
     <LoadingSorry
       text={
         <>
-          <p>{error.error?.toString() || "Sorry, something has gone wrong"}</p>
+          <p>I’m really sorry, something’s gone wrong</p>
+          {error.error ? (
+            <p>
+              <code>{error.error.toString()}</code>
+            </p>
+          ) : null}
+          <p>You could try reloading the page</p>
           <p>
             <button
               type="button"
               className="button"
               onClick={() => window.location.reload()}
             >
-              ↻ Try again
+              ↻ Reload the page
             </button>
           </p>
         </>
