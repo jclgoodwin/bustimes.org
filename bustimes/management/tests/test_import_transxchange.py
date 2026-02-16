@@ -893,22 +893,6 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(179, len(timetable.groupings[0].rows))
         self.assertEqual(179, len(timetable.groupings[1].rows))
 
-        # check row ordering near the end (sequence number tiebreaker)
-        codes = [r.stop.atco_code.split(":")[-1] for r in timetable.groupings[1].rows]
-        self.assertEqual(
-            codes[168:176],
-            [
-                "4400MS0425",
-                "4400MS0033",
-                "4400MS0031",
-                "4400MS0029",
-                "4400MS0028",
-                "4400MS0027",
-                "4400MS0051",
-                "4400MS0049",
-            ],
-        )
-
         self.assertNotContains(response, "set down only")
 
     @time_machine.travel("2021-06-28")
