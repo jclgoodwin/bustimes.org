@@ -16,7 +16,7 @@ from django.utils import timezone
 from xmltodict import unparse
 
 from bustimes.utils import get_stop_times
-from vehicles.models import Vehicle, VehicleJourney
+from vehicles.models import VehicleJourney
 
 
 TIMEZONE = ZoneInfo("Europe/London")
@@ -91,28 +91,11 @@ class RemoteDepartures(Departures):
             line_name_lower = line_name.lower()
             if line_name_lower in self.services_by_name:
                 return self.services_by_name[line_name_lower]
-            # if line_name_lower in self.services_by_alternative_name:
-            #     return self.services_by_alternative_name[line_name_lower]
 
             # Translink Glider
             if f"g{line_name_lower}" in self.services_by_name:
                 return self.services_by_name[f"g{line_name_lower}"]
 
-            alternatives = {
-                "Puls": "pulse",
-                # 'FLCN': 'falcon',
-                # "TUBE": "oxford tube",
-                "SPRI": "spring",
-                "PRO": "pronto",
-                "SA": "the sherwood arrow",
-                "Yo-Y": "yo-yo",
-                "Port": "portway park and ride",
-                "Bris": "brislington park and ride",
-                "sp": "sprint",
-            }
-            alternative = alternatives.get(line_name)
-            if alternative:
-                return self.get_service(alternative)
         return line_name
 
     def departures_from_response(self, res):
@@ -190,61 +173,6 @@ class TflDepartures(RemoteDepartures):
         return sorted(
             [self.get_row(item) for item in res.json()], key=lambda row: row["live"]
         )
-
-
-class EdinburghDepartures(RemoteDepartures):
-    def get_request_url(self) -> str:
-        return "https://tfe-opendata.com/api/v1/live_bus_times/" + self.stop.naptan_code
-
-    def departures_from_response(self, res) -> list:
-        routes = res.json()
-        if routes:
-            departures = []
-            for route in routes:
-                service = self.get_service(route["routeName"])
-                for departure in route["departures"]:
-                    time = ciso8601.parse_datetime(departure["departureTime"])
-                    departures.append(
-                        {
-                            "time": None if departure["isLive"] else time,
-                            "live": time if departure["isLive"] else None,
-                            "service": service,
-                            "destination": departure["destination"],
-                            "vehicle": departure["vehicleId"],
-                            "tripId": departure["tripId"],
-                        }
-                    )
-            vehicles = Vehicle.objects.filter(
-                source__name="TfE",
-                code__in=[item["vehicle"] for item in departures],
-            ).only(
-                "id",
-                "code",
-                "slug",
-                "fleet_code",
-                "fleet_number",
-                "reg",
-                "latest_journey_id",
-            )
-            vehicles = {vehicle.code: vehicle for vehicle in vehicles}
-            for item in departures:
-                vehicle = vehicles.get(item["vehicle"])
-                if vehicle:
-                    item["link"] = (
-                        f"{vehicle.get_absolute_url()}#journeys/{vehicle.latest_journey_id}"
-                    )
-                    item["vehicle"] = vehicle
-            hour = datetime.timedelta(hours=1)
-            if all(
-                ((departure["time"] or departure["live"]) - self.now) >= hour
-                for departure in departures
-            ):
-                for departure in departures:
-                    if departure["time"]:
-                        departure["time"] -= hour
-                    else:
-                        departure["live"] -= hour
-            return departures
 
 
 class TimetableDepartures(Departures):
