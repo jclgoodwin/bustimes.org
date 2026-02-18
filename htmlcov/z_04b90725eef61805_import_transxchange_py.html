@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_04b90725eef61805_suggest_bod_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.1">coverage.py v7.13.1</a>,
-            created at 2026-02-18 11:56 +0000
+            created at 2026-02-18 15:27 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -900,7 +900,7 @@
     <p class="run"><span class="n"><a id="t818" href="#t818">818</a></span><span class="t">        <span class="key">return</span> <span class="nam">calendar</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t819" href="#t819">819</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t820" href="#t820">820</a></span><span class="t">    <span class="op">@</span><span class="nam">cache</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t821" href="#t821">821</a></span><span class="t">    <span class="key">def</span> <span class="nam">get_note</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">note_code</span><span class="op">,</span> <span class="nam">note_text</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t821" href="#t821">821</a></span><span class="t">    <span class="key">def</span> <span class="nam">get_note</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">note_code</span><span class="op">=</span><span class="key">None</span><span class="op">,</span> <span class="nam">note_text</span><span class="op">=</span><span class="key">None</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t822" href="#t822">822</a></span><span class="t">        <span class="key">return</span> <span class="nam">Note</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">get_or_create</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t823" href="#t823">823</a></span><span class="t">            <span class="nam">code</span><span class="op">=</span><span class="nam">note_code</span> <span class="key">or</span> <span class="str">""</span><span class="op">,</span> <span class="nam">text</span><span class="op">=</span><span class="op">(</span><span class="nam">note_text</span> <span class="key">or</span> <span class="str">""</span><span class="op">)</span><span class="op">[</span><span class="op">:</span><span class="num">255</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t824" href="#t824">824</a></span><span class="t">        <span class="op">)</span><span class="op">[</span><span class="num">0</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
@@ -1038,7 +1038,7 @@
     <p class="run"><span class="n"><a id="t956" href="#t956">956</a></span><span class="t">                    <span class="nam">trip_notes</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">Trip</span><span class="op">.</span><span class="nam">notes</span><span class="op">.</span><span class="nam">through</span><span class="op">(</span><span class="nam">trip</span><span class="op">=</span><span class="nam">trip</span><span class="op">,</span> <span class="nam">note</span><span class="op">=</span><span class="nam">note</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t957" href="#t957">957</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t958" href="#t958">958</a></span><span class="t">            <span class="key">if</span> <span class="nam">operator_ref</span> <span class="key">in</span> <span class="nam">operator_notes</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t959" href="#t959">959</a></span><span class="t">                <span class="nam">note</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">get_note</span><span class="op">(</span><span class="nam">operator_ref</span><span class="op">,</span> <span class="nam">operator_notes</span><span class="op">[</span><span class="nam">operator_ref</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t959" href="#t959">959</a></span><span class="t">                <span class="nam">note</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">get_note</span><span class="op">(</span><span class="nam">note_text</span><span class="op">=</span><span class="nam">operator_notes</span><span class="op">[</span><span class="nam">operator_ref</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t960" href="#t960">960</a></span><span class="t">                <span class="nam">trip_notes</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">Trip</span><span class="op">.</span><span class="nam">notes</span><span class="op">.</span><span class="nam">through</span><span class="op">(</span><span class="nam">trip</span><span class="op">=</span><span class="nam">trip</span><span class="op">,</span> <span class="nam">note</span><span class="op">=</span><span class="nam">note</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t961" href="#t961">961</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t962" href="#t962">962</a></span><span class="t">            <span class="key">if</span> <span class="nam">journey</span><span class="op">.</span><span class="nam">frequency_interval</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -1698,7 +1698,7 @@
             <a class="nav" href="z_04b90725eef61805_suggest_bod_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.1">coverage.py v7.13.1</a>,
-            created at 2026-02-18 11:56 +0000
+            created at 2026-02-18 15:27 +0000
         </p>
     </div>
 </footer>
