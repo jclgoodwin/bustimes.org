@@ -122,9 +122,7 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
         except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):
             return
 
-    if operator.noc == "FABD":  # Aberdeen
-        vehicle = vehicle.removeprefix("111-").removeprefix("S-")
-    elif operator.name.startswith("Stagecoach "):
+    if operator.name.startswith("Stagecoach "):
         return
 
     vehicle_code_code = f"{operator_ref}:{vehicle}"
@@ -232,6 +230,13 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
 
 @db_periodic_task(crontab(minute="*/5"))
 def stats():
+    """
+    count the number of current vehicle journeys
+    (in total, with services, and with trips)
+    and pending vehicle revisions
+    for the /status graphs
+    """
+
     now = timezone.now()
     half_hour_ago = now - timedelta(minutes=30)
     journeys = VehicleJourney.objects.filter(
@@ -257,6 +262,10 @@ def stats():
 
 @db_periodic_task(crontab(minute=4, hour=10))
 def timetable_source_stats():
+    """
+    update the other /status graph
+    """
+
     now = timezone.now()
 
     sources = (
@@ -298,7 +307,7 @@ def compress_avl_archive():
     move files named things like
     2024-03-15_060942.json
     into
-    2024-02-15.zip
+    2024-03-15.zip
     """
 
     today_str = timezone.now().date().isoformat()
