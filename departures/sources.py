@@ -1,5 +1,3 @@
-"""Various ways of getting live departures from some web service"""
-
 import datetime
 import logging
 from zoneinfo import ZoneInfo
@@ -245,8 +243,10 @@ class TimetableDepartures(Departures):
         if len(today_times) == self.per_page:
             while all(
                 today_times[0].departure == time.departure for time in today_times[1:]
+            ) and (
+                more_times := all_today_times[len(today_times) : len(today_times) + 8]
             ):
-                today_times += all_today_times[len(today_times) : len(today_times) + 8]
+                today_times += more_times
 
         times = [self.get_row(stop_time) for stop_time in today_times]
 
