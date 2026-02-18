@@ -259,28 +259,29 @@ class Timetable:
         self.apply_stops()
 
         # correct origin and destination/inbound and outbound descriptions being the wrong way round
-        if self.groupings and len(self.origins_and_destinations) == 1:
-            rows = self.groupings[0].rows
-            if type(rows[0].stop) is Stop or type(rows[-1].stop) is Stop:
-                pass
-            else:
-                origin = self.origins_and_destinations[0][0]
-                destination = self.origins_and_destinations[0][-1]
-                actual_origin = rows[0].stop.get_qualified_name()
-                actual_destination = rows[-1].stop.get_qualified_name()
-                if (
-                    origin in actual_destination
-                    and origin not in actual_origin
-                    or destination in actual_origin
-                    and destination not in actual_destination
-                ):
-                    self.origins_and_destinations = [
-                        tuple(reversed(pair)) for pair in self.origins_and_destinations
-                    ]
-                    self.inbound_outbound_descriptions = [
-                        tuple(reversed(pair))
-                        for pair in self.inbound_outbound_descriptions
-                    ]
+        # if self.groupings and len(self.origins_and_destinations) == 1:
+        #     rows = self.groupings[0].rows
+        #     if type(rows[0].stop) is Stop or type(rows[-1].stop) is Stop:
+        #         pass
+        #     else:
+        #         origin = self.origins_and_destinations[0][0]
+        #         destination = self.origins_and_destinations[0][-1]
+        #         actual_origin = rows[0].stop.get_qualified_name()
+        #         actual_destination = rows[-1].stop.get_qualified_name()
+        #         if (
+        #             SequenceMatcher(None, destination, actual_destination).quick_ratio()
+        #             + SequenceMatcher(None, origin, actual_origin).quick_ratio()
+        #             <
+        #             SequenceMatcher(None, destination, actual_origin).quick_ratio()
+        #             + SequenceMatcher(None, origin, actual_destination).quick_ratio()
+        #         ):
+        #             self.origins_and_destinations = [
+        #                 tuple(reversed(pair)) for pair in self.origins_and_destinations
+        #             ]
+        #             self.inbound_outbound_descriptions = [
+        #                 tuple(reversed(pair))
+        #                 for pair in self.inbound_outbound_descriptions
+        #             ]
 
         return self
 
