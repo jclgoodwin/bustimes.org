@@ -818,7 +818,7 @@ class Command(BaseCommand):
         return calendar
 
     @cache
-    def get_note(self, note_code, note_text):
+    def get_note(self, note_code=None, note_text=None):
         return Note.objects.get_or_create(
             code=note_code or "", text=(note_text or "")[:255]
         )[0]
@@ -956,7 +956,7 @@ class Command(BaseCommand):
                     trip_notes.append(Trip.notes.through(trip=trip, note=note))
 
             if operator_ref in operator_notes:
-                note = self.get_note(operator_ref, operator_notes[operator_ref])
+                note = self.get_note(note_text=operator_notes[operator_ref])
                 trip_notes.append(Trip.notes.through(trip=trip, note=note))
 
             if journey.frequency_interval:
