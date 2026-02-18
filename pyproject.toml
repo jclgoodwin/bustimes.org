@@ -48,6 +48,7 @@ dependencies = [
     "django-timezone-field>=7.2.1",
     "django-imagekit>=6.1.0",
     "django-storages>=1.14.6",
+    "transxchange-parser",
 ]
 
 [dependency-groups]
@@ -75,6 +76,9 @@ dev = [
 
 [tool.uv]
 package = false
+
+[tool.uv.sources]
+transxchange-parser = { git = "https://github.com/bustimes/transxchange-parser" }
 
 [build-system]
 requires = ["hatchling"]
