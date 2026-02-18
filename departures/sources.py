@@ -92,10 +92,6 @@ class RemoteDepartures(Departures):
             if line_name_lower in self.services_by_name:
                 return self.services_by_name[line_name_lower]
 
-            # Translink Glider
-            if f"g{line_name_lower}" in self.services_by_name:
-                return self.services_by_name[f"g{line_name_lower}"]
-
         return line_name
 
     def departures_from_response(self, res):
