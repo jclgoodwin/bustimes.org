@@ -34,7 +34,7 @@ from busstops.models import (
 )
 from busstops.management.commands.naptan_new import get_stop
 from busstops.utils import get_datetime
-from transxchange.txc import TransXChange
+from txc import TransXChange
 from vehicles.models import get_text_colour
 from vosa.models import Registration
 
@@ -265,7 +265,7 @@ def do_route_links(journeys, transxchange, stops, service):
             to_stop = stops.get(route_link.to_stop)
 
             if type(from_stop) is StopPoint and type(to_stop) is StopPoint:
-                start_point = Point(route_link.track[0], srid=route_link.track.srid)
+                start_point = Point(route_link.track[0], srid=route_link.track[0].srid)
 
                 # Highland Council - eastings and northings divided by 100000
                 if 0 < start_point.x < 1 and 0 < start_point.y < 1:
@@ -281,7 +281,7 @@ def do_route_links(journeys, transxchange, stops, service):
                 if route_link_is_dodgy(start_point, from_stop, service.slug):
                     continue
 
-                end_point = Point(route_link.track[-1], srid=route_link.track.srid)
+                end_point = Point(route_link.track[-1], srid=route_link.track[-1].srid)
 
                 if route_link_is_dodgy(end_point, to_stop, service.slug):
                     continue
@@ -864,7 +864,8 @@ class Command(BaseCommand):
             operator_ref = journey.operator or txc_service.operator
 
             trip = Trip(
-                inbound=journey.journey_pattern.is_inbound(),
+                inbound=journey.journey_pattern.direction
+                in ("inbound", "anticlockwise"),
                 calendar=calendar,
                 route=route,
                 journey_pattern=journey.journey_pattern.id,
