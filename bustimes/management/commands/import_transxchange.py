@@ -17,7 +17,7 @@ from functools import cache
 from tqdm import tqdm
 
 from django.core.management.base import BaseCommand
-from django.contrib.gis.geos import Point, LineString
+from django.contrib.gis.geos import GEOSGeometry, Point, LineString
 from django.db import IntegrityError
 from django.db.models import Count, Exists, OuterRef, Q
 from django.db.models.functions import Now, Upper
@@ -265,7 +265,7 @@ def do_route_links(journeys, transxchange, stops, service):
             to_stop = stops.get(route_link.to_stop)
 
             if type(from_stop) is StopPoint and type(to_stop) is StopPoint:
-                start_point = Point(route_link.track[0], srid=route_link.track[0].srid)
+                start_point = GEOSGeometry(route_link.track[0].wkt())
 
                 # Highland Council - eastings and northings divided by 100000
                 if 0 < start_point.x < 1 and 0 < start_point.y < 1:
@@ -281,7 +281,7 @@ def do_route_links(journeys, transxchange, stops, service):
                 if route_link_is_dodgy(start_point, from_stop, service.slug):
                     continue
 
-                end_point = Point(route_link.track[-1], srid=route_link.track[-1].srid)
+                end_point = GEOSGeometry(route_link.track[-1].wkt())
 
                 if route_link_is_dodgy(end_point, to_stop, service.slug):
                     continue
@@ -290,7 +290,7 @@ def do_route_links(journeys, transxchange, stops, service):
                 route_links_to_create[key] = RouteLink(
                     from_stop_id=from_stop.atco_code,
                     to_stop_id=to_stop.atco_code,
-                    geometry=route_link.track,
+                    geometry=route_link.wkt(),
                     service=service,
                 )
 

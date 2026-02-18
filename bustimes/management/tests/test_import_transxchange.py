@@ -1636,16 +1636,17 @@ class ImportTransXChangeTest(TestCase):
     def test_ticketer_wait_times(self):
         Operator.objects.create(noc="MDCL", name="Midland Classic")
 
-        with self.assertLogs("transxchange.txc", "WARNING") as cm:
+        with self.assertLogs("txc.txc", "WARNING") as cm:
             self.handle_files(
                 "current.zip", ["MDCL_9_MDCLPD105080159_20250506_-_2108484.xml"]
             )
 
+            print(cm.output)
         self.assertEqual(
             cm.output[:2],
             [
-                "WARNING:transxchange.txc:dodgily ignored second wait time 0:09:00 from 260013205 to 260013208",
-                "WARNING:transxchange.txc:correctly ignored second journey pattern wait time 0:08:00 at 1000DSBSB818",
+                "WARNING:txc.txc:dodgily ignored second wait time 0:09:00 from 260013205 to 260013208",
+                "WARNING:txc.txc:correctly ignored second journey pattern wait time 0:08:00 at 1000DSBSB818",
             ],
         )
 
