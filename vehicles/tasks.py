@@ -1,12 +1,14 @@
 import functools
 import json
 from datetime import timedelta
+import zipfile
 
 from ciso8601 import parse_datetime
 from django.core.cache import cache
 from django.db import IntegrityError
 from django.db.models import Count, Q
 from django.utils import timezone
+from django.conf import settings
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task, db_task
 
@@ -103,7 +105,9 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
     if operator_ref:
         vehicle = vehicle.removeprefix(f"{operator_ref}-")
 
-    vehicle = vehicle.removeprefix("WCM-").removeprefix("SHU-").removeprefix("MCG_Fleet-")
+    vehicle = (
+        vehicle.removeprefix("WCM-").removeprefix("SHU-").removeprefix("MCG_Fleet-")
+    )
 
     if not vehicle or vehicle == "-":
         return
@@ -286,3 +290,35 @@ def timetable_source_stats():
     history.append(stats)
 
     cache.set("timetable-source-stats", history, None)
+
+
+@db_periodic_task(crontab(minute=10, hour=1))
+def compress_avl_archive():
+    """
+    move files named things like
+    2024-03-15_060942.json
+    into
+    2024-02-15.zip
+    """
+
+    today_str = timezone.now().date().isoformat()
+
+    for path in settings.AVL_ARCHIVE_DIR.iterdir():
+        if not path.name.isdigit():
+            continue
+
+        date_str = None
+        archive = None
+
+        for file_path in sorted(path.iterdir()):
+            if file_path.suffix != ".json":
+                continue
+            if file_path.name.startswith(today_str):
+                break
+            if not date_str or not file_path.name.startswith(date_str):
+                date_str = file_path.name[:10]
+                archive = zipfile.ZipFile(
+                    path / f"{date_str}.zip", "a", compression=zipfile.ZIP_DEFLATED
+                )
+            archive.write(file_path, file_path.name)
+            file_path.unlink()
