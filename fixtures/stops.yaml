@@ -111,3 +111,17 @@
 "638053541":
     indicator: Stance 1
     latlong: POINT(-3.3161678 57.6494396)
+
+# Fort William Bus Station
+"670085645":
+    indicator: Stances 7/8
+    latlong: POINT(-5.1042864 56.8211092)
+"670085465C":
+    indicator: Stances 5/6
+    latlong: POINT(-5.1044830 56.8210686)
+"670085645B":
+    indicator: Stances 3/4
+    latlong: POINT(-5.1047395 56.8210198)
+"670085645A":
+    indicator: Stances 1/2
+    latlong: POINT(-5.1049530 56.8209844)
