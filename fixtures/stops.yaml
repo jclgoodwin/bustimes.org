@@ -88,3 +88,26 @@
     landmark: Sports Direct
 "370023314":
     landmark: ""
+
+# Elgin Bus Station (© OpenStreetMap contributors)
+"638053547":
+    indicator: Stance 7
+    latlong: POINT(-3.3165853 57.6493448)
+"638053546":
+    indicator: Stance 6
+    latlong: POINT(-3.3165165 57.6493574)
+"638053545":
+    indicator: Stance 5
+    latlong: POINT(-3.3164562 57.6493723)
+"638053544":
+    indicator: Stance 4
+    latlong: POINT(-3.3163819 57.6493876)
+"638053543":
+    indicator: Stance 3
+    latlong: POINT(-3.3163123 57.6494046)
+"638053542":
+    indicator: Stance 2
+    latlong: POINT(-3.3162395 57.6494268)
+"638053541":
+    indicator: Stance 1
+    latlong: POINT(-3.3161678 57.6494396)
