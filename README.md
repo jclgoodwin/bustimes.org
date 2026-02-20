@@ -47,7 +47,7 @@
 | busstops/management/tests/test\_import\_nptg.py                 |       31 |        0 |    100% |           |
 | busstops/management/tests/test\_import\_operators.py            |       70 |        0 |    100% |           |
 | busstops/middleware.py                                          |       31 |        0 |    100% |           |
-| busstops/models.py                                              |      626 |       21 |     97% |272, 297, 323, 441, 478, 528, 612, 615, 649, 687, 839, 872, 951, 963-967, 1061, 1101, 1116, 1153 |
+| busstops/models.py                                              |      626 |       22 |     96% |272, 297, 323, 441, 478, 528, 612, 615, 649, 687, 839, 872, 951, 963-967, 1052, 1061, 1101, 1116, 1153 |
 | busstops/popular\_pages.py                                      |       12 |        0 |    100% |           |
 | busstops/tasks.py                                               |       11 |        0 |    100% |           |
 | busstops/templatetags/\_\_init\_\_.py                           |        0 |        0 |    100% |           |
@@ -102,7 +102,7 @@
 | departures/avl.py                                               |       12 |        1 |     92% |        14 |
 | departures/gtfsr.py                                             |       91 |        2 |     98% |   91, 111 |
 | departures/live.py                                              |      127 |       18 |     86% |42, 57, 59, 61, 72-83, 144, 155, 167, 181 |
-| departures/sources.py                                           |      189 |       32 |     83% |31, 55, 60, 64, 68, 72, 102, 105-107, 117-124, 129-130, 144-145, 153-154, 249, 264, 337, 341-342, 348-349, 352 |
+| departures/sources.py                                           |      191 |       33 |     83% |31, 55, 60, 64, 68, 72, 93, 105, 108-110, 120-127, 132-133, 147-148, 156-157, 252, 267, 340, 344-345, 351-352, 355 |
 | departures/test\_gtfsr\_trip\_updates.py                        |       45 |        0 |    100% |           |
 | departures/test\_gtfsr\_vehicle\_positions.py                   |       33 |        0 |    100% |           |
 | departures/test\_live.py                                        |       96 |        0 |    100% |           |
@@ -193,7 +193,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       59 |        0 |    100% |           |
-| **TOTAL**                                                       | **17113** | **1137** | **93%** |           |
+| **TOTAL**                                                       | **17115** | **1139** | **93%** |           |
 
 
 ## Setup coverage badge
