@@ -576,6 +576,7 @@ class DataSourceAdmin(admin.ModelAdmin):
 @admin.register(models.SIRISource)
 class SIRISourceAdmin(admin.ModelAdmin):
     list_display = ("name", "url", "requestor_ref", "areas", "is_poorly")
+    autocomplete_fields = ("operators", "admin_areas")
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
