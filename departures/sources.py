@@ -82,14 +82,17 @@ class RemoteDepartures(Departures):
         return requests.get(self.get_request_url(), **self.get_request_kwargs())
 
     def get_service(self, line_name: str):
-        """Given a line name string, returns the Service matching a line name
-        (case-insensitively), or a line name string
-        """
         if line_name:
+            # try to find matching service (case-insensitively)
             line_name_lower = line_name.lower()
-            if line_name_lower in self.services_by_name:
-                return self.services_by_name[line_name_lower]
+            if service := self.services_by_name.get(line_name_lower):
+                return service
 
+            # FlixBus
+            elif service := self.services_by_name.get(f"uk{line_name_lower}"):
+                return service
+
+        # fallback
         return line_name
 
     def departures_from_response(self, res):
