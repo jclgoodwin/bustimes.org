@@ -1,3 +1,4 @@
+import math
 from unittest.mock import patch
 
 import time_machine
@@ -561,3 +562,79 @@ class ViewsTests(TestCase):
 
         response = self.client.get("/mao/")
         self.assertEqual(response.status_code, 404)
+
+
+class StopsMVTTests(TestCase):
+    """Tests for the Mapbox Vector Tile endpoint"""
+
+    @classmethod
+    def setUpTestData(cls):
+        north = Region.objects.create(pk="NE", name="North East")
+        admin_area = AdminArea.objects.create(
+            id=98, atco_code=98, region=north, name="Test Area"
+        )
+        # lon=1.0, lat=52.0 — roughly East Anglia
+        cls.stop = StopPoint.objects.create(
+            atco_code="MVT0000001",
+            common_name="MVT Test Stop",
+            active=True,
+            admin_area=admin_area,
+            locality_centre=False,
+            indicator="A",
+            bearing="N",
+            latlong=Point(1.0, 52.0),
+        )
+        service = Service.objects.create(line_name="T1", current=True, region=north)
+        StopUsage.objects.create(service=service, stop=cls.stop, order=0)
+
+        # A stop with no current service — should not appear in tiles
+        cls.inactive_stop = StopPoint.objects.create(
+            atco_code="MVT0000002",
+            common_name="Inactive Stop",
+            active=True,
+            admin_area=admin_area,
+            locality_centre=False,
+            latlong=Point(1.0, 52.0),
+        )
+        inactive_service = Service.objects.create(
+            line_name="T2", current=False, region=north
+        )
+        StopUsage.objects.create(
+            service=inactive_service, stop=cls.inactive_stop, order=0
+        )
+
+    @staticmethod
+    def latlon_to_tile(lat, lon, z):
+        n = 2**z
+        x = int((lon + 180) / 360 * n)
+        lat_rad = math.radians(lat)
+        y = int(
+            (1 - math.log(math.tan(lat_rad) + 1 / math.cos(lat_rad)) / math.pi) / 2 * n
+        )
+        return z, x, y
+
+    def test_zoom_too_low(self):
+        """Tiles below z=10 return empty bytes"""
+        response = self.client.get("/stops/9/255/255.mvt")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/x-protobuf")
+        self.assertEqual(response.content, b"")
+
+    def test_empty_tile(self):
+        """A tile with no stops returns empty bytes"""
+        # z=14, x=0, y=0 is top-left corner of world (Pacific/Arctic) — no UK stops
+        response = self.client.get("/stops/14/0/0.mvt")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/x-protobuf")
+        self.assertEqual(response.content, b"")
+
+    def test_tile_contains_active_stop(self):
+        """A tile covering an active stop returns it (with current service only)"""
+        z, x, y = self.latlon_to_tile(52.0, 1.0, 14)
+        response = self.client.get(f"/stops/{z}/{x}/{y}.mvt")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/x-protobuf")
+        # protobuf encodes strings as raw UTF-8 bytes
+        self.assertIn(b"MVT0000001", response.content)
+        # stop with inactive service must not appear
+        self.assertNotIn(b"MVT0000002", response.content)
