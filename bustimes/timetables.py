@@ -624,13 +624,34 @@ class Grouping:
                     adjacency_count[pair] = adjacency_count.get(pair, 0) + 1
                 prev = key
 
+        def chain_length(node):
+            """Count stops in the unambiguous chain from node before a fork or merge."""
+            length = 1
+            current = node
+            while True:
+                succs = successors.get(current, set())
+                if len(succs) != 1:
+                    break
+                (nxt,) = succs
+                if in_degree.get(nxt, 0) != 1:
+                    break  # merge point: another predecessor still pending
+                length += 1
+                current = nxt
+            return length
+
         def sort_key(k):
-            # primary: prefer direct successor of last emitted stop
-            # secondary: prefer lower sequence number
-            return (
-                adjacency_count.get((last, k), 0),
-                sequences.get(k, 0),
-            )
+            adj = adjacency_count.get((last, k), 0) if last is not None else 0
+            if adj > 0:
+                # At a branch point: among direct successors, prefer shorter
+                # chains so that short terminus branches (e.g. a Street
+                # terminus stop) stay grouped near their branch point rather
+                # than being stranded at the bottom of the timetable.
+                return (True, -chain_length(k), adj, sequences.get(k, 0))
+            else:
+                # Initial selection or no direct-successor relationship:
+                # use sequence number only (chain_length would wrongly prefer
+                # short-chain route-starts over long-chain route-starts).
+                return (False, 0, adj, sequences.get(k, 0))
 
         # Kahn's algorithm, but when multiple nodes are ready,
         # prefer the direct successor of the last emitted node
