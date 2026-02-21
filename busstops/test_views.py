@@ -100,6 +100,7 @@ class ViewsTests(TestCase):
             locality_centre=False,
             indicator="adj",
             bearing="E",
+            latlong=Point(1.041894987727773, 52.85610279717982),
         )
         cls.stop = StopPoint.objects.create(
             atco_code="2900M114",
@@ -111,7 +112,7 @@ class ViewsTests(TestCase):
             locality_centre=False,
             indicator="opp",
             bearing="W",
-            latlong=Point(52.8566019427, 1.0331935468),
+            latlong=Point(1.041894987727773, 52.85610279717982),
         )
         cls.inactive_service = Service.objects.create(
             service_code="45A", line_name="45A", region=cls.north, current=False
@@ -344,6 +345,34 @@ class ViewsTests(TestCase):
         )
         self.assertEqual("FeatureCollection", response.json()["type"])
         self.assertIn("features", response.json())
+
+    def test_zoom_too_low(self):
+        """zoom lower than 10"""
+
+        response = self.client.get("/stops/9/255/255.mvt")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/x-protobuf")
+        self.assertEqual(response.content, b"")
+
+    def test_empty_tile(self):
+        """no stops"""
+
+        response = self.client.get("/stops/14/0/0.mvt")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/x-protobuf")
+        self.assertEqual(response.content, b"")
+
+    def test_tile_contains_active_stop(self):
+        """A tile covering an active stop returns it (with current service only)"""
+
+        response = self.client.get("/stops/14/8239/5347.mvt")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/x-protobuf")
+        # protobuf encodes strings as raw UTF-8 bytes
+        self.assertIn(b"2900M114", response.content)
+        self.assertIn(b"Melton Constable", response.content)
+        # stop with inactive service must not appear
+        self.assertNotIn(b"2900M115", response.content)
 
     def test_stop_view(self):
         response = self.client.get("/stops/2900m114")

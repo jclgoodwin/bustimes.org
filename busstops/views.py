@@ -327,13 +327,10 @@ def stops_mvt(request, z, x, y):
                         ST_TileEnvelope(%s, %s, %s),
                         4096, 64, true
                     ) AS geom,
-                    sp.atco_code,
                     '/stops/' || sp.atco_code AS url,
                     sp.indicator,
                     sp.common_name,
                     COALESCE(l.name, '') AS locality_name,
-                    sp.stop_type,
-                    sp.bus_stop_type,
                     COALESCE(
                         sp.heading,
                         CASE sp.bearing
