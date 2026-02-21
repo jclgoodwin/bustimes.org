@@ -49,6 +49,7 @@ urlpatterns = [
     ),
     path("robots.txt", views.robots_txt),
     path("stops.json", views.stops_json),
+    path("stops/<int:z>/<int:x>/<int:y>.mvt", views.stops_mvt),
     path(
         "regions/<pk>",
         cdn_cache_control(1800)(views.RegionDetailView.as_view()),

@@ -19,6 +19,7 @@ from django.contrib.sitemaps import Sitemap
 from django.core.cache import cache
 from django.core.mail import EmailMessage
 from django.core.paginator import Paginator
+from django.db import connection
 from django.db.models import F, OuterRef, Prefetch, Q, When, Case, Value
 from django.db.models.functions import Coalesce, Now
 from django.http import (
@@ -307,6 +308,80 @@ def status(request):
         "status.html",
         context,
     )
+
+
+@cdn_cache_control(3600)
+def stops_mvt(request, z, x, y):
+    """Mapbox Vector Tile endpoint for bus stops, replacing stops_json eventually."""
+    if z < 10:
+        return HttpResponse(b"", content_type="application/x-protobuf")
+
+    with connection.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT ST_AsMVT(tile, 'stops', 4096, 'geom')
+            FROM (
+                SELECT
+                    ST_AsMVTGeom(
+                        ST_Transform(sp.latlong, 3857),
+                        ST_TileEnvelope(%s, %s, %s),
+                        4096, 64, true
+                    ) AS geom,
+                    sp.atco_code,
+                    '/stops/' || sp.atco_code AS url,
+                    sp.indicator,
+                    sp.common_name,
+                    COALESCE(l.name, '') AS locality_name,
+                    sp.stop_type,
+                    sp.bus_stop_type,
+                    COALESCE(
+                        sp.heading,
+                        CASE sp.bearing
+                            WHEN 'N'  THEN 0
+                            WHEN 'NE' THEN 45
+                            WHEN 'E'  THEN 90
+                            WHEN 'SE' THEN 135
+                            WHEN 'S'  THEN 180
+                            WHEN 'SW' THEN 225
+                            WHEN 'W'  THEN 270
+                            WHEN 'NW' THEN 315
+                        END
+                    ) AS bearing,
+                    CASE
+                        WHEN sp.indicator != '' AND LENGTH(sp.indicator) < 3
+                             AND sp.indicator != LOWER(sp.indicator)
+                            THEN sp.indicator
+                        WHEN sp.indicator != ''
+                             AND array_length(regexp_split_to_array(sp.indicator, '\s+'), 1) = 2
+                             AND LENGTH((regexp_split_to_array(sp.indicator, '\s+'))[2]) < 3
+                             AND LOWER((regexp_split_to_array(sp.indicator, '\s+'))[1])
+                                 IN ('stop','bay','stand','stance','gate','platform')
+                            THEN (regexp_split_to_array(sp.indicator, '\s+'))[2]
+                        WHEN POSITION(' ' IN sp.common_name) > 0
+                             AND LENGTH(regexp_replace(sp.common_name, '^.* ', '')) < 3
+                             AND (   regexp_replace(sp.common_name, '^.* ', '') ~ '^[0-9]+$'
+                                  OR regexp_replace(sp.common_name, '^.* ', '') ~ '^[A-Z]+$')
+                            THEN regexp_replace(sp.common_name, '^.* ', '')
+                        ELSE NULL
+                    END AS icon
+                FROM busstops_stoppoint sp
+                LEFT JOIN busstops_locality l ON sp.locality_id = l.id
+                WHERE
+                    sp.latlong && ST_Transform(ST_TileEnvelope(%s, %s, %s), 4326)
+                    AND EXISTS (
+                        SELECT 1
+                        FROM busstops_stopusage su
+                        JOIN busstops_service svc ON su.service_id = svc.id
+                        WHERE su.stop_id = sp.atco_code AND svc.current = true
+                    )
+            ) AS tile
+            WHERE geom IS NOT NULL
+            """,
+            [z, x, y, z, x, y],
+        )
+        row = cursor.fetchone()
+    mvt_data = bytes(row[0]) if row and row[0] else b""
+    return HttpResponse(mvt_data, content_type="application/x-protobuf")
 
 
 def stats(request):
