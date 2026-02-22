@@ -310,7 +310,7 @@ def status(request):
     )
 
 
-@cdn_cache_control(3600)
+@cache_control(max_age=3600)
 def stops_mvt(request, z, x, y):
     """Mapbox Vector Tile endpoint for bus stops, replacing stops_json eventually."""
     if z < 10:
@@ -395,7 +395,7 @@ def timetable_source_stats(request):
     return JsonResponse(cache.get("timetable-source-stats", []), safe=False)
 
 
-@cdn_cache_control(3600)
+@cache_control(max_age=3600)
 def stops_json(request):
     """JSON endpoint accessed by the JavaScript map,
     listing the active StopPoints within a rectangle,
