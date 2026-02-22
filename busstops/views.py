@@ -362,10 +362,14 @@ def stops_mvt(request, z, x, y):
                         ELSE NULL
                     END AS icon,
                     (
-                        SELECT STRING_AGG(DISTINCT su.line_name, ',' ORDER BY su.line_name)
-                        FROM busstops_stopusage su
-                        JOIN busstops_service svc ON su.service_id = svc.id
-                        WHERE su.stop_id = sp.atco_code AND svc.current = true
+                        SELECT STRING_AGG(line_name, ',' ORDER BY m[1], lpad(m[2], 4, '0'), m[3])
+                        FROM (
+                            SELECT DISTINCT su.line_name,
+                                regexp_match(su.line_name, '^([^0-9]*)([0-9]*)([^0-9]*)$') AS m
+                            FROM busstops_stopusage su
+                            JOIN busstops_service svc ON su.service_id = svc.id
+                            WHERE su.stop_id = sp.atco_code AND svc.current = true
+                        )
                     ) AS line_names
                 FROM busstops_stoppoint sp
                 LEFT JOIN busstops_locality l ON sp.locality_id = l.id

@@ -789,7 +789,10 @@ export default function BigMap(
                 setClickedStopFeature({
                   type: "Feature",
                   properties: { url, name, services },
-                  geometry: feature.geometry,
+                  geometry: feature.geometry as {
+                    type: "Point";
+                    coordinates: [number, number];
+                  },
                 });
               }
             }
