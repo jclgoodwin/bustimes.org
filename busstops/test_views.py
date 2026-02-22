@@ -137,6 +137,7 @@ class ViewsTests(TestCase):
         )
         trip = Trip.objects.create(route=route, start="0", end="1")
         StopTime.objects.create(trip=trip, stop=cls.stop, arrival="2")
+        StopUsage.objects.create(service=cls.service, stop=cls.stop, order=0)
 
         Service.objects.bulk_create(
             [
@@ -349,7 +350,7 @@ class ViewsTests(TestCase):
     def test_zoom_too_low(self):
         """zoom lower than 10"""
 
-        response = self.client.get("/stops/9/255/255.mvt")
+        response = self.client.get("/stops/9/255/255.pbf")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "application/x-protobuf")
         self.assertEqual(response.content, b"")
@@ -357,7 +358,7 @@ class ViewsTests(TestCase):
     def test_empty_tile(self):
         """no stops"""
 
-        response = self.client.get("/stops/14/0/0.mvt")
+        response = self.client.get("/stops/14/0/0.pbf")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "application/x-protobuf")
         self.assertEqual(response.content, b"")
@@ -365,7 +366,7 @@ class ViewsTests(TestCase):
     def test_tile_contains_active_stop(self):
         """A tile covering an active stop returns it (with current service only)"""
 
-        response = self.client.get("/stops/14/8239/5347.mvt")
+        response = self.client.get("/stops/14/8239/5347.pbf")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "application/x-protobuf")
         # protobuf encodes strings as raw UTF-8 bytes

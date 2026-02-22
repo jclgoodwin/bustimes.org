@@ -142,26 +142,18 @@ function SlippyMapHash() {
 }
 
 function Stops({
-  stops,
   times,
+  clickedStopFeature,
   clickedStopUrl,
   setClickedStop,
 }: {
-  stops?: {
-    type: "FeatureCollection";
-    features: Stop[];
-  };
   times?: Trip["times"];
+  clickedStopFeature?: Stop;
   clickedStopUrl?: string;
   setClickedStop: (stop?: string) => void;
 }) {
+  // if we're displaying the stops of a trip
   const stopsById = React.useMemo<{ [url: string]: Stop } | undefined>(() => {
-    if (stops) {
-      return Object.assign(
-        {},
-        ...stops.features.map((stop) => ({ [stop.properties.url]: stop })),
-      );
-    }
     if (times) {
       return Object.assign(
         {},
@@ -176,9 +168,11 @@ function Stops({
         }),
       );
     }
-  }, [stops, times]);
+  }, [times]);
 
-  const clickedStop = stopsById && clickedStopUrl && stopsById[clickedStopUrl];
+  const clickedStop = times
+    ? stopsById && clickedStopUrl && stopsById[clickedStopUrl]
+    : clickedStopFeature;
 
   const theme = React.useContext(ThemeContext);
 
@@ -186,37 +180,40 @@ function Stops({
 
   return (
     <React.Fragment>
-      {stops ? (
-        <Source type="geojson" data={stops}>
+      {times ? null : (
+        <Source
+          type="vector"
+          tiles={[`${location.origin}/stops/{z}/{x}/{y}.pbf`]}
+          minzoom={10}
+        >
           <Layer
-            {...{
-              id: "stops",
-              type: "symbol",
-              minzoom: 14,
-              layout: {
-                "text-field": ["get", "icon"],
-                "text-font": font,
-                "text-allow-overlap": true,
-                "text-size": 10,
-                "icon-rotate": ["+", 45, ["get", "bearing"]],
-                "icon-image": [
-                  "case",
-                  ["==", ["get", "bearing"], ["literal", null]],
-                  "stop-marker-circle",
-                  "stop-marker",
-                ],
-                "icon-allow-overlap": true,
-                "icon-ignore-placement": true,
-                "text-ignore-placement": true,
-                "icon-padding": [3],
-              },
-              paint: {
-                "text-color": "#ffffff",
-              },
+            id="stops"
+            source-layer="stops"
+            type="symbol"
+            minzoom={14}
+            layout={{
+              "text-field": ["get", "icon"],
+              "text-font": font,
+              "text-allow-overlap": true,
+              "text-size": 10,
+              "icon-rotate": ["+", 45, ["get", "bearing"]],
+              "icon-image": [
+                "case",
+                ["==", ["get", "bearing"], ["literal", null]],
+                "stop-marker-circle",
+                "stop-marker",
+              ],
+              "icon-allow-overlap": true,
+              "icon-ignore-placement": true,
+              "text-ignore-placement": true,
+              "icon-padding": [3],
+            }}
+            paint={{
+              "text-color": "#ffffff",
             }}
           />
         </Source>
-      ) : null}
+      )}
       {clickedStop ? (
         <StopPopup
           item={clickedStop}
@@ -479,8 +476,6 @@ export default function BigMap(
 
   const [vehicles, setVehicles] = React.useState<VehicleLocation[]>();
 
-  const [stops, setStops] = React.useState();
-
   const [zoom, setZoom] = React.useState<number>();
 
   const [clickedStopUrl, setClickedStopURL] = React.useState(() => {
@@ -491,6 +486,10 @@ export default function BigMap(
       }
     }
   });
+
+  const [clickedStopFeature, setClickedStopFeature] = React.useState<
+    Stop | undefined
+  >();
 
   const [tripVehicle, setTripVehicle] = React.useState<VehicleLocation>();
 
@@ -524,24 +523,11 @@ export default function BigMap(
 
   // slippy map stuff
   const boundsRef = React.useRef<LngLatBounds | null>(null);
-  const stopsHighWaterMark = React.useRef<LngLatBounds | null>(null);
-  const stopsTimeout = React.useRef<number | null>(null);
   const vehiclesHighWaterMark = React.useRef<LngLatBounds | null>(null);
   const vehiclesTimeout = React.useRef<number | null>(null);
   const vehiclesAbortController = React.useRef<AbortController | null>(null);
   const vehiclesLength = React.useRef<number>(0);
 
-  const loadStops = React.useCallback(() => {
-    const _bounds = boundsRef.current as LngLatBounds;
-
-    fetchJson(`stops.json${getBoundsQueryString(_bounds)}`).then((items) => {
-      stopsHighWaterMark.current = _bounds;
-      setLoadingStops(false);
-      setStops(items);
-    });
-  }, []);
-
-  const [loadingStops, setLoadingStops] = React.useState(false);
   const [loadingBuses, setLoadingBuses] = React.useState(true);
 
   const loadVehicles = React.useCallback(
@@ -719,13 +705,6 @@ export default function BigMap(
         setLoadingBuses(false);
       }
 
-      // debounce,
-      // to avoid making loads of requests in quick succession
-      if (stopsTimeout.current) {
-        clearTimeout(stopsTimeout.current);
-        setLoadingStops(false);
-      }
-
       const _bounds = evt.target.getBounds();
       const _zoom = evt.viewState.zoom;
       setZoom(_zoom);
@@ -742,18 +721,10 @@ export default function BigMap(
           // we've zoomed in, so already have all the vehicles in this bounding box
           vehiclesTimeout.current = window.setTimeout(loadVehicles, 12000);
         }
-
-        if (
-          shouldShowStops(_zoom) &&
-          !containsBounds(stopsHighWaterMark.current, boundsRef.current)
-        ) {
-          setLoadingStops(true);
-          stopsTimeout.current = window.setTimeout(loadStops, 200); // for debouncing purposes
-        }
       }
       updateLocalStorage(_zoom, evt.target.getCenter());
     },
-    [loadStops, loadVehicles],
+    [loadVehicles],
   );
 
   // (re)load vehicles on tab visibility change
@@ -782,6 +753,7 @@ export default function BigMap(
       if (vehicleId) {
         setClickedVehicleMarker(vehicleId);
         setClickedStopURL(undefined);
+        setClickedStopFeature(undefined);
         return;
       }
 
@@ -792,17 +764,45 @@ export default function BigMap(
             setClickedVehicleMarker(feature.id as number);
             return;
           }
-          if (feature.properties.url !== clickedStopUrl) {
-            setClickedStopURL(feature.properties.url);
+          if (feature.layer.id === "stops") {
+            const url = feature.properties.url;
+            if (url !== clickedStopUrl) {
+              setClickedStopURL(url);
+              if (props.mode === MapMode.Slippy) {
+                let name = feature.properties.common_name;
+
+                if (feature.properties.indicator) {
+                  name = `${name} (${feature.properties.indicator})`;
+                }
+
+                if (
+                  feature.properties.locality_name &&
+                  !name.startsWith(feature.properties.locality_name)
+                ) {
+                  name = `${feature.properties.locality_name} ${name}`;
+                }
+
+                const services = feature.properties.line_names
+                  ? feature.properties.line_names.split(",")
+                  : undefined;
+
+                setClickedStopFeature({
+                  type: "Feature",
+                  properties: { url, name, services },
+                  geometry: feature.geometry,
+                });
+              }
+            }
             break;
           }
         }
       } else {
         setClickedStopURL(undefined);
+        setClickedStopFeature(undefined);
       }
       setClickedVehicleMarker(undefined);
     },
-    [clickedStopUrl],
+    [clickedStopUrl, props.mode],
   );
 
   const handleMapInit = React.useCallback(
@@ -813,22 +813,17 @@ export default function BigMap(
         if (!boundsRef.current) {
           // first load
           const _zoom = map.getZoom();
-          const _bounds = map.getBounds();
           boundsRef.current = map.getBounds();
           setZoom(_zoom);
 
           if (shouldShowVehicles(_zoom)) {
             setLoadingBuses(true);
             loadVehicles();
-            if (shouldShowStops(_zoom)) {
-              setLoadingStops(true);
-              loadStops();
-            }
           }
         }
       }
     },
-    [props.mode, loadVehicles, loadStops],
+    [props.mode, loadVehicles],
   );
 
   const [cursor, setCursor] = React.useState<string>();
@@ -973,12 +968,19 @@ export default function BigMap(
 
           {/* props.mode === MapMode.Slippy ? <SlippyMapHash /> : null */}
 
-          {trip || (stops && showStops) ? (
+          {props.mode === MapMode.Slippy ? (
             <Stops
-              stops={props.mode === MapMode.Slippy ? stops : undefined}
-              times={props.mode === MapMode.Trip ? trip?.times : undefined}
-              setClickedStop={setClickedStopURL}
+              clickedStopFeature={clickedStopFeature}
+              setClickedStop={(url) => {
+                setClickedStopURL(url);
+                if (!url) setClickedStopFeature(undefined);
+              }}
+            />
+          ) : trip ? (
+            <Stops
+              times={trip.times}
               clickedStopUrl={clickedStopUrl}
+              setClickedStop={setClickedStopURL}
             />
           ) : null}
 
@@ -993,17 +995,13 @@ export default function BigMap(
           ) : null}
 
           {zoom &&
-          ((props.mode === MapMode.Slippy && !showStops) ||
-            loadingBuses ||
-            loadingStops) ? (
+          ((props.mode === MapMode.Slippy && !showStops) || loadingBuses) ? (
             <div className="maplibregl-ctrl map-status-bar">
               {props.mode === MapMode.Slippy && !showStops
                 ? "Zoom in to see stops"
                 : null}
               {!showBuses ? <div>Zoom in to see buses</div> : null}
-              {showBuses && (loadingBuses || loadingStops) ? (
-                <div>Loading…</div>
-              ) : null}
+              {showBuses && loadingBuses ? <div>Loading…</div> : null}
             </div>
           ) : null}
 

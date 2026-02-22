@@ -360,7 +360,13 @@ def stops_mvt(request, z, x, y):
                                   OR regexp_replace(sp.common_name, '^.* ', '') ~ '^[A-Z]+$')
                             THEN regexp_replace(sp.common_name, '^.* ', '')
                         ELSE NULL
-                    END AS icon
+                    END AS icon,
+                    (
+                        SELECT STRING_AGG(DISTINCT su.line_name, ',' ORDER BY su.line_name)
+                        FROM busstops_stopusage su
+                        JOIN busstops_service svc ON su.service_id = svc.id
+                        WHERE su.stop_id = sp.atco_code AND svc.current = true
+                    ) AS line_names
                 FROM busstops_stoppoint sp
                 LEFT JOIN busstops_locality l ON sp.locality_id = l.id
                 WHERE
