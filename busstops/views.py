@@ -349,11 +349,11 @@ def stops_mvt(request, z, x, y):
                              AND sp.indicator != LOWER(sp.indicator)
                             THEN sp.indicator
                         WHEN sp.indicator != ''
-                             AND array_length(regexp_split_to_array(sp.indicator, '\s+'), 1) = 2
-                             AND LENGTH((regexp_split_to_array(sp.indicator, '\s+'))[2]) < 3
-                             AND LOWER((regexp_split_to_array(sp.indicator, '\s+'))[1])
+                             AND array_length(regexp_split_to_array(sp.indicator, '\\s+'), 1) = 2
+                             AND LENGTH((regexp_split_to_array(sp.indicator, '\\s+'))[2]) < 3
+                             AND LOWER((regexp_split_to_array(sp.indicator, '\\s+'))[1])
                                  IN ('stop','bay','stand','stance','gate','platform')
-                            THEN (regexp_split_to_array(sp.indicator, '\s+'))[2]
+                            THEN (regexp_split_to_array(sp.indicator, '\\s+'))[2]
                         WHEN POSITION(' ' IN sp.common_name) > 0
                              AND LENGTH(regexp_replace(sp.common_name, '^.* ', '')) < 3
                              AND (   regexp_replace(sp.common_name, '^.* ', '') ~ '^[0-9]+$'
