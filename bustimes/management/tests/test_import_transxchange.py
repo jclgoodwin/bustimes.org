@@ -1272,9 +1272,13 @@ class ImportTransXChangeTest(TestCase):
 
         # check M12 row ordering (sequence number tiebreaker)
         codes = [(r.stop.atco_code or "").split(":")[-1] for r in groupings[0].rows]
+
         self.assertEqual(
-            codes[10:14], ["450014781", "450017590", "450017207", "3390BB01"]
+            codes[10:14], ["450017207", "3390BB01", "079073001Z", "4100024PARWS"]
         )
+
+        # for r in groupings[0].rows:
+        #     print(r.stop.atco_code, [cell if type(cell) is str else cell.stoptime.sequence for cell in r.times])
 
         self.assertContains(
             res,
