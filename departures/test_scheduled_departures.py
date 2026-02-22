@@ -52,4 +52,4 @@ class ScheduledDeparturesTest(TestCase):
             response = self.client.get(
                 "/stops/230ABCDE/departures?date=2022-05-04&time=01:00"
             )
-        print(response.text)
+        self.assertContains(response, "00:10", 12)
