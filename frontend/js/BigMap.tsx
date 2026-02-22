@@ -184,7 +184,8 @@ function Stops({
         <Source
           type="vector"
           tiles={[`${location.origin}/stops/{z}/{x}/{y}.pbf`]}
-          minzoom={10}
+          minzoom={14}
+          maxzoom={14}
         >
           <Layer
             id="stops"
