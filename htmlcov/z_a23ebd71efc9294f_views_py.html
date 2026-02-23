@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_3baf1eb7e8e062db_admin_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.1">coverage.py v7.13.1</a>,
-            created at 2026-02-22 23:13 +0000
+            created at 2026-02-23 01:12 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -392,7 +392,7 @@
     <p class="run run2"><span class="n"><a id="t310" href="#t310">310</a></span><span class="t">    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t311" href="#t311">311</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t312" href="#t312">312</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t313" href="#t313">313</a></span><span class="t"><span class="op">@</span><span class="nam">cdn_cache_control</span><span class="op">(</span><span class="num">3600</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t313" href="#t313">313</a></span><span class="t"><span class="op">@</span><span class="nam">cache_control</span><span class="op">(</span><span class="nam">max_age</span><span class="op">=</span><span class="num">3600</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t314" href="#t314">314</a></span><span class="t"><span class="key">def</span> <span class="nam">stops_mvt</span><span class="op">(</span><span class="nam">request</span><span class="op">,</span> <span class="nam">z</span><span class="op">,</span> <span class="nam">x</span><span class="op">,</span> <span class="nam">y</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t315" href="#t315">315</a></span><span class="t">    <span class="str">"""Mapbox Vector Tile endpoint for bus stops, replacing stops_json eventually."""</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t316" href="#t316">316</a></span><span class="t">    <span class="key">if</span> <span class="nam">z</span> <span class="op">&lt;</span> <span class="num">10</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -477,7 +477,7 @@
     <p class="run"><span class="n"><a id="t395" href="#t395">395</a></span><span class="t">    <span class="key">return</span> <span class="nam">JsonResponse</span><span class="op">(</span><span class="nam">cache</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"timetable-source-stats"</span><span class="op">,</span> <span class="op">[</span><span class="op">]</span><span class="op">)</span><span class="op">,</span> <span class="nam">safe</span><span class="op">=</span><span class="key">False</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t396" href="#t396">396</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t397" href="#t397">397</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t398" href="#t398">398</a></span><span class="t"><span class="op">@</span><span class="nam">cdn_cache_control</span><span class="op">(</span><span class="num">3600</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t398" href="#t398">398</a></span><span class="t"><span class="op">@</span><span class="nam">cache_control</span><span class="op">(</span><span class="nam">max_age</span><span class="op">=</span><span class="num">3600</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t399" href="#t399">399</a></span><span class="t"><span class="key">def</span> <span class="nam">stops_json</span><span class="op">(</span><span class="nam">request</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t400" href="#t400">400</a></span><span class="t">    <span class="str">"""JSON endpoint accessed by the JavaScript map,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t401" href="#t401">401</a></span><span class="t"><span class="str">    listing the active StopPoints within a rectangle,</span>&nbsp;</span><span class="r"></span></p>
@@ -1824,7 +1824,7 @@
             <a class="nav" href="z_3baf1eb7e8e062db_admin_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.1">coverage.py v7.13.1</a>,
-            created at 2026-02-22 23:13 +0000
+            created at 2026-02-23 01:12 +0000
         </p>
     </div>
 </footer>
