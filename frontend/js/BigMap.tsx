@@ -480,7 +480,7 @@ export default function BigMap(
   const [zoom, setZoom] = React.useState<number>();
 
   const [clickedStopUrl, setClickedStopURL] = React.useState(() => {
-    if (document.referrer) {
+    if (document.referrer && props.mode !== MapMode.Slippy) {
       const referrer = new URL(document.referrer).pathname;
       if (referrer.indexOf("/stops/") === 0) {
         return referrer;
