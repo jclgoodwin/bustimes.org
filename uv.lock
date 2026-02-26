@@ -97,29 +97,30 @@ wheels = [
 
 [[package]]
 name = "boto3"
-version = "1.42.56"
+version = "1.42.57"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "botocore" },
     { name = "jmespath" },
     { name = "s3transfer" },
 ]
+sdist = { url = "https://files.pythonhosted.org/packages/b6/86/46898eaae75ab2185bcf2af406fb4cd1646a0bc277d5dab8ca36c30b7e5e/boto3-1.42.57.tar.gz", hash = "sha256:b598f1705f231f118a81abbfde0c5b52879b1b1997a1aba513f04d61e7b12cbd", size = 112799, upload-time = "2026-02-25T20:31:59.362Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/59/bb/a7fd6f4f38cf0f6cd91c152442cbe5b5f270275a60a5c7147ae5560f2f25/boto3-1.42.56-py3-none-any.whl", hash = "sha256:e09f91170b19e0ecd5e514321d99323be3e91a58dfa73fd58cf73b7b8b179c84", size = 140556, upload-time = "2026-02-24T20:28:49.815Z" },
+    { url = "https://files.pythonhosted.org/packages/9e/21/854be1e1829a33450079c1a05f89ef03a2a44bdad590de3e10dc09d73cbd/boto3-1.42.57-py3-none-any.whl", hash = "sha256:74f47051e3b741a0c1e64d57b891076c2c68f8d7b98aee36b044fab1849b4823", size = 140554, upload-time = "2026-02-25T20:31:53.215Z" },
 ]
 
 [[package]]
 name = "botocore"
-version = "1.42.56"
+version = "1.42.57"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "jmespath" },
     { name = "python-dateutil" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b8/2f/f6351cca2e3a087fb82a5c19e4d60e93a5dae27e9a085cc5fcb7faca8bd4/botocore-1.42.56.tar.gz", hash = "sha256:b1d7d3cf2fbe4cc1804a6567a051fc7141d21bcdcfde0336257b8dd2085272c2", size = 14939515, upload-time = "2026-02-24T20:28:40.55Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/cd/9c/f9e289f44985fe5b2e3ffc127a55cf7e87ef88499f5a8001db86d74ecfb1/botocore-1.42.57.tar.gz", hash = "sha256:51f94c602b687a70aa11d8bbea2b741b87b0aef7bddb43e5386247bf4311c479", size = 14940952, upload-time = "2026-02-25T20:31:42.049Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5a/09/dcc3f79de57f684d844ca853eeebff1786e5d672cf600f8ee6a118a9f015/botocore-1.42.56-py3-none-any.whl", hash = "sha256:111089dea212438a5197e909e5b528e7c30fd8cbd02c8c7d469359b368929343", size = 14612466, upload-time = "2026-02-24T20:28:36.379Z" },
+    { url = "https://files.pythonhosted.org/packages/cc/bd/89d0fdb65488d6ee40194268b07316433b41f3aa3f242676ed804c3200f5/botocore-1.42.57-py3-none-any.whl", hash = "sha256:0d26c09955e52ac5090d9cf9e218542df81670077049a606be7c3bd235208e67", size = 14614741, upload-time = "2026-02-25T20:31:39.081Z" },
 ]
 
 [[package]]
@@ -650,15 +651,15 @@ wheels = [
 
 [[package]]
 name = "fakeredis"
-version = "2.34.0"
+version = "2.34.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "redis" },
     { name = "sortedcontainers" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d8/44/c403963727d707e03f49a417712b0a23e853d33ae50729679040b6cfe281/fakeredis-2.34.0.tar.gz", hash = "sha256:72bc51a7ab39bedf5004f0cf1b5206822619c1be8c2657fd878d1f4250256c57", size = 177156, upload-time = "2026-02-16T15:56:34.318Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/11/40/fd09efa66205eb32253d2b2ebc63537281384d2040f0a88bcd2289e120e4/fakeredis-2.34.1.tar.gz", hash = "sha256:4ff55606982972eecce3ab410e03d746c11fe5deda6381d913641fbd8865ea9b", size = 177315, upload-time = "2026-02-25T13:17:51.315Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/1a/8e/af19c00753c432355f9b76cec3ab0842578de43ba575e82735b18c1b3ec9/fakeredis-2.34.0-py3-none-any.whl", hash = "sha256:bc45d362c6cc3a537f8287372d8ea532538dfbe7f5d635d0905d7b3464ec51d2", size = 122063, upload-time = "2026-02-16T15:56:21.227Z" },
+    { url = "https://files.pythonhosted.org/packages/49/b5/82f89307d0d769cd9bf46a54fb9136be08e4e57c5570ae421db4c9a2ba62/fakeredis-2.34.1-py3-none-any.whl", hash = "sha256:0107ec99d48913e7eec2a5e3e2403d1bd5f8aa6489d1a634571b975289c48f12", size = 122160, upload-time = "2026-02-25T13:17:49.701Z" },
 ]
 
 [[package]]
@@ -696,14 +697,14 @@ wheels = [
 
 [[package]]
 name = "govuk-bank-holidays"
-version = "0.18"
+version = "0.19"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "requests" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ff/eb/51682387ac03c95d02b886067cbee16c825ce5ede16f7d1f4a80211f12de/govuk_bank_holidays-0.18.tar.gz", hash = "sha256:b4752b5c884de50e8110585c2942508774ea8e6d5b6d696618863336c36f7a17", size = 15995, upload-time = "2025-11-03T16:44:39.94Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b6/b7/59ecbef6a66d9281dfca4fcf9afda630354bcc24698d7338fc24ed065b79/govuk_bank_holidays-0.19.tar.gz", hash = "sha256:01aabb85968bebb6c91b2fda21e14c0179328e003ab48f2f543318114273edf6", size = 16141, upload-time = "2026-02-25T13:12:09.993Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/18/37/b259ece89c491457fccce5bb4bd95969b3607e94904c8c9f96f93ddb5993/govuk_bank_holidays-0.18-py3-none-any.whl", hash = "sha256:cd8f1378644df3f5c2fb74fee50591229afb302b24fdbeca6672b093c80fffca", size = 14030, upload-time = "2025-11-03T16:44:37.777Z" },
+    { url = "https://files.pythonhosted.org/packages/f2/be/cf1c406a591a81df20bb2a8b51f78fa2d86524d3ce3bd5525a204c01a835/govuk_bank_holidays-0.19-py3-none-any.whl", hash = "sha256:8825af86d98c8da26e4485fa44b50b8dcfca8dc051387984c79008308501bc17", size = 14286, upload-time = "2026-02-25T13:12:08.523Z" },
 ]
 
 [[package]]
