@@ -34,6 +34,17 @@
   color: #fff;
 }
 
+.vehicle-marker.right {
+  transform: scaleX(-1);
+}
+
+.vehicle-marker.right text,
+.vehicle-marker.right .text {
+  transform: scaleX(-1);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
 .maplibregl-marker:hover .vehicle-marker,
 .vehicle-marker.selected {
   outline: 1px solid var(--marker-arrow-color); /* inverse of --marker-border-color */

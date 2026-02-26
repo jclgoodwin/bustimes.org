@@ -80,9 +80,6 @@ function VehicleMarker({ vehicle, selected }: VehicleMarkerProps) {
     if (rotation < 180) {
       rotation -= 90;
       className += " right";
-      if (vehicle.vehicle?.right_css) {
-        background = vehicle.vehicle.right_css;
-      }
     } else {
       rotation -= 270;
     }
@@ -124,7 +121,7 @@ function VehicleMarker({ vehicle, selected }: VehicleMarkerProps) {
         className={className}
         style={background ? { background: background } : undefined}
       >
-        {marker}
+        <div class="text">{marker}</div>
       </div>
     );
   }

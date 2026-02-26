@@ -226,8 +226,7 @@ class Livery(models.Model):
             css = f"{css};\n  color: #fff"
         if self.stroke_colour:
             css = f"{css};\n  stroke: {self.stroke_colour}"
-        if self.right_css != self.left_css:
-            css += f";\n  &.right{{\n    background:{self.right_css}\n  }}"
+        # .right mirroring is handled via CSS transform: scaleX(-1) in maps.css
         return [f"{selector}{{\n{css}\n}}\n"]
 
 
@@ -444,7 +443,7 @@ class Vehicle(models.Model):
             json["livery"] = self.livery_id
         elif self.colours:
             json["css"] = self.get_livery()
-            json["right_css"] = self.get_livery(90)
+            # json["right_css"] = self.get_livery(90)
             json["text_colour"] = self.get_text_colour()
         if colour := getattr(self, "colour", None):
             json["colour"] = colour
