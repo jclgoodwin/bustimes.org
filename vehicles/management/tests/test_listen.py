@@ -31,7 +31,7 @@ class ListenTest(TestCase):
             "http://example.com",
             json={
                 "username": "bot",
-                "content": "[sndr-p420-kak](https://bustimes.org/vehicles/sndr-p420-kak)",
+                "content": "[sndr-p420-kak](https://bustimes.org/vehicles/sndr-p420-kak) <@813528710404898817>",
             },
             timeout=10,
         )
