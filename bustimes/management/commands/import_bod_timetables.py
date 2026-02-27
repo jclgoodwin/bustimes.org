@@ -199,7 +199,7 @@ def bus_open_data(api_key, specific_operator):
         if not is_noc(source.search):
             params = parse_qs(source.search)
             operator_datasets = [
-                item for item in datasets if (params | item["params"]) == item["params"]
+                item for item in datasets if (item["params"] | params) == item["params"]
             ]
         else:
             operator_datasets = [

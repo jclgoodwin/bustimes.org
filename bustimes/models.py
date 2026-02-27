@@ -16,7 +16,7 @@ class TimetableDataSource(models.Model):
     search = models.CharField(
         max_length=255,
         blank=True,
-        help_text="for BODS sources, usually one of the operator's NOCs",
+        help_text="for BODS sources, usually one of the operator's NOCs. But remember that searching for 'ANEA' for example will return *all* Arriva datasets, not just the ANEA one",
     )
     url = models.URLField(
         blank=True,
