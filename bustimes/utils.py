@@ -192,7 +192,7 @@ def get_other_trips_in_block(trip, date):
 
 
 def get_stop_times(date: date, time: timedelta | None, stop, routes, trip_ids=None):
-    times = StopTime.objects.filter(pick_up=True).annotate(date=Value(date))
+    times = StopTime.objects.filter(pick_up=True)
 
     try:
         times = times.filter(stop__stop_area=stop)
@@ -200,8 +200,21 @@ def get_stop_times(date: date, time: timedelta | None, stop, routes, trip_ids=No
         times = times.filter(stop=stop)
 
     if trip_ids:
-        trips = Trip.objects.filter(id__in=trip_ids, start__lt=time)
-        times = times.filter(departure__lt=time)
+        trips = Trip.objects.filter(id__in=trip_ids)
+        one_day = timedelta(1)
+        times = times.filter(
+            Q(departure__lt=time)
+            | Q(departure__gte=one_day, departure__lt=time + one_day)
+        )
+        times = times.annotate(
+            date=Case(
+                When(
+                    departure__gte=one_day,
+                    then=Value(date - one_day),
+                ),
+                default=date,
+            )
+        )
     else:
         routes = list(get_routes(routes, date))
 
@@ -229,6 +242,8 @@ def get_stop_times(date: date, time: timedelta | None, stop, routes, trip_ids=No
             ).order_by("departure_time")
         else:
             times = times.filter(departure__isnull=False)
+
+        times = times.annotate(date=Value(date))
 
     times = times.filter(trip__in=trips)
 
