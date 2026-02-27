@@ -6,15 +6,12 @@ from django.conf import settings
 
 
 def get_content(slug):
-    content = slug
+    content = f"[{slug}](https://bustimes.org/vehicles/{slug})"
 
-    # vehicle = Vehicle.objects.get(slug=slug)
-    # if vehicle.latest_journey and vehicle.latest_journey.route_name:
-    #    content += f" on route {vehicle.latest_journey.route_name}"
-    #    if vehicle.latest_journey.destination:
-    #        content += " to {vehicle.latest_journey.destination}"
+    if slug.startswith("sndr-") or slug.startswith("obus-"):
+        content = f"{content} <@813528710404898817>"
 
-    return f"[{content}](https://bustimes.org/vehicles/{slug})"
+    return content
 
 
 class Command(BaseCommand):

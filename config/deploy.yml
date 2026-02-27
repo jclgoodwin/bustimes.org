@@ -13,10 +13,9 @@ image: jclgoodwin/bustimes-org
 servers:
   web:
     hosts:
-      - 10.131.240.113
-      - 10.131.240.116
-      - 10.131.240.117
-      - 10.131.240.118
+      - 10.131.33.248
+      - 10.131.240.93
+      - 10.131.240.95
     env:
       clear:
         WEB_CONCURRENCY: 8
@@ -38,8 +37,8 @@ servers:
 
 accessories:
   tileserver:
-    image: maptiler/tileserver-gl-light:v5.4.0
-    host: 138.68.161.218
+    image: maptiler/tileserver-gl-light
+    host: 167.99.89.1
     port: 80:8080
     volumes:
       - /root/data:/data
