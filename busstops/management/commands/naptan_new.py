@@ -101,7 +101,7 @@ def get_stop(element, atco_code):
     )
 
     for xml_path, key in mapping:
-        value = element.findtext(xml_path, "")
+        value = element.findtext(xml_path, "").strip()
         if value in nothings:
             value = ""
         setattr(stop, key, value)
