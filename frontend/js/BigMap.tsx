@@ -452,6 +452,32 @@ function JourneySidebar(props: {
   );
 }
 
+function getStopName({
+  common_name,
+  locality_name,
+  indicator,
+}: { [name: string]: string }) {
+  let name = common_name;
+  if (indicator) {
+    if (
+      /^(opp|opposite|adj|adjacent|at|o\/s|nr|near|before|after|by|on|in|outside)(\s.*)?$/i.test(
+        indicator,
+      )
+    ) {
+      name = `${indicator} ${name}`;
+      if (locality_name) {
+        return `${locality_name}, ${name}`;
+      }
+    } else {
+      name = `${name} (${indicator})`;
+    }
+  }
+  if (locality_name && !common_name.startsWith(locality_name)) {
+    name = `${locality_name} ${name}`;
+  }
+  return name;
+}
+
 export default function BigMap(
   props: {
     noc?: string;
@@ -770,22 +796,9 @@ export default function BigMap(
             if (url !== clickedStopUrl) {
               setClickedStopURL(url);
               if (props.mode === MapMode.Slippy) {
-                let name = feature.properties.common_name;
+                const name = getStopName(feature.properties);
 
-                if (feature.properties.indicator) {
-                  name = `${name} (${feature.properties.indicator})`;
-                }
-
-                if (
-                  feature.properties.locality_name &&
-                  !name.startsWith(feature.properties.locality_name)
-                ) {
-                  name = `${feature.properties.locality_name} ${name}`;
-                }
-
-                const services = feature.properties.line_names
-                  ? feature.properties.line_names.split(",")
-                  : undefined;
+                const services = feature.properties.line_names?.split(",");
 
                 setClickedStopFeature({
                   type: "Feature",
