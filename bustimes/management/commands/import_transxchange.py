@@ -1481,9 +1481,24 @@ class Command(BaseCommand):
             if file_hash:
                 route_defaults["file_hash"] = file_hash
 
-            route, route_created = Route.objects.update_or_create(
-                route_defaults, source=self.source, code=route_code
-            )
+            # TfGM: all files are in a subfolder
+            # with a name like "TfGM TXC 260225 OpenData" that changes every release
+            # even if the file didn't change
+            condition = Q(code=route_code)
+            if file_hash and "/" in route_code:
+                part = route_code.split("/")[-1]
+                condition |= Q(file_hash=file_hash, code__endswith=f"/{part}")
+
+            route_defaults["code"] = route_code
+
+            try:
+                route, route_created = Route.objects.filter(condition).update_or_create(
+                    route_defaults, source=self.source
+                )
+            except Route.MultipleObjectsReturned:
+                route, route_created = Route.objects.update_or_create(
+                    route_defaults, code=route_code, source=self.source
+                )
 
             self.route_ids.add(route.id)
 
