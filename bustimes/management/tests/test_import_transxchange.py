@@ -1195,18 +1195,39 @@ class ImportTransXChangeTest(TestCase):
 
             with self.assertLogs(
                 "bustimes.management.commands.import_transxchange", "WARNING"
-            ):
+            ) as cm:
                 call_command("import_transxchange", zipfile_path)
+
+                # warning about missing stop
+                self.assertEqual(
+                    cm.output,
+                    [
+                        "WARNING:bustimes.management.commands.import_transxchange:370010201"
+                    ],
+                )
 
             m11a_trip_ids = Trip.objects.filter(route__line_name="M11A").last().id
             m12_trip_ids = Trip.objects.filter(route__line_name="M12").last().id
+
+            # ensure that file is re-imported
+            Route.objects.filter(line_name="M12").update(file_hash=None)
+
+            # change departure time, so trip id should not be reused
             Trip.objects.filter(route__line_name="M12").update(start="00:00")
 
             # test re-importing a previously imported service again
             with self.assertLogs(
                 "bustimes.management.commands.import_transxchange", "WARNING"
-            ):
+            ) as cm:
                 call_command("import_transxchange", zipfile_path)
+
+                # warning about missing stop (again)
+                self.assertEqual(
+                    cm.output,
+                    [
+                        "WARNING:bustimes.management.commands.import_transxchange:370010201"
+                    ],
+                )
 
             # ids should have kept the same
             self.assertEqual(

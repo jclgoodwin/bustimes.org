@@ -1408,6 +1408,7 @@ class Command(BaseCommand):
                 "service_code": txc_service.service_code,
                 "public_use": service.public_use,
                 "version": self.version,
+                "source": self.source,
             }
 
             for key in ("outbound_description", "inbound_description"):
@@ -1481,24 +1482,37 @@ class Command(BaseCommand):
             if file_hash:
                 route_defaults["file_hash"] = file_hash
 
+            route_defaults["code"] = route_code
+
             # TfGM: all files are in a subfolder
             # with a name like "TfGM TXC 260225 OpenData" that changes every release
             # even if the file didn't change
-            condition = Q(code=route_code)
-            if file_hash and "/" in route_code:
-                part = route_code.split("/")[-1]
-                condition |= Q(file_hash=file_hash, code__endswith=f"/{part}")
 
-            route_defaults["code"] = route_code
+            if file_hash:
+                existing_route = self.source.route_set.filter(
+                    code=route_code, file_hash=file_hash
+                ).first()
 
-            try:
-                route, route_created = Route.objects.filter(condition).update_or_create(
-                    route_defaults, source=self.source
-                )
-            except Route.MultipleObjectsReturned:
-                route, route_created = Route.objects.update_or_create(
-                    route_defaults, code=route_code, source=self.source
-                )
+                if not existing_route and "/" in route_code:
+                    part = route_code.split("/")[-1]
+
+                    existing_route = self.source.route_set.filter(
+                        version=self.version,
+                        code__endswith=f"/{part}",
+                        file_hash=file_hash,
+                    ).first()
+
+                if existing_route:
+                    route, route_created = Route.objects.update_or_create(
+                        route_defaults, id=existing_route.id
+                    )
+                    self.route_ids.add(route.id)
+                    # file hasn't changed, so we don't need to re-load journeys
+                    return
+
+            route, route_created = Route.objects.update_or_create(
+                route_defaults, code=route_code, source=self.source
+            )
 
             self.route_ids.add(route.id)
 
