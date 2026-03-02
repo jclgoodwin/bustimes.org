@@ -1321,6 +1321,14 @@ class ImportTransXChangeTest(TestCase):
             html=True,
         )
 
+        # operator note is applied to all M12 trips
+        m12_trip = Trip.objects.filter(route__line_name="M12").first()
+        operator_note = m12_trip.notes.get(code="")
+        self.assertEqual(
+            "You must book this service in advance via the operator's website or telephone",
+            operator_note.text,
+        )
+
     @time_machine.travel("4 June 2022")
     def test_rail(self):
         Operator.objects.create(noc="LM", name="West Midlands Railroad")
