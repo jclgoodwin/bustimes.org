@@ -930,13 +930,11 @@ class ImportTransXChangeTest(TestCase):
 
     @time_machine.travel("2021-07-07")
     def test_multiple_lines(self):
-        call_command(
-            "import_transxchange", FIXTURES_DIR / "904_SCD_PH_903_20210530.xml"
-        )
+        filename = "904_SCD_PH_903_20210530.xml"
 
-        route_1, route_2 = Route.objects.filter(
-            code__contains="904_SCD_PH_903_20210530"
-        )
+        call_command("import_transxchange", FIXTURES_DIR / filename)
+
+        route_1, route_2 = Route.objects.filter(code__contains=filename)
 
         trip = route_1.trip_set.first()
         self.assertEqual(trip.garage.name, "Barnstaple")
@@ -979,9 +977,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(Route.objects.filter(service__current=True).count(), 2)
 
         # test re-import
-        call_command(
-            "import_transxchange", FIXTURES_DIR / "904_SCD_PH_903_20210530.xml"
-        )
+        call_command("import_transxchange", FIXTURES_DIR / filename)
         self.assertEqual(Route.objects.filter(service__current=True).count(), 2)
 
     @time_machine.travel("2021-07-07")
