@@ -1129,7 +1129,7 @@ class Command(BaseCommand):
 
         service = None
 
-        for i, line in enumerate(txc_service.lines):
+        for line in txc_service.lines:
             line.line_name = line.line_name.replace("_", " ")
 
             # prefer a BODS-type source over TNDS
@@ -1508,7 +1508,7 @@ class Command(BaseCommand):
                     )
                     self.route_ids.add(route.id)
                     # file hasn't changed, so we don't need to re-load journeys
-                    return
+                    continue
 
             route, route_created = Route.objects.update_or_create(
                 route_defaults, code=route_code, source=self.source
