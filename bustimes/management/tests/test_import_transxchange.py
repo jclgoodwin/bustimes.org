@@ -976,6 +976,14 @@ class ImportTransXChangeTest(TestCase):
             ],
         )
 
+        self.assertEqual(Route.objects.filter(service__current=True).count(), 2)
+
+        # test re-import
+        call_command(
+            "import_transxchange", FIXTURES_DIR / "904_SCD_PH_903_20210530.xml"
+        )
+        self.assertEqual(Route.objects.filter(service__current=True).count(), 2)
+
     @time_machine.travel("2021-07-07")
     def test_confusing_start_date(self):
         with self.assertLogs(
