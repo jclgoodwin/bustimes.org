@@ -1012,6 +1012,7 @@ class OperatorDetailView(DetailView):
             ).first()
             if alternative:
                 return redirect(alternative)
+            # no services or vehicles - render a 404 page that looks like a normal page
             context["ad"] = False
             status_code = HTTPStatus.NOT_FOUND
 
@@ -1430,6 +1431,7 @@ def service_last_modified(request, service_id):
 
 
 @last_modified(service_last_modified)
+@cdn_cache_control(max_age=3600)
 def service_map_data(request, service_id):
     service = request.service
     stops = service.stops.filter(

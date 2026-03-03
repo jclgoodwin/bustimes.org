@@ -517,6 +517,10 @@ class TripDetailView(DetailView):
                     context["trip_update"] = trip_update
                     gtfsr.apply_trip_update(stops, trip_update)
 
+            else:
+                # no real-time data - cache for an hour
+                context["max_age"] = 3600
+
         context["stops"] = stops
         self.object.stops = stops
         trip_serializer = TripSerializer(self.object)
@@ -526,6 +530,16 @@ class TripDetailView(DetailView):
         context["stops_json"] = mark_safe(stops_json.decode())
 
         return context
+
+    def render_to_response(self, context):
+        response = super().render_to_response(context)
+
+        if "max_age" in context:
+            response["CDN-Cache-Control"] = (
+                f"public, max-age={context['max_age']}, stale-if-error={context['max_age']}"
+            )
+
+        return response
 
 
 @require_GET
