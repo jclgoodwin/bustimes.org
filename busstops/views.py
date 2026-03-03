@@ -13,7 +13,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import Point
 from django.contrib.postgres.aggregates import ArrayAgg
-from django.contrib.postgres.expressions import ArraySubquery
+from itertools import groupby
 from django.contrib.postgres.search import SearchHeadline, SearchQuery, SearchRank
 from django.contrib.sitemaps import Sitemap
 from django.core.cache import cache
@@ -45,7 +45,7 @@ from sql_util.utils import Exists, SubqueryMax, SubqueryMin
 from ukpostcodeutils import validation
 
 from buses.utils import cdn_cache_control
-from bustimes.models import StopTime, Trip
+from bustimes.models import StopTime
 from departures import live
 from disruptions.models import Consequence, Situation
 from fares.models import FareTable
@@ -1465,47 +1465,32 @@ def service_map_data(request, service_id):
         },
     }
 
-    trips = (
-        Trip.objects.only("id")
-        .annotate(
-            stop_ids=ArraySubquery(
-                StopTime.objects.filter(trip=OuterRef("id")).values("stop")
-            ),
-        )
-        .filter(route__service=service)
-    )
-
-    route_links = {
-        (route_link.from_stop_id, route_link.to_stop_id): route_link
-        for route_link in service.routelink_set.all()
-    }
-
-    if (
-        not route_links
-        and service.geometry
-        and service.geometry.geom_type
-        in (
-            "LineString",
-            "MultiLineString",
-        )
-    ):
+    if service.geometry and service.geometry.geom_type[-10:] == "LineString":
         data["geometry"] = {
             "type": service.geometry.geom_type,
             "coordinates": service.geometry.coords,
         }
     else:
+        route_links = {
+            (route_link.from_stop_id, route_link.to_stop_id): route_link
+            for route_link in service.routelink_set.all()
+        }
+
         # build pairs of consecutive stops
+
+        stop_times = (
+            StopTime.objects.filter(trip__route__service=service)
+            .order_by("trip_id", "id")
+            .values_list("trip_id", "stop_id")
+        )
 
         pairs = set()
 
-        for trip in trips:
+        for _, group in groupby(stop_times, key=lambda x: x[0]):  # group by trip_id
             previous_stop_id = None
-            for stop_id in trip.stop_ids:
+            for _, stop_id in group:
                 if previous_stop_id:
-                    pair = (previous_stop_id, stop_id)
-                    if pair not in pairs:
-                        pairs.add(pair)
-
+                    pairs.add((previous_stop_id, stop_id))
                 previous_stop_id = stop_id
 
         line_string = []
