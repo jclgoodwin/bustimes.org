@@ -254,17 +254,21 @@ class TimetableDepartures(Departures):
         times = [self.get_row(stop_time) for stop_time in today_times]
 
         # prefetch journeys to show which vehicle is operating journey
+        dates = {time["date"] for time in times}
         prefetch_related_objects(
             [time["stop_time"].trip for time in times],
             Prefetch(
                 "vehiclejourney_set",
-                VehicleJourney.objects.filter(date=date).select_related("vehicle"),
+                VehicleJourney.objects.filter(date__in=dates).select_related("vehicle"),
                 to_attr="vehicle_journeys",
             ),
         )
         for time in times:
-            if time["stop_time"].trip.vehicle_journeys:
-                time["vehicle"] = time["stop_time"].trip.vehicle_journeys[0].vehicle
+            trip_date = time["date"]
+            for journey in time["stop_time"].trip.vehicle_journeys:
+                if journey.date == trip_date:
+                    time["vehicle"] = journey.vehicle
+                    break
 
         # # add tomorrow's times until there are 10, or the next day until there more than 0
         # i = 0
