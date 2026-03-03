@@ -102,7 +102,7 @@
 | departures/avl.py                                               |       12 |        1 |     92% |        14 |
 | departures/gtfsr.py                                             |       91 |        2 |     98% |   91, 111 |
 | departures/live.py                                              |      127 |       18 |     86% |42, 57, 59, 61, 72-83, 144, 155, 167, 181 |
-| departures/sources.py                                           |      191 |       33 |     83% |31, 55, 60, 64, 68, 72, 93, 105, 108-110, 120-127, 132-133, 147-148, 156-157, 252, 267, 340, 344-345, 351-352, 355 |
+| departures/sources.py                                           |      195 |       35 |     82% |31, 55, 60, 64, 68, 72, 93, 105, 108-110, 120-127, 132-133, 147-148, 156-157, 252, 269-271, 344, 348-349, 355-356, 359 |
 | departures/test\_gtfsr\_trip\_updates.py                        |       45 |        0 |    100% |           |
 | departures/test\_gtfsr\_vehicle\_positions.py                   |       33 |        0 |    100% |           |
 | departures/test\_live.py                                        |       96 |        0 |    100% |           |
@@ -193,7 +193,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       59 |        0 |    100% |           |
-| **TOTAL**                                                       | **17190** | **1141** | **93%** |           |
+| **TOTAL**                                                       | **17194** | **1143** | **93%** |           |
 
 
 ## Setup coverage badge
