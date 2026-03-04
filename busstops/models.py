@@ -16,7 +16,7 @@ from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.core.cache import cache
 from django.db.models import Q, Value
 from django.db.models.aggregates import StringAgg
-from django.db.models.functions import Coalesce, Upper
+from django.db.models.functions import Coalesce, Concat, Upper
 from django.urls import reverse
 from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
@@ -705,23 +705,21 @@ class ServiceManager(models.Manager):
         vector += SearchVector("line_brand", weight="A", config="english")
         vector += SearchVector("description", weight="B", config="english")
         vector += SearchVector(
-            StringAgg("operator__noc", Value(" "), default=""),
+            StringAgg(
+                Concat("operator__noc", Value(" "), "operator__name"),
+                Value(" "),
+                default="",
+            ),
             weight="B",
             config="english",
         )
         vector += SearchVector(
-            StringAgg("operator__name", Value(" "), default=""),
-            weight="B",
-            config="english",
-        )
-        vector += SearchVector(
-            StringAgg("stops__locality__name", Value(" "), default=""),
+            StringAgg(
+                Concat("stops__locality__name", Value(" "), "stops__common_name"),
+                Value(" "),
+                default="",
+            ),
             weight="C",
-            config="english",
-        )
-        vector += SearchVector(
-            StringAgg("stops__common_name", Value(" "), default=""),
-            weight="D",
             config="english",
         )
         return self.get_queryset().annotate(document=vector)
