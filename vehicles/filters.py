@@ -31,6 +31,7 @@ class VehicleRevisionFilter(FilterSet):
     )
 
     def operator_filter(self, queryset, _, value):
+        value = str(value).upper()
         return queryset.filter(
             Q(vehicle__operator=value) | Q(from_operator=value) | Q(to_operator=value)
         )
