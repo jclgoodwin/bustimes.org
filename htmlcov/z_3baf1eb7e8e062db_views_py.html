@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for bustimes/views.py: 83%</title>
+    <title>Coverage for bustimes/views.py: 84%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_c827f16f.png">
     <link rel="stylesheet" href="style_cb_9ff733b0.css" type="text/css">
     <script src="coverage_html_cb_dd2e7eb5.js" defer></script>
@@ -12,7 +12,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>bustimes&#8201;/&#8201;views.py</b>:
-            <span class="pc_cov">83%</span>
+            <span class="pc_cov">84%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -54,8 +54,8 @@
             </div>
         </aside>
         <h2>
-            <span class="text">391 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">326<span class="text"> run</span></button>
+            <span class="text">397 statements &nbsp;</span>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">332<span class="text"> run</span></button>
             <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">65<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_f5dba1c56a64fa65_avl_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.1">coverage.py v7.13.1</a>,
-            created at 2026-03-04 12:17 +0000
+            created at 2026-03-05 17:28 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -827,30 +827,39 @@
     <p class="pln"><span class="n"><a id="t745" href="#t745">745</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t746" href="#t746">746</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t747" href="#t747">747</a></span><span class="t"><span class="op">@</span><span class="nam">require_GET</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t748" href="#t748">748</a></span><span class="t"><span class="key">def</span> <span class="nam">trip_updates</span><span class="op">(</span><span class="nam">request</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t749" href="#t749">749</a></span><span class="t">    <span class="nam">feed</span> <span class="op">=</span> <span class="nam">gtfsr</span><span class="op">.</span><span class="nam">get_feed_entities</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t750" href="#t750">750</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t751" href="#t751">751</a></span><span class="t">    <span class="nam">journey_codes</span> <span class="op">=</span> <span class="nam">feed</span><span class="op">[</span><span class="str">"entity"</span><span class="op">]</span><span class="op">.</span><span class="nam">keys</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t752" href="#t752">752</a></span><span class="t">    <span class="nam">trips</span> <span class="op">=</span> <span class="nam">Trip</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span><span class="nam">ticket_machine_code__in</span><span class="op">=</span><span class="nam">journey_codes</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t753" href="#t753">753</a></span><span class="t">    <span class="nam">operators</span> <span class="op">=</span> <span class="nam">Operator</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t754" href="#t754">754</a></span><span class="t">        <span class="nam">service__route__in</span><span class="op">=</span><span class="nam">set</span><span class="op">(</span><span class="nam">trip</span><span class="op">.</span><span class="nam">route_id</span> <span class="key">for</span> <span class="nam">trip</span> <span class="key">in</span> <span class="nam">trips</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t755" href="#t755">755</a></span><span class="t">    <span class="op">)</span><span class="op">.</span><span class="nam">distinct</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t756" href="#t756">756</a></span><span class="t">    <span class="nam">trips</span> <span class="op">=</span> <span class="op">{</span><span class="nam">trip</span><span class="op">.</span><span class="nam">ticket_machine_code</span><span class="op">:</span> <span class="nam">trip</span> <span class="key">for</span> <span class="nam">trip</span> <span class="key">in</span> <span class="nam">trips</span><span class="op">}</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t757" href="#t757">757</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t758" href="#t758">758</a></span><span class="t">    <span class="nam">trip_updates</span> <span class="op">=</span> <span class="op">[</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t759" href="#t759">759</a></span><span class="t">        <span class="op">(</span><span class="nam">entity</span><span class="op">,</span> <span class="nam">trips</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="nam">trip_id</span><span class="op">)</span><span class="op">)</span> <span class="key">for</span> <span class="nam">trip_id</span><span class="op">,</span> <span class="nam">entity</span> <span class="key">in</span> <span class="nam">feed</span><span class="op">[</span><span class="str">"entity"</span><span class="op">]</span><span class="op">.</span><span class="nam">items</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t760" href="#t760">760</a></span><span class="t">    <span class="op">]</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t761" href="#t761">761</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t762" href="#t762">762</a></span><span class="t">    <span class="key">return</span> <span class="nam">render</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t763" href="#t763">763</a></span><span class="t">        <span class="nam">request</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t764" href="#t764">764</a></span><span class="t">        <span class="str">"trip_updates.html"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t765" href="#t765">765</a></span><span class="t">        <span class="op">{</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t766" href="#t766">766</a></span><span class="t">            <span class="str">"trips"</span><span class="op">:</span> <span class="nam">len</span><span class="op">(</span><span class="nam">trips</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t767" href="#t767">767</a></span><span class="t">            <span class="str">"operators"</span><span class="op">:</span> <span class="nam">operators</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t768" href="#t768">768</a></span><span class="t">            <span class="str">"timestamp"</span><span class="op">:</span> <span class="nam">datetime</span><span class="op">.</span><span class="nam">fromtimestamp</span><span class="op">(</span><span class="nam">int</span><span class="op">(</span><span class="nam">feed</span><span class="op">[</span><span class="str">"header"</span><span class="op">]</span><span class="op">[</span><span class="str">"timestamp"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t769" href="#t769">769</a></span><span class="t">            <span class="str">"trip_updates"</span><span class="op">:</span> <span class="nam">trip_updates</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t770" href="#t770">770</a></span><span class="t">        <span class="op">}</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t771" href="#t771">771</a></span><span class="t">    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t748" href="#t748">748</a></span><span class="t"><span class="key">def</span> <span class="nam">trip_updates_json</span><span class="op">(</span><span class="nam">request</span><span class="op">,</span> <span class="nam">feed_name</span><span class="op">:</span> <span class="nam">str</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t749" href="#t749">749</a></span><span class="t">    <span class="key">if</span> <span class="nam">feed_name</span> <span class="key">in</span> <span class="op">(</span><span class="str">"ember"</span><span class="op">,</span> <span class="str">"ntaie"</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t750" href="#t750">750</a></span><span class="t">        <span class="key">if</span> <span class="nam">feed</span> <span class="op">:=</span> <span class="nam">cache</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="nam">feed_name</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t751" href="#t751">751</a></span><span class="t">            <span class="key">return</span> <span class="nam">JsonResponse</span><span class="op">(</span><span class="nam">feed</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t752" href="#t752">752</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t753" href="#t753">753</a></span><span class="t">    <span class="key">raise</span> <span class="nam">Http404</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t754" href="#t754">754</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t755" href="#t755">755</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t756" href="#t756">756</a></span><span class="t"><span class="op">@</span><span class="nam">require_GET</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t757" href="#t757">757</a></span><span class="t"><span class="key">def</span> <span class="nam">trip_updates</span><span class="op">(</span><span class="nam">request</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t758" href="#t758">758</a></span><span class="t">    <span class="nam">feed</span> <span class="op">=</span> <span class="nam">gtfsr</span><span class="op">.</span><span class="nam">get_feed_entities</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t759" href="#t759">759</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t760" href="#t760">760</a></span><span class="t">    <span class="nam">journey_codes</span> <span class="op">=</span> <span class="nam">feed</span><span class="op">[</span><span class="str">"entity"</span><span class="op">]</span><span class="op">.</span><span class="nam">keys</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t761" href="#t761">761</a></span><span class="t">    <span class="nam">trips</span> <span class="op">=</span> <span class="nam">Trip</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span><span class="nam">ticket_machine_code__in</span><span class="op">=</span><span class="nam">journey_codes</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t762" href="#t762">762</a></span><span class="t">    <span class="nam">operators</span> <span class="op">=</span> <span class="nam">Operator</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t763" href="#t763">763</a></span><span class="t">        <span class="nam">service__route__in</span><span class="op">=</span><span class="nam">set</span><span class="op">(</span><span class="nam">trip</span><span class="op">.</span><span class="nam">route_id</span> <span class="key">for</span> <span class="nam">trip</span> <span class="key">in</span> <span class="nam">trips</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t764" href="#t764">764</a></span><span class="t">    <span class="op">)</span><span class="op">.</span><span class="nam">distinct</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t765" href="#t765">765</a></span><span class="t">    <span class="nam">trips</span> <span class="op">=</span> <span class="op">{</span><span class="nam">trip</span><span class="op">.</span><span class="nam">ticket_machine_code</span><span class="op">:</span> <span class="nam">trip</span> <span class="key">for</span> <span class="nam">trip</span> <span class="key">in</span> <span class="nam">trips</span><span class="op">}</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t766" href="#t766">766</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t767" href="#t767">767</a></span><span class="t">    <span class="nam">trip_updates</span> <span class="op">=</span> <span class="op">[</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t768" href="#t768">768</a></span><span class="t">        <span class="op">(</span><span class="nam">entity</span><span class="op">,</span> <span class="nam">trips</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="nam">trip_id</span><span class="op">)</span><span class="op">)</span> <span class="key">for</span> <span class="nam">trip_id</span><span class="op">,</span> <span class="nam">entity</span> <span class="key">in</span> <span class="nam">feed</span><span class="op">[</span><span class="str">"entity"</span><span class="op">]</span><span class="op">.</span><span class="nam">items</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t769" href="#t769">769</a></span><span class="t">    <span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t770" href="#t770">770</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t771" href="#t771">771</a></span><span class="t">    <span class="key">return</span> <span class="nam">render</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t772" href="#t772">772</a></span><span class="t">        <span class="nam">request</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t773" href="#t773">773</a></span><span class="t">        <span class="str">"trip_updates.html"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t774" href="#t774">774</a></span><span class="t">        <span class="op">{</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t775" href="#t775">775</a></span><span class="t">            <span class="str">"trips"</span><span class="op">:</span> <span class="nam">len</span><span class="op">(</span><span class="nam">trips</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t776" href="#t776">776</a></span><span class="t">            <span class="str">"operators"</span><span class="op">:</span> <span class="nam">operators</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t777" href="#t777">777</a></span><span class="t">            <span class="str">"timestamp"</span><span class="op">:</span> <span class="nam">datetime</span><span class="op">.</span><span class="nam">fromtimestamp</span><span class="op">(</span><span class="nam">int</span><span class="op">(</span><span class="nam">feed</span><span class="op">[</span><span class="str">"header"</span><span class="op">]</span><span class="op">[</span><span class="str">"timestamp"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t778" href="#t778">778</a></span><span class="t">            <span class="str">"trip_updates"</span><span class="op">:</span> <span class="nam">trip_updates</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t779" href="#t779">779</a></span><span class="t">        <span class="op">}</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t780" href="#t780">780</a></span><span class="t">    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
 </main>
 <footer>
     <div class="content">
@@ -860,7 +869,7 @@
             <a class="nav" href="z_f5dba1c56a64fa65_avl_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.1">coverage.py v7.13.1</a>,
-            created at 2026-03-04 12:17 +0000
+            created at 2026-03-05 17:28 +0000
         </p>
     </div>
 </footer>
