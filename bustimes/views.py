@@ -745,6 +745,15 @@ def tfl_vehicle(request, reg: str):
 
 
 @require_GET
+def trip_updates_json(request, feed_name: str):
+    if feed_name in ("ember", "ntaie"):
+        if feed := cache.get(feed_name):
+            return JsonResponse(feed)
+
+    raise Http404
+
+
+@require_GET
 def trip_updates(request):
     feed = gtfsr.get_feed_entities()
 

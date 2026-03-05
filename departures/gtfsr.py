@@ -25,9 +25,8 @@ def _get_feed():
             return feed
 
 
-def get_feed_entities() -> dict:
-    feed = _get_feed()
-    if feed:
+def get_feed_entities(feed_name="ntaie") -> dict:
+    if feed_name == "ntaie" and (feed := _get_feed()):
         feed = json_format.MessageToDict(feed)
         if "entity" in feed:
             feed["entity"] = {
@@ -35,14 +34,13 @@ def get_feed_entities() -> dict:
                 for entity in feed["entity"]
                 if "tripId" in entity["tripUpdate"]["trip"]
             }
-            cache.set("ntaie", feed, 300)  # cache for 5 minutes
+            cache.set(feed_name, feed, 300)  # cache for 5 minutes
             return feed
-    return cache.get("ntaie")
+    return cache.get(feed_name)
 
 
 def get_trip_update(trip) -> dict:
-    trip_id = trip.ticket_machine_code
-    if trip_id:
+    if trip_id := trip.ticket_machine_code:
         feed = get_feed_entities()
         if feed and trip_id in feed["entity"]:
             return feed["entity"][trip_id]

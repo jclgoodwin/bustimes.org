@@ -1,4 +1,5 @@
 from datetime import timedelta
+from http import HTTPStatus
 from unittest.mock import patch
 
 import fakeredis
@@ -122,6 +123,12 @@ class GTFSRTTest(TestCase):
             response = self.client.get("/trip_updates")
             self.assertContains(response, "3051 trip_updates")
             self.assertContains(response, "2 matching trips")
+
+            response = self.client.get("/trip_updates/ntaie.json")
+            self.assertEqual(response.headers["Content-Type"], "application/json")
+
+            response = self.client.get("/trip_updates/foo.json")
+            self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
             response = self.client.get("/stops/8250DB000429?date=2022-05-04&time=05:00")
             self.assertContains(response, "Ex&shy;pected")
