@@ -184,7 +184,7 @@ def get_departures(stop, services, when) -> dict:
     one_hour_ago = now - one_hour
 
     if departures and gtfsr_available:
-        gtfsr.update_stop_departures(departures)
+        gtfsr.update_stop_departures(departures, "ntaie")
 
     if when or live_departures or type(stop) is not StopPoint:
         pass

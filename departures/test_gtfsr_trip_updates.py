@@ -144,7 +144,7 @@ class GTFSRTTest(TestCase):
 
     def test_no_feed(self):
         with patch("departures.gtfsr.get_trip_updates", return_value=None):
-            self.assertIsNone(gtfsr.update_stop_departures(()))
+            self.assertIsNone(gtfsr.update_stop_departures((), "ntaie"))
 
     def test_get_expected_time(self):
         update = {
@@ -156,12 +156,8 @@ class GTFSRTTest(TestCase):
         }
 
         self.assertEqual(
-            str(
-                gtfsr.get_expected_time(
-                    timedelta(hours=8, minutes=20), update, "arrival"
-                )
-            ),
-            "2024-09-03 08:39:18+01:00",
+            gtfsr.get_expected_time(timedelta(hours=8, minutes=20), update, "arrival"),
+            "08:39",
         )
         self.assertEqual(
             gtfsr.get_expected_time(

@@ -511,8 +511,12 @@ class TripDetailView(DetailView):
             if stops[-1].stop:
                 context["destination"] = stops[-1].stop.locality
 
-            if route and route.source.name == "Realtime Transport Operators":
-                trip_update = gtfsr.get_trip_update(self.object)
+            if route and (
+                route.source.name == "Realtime Transport Operators"
+                or route.source.name == "Ember"
+            ):
+                feed_name = "ember" if route.source.name == "Ember" else "ntaie"
+                trip_update = gtfsr.get_trip_update(self.object, feed_name)
                 if trip_update:
                     context["trip_update"] = trip_update
                     gtfsr.apply_trip_update(stops, trip_update)
@@ -744,9 +748,19 @@ def tfl_vehicle(request, reg: str):
     )
 
 
+trip_updates_sources = {
+    "ember": {
+        "source_name": "Ember",
+    },
+    "ntaie": {
+        "source_name": "Realtime Transport Operators",
+    },
+}
+
+
 @require_GET
 def trip_updates_json(request, feed_name: str):
-    if feed_name in ("ember", "ntaie"):
+    if feed_name in trip_updates_sources:
         if feed := cache.get(f"{feed_name}_trip_updates"):
             return JsonResponse(feed)
 
@@ -755,10 +769,19 @@ def trip_updates_json(request, feed_name: str):
 
 @require_GET
 def trip_updates(request):
-    trip_updates = gtfsr.get_trip_updates()
+    feed_name = request.GET.get("feed_name", "ntaie")
+
+    if feed_name not in trip_updates_sources:
+        raise Http404
+
+    source = DataSource.objects.get(name=trip_updates_sources[feed_name]["source_name"])
+
+    trip_updates = gtfsr.get_trip_updates(feed_name)
 
     journey_codes = trip_updates.keys()
-    trips = Trip.objects.filter(ticket_machine_code__in=journey_codes)
+    trips = Trip.objects.filter(
+        route__source=source, ticket_machine_code__in=journey_codes
+    )
     operators = Operator.objects.filter(
         service__route__in=set(trip.route_id for trip in trips)
     ).distinct()

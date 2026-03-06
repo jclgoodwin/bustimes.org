@@ -25,7 +25,7 @@ def _get_feed():
             return feed
 
 
-def get_trip_updates(feed_name="ntaie") -> dict:
+def get_trip_updates(feed_name) -> dict:
     if feed_name == "ntaie" and (feed := _get_feed()):
         feed = json_format.MessageToDict(feed)
         if "entity" in feed:
@@ -41,9 +41,9 @@ def get_trip_updates(feed_name="ntaie") -> dict:
     return cache.get(f"{feed_name}_trip_updates")
 
 
-def get_trip_update(trip) -> dict:
+def get_trip_update(trip, feed_name: str) -> dict:
     if trip_id := trip.ticket_machine_code:
-        if trip_updates := get_trip_updates():
+        if trip_updates := get_trip_updates(feed_name):
             if trip_id in trip_updates:
                 return trip_updates[trip_id]
 
@@ -56,7 +56,7 @@ def get_expected_time(scheduled_time, stop_time_update, key):
         elif "time" in update:
             return datetime.fromtimestamp(
                 int(update["time"]), tz=ZoneInfo("Europe/Dublin")
-            )
+            ).strftime("%H:%M")
         else:
             return
         return format_timedelta(expected_time)
@@ -114,8 +114,8 @@ def update_departure(departure: dict, trip_update: dict) -> None:
             departure["live"] = departure["time"] + delay
 
 
-def update_stop_departures(departures: list) -> None:
-    trip_updates = get_trip_updates()
+def update_stop_departures(departures: list, feed_name: str) -> None:
+    trip_updates = get_trip_updates(feed_name)
 
     if not trip_updates:
         return
