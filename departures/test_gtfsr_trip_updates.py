@@ -143,7 +143,7 @@ class GTFSRTTest(TestCase):
             self.assertTrue(response.context["stops_json"])
 
     def test_no_feed(self):
-        with patch("departures.gtfsr.get_feed_entities", return_value=None):
+        with patch("departures.gtfsr.get_trip_updates", return_value=None):
             self.assertIsNone(gtfsr.update_stop_departures(()))
 
     def test_get_expected_time(self):
