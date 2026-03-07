@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "vosa",
     "email_obfuscator",
     "api",
+    "photos",
     "rest_framework",
     "django_filters",
     "simple_history",
@@ -171,6 +172,14 @@ HUEY = {
 STATIC_URL = "/static/"
 STATIC_ROOT = os.environ.get("STATIC_ROOT", BASE_DIR / "staticfiles")
 STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "region_name": "ams3",
+            "endpoint_url": "https://ams3.digitaloceanspaces.com",
+            "bucket_name": "bustimes-data",
+        },
+    },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },

@@ -8,7 +8,7 @@ import subprocess
 import xmltodict
 from django.conf import settings
 from django.contrib.auth.models import Permission
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.gis.geos import GEOSException, Point
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied, BadRequest
@@ -25,6 +25,7 @@ from django.utils.cache import get_conditional_response, set_response_etag
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_safe
+from django.utils.decorators import method_decorator
 from django.views.generic.detail import DetailView
 from haversine import Unit, haversine, haversine_vector
 from redis.exceptions import ConnectionError
@@ -42,6 +43,8 @@ from busstops.models import (
 from busstops.utils import get_bounding_box
 from bustimes.models import Garage, Route, StopTime
 from bustimes.utils import contiguous_stoptimes_only, get_other_trips_in_block
+from photos.forms import PhotoForm
+from photos.utils import add_flickr_photo
 
 from . import filters, forms
 from .management.commands import import_bod_avl
@@ -737,7 +740,22 @@ class VehicleDetailView(DetailView):
             context["previous"] = self.object.get_previous()
             context["next"] = self.object.get_next()
 
+        if self.request.user.has_perm("photos.add_photo"):
+            context["form"] = PhotoForm()
+
         return context
+
+    @method_decorator(permission_required("photos.add_photo", raise_exception=True))
+    def post(self, *args, **kwargs):
+        form = PhotoForm(self.request.POST)
+        vehicle = self.get_object()
+        if form.is_valid():
+            try:
+                add_flickr_photo(form.cleaned_data["url"], vehicle, self.request)
+            except IndexError:
+                pass
+
+        return self.get(*args, **kwargs)
 
 
 def check_user(request):

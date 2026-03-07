@@ -63,6 +63,14 @@
     </ul>
 {% endif %}
 
+{% if form %}
+    <form action="{{ request.path }}" method="POST">
+        {{ form }}
+        {% csrf_token %}
+        <input type="submit">
+    </form>
+{% endif %}
+
 {% load static %}
 
 <div id="journeys" hx-history="false">

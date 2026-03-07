@@ -44,6 +44,8 @@ dependencies = [
     "xmltodict>=1.0.2",
     "django-http-compression>=1.2.0",
     "tqdm>=4.67.1",
+    "django-imagekit>=6.1.0",
+    "django-storages>=1.14.6",
 ]
 
 [dependency-groups]
