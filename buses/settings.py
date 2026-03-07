@@ -175,9 +175,11 @@ STORAGES = {
     "default": {
         "BACKEND": "storages.backends.s3.S3Storage",
         "OPTIONS": {
-            "region_name": "ams3",
-            "endpoint_url": "https://ams3.digitaloceanspaces.com",
-            "bucket_name": "bustimes-data",
+            "region_name": "lon1",
+            "endpoint_url": "https://lon1.digitaloceanspaces.com",
+            "bucket_name": "bus-photos",
+            "default_acl": "public-read",
+            "querystring_auth": False,
         },
     },
     "staticfiles": {

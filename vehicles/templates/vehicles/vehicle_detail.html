@@ -9,6 +9,9 @@
     {% else %}
         <meta name="robots" content="noindex,noarchive">
     {% endif %}
+    {% if vehicle.photo_set.all %}
+        <meta name="og:image" src="{{ vehicle.photo_set.all.0.image_1200_630.url }}">
+    {% endif %}
 {% endblock canonical %}
 
 {% block head %}
@@ -63,14 +66,6 @@
     </ul>
 {% endif %}
 
-{% if form %}
-    <form action="{{ request.path }}" method="POST">
-        {{ form }}
-        {% csrf_token %}
-        <input type="submit">
-    </form>
-{% endif %}
-
 {% load static %}
 
 <div id="journeys" hx-history="false">
@@ -85,7 +80,7 @@
                     <option{% if option == date %} selected{% endif %} value="{{ option.isoformat }}">{{ option|date:"l j F Y" }}</option>
                 {% endfor %}
             </select>
-        {% else %}
+    {% else %}
             <input type="date" name="date" aria-label="Date" value="{{ date.isoformat }}">
         {% endif %}
         <noscript><input type="submit" value="Go"></noscript>
@@ -162,6 +157,21 @@
 {% endif %}
 
 </div>
+
+{% if form %}
+
+    {% for photo in vehicle.photo_set.all %}
+        <p><img src="{{ photo.image_1200_630.url }}" width="600" height="315" alt=""></p>
+    {% endfor %}
+
+    <form action="{{ request.path }}" method="POST">
+        {{ form.as_p }}
+        {% csrf_token %}
+        <input type="submit">
+    </form>
+
+{% endif %}
+
 
 <div id="history"></div>
 
