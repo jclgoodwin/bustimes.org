@@ -1292,13 +1292,12 @@ class Command(BaseCommand):
                         service.colour_id = operator.colour_id
                         break
 
+            # Lines and Services can have a MarketingName
+            # (a line_brand is a thing I've made up)
+
             line_brand = line.line_brand or line.marketing_name
             if line_brand:
                 logger.info(line_brand)
-                if service.description:
-                    service.description = service.description.removesuffix(
-                        f" [{line.line_brand}]"
-                    )
 
             if txc_service.marketing_name:
                 logger.info(txc_service.marketing_name)
@@ -1314,6 +1313,12 @@ class Command(BaseCommand):
                     service.public_use = False
                 else:
                     line_brand = txc_service.marketing_name
+
+                    if service.description and " [" in service.description:
+                        service.description = service.description.removesuffix(
+                            f" [{line_brand}]"
+                        )
+
             if (
                 not line_brand
                 and service.colour

@@ -1344,6 +1344,7 @@ class ImportTransXChangeTest(TestCase):
 
         service = Service.objects.get()
         self.assertEqual("Stourbridge Shuttle", service.line_brand)
+        self.assertEqual("Stourbridge Junction - Stourbridge Town", service.description)
 
         response = self.client.get(service.get_absolute_url())
         self.assertContains(
