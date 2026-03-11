@@ -91,13 +91,13 @@
 | bustimes/management/tests/test\_import\_passenger.py            |       23 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_transxchange.py         |      784 |        0 |    100% |           |
 | bustimes/management/tests/test\_tnds.py                         |       19 |        0 |    100% |           |
-| bustimes/models.py                                              |      341 |        6 |     98% |115, 422, 467-470, 502 |
+| bustimes/models.py                                              |      341 |        7 |     98% |115, 221, 422, 467-470, 502 |
 | bustimes/test\_get\_trip.py                                     |       31 |        0 |    100% |           |
 | bustimes/tests.py                                               |      132 |        0 |    100% |           |
 | bustimes/timetables.py                                          |      646 |       50 |     92% |39-52, 162-173, 204-205, 293, 307-312, 325, 344, 419, 422, 438-441, 443, 470, 582-597, 748-749, 820, 966-968, 1017 |
 | bustimes/urls.py                                                |        3 |        0 |    100% |           |
 | bustimes/utils.py                                               |      205 |       12 |     94% |175, 244, 275, 284-286, 307-308, 384, 401-402, 476 |
-| bustimes/views.py                                               |      443 |      101 |     77% |138-225, 298-299, 302-303, 319-321, 329-338, 340-348, 355, 377, 466, 475, 511, 517, 708, 732-734, 751, 755-783, 811-822, 831-837, 879 |
+| bustimes/views.py                                               |      449 |      107 |     76% |138-233, 306-307, 310-311, 327-329, 337-346, 348-356, 363, 385, 474, 483, 519, 525, 716, 740-742, 759, 763-791, 819-830, 839-845, 887 |
 | departures/\_\_init\_\_.py                                      |        0 |        0 |    100% |           |
 | departures/avl.py                                               |       12 |        1 |     92% |        14 |
 | departures/gtfsr.py                                             |       87 |        2 |     98% |   91, 111 |
@@ -193,7 +193,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       59 |        0 |    100% |           |
-| **TOTAL**                                                       | **17251** | **1178** | **93%** |           |
+| **TOTAL**                                                       | **17257** | **1185** | **93%** |           |
 
 
 ## Setup coverage badge
