@@ -325,6 +325,10 @@ TNDS_DIR = DATA_DIR / "TNDS"
 
 AVL_ARCHIVE_DIR = DATA_DIR / "avl"
 
+FLICKR_API_KEY = os.environ.get("FLICKR_API_KEY")
+
+STADIA_MAPS_API_KEY = os.environ.get("STADIA_MAPS_API_KEY")
+
 # captchas
 TURNSTILE_SITEKEY = os.environ.get("TURNSTILE_SITEKEY", "0x4AAAAAAAFWiyCqdh2c-5sy")
 TURNSTILE_SECRET = os.environ.get("TURNSTILE_SECRET")
