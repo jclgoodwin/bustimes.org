@@ -10,4 +10,10 @@
 
 <h1>{{ object }}</h1>
 
+{% for route_link in route_links %}
+    <p><a href="{{ route_link.get_absolute_url }}">{{ route_link.from_stop }} to {{ route_link.to_stop }}</a></p>
+{% endfor %}
+
+{{ response }}
+
 {% endblock content %}
