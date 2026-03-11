@@ -189,8 +189,9 @@ def snap(request, trip_id=None, journey_id=None):
 
     if "trip" in response:
         leg = response["trip"]["legs"][0]
-        shape = polyline.decode(leg["shape"], precision=6)
-        shape = LineString([(lon, lat) for lat, lon in shape])
+        shape = LineString(
+            [(lon, lat) for lat, lon in polyline.decode(leg["shape"], precision=6)]
+        )
 
         start_dist = None
 
@@ -200,18 +201,25 @@ def snap(request, trip_id=None, journey_id=None):
 
             if start_dist is None:
                 start_dist = shape.project(from_point)
-            end_dist = shape.project(to_point)
+
+            # project onto remaining shape only
+            remaining = substring(shape, start_dist, shape.length)
+            if remaining.geom_type != "LineString":
+                start_dist = None
+                continue
+            end_dist_on_remaining = remaining.project(to_point)
+            end_dist = start_dist + end_dist_on_remaining
 
             # skip if either stop is too far from the matched route (~0.1km at UK latitudes)
             if (
                 from_point.distance(shape.interpolate(start_dist)) > 0.001
-                or to_point.distance(shape.interpolate(end_dist)) > 0.001
+                or to_point.distance(remaining.interpolate(end_dist_on_remaining))
+                > 0.001
             ):
                 start_dist = None
                 continue
 
             line_substring = substring(shape, start_dist, end_dist)
-
             start_dist = end_dist
 
             if type(line_substring) is not LineString:
