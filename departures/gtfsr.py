@@ -25,25 +25,27 @@ def _get_feed():
             return feed
 
 
-def get_feed_entities(feed_name="ntaie") -> dict:
+def get_trip_updates(feed_name) -> dict:
     if feed_name == "ntaie" and (feed := _get_feed()):
         feed = json_format.MessageToDict(feed)
         if "entity" in feed:
-            feed["entity"] = {
-                entity["tripUpdate"]["trip"]["tripId"]: entity
+            trip_updates = {
+                entity["tripUpdate"]["trip"]["tripId"]: entity["tripUpdate"]
                 for entity in feed["entity"]
                 if "tripId" in entity["tripUpdate"]["trip"]
             }
-            cache.set(feed_name, feed, 300)  # cache for 5 minutes
-            return feed
-    return cache.get(feed_name)
+            cache.set(
+                f"{feed_name}_trip_updates", trip_updates, 300
+            )  # cache for 5 minutes
+            return trip_updates
+    return cache.get(f"{feed_name}_trip_updates")
 
 
-def get_trip_update(trip) -> dict:
+def get_trip_update(trip, feed_name: str) -> dict:
     if trip_id := trip.ticket_machine_code:
-        feed = get_feed_entities()
-        if feed and trip_id in feed["entity"]:
-            return feed["entity"][trip_id]
+        if trip_updates := get_trip_updates(feed_name):
+            if trip_id in trip_updates:
+                return trip_updates[trip_id]
 
 
 def get_expected_time(scheduled_time, stop_time_update, key):
@@ -54,14 +56,14 @@ def get_expected_time(scheduled_time, stop_time_update, key):
         elif "time" in update:
             return datetime.fromtimestamp(
                 int(update["time"]), tz=ZoneInfo("Europe/Dublin")
-            )
+            ).strftime("%H:%M")
         else:
             return
         return format_timedelta(expected_time)
 
 
 def apply_trip_update(stops, trip_update: dict) -> None:
-    if "stopTimeUpdate" not in trip_update["tripUpdate"]:
+    if "stopTimeUpdate" not in trip_update:
         return
 
     stops_by_sequence = {}
@@ -70,7 +72,7 @@ def apply_trip_update(stops, trip_update: dict) -> None:
         stops_by_sequence[stop.sequence] = stop
         stop.update = None
 
-    for stop_time_update in trip_update["tripUpdate"]["stopTimeUpdate"]:
+    for stop_time_update in trip_update["stopTimeUpdate"]:
         sequence = stop_time_update["stopSequence"]
         stop_time = stops_by_sequence[sequence]
         assert sequence == stop_time.sequence
@@ -96,11 +98,11 @@ def apply_trip_update(stops, trip_update: dict) -> None:
 
 
 def update_departure(departure: dict, trip_update: dict) -> None:
-    if trip_update["tripUpdate"]["trip"]["scheduleRelationship"] == "CANCELED":
+    if trip_update["trip"]["scheduleRelationship"] == "CANCELED":
         departure["cancelled"] = True
         return
     stop_time_update = None
-    for update in trip_update["tripUpdate"]["stopTimeUpdate"]:
+    for update in trip_update["stopTimeUpdate"]:
         if update["stopSequence"] > departure["stop_time"].sequence:
             break
         stop_time_update = update
@@ -112,14 +114,13 @@ def update_departure(departure: dict, trip_update: dict) -> None:
             departure["live"] = departure["time"] + delay
 
 
-def update_stop_departures(departures: list) -> None:
-    feed = get_feed_entities()
-    if not feed:
+def update_stop_departures(departures: list, feed_name: str) -> None:
+    trip_updates = get_trip_updates(feed_name)
+
+    if not trip_updates:
         return
 
     for departure in departures:
-        stop_time = departure["stop_time"]
-        trip = stop_time.trip
-        trip_update = feed["entity"].get(trip.ticket_machine_code)
-        if trip_update:
+        trip_id = departure["stop_time"].trip.ticket_machine_code
+        if trip_update := trip_updates.get(trip_id):
             update_departure(departure, trip_update)

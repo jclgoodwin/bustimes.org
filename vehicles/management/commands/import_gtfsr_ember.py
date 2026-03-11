@@ -31,9 +31,12 @@ class Command(GTFSRCommand):
         feed = gtfs_realtime_pb2.FeedMessage()
         feed.ParseFromString(response.content)
 
-        cache.set(
-            "ember", json_format.MessageToDict(feed), 300
-        )  # cache (to use trip_updates and so on)
+        trip_updates = {
+            entity["tripUpdate"]["trip"]["tripId"]: entity["tripUpdate"]
+            for entity in json_format.MessageToDict(feed)["entity"]
+            if "tripUpdate" in entity and "tripId" in entity["tripUpdate"]["trip"]
+        }
+        cache.set("ember_trip_updates", trip_updates, 300)
 
         # the feed contains both vehicle positions and alerts (and possibly other entities)
         for item in feed.entity:

@@ -511,8 +511,12 @@ class TripDetailView(DetailView):
             if stops[-1].stop:
                 context["destination"] = stops[-1].stop.locality
 
-            if route and route.source.name == "Realtime Transport Operators":
-                trip_update = gtfsr.get_trip_update(self.object)
+            if route and (
+                route.source.name == "Realtime Transport Operators"
+                or route.source.name == "Ember"
+            ):
+                feed_name = "ember" if route.source.name == "Ember" else "ntaie"
+                trip_update = gtfsr.get_trip_update(self.object, feed_name)
                 if trip_update:
                     context["trip_update"] = trip_update
                     gtfsr.apply_trip_update(stops, trip_update)
@@ -744,10 +748,20 @@ def tfl_vehicle(request, reg: str):
     )
 
 
+trip_updates_sources = {
+    "ember": {
+        "source_name": "Ember",
+    },
+    "ntaie": {
+        "source_name": "Realtime Transport Operators",
+    },
+}
+
+
 @require_GET
 def trip_updates_json(request, feed_name: str):
-    if feed_name in ("ember", "ntaie"):
-        if feed := cache.get(feed_name):
+    if feed_name in trip_updates_sources:
+        if feed := cache.get(f"{feed_name}_trip_updates"):
             return JsonResponse(feed)
 
     raise Http404
@@ -755,17 +769,26 @@ def trip_updates_json(request, feed_name: str):
 
 @require_GET
 def trip_updates(request):
-    feed = gtfsr.get_feed_entities()
+    feed_name = request.GET.get("feed_name", "ntaie")
 
-    journey_codes = feed["entity"].keys()
-    trips = Trip.objects.filter(ticket_machine_code__in=journey_codes)
+    if feed_name not in trip_updates_sources:
+        raise Http404
+
+    source = DataSource.objects.get(name=trip_updates_sources[feed_name]["source_name"])
+
+    trip_updates = gtfsr.get_trip_updates(feed_name)
+
+    journey_codes = trip_updates.keys()
+    trips = Trip.objects.filter(
+        route__source=source, ticket_machine_code__in=journey_codes
+    )
     operators = Operator.objects.filter(
         service__route__in=set(trip.route_id for trip in trips)
     ).distinct()
     trips = {trip.ticket_machine_code: trip for trip in trips}
 
     trip_updates = [
-        (entity, trips.get(trip_id)) for trip_id, entity in feed["entity"].items()
+        (entity, trips.get(trip_id)) for trip_id, entity in trip_updates.items()
     ]
 
     return render(
@@ -774,7 +797,6 @@ def trip_updates(request):
         {
             "trips": len(trips),
             "operators": operators,
-            "timestamp": datetime.fromtimestamp(int(feed["header"]["timestamp"])),
             "trip_updates": trip_updates,
         },
     )
