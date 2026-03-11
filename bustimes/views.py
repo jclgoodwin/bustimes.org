@@ -37,6 +37,8 @@ from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.lexers import JsonLexer, XmlLexer
 from rest_framework.renderers import JSONRenderer
+from shapely.geometry import LineString, Point
+from shapely.ops import substring
 
 from api.serializers import TripSerializer
 from api.views import TripViewSet
@@ -128,6 +130,91 @@ def route_link_view(request, pk):
     )
 
     return HttpResponse(m.get_root().render())
+
+
+def snap(request, pk):
+    trip = get_object_or_404(Trip.objects.filter(route__service__isnull=False), pk=pk)
+
+    session = requests.Session()
+    session.params.update(
+        {
+            "api_key": settings.STADIA_MAPS_API_KEY,
+        }
+    )
+    url = "https://api.stadiamaps.com/trace_route"
+
+    stop_times = trip.stoptime_set.filter(stop__latlong__isnull=False).select_related(
+        "stop"
+    )
+
+    points = [
+        {
+            "lat": stop_time.stop.latlong.y,
+            "lon": stop_time.stop.latlong.x,
+            "time": stop_time.arrival_or_departure().total_seconds(),
+        }
+        for stop_time in stop_times
+    ]
+    response = session.post(
+        url,
+        json={
+            "costing": "bus",
+            "shape": points,
+            # 'shape_match': 'map_snap',
+            "trace_options": {
+                "search_radius": 10,
+            },
+        },
+    ).json()
+
+    import polyline
+
+    for match in [response["trip"]] + [
+        alt["trip"] for alt in response.get("alternates", ())
+    ]:
+        locations = match["locations"]
+        leg = match["legs"][0]
+        shape = polyline.decode(leg["shape"], precision=6)
+        shape = LineString([(lon, lat) for lat, lon in shape])
+
+        from_index = locations[0]["original_index"]
+        to_index = locations[-1]["original_index"]
+
+        for i in range(from_index, to_index):
+            from_stop = stop_times[i].stop
+            to_stop = stop_times[i + 1].stop
+
+            if RouteLink.objects.filter(
+                service_id=trip.route.service_id,
+                from_stop=from_stop,
+                to_stop=to_stop,
+            ).exists():
+                continue
+
+            from_point = Point(from_stop.latlong.coords)
+            to_point = Point(to_stop.latlong.coords)
+
+            line_substring = substring(
+                shape, shape.project(from_point), shape.project(to_point)
+            )
+
+            RouteLink.objects.create(
+                service_id=trip.route.service_id,
+                from_stop=from_stop,
+                to_stop=to_stop,
+                geometry=line_substring.wkt,
+            )
+
+    return render(
+        request,
+        "snap.html",
+        {
+            "object": trip,
+            "breadcrumb": [trip],
+            # "responses": responses,
+            # "css": css,
+        },
+    )
 
 
 def maybe_download_file(local_path, s3_key):
