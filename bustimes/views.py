@@ -188,39 +188,47 @@ def snap(request, trip_id=None, journey_id=None):
     import polyline
 
     if "trip" in response:
-        locations = response["trip"]["locations"]
         leg = response["trip"]["legs"][0]
         shape = polyline.decode(leg["shape"], precision=6)
         shape = LineString([(lon, lat) for lat, lon in shape])
 
-        # from_index = locations[0]["original_index"]
-        # to_index = locations[-1]["original_index"]
+        start_dist = None
 
-        for from_stop, to_stop in pairwise(stop_times):
-            if route_link := RouteLink.objects.filter(
+        for from_st, to_st in pairwise(stop_times):
+            from_point = Point(from_st.stop.latlong.coords)
+            to_point = Point(to_st.stop.latlong.coords)
+
+            if start_dist is None:
+                start_dist = shape.project(from_point)
+            end_dist = shape.project(to_point)
+
+            # skip if either stop is too far from the matched route (~0.1km at UK latitudes)
+            if (
+                from_point.distance(shape.interpolate(start_dist)) > 0.001
+                or to_point.distance(shape.interpolate(end_dist)) > 0.001
+            ):
+                start_dist = None
+                continue
+
+            line_substring = substring(shape, start_dist, end_dist)
+
+            start_dist = end_dist
+
+            if type(line_substring) is not LineString:
+                continue
+
+            route_link = RouteLink.objects.filter(
                 service_id=trip.route.service_id,
-                from_stop=from_stop.stop,
-                to_stop=to_stop.stop,
-            ).first():
-                pass
-            else:
-                route_link = RouteLink(
-                    service_id=trip.route.service_id,
-                    from_stop=from_stop.stop,
-                    to_stop=to_stop.stop,
-                )
-
-            from_point = Point(from_stop.stop.latlong.coords)
-            to_point = Point(to_stop.stop.latlong.coords)
-
-            line_substring = substring(
-                shape, shape.project(from_point), shape.project(to_point)
+                from_stop=from_st.stop,
+                to_stop=to_st.stop,
+            ).first() or RouteLink(
+                service_id=trip.route.service_id,
+                from_stop=from_st.stop,
+                to_stop=to_st.stop,
             )
-
-            if type(line_substring) is LineString:
-                route_link.geometry = line_substring.wkt
-                route_links.append(route_link)
-                route_link.save()
+            route_link.geometry = line_substring.wkt
+            route_links.append(route_link)
+            route_link.save()
 
     return render(
         request,
