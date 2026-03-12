@@ -358,7 +358,7 @@ class StopPoint(models.Model):
 
     latlong = models.PointField(null=True, blank=True)
 
-    parents = models.ForeignKey("self", blank=True)
+    parents = models.ManyToManyField("self", blank=True)
     stop_area = models.ForeignKey(StopArea, models.SET_NULL, null=True, blank=True)
     locality = models.ForeignKey("Locality", models.SET_NULL, null=True, blank=True)
     suburb = models.CharField(max_length=48, blank=True)
