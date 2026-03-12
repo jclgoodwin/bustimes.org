@@ -27,7 +27,7 @@
 | buses/utils.py                                                  |       23 |        4 |     83% |     35-38 |
 | buses/wsgi.py                                                   |        4 |        0 |    100% |           |
 | busstops/\_\_init\_\_.py                                        |        0 |        0 |    100% |           |
-| busstops/admin.py                                               |      322 |       14 |     96% |104-110, 184, 243-251, 333-335, 381, 456, 460, 509, 594, 622 |
+| busstops/admin.py                                               |      324 |       14 |     96% |105-111, 185, 244-252, 334-336, 382, 457, 461, 511, 596, 624 |
 | busstops/fields.py                                              |       27 |        0 |    100% |           |
 | busstops/forms.py                                               |       46 |        0 |    100% |           |
 | busstops/management/\_\_init\_\_.py                             |        0 |        0 |    100% |           |
@@ -47,7 +47,7 @@
 | busstops/management/tests/test\_import\_nptg.py                 |       31 |        0 |    100% |           |
 | busstops/management/tests/test\_import\_operators.py            |       70 |        0 |    100% |           |
 | busstops/middleware.py                                          |       31 |        0 |    100% |           |
-| busstops/models.py                                              |      629 |       21 |     97% |273, 298, 324, 448, 485, 535, 619, 622, 656, 694, 844, 877, 956, 968-972, 1066, 1106, 1121, 1158 |
+| busstops/models.py                                              |      629 |       22 |     97% |273, 298, 324, 448, 485, 535, 619, 622, 656, 694, 844, 877, 956, 968-972, 1057, 1066, 1106, 1121, 1158 |
 | busstops/popular\_pages.py                                      |       12 |        0 |    100% |           |
 | busstops/tasks.py                                               |       11 |        0 |    100% |           |
 | busstops/templatetags/\_\_init\_\_.py                           |        0 |        0 |    100% |           |
@@ -193,7 +193,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       59 |        0 |    100% |           |
-| **TOTAL**                                                       | **17317** | **1191** | **93%** |           |
+| **TOTAL**                                                       | **17319** | **1192** | **93%** |           |
 
 
 ## Setup coverage badge
