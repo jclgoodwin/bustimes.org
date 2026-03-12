@@ -74,7 +74,7 @@
 | bustimes/management/commands/import\_atco\_cif.py               |      235 |       25 |     89% |28-35, 40, 43-44, 71, 204, 206, 209, 211, 219, 225, 289, 322-327, 367-368, 435 |
 | bustimes/management/commands/import\_bod\_timetables.py         |      268 |       28 |     90% |35-43, 63, 106, 110, 113-116, 121, 126-127, 151, 179, 189, 200-201, 268, 285-289, 312, 328-329, 345 |
 | bustimes/management/commands/import\_gtfs.py                    |      227 |        6 |     97% |69, 122-123, 135, 142, 339 |
-| bustimes/management/commands/import\_gtfs\_ember.py             |      149 |        4 |     97% |44, 107, 174, 273 |
+| bustimes/management/commands/import\_gtfs\_ember.py             |      179 |        6 |     97% |46, 109, 176, 278, 307, 320 |
 | bustimes/management/commands/import\_gtfs\_flixbus.py           |      181 |       10 |     94% |45, 110, 192, 296-297, 321-322, 340-341, 346 |
 | bustimes/management/commands/import\_ni.py                      |       31 |        0 |    100% |           |
 | bustimes/management/commands/import\_passenger.py               |      116 |       35 |     70% |51-54, 56-58, 64, 103, 113-117, 143-180 |
@@ -126,7 +126,7 @@
 | fares/management/commands/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | fares/management/commands/import\_netex\_fares.py               |      354 |       59 |     83% |29, 70-71, 122, 129-131, 224-225, 324, 368-369, 450, 529-536, 556, 565-566, 582-587, 594-631, 651-652, 662-663, 669-678 |
 | fares/management/commands/mytrip\_ticketing.py                  |       34 |        0 |    100% |           |
-| fares/models.py                                                 |      176 |        8 |     95% |60, 142, 217, 222, 245-246, 250-251 |
+| fares/models.py                                                 |      190 |        8 |     96% |60, 142, 217, 222, 245-246, 250-251 |
 | fares/mytrip.py                                                 |       53 |        2 |     96% |     49-50 |
 | fares/test\_mytrip.py                                           |       47 |        0 |    100% |           |
 | fares/tests.py                                                  |       79 |        0 |    100% |           |
@@ -193,7 +193,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       59 |        0 |    100% |           |
-| **TOTAL**                                                       | **17261** | **1189** | **93%** |           |
+| **TOTAL**                                                       | **17305** | **1191** | **93%** |           |
 
 
 ## Setup coverage badge
