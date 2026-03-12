@@ -262,3 +262,39 @@ class Cell(models.Model):
         DistanceMatrixElement, models.CASCADE, null=True
     )
     price = models.ForeignKey(Price, models.CASCADE, null=True)
+
+
+# GTFS fare_attributes.txt and fare_rules.txt
+
+
+class Fare(models.Model):
+    source = models.ForeignKey("busstops.DataSource", models.CASCADE)
+    fare_id = models.CharField(max_length=255)
+    price = models.DecimalField(max_digits=6, decimal_places=2)
+    currency = models.CharField(max_length=3)
+    payment_method = models.PositiveSmallIntegerField()
+    transfers = models.PositiveSmallIntegerField()
+
+    class Meta:
+        unique_together = ("source", "fare_id")
+
+
+class FareRule(models.Model):
+    fare = models.ForeignKey(Fare, models.CASCADE)
+    service = models.ForeignKey(
+        "busstops.Service", models.DO_NOTHING, null=True, blank=True
+    )
+    origin = models.ForeignKey(
+        "busstops.StopPoint",
+        models.DO_NOTHING,
+        null=True,
+        blank=True,
+        related_name="origin_rules",
+    )
+    destination = models.ForeignKey(
+        "busstops.StopPoint",
+        models.DO_NOTHING,
+        null=True,
+        blank=True,
+        related_name="destination_rules",
+    )
