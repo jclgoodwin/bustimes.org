@@ -49,11 +49,12 @@ class StopPointAdmin(GISModelAdmin):
         "service__region",
         "admin_area",
     ]
-    raw_id_fields = ["stop_area", "locality", "admin_area"]
+    raw_id_fields = ["source", "parents", "stop_area", "locality", "admin_area"]
     search_fields = ["atco_code"]
     ordering = ["atco_code"]
     inlines = [StopCodeInline]
     show_full_result_count = False
+    readonly_fields = ["search_vector"]
 
     def get_search_results(self, request, queryset, search_term):
         if not search_term:
@@ -466,6 +467,7 @@ class LocalityAdmin(GISModelAdmin):
     search_fields = ("id", "name")
     raw_id_fields = ("adjacent", "parent")
     list_filter = ("modified_at", "created_at", "admin_area__region", "admin_area")
+    readonly_fields = ["search_vector"]
 
 
 @admin.register(models.OperatorCode)
