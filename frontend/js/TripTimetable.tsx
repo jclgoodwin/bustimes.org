@@ -116,7 +116,15 @@ function Row({
         actualRowSpan = (actualRowSpan || 1) + 1;
       }
     } else if (!vehicle?.progress || vehicle.progress.id !== stop.id) {
-      actual = stop.actual_departure_time; // vehicle history
+      if (
+        vehicle?.progress &&
+        vehicle.progress.id + 1 === stop.id &&
+        vehicle.progress.progress > 0.1
+      ) {
+        pass;
+      } else {
+        actual = stop.actual_departure_time; // vehicle history
+      }
     }
     if (actual) {
       actual = actual.slice(11, 16);
