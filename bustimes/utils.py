@@ -363,13 +363,22 @@ def get_trip(
 
     if departure_time:
         start_time = timezone.localtime(departure_time)
-        start = Q(start=timedelta(hours=start_time.hour, minutes=start_time.minute))
-        if start_time.hour < 6:
-            start |= Q(
-                start=timedelta(
-                    days=1, hours=start_time.hour, minutes=start_time.minute
-                )
+        start_timedelta = timedelta(hours=start_time.hour, minutes=start_time.minute)
+        start = Q(start=start_timedelta)
+        if origin:
+            start |= Exists(
+                "stoptime", filter=Q(stop=origin_ref, departure=start_timedelta)
             )
+        if start_time.hour < 6:
+            start |= Q(start=start_timedelta + timedelta(days=1))
+            if origin:
+                start |= Exists(
+                    "stoptime",
+                    filter=Q(
+                        stop=origin_ref, departure=start_timedelta + timedelta(days=1)
+                    ),
+                )
+
     elif len(journey_code) == 4 and journey_code.isdigit() and int(journey_code) < 2400:
         hours = int(journey_code[:-2])
         minutes = int(journey_code[-2:])
