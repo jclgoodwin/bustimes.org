@@ -3,6 +3,7 @@ from functools import cache
 from itertools import pairwise
 from pathlib import Path
 import geopandas as gpd
+import pandas as pd
 
 import gtfs_kit
 import requests
@@ -15,6 +16,7 @@ from django.contrib.gis.geos import LineString, Point
 
 from busstops.models import DataSource, Operator, Service, StopPoint
 from vosa.models import Registration
+from fares.models import Fare, FareRule
 
 from ...download_utils import download_if_modified
 from ...models import Route, StopTime, Trip, Note, RouteLink
@@ -208,6 +210,9 @@ class Command(BaseCommand):
         )
         RouteLink.objects.bulk_create([rl for rl in route_links.values() if not rl.id])
 
+        fare_attributes_df = feed.fare_attributes
+        fare_rules_df = feed.fare_rules
+
         # get TripUpdates from the GTFS-RT feed - to mark some stops as "pre-book only":
 
         realtime_url = "https://api.ember.to/v1/gtfs/realtime/"
@@ -271,6 +276,48 @@ class Command(BaseCommand):
             for note in existing_notes.values():
                 if note not in stop_notes:
                     note.trip_set.clear()
+
+            # fares
+            if fare_attributes_df is not None and not fare_attributes_df.empty:
+                new_fare_ids = set(fare_attributes_df.fare_id.tolist())
+                Fare.objects.filter(source=source).exclude(
+                    fare_id__in=new_fare_ids
+                ).delete()
+                fares = {}
+                for row in fare_attributes_df.itertuples():
+                    fare, _ = Fare.objects.update_or_create(
+                        source=source,
+                        fare_id=row.fare_id,
+                        defaults={
+                            "price": row.price,
+                            "currency": row.currency_type,
+                            "payment_method": row.payment_method,
+                            "transfers": int(row.transfers)
+                            if pd.notna(row.transfers)
+                            else 0,
+                        },
+                    )
+                    fares[row.fare_id] = fare
+                FareRule.objects.filter(fare__source=source).delete()
+                if fare_rules_df is not None and not fare_rules_df.empty:
+                    rules = []
+                    for row in fare_rules_df.itertuples():
+                        fare = fares.get(row.fare_id)
+                        if fare is None:
+                            continue
+                        rule = FareRule(fare=fare)
+                        if pd.notna(getattr(row, "route_id", float("nan"))):
+                            route = existing_routes.get(row.route_id)
+                            if route:
+                                rule.service = route.service
+                        if pd.notna(getattr(row, "origin_id", float("nan"))):
+                            rule.origin = stops.get(row.origin_id)
+                        if pd.notna(getattr(row, "destination_id", float("nan"))):
+                            rule.destination = stops.get(row.destination_id)
+                        rules.append(rule)
+                    FareRule.objects.bulk_create(rules)
+            else:
+                Fare.objects.filter(source=source).delete()
 
             for service in source.service_set.filter(current=True):
                 service.do_stop_usages()
