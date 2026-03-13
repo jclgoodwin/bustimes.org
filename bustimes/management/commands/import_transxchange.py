@@ -1042,14 +1042,33 @@ class Command(BaseCommand):
         StopTime.notes.through.objects.bulk_create(stop_time_notes, batch_size=1000)
 
     def should_defer_to_other_source(self, operators: dict, line_name: str):
+        nocs = {operator.noc for operator in operators.values()}
+
+        go_ahead_london_nocs = {
+            "LGEN",
+            "LONC",
+            "MBGA",
+            "BTRI",
+            "DLBU",
+            "KNCO",
+            "GAHL",
+        }
+
         if not (self.source.is_tnds() or self.source.name == "TfGM"):
+            if not nocs.isdisjoint(go_ahead_london_nocs):
+                # defer to TfL source
+                return Route.objects.filter(
+                    source__name="L",
+                    service__current=True,
+                    service__operator__in=go_ahead_london_nocs,
+                    line_name__iexact=line_name,
+                ).exists()
+
             return False
         elif self.source.name == "L":  # TfL data is always best
             return False
         elif not operators:
             return False
-
-        nocs = [operator.noc for operator in operators.values()]
 
         if self.source.name != "TfGM":
             if any(noc not in self.incomplete_operators for noc in nocs):
@@ -1149,10 +1168,6 @@ class Command(BaseCommand):
 
             if operators:
                 q = Q(operator__in=operators.values())
-
-                # try to deduplicate Go Ahead London services
-                if any(o.noc == "LGEN" for o in operators.values()):
-                    q |= Q(operator="MBGA")
 
                 # prevent certain seemingly-the-same services being merged
                 if (
