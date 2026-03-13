@@ -107,9 +107,9 @@ def get_departures(stop, services, when) -> dict:
     ).select_related("source")
     departures = None
 
-    gtfsr_available = any(
-        route.source.name == "Realtime Transport Operators" for route in routes
-    )
+    ntaie = any(route.source.name == "Realtime Transport Operators" for route in routes)
+    ember = any(route.source.name == "Ember" for route in routes)
+    gtfsr_available = ntaie or ember
 
     if not when and live_departures is None and not gtfsr_available:
         vehicle_locations = avl.get_tracking(stop, services)
@@ -184,7 +184,7 @@ def get_departures(stop, services, when) -> dict:
     one_hour_ago = now - one_hour
 
     if departures and gtfsr_available:
-        gtfsr.update_stop_departures(departures, "ntaie")
+        gtfsr.update_stop_departures(departures, "ember" if ember else "ntaie")
 
     if when or live_departures or type(stop) is not StopPoint:
         pass

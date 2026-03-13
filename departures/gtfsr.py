@@ -110,8 +110,18 @@ def update_departure(departure: dict, trip_update: dict) -> None:
         if stop_time_update["scheduleRelationship"] == "SKIPPED":
             departure["cancelled"] = True
         elif "departure" in stop_time_update:
-            delay = timedelta(seconds=stop_time_update["departure"]["delay"])
-            departure["live"] = departure["time"] + delay
+            if (
+                stop_time_update["stopSequence"] == departure["stop_time"].sequence
+                and "time" in stop_time_update["departure"]
+            ):
+                time = datetime.fromtimestamp(
+                    int(stop_time_update["departure"]["time"])
+                )
+                departure["live"] = time
+
+            elif "delay" in stop_time_update["departure"]:
+                delay = timedelta(seconds=stop_time_update["departure"]["delay"])
+                departure["live"] = departure["time"] + delay
 
 
 def update_stop_departures(departures: list, feed_name: str) -> None:
