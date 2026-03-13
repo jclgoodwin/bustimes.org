@@ -6,12 +6,6 @@ from pathlib import Path
 from warnings import filterwarnings
 
 import dj_database_url
-import sentry_sdk
-
-from sentry_sdk.integrations.django import DjangoIntegration
-from sentry_sdk.integrations.huey import HueyIntegration
-from sentry_sdk.integrations.logging import ignore_logger
-from sentry_sdk.integrations.redis import RedisIntegration
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY", "")
@@ -274,6 +268,13 @@ def traces_sampler(context):
 
 if not TEST:  # pragma: nocover
     if "SENTRY_DSN" in os.environ:
+        import sentry_sdk
+
+        from sentry_sdk.integrations.django import DjangoIntegration
+        from sentry_sdk.integrations.huey import HueyIntegration
+        from sentry_sdk.integrations.logging import ignore_logger
+        from sentry_sdk.integrations.redis import RedisIntegration
+
         sentry_sdk.init(
             dsn=os.environ.get("SENTRY_DSN"),
             integrations=[DjangoIntegration(), RedisIntegration(), HueyIntegration()],
