@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>map</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+<body>
+
+<main>
+
+<div id="map" style="height: 80vh">
+</div>
+
+<button id="load">Load stuff</button>
+
+<code id="console"></code>
+
+<script src='https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js'></script>
+<link href='https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css' rel='stylesheet' />
+
+<script>
+var map = new maplibregl.Map({
+  container: 'map',
+  style: 'https://tiles.bustimes.org.uk/styles/light/style.json',
+  hash: true,
+  // fitBoundsOptions: { padding: 40, maxZoom: 17 },
+  attributionControl: {
+    compact: false,
+    customAttribution: ""
+  }
+});
+
+
+document.getElementById("load").addEventListener("click", function() {
+    const console = document.getElementById("console");
+
+    const socket = new WebSocket(
+      `ws://${window.location.host}/vehicles`,
+    );
+
+    socket.addEventListener("open", function(event) {
+        const b = map.getBounds();
+        this.send(JSON.stringify({
+            bounds: [b.getSouth(), b.getWest(), b.getNorth(), b.getEast()]
+        }));
+    });
+    socket.addEventListener("message", function(event) {
+        console.innerText += event.data;
+    });
+});
+</script>
+
+</main>
+
+<footer>
+    Contains public sector information licenced under the Open Government Licence v3.0
+</footer>
+
+</body>
+</html>

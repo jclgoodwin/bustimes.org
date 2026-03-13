@@ -154,7 +154,7 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = None
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
 
 REDIS_URL = os.environ.get("REDIS_URL")
-TILE38_URL = os.environ.get("TILE38_URL")
+TILE38_URL = os.environ.get("TILE38_URL", "redis://localhost:9851")
 
 HUEY = {
     "name": "bustimes",

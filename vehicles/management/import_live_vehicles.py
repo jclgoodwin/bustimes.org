@@ -1,4 +1,3 @@
-import asyncio
 import json
 import logging
 from collections import namedtuple
@@ -7,6 +6,7 @@ from time import sleep
 
 import requests
 import sentry_sdk
+from asgiref.sync import async_to_sync
 from ciso8601 import parse_datetime
 from django.contrib.gis.geos import Point
 from django.core.cache import cache
@@ -388,22 +388,19 @@ class ImportLiveVehiclesCommand(BaseCommand):
             logger.exception(e)
 
         if tile38_points:
-
-            async def _write_tile38():
-                for lat, lon, vehicle_id in tile38_points:
-                    await (
-                        tile38_client.set("vehicle_location_locations", str(vehicle_id))
-                        .point(lat, lon)
-                        .ex(900)
-                        .exec()
-                    )
-
-            try:
-                asyncio.run(_write_tile38())
-            except Exception as e:
-                logger.exception(e)
+            async_to_sync(self.set_tile38_points)(tile38_points)
 
         self.to_save = []
+
+    @staticmethod
+    async def set_tile38_points(tile38_points):
+        for lat, lon, vehicle_id in tile38_points:
+            await (
+                tile38_client.set("vehicle_location_locations", str(vehicle_id))
+                .point(lat, lon)
+                .ex(900)
+                .exec()
+            )
 
     def do_source(self):
         if self.url:
