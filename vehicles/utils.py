@@ -11,6 +11,12 @@ try:
 except InvalidCacheBackendError:
     redis_client = None
 
+tile38_client = None
+if url := settings.TILE38_URL:
+    from pyle38 import Tile38
+
+    tile38_client = Tile38(url)
+
 
 def filename_from_content_disposition(response) -> str:
     # really not fully RFC 6266 compliant

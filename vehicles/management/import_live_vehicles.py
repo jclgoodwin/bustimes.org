@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 from collections import namedtuple
@@ -22,7 +23,7 @@ from busstops.models import DataSource
 from bustimes.models import Route, Trip
 
 from ..models import Vehicle, VehicleJourney, VehicleCode
-from ..utils import calculate_bearing, redis_client
+from ..utils import calculate_bearing, redis_client, tile38_client
 
 logger = logging.getLogger(__name__)
 fifteen_minutes = timedelta(minutes=15)
@@ -320,6 +321,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
         pipeline = redis_client.pipeline(transaction=False)
 
         geoadd = []
+        tile38_points = []
         sadd = {}
 
         for location, vehicle in self.to_save:
@@ -332,6 +334,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
             # update live map
 
             geoadd += [location.latlong.x, location.latlong.y, vehicle.id]
+            if tile38_client:
+                tile38_points.append(
+                    (location.latlong.y, location.latlong.x, vehicle.id)
+                )
 
             if location.journey.service_id:
                 key = f"service{location.journey.service_id}vehicles"
@@ -380,6 +386,22 @@ class ImportLiveVehiclesCommand(BaseCommand):
             pipeline.execute()
         except ConnectionError as e:
             logger.exception(e)
+
+        if tile38_points:
+
+            async def _write_tile38():
+                for lat, lon, vehicle_id in tile38_points:
+                    await (
+                        tile38_client.set("vehicle_location_locations", str(vehicle_id))
+                        .point(lat, lon)
+                        .ex(900)
+                        .exec()
+                    )
+
+            try:
+                asyncio.run(_write_tile38())
+            except Exception as e:
+                logger.exception(e)
 
         self.to_save = []
 
