@@ -54,8 +54,8 @@
             </div>
         </aside>
         <h2>
-            <span class="text">127 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">109<span class="text"> run</span></button>
+            <span class="text">129 statements &nbsp;</span>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">111<span class="text"> run</span></button>
             <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">18<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_f5dba1c56a64fa65_sources_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.1">coverage.py v7.13.1</a>,
-            created at 2026-03-12 13:41 +0000
+            created at 2026-03-13 08:39 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -189,9 +189,9 @@
     <p class="run run2"><span class="n"><a id="t107" href="#t107">107</a></span><span class="t">    <span class="op">)</span><span class="op">.</span><span class="nam">select_related</span><span class="op">(</span><span class="str">"source"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t108" href="#t108">108</a></span><span class="t">    <span class="nam">departures</span> <span class="op">=</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t109" href="#t109">109</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t110" href="#t110">110</a></span><span class="t">    <span class="nam">gtfsr_available</span> <span class="op">=</span> <span class="nam">any</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t111" href="#t111">111</a></span><span class="t">        <span class="nam">route</span><span class="op">.</span><span class="nam">source</span><span class="op">.</span><span class="nam">name</span> <span class="op">==</span> <span class="str">"Realtime Transport Operators"</span> <span class="key">for</span> <span class="nam">route</span> <span class="key">in</span> <span class="nam">routes</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t112" href="#t112">112</a></span><span class="t">    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t110" href="#t110">110</a></span><span class="t">    <span class="nam">ntaie</span> <span class="op">=</span> <span class="nam">any</span><span class="op">(</span><span class="nam">route</span><span class="op">.</span><span class="nam">source</span><span class="op">.</span><span class="nam">name</span> <span class="op">==</span> <span class="str">"Realtime Transport Operators"</span> <span class="key">for</span> <span class="nam">route</span> <span class="key">in</span> <span class="nam">routes</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t111" href="#t111">111</a></span><span class="t">    <span class="nam">ember</span> <span class="op">=</span> <span class="nam">any</span><span class="op">(</span><span class="nam">route</span><span class="op">.</span><span class="nam">source</span><span class="op">.</span><span class="nam">name</span> <span class="op">==</span> <span class="str">"Ember"</span> <span class="key">for</span> <span class="nam">route</span> <span class="key">in</span> <span class="nam">routes</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t112" href="#t112">112</a></span><span class="t">    <span class="nam">gtfsr_available</span> <span class="op">=</span> <span class="nam">ntaie</span> <span class="key">or</span> <span class="nam">ember</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t113" href="#t113">113</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t114" href="#t114">114</a></span><span class="t">    <span class="key">if</span> <span class="key">not</span> <span class="nam">when</span> <span class="key">and</span> <span class="nam">live_departures</span> <span class="key">is</span> <span class="key">None</span> <span class="key">and</span> <span class="key">not</span> <span class="nam">gtfsr_available</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t115" href="#t115">115</a></span><span class="t">        <span class="nam">vehicle_locations</span> <span class="op">=</span> <span class="nam">avl</span><span class="op">.</span><span class="nam">get_tracking</span><span class="op">(</span><span class="nam">stop</span><span class="op">,</span> <span class="nam">services</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -266,7 +266,7 @@
     <p class="run"><span class="n"><a id="t184" href="#t184">184</a></span><span class="t">    <span class="nam">one_hour_ago</span> <span class="op">=</span> <span class="nam">now</span> <span class="op">-</span> <span class="nam">one_hour</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t185" href="#t185">185</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t186" href="#t186">186</a></span><span class="t">    <span class="key">if</span> <span class="nam">departures</span> <span class="key">and</span> <span class="nam">gtfsr_available</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t187" href="#t187">187</a></span><span class="t">        <span class="nam">gtfsr</span><span class="op">.</span><span class="nam">update_stop_departures</span><span class="op">(</span><span class="nam">departures</span><span class="op">,</span> <span class="str">"ntaie"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t187" href="#t187">187</a></span><span class="t">        <span class="nam">gtfsr</span><span class="op">.</span><span class="nam">update_stop_departures</span><span class="op">(</span><span class="nam">departures</span><span class="op">,</span> <span class="str">"ember"</span> <span class="key">if</span> <span class="nam">ember</span> <span class="key">else</span> <span class="str">"ntaie"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t188" href="#t188">188</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t189" href="#t189">189</a></span><span class="t">    <span class="key">if</span> <span class="nam">when</span> <span class="key">or</span> <span class="nam">live_departures</span> <span class="key">or</span> <span class="nam">type</span><span class="op">(</span><span class="nam">stop</span><span class="op">)</span> <span class="key">is</span> <span class="key">not</span> <span class="nam">StopPoint</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t190" href="#t190">190</a></span><span class="t">        <span class="key">pass</span>&nbsp;</span><span class="r"></span></p>
@@ -347,7 +347,7 @@
             <a class="nav" href="z_f5dba1c56a64fa65_sources_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.1">coverage.py v7.13.1</a>,
-            created at 2026-03-12 13:41 +0000
+            created at 2026-03-13 08:39 +0000
         </p>
     </div>
 </footer>

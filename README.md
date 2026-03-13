@@ -21,7 +21,7 @@
 | buses/asgi.py                                                   |        4 |        0 |    100% |           |
 | buses/context\_processors.py                                    |        5 |        0 |    100% |           |
 | buses/jinja2.py                                                 |       36 |        1 |     97% |        40 |
-| buses/settings.py                                               |      124 |       31 |     75% |104-114, 134, 148-156, 212, 231-239, 256-272, 321 |
+| buses/settings.py                                               |      119 |       31 |     74% |98-108, 128, 142-150, 206, 225-233, 250-266, 322 |
 | buses/tests.py                                                  |       12 |        0 |    100% |           |
 | buses/urls.py                                                   |        5 |        0 |    100% |           |
 | buses/utils.py                                                  |       23 |        4 |     83% |     35-38 |
@@ -100,8 +100,8 @@
 | bustimes/views.py                                               |      453 |      111 |     75% |138-241, 314-315, 318-319, 335-337, 345-354, 356-364, 371, 393, 482, 491, 527, 533, 724, 748-750, 767, 771-799, 827-838, 847-853, 895 |
 | departures/\_\_init\_\_.py                                      |        0 |        0 |    100% |           |
 | departures/avl.py                                               |       12 |        1 |     92% |        14 |
-| departures/gtfsr.py                                             |       87 |        2 |     98% |   91, 111 |
-| departures/live.py                                              |      127 |       18 |     86% |42, 57, 59, 61, 72-83, 144, 155, 167, 181 |
+| departures/gtfsr.py                                             |       91 |        4 |     96% |91, 111, 117-120 |
+| departures/live.py                                              |      129 |       18 |     86% |42, 57, 59, 61, 72-83, 144, 155, 167, 181 |
 | departures/sources.py                                           |      195 |       35 |     82% |31, 55, 60, 64, 68, 72, 93, 105, 108-110, 120-127, 132-133, 147-148, 156-157, 252, 269-271, 344, 348-349, 355-356, 359 |
 | departures/test\_gtfsr\_trip\_updates.py                        |       50 |        0 |    100% |           |
 | departures/test\_gtfsr\_vehicle\_positions.py                   |       33 |        0 |    100% |           |
@@ -193,7 +193,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       59 |        0 |    100% |           |
-| **TOTAL**                                                       | **17319** | **1192** | **93%** |           |
+| **TOTAL**                                                       | **17320** | **1194** | **93%** |           |
 
 
 ## Setup coverage badge
