@@ -1,10 +1,7 @@
 import logging
 from pathlib import Path
-from itertools import pairwise
-
 import gtfs_kit
 from shapely.errors import EmptyPartError
-from shapely import ops as so
 from zipfile import BadZipFile
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
@@ -18,8 +15,8 @@ from busstops.models import AdminArea, DataSource, Operator, Region, Service, St
 
 from ...download_utils import download_if_modified
 from ...utils import log_time_taken
-from ...models import Route, Trip, RouteLink
-from ...gtfs_utils import get_calendars, MODES
+from ...models import Route, Trip
+from ...gtfs_utils import get_calendars, MODES, do_route_links
 
 logger = logging.getLogger(__name__)
 
@@ -319,7 +316,8 @@ class Command(BaseCommand):
         )
         old_routes.update(service=None)
 
-        do_route_links(feed, self.source, self.routes, stops)
+        feed_stops = {row.stop_id: row for row in feed.stops.itertuples()}
+        do_route_links(feed, self.source, self.routes, feed_stops)
 
     def handle(self, *args, **options):
         collections = DataSource.objects.filter(
@@ -345,64 +343,3 @@ class Command(BaseCommand):
                     logger.exception(e)
 
             # sleep(2)
-
-
-def do_route_links(
-    feed: gtfs_kit.feed.Feed, source: DataSource, routes: dict, stops: dict
-):
-    try:
-        trips = feed.get_trips(as_gdf=True).drop_duplicates("shape_id")
-    except ValueError:
-        return
-
-    existing_route_links = {
-        (rl.service_id, rl.from_stop_id, rl.to_stop_id): rl
-        for rl in RouteLink.objects.filter(service__source=source)
-    }
-    route_links = {}
-
-    for trip in trips.itertuples():
-        if trip.geometry is None:
-            continue
-
-        service = routes[trip.route_id].service_id
-
-        start_dist = None
-
-        for a, b in pairwise(
-            feed.stop_times[feed.stop_times.trip_id == trip.trip_id].itertuples()
-        ):
-            key = (service, a.stop_id, b.stop_id)
-
-            if key in route_links:
-                start_dist = None
-                continue
-
-            # find the substring of rl.geometry between the stops a and b
-            if not start_dist:
-                stop_a = stops[a.stop_id]
-                point_a = so.Point(stop_a.latlong.coords)
-                start_dist = trip.geometry.project(point_a)
-            stop_b = stops[b.stop_id]
-            point_b = so.Point(stop_b.latlong.coords)
-            end_dist = trip.geometry.project(point_b)
-
-            geom = so.substring(trip.geometry, start_dist, end_dist)
-            if type(geom) is so.LineString:
-                if key in existing_route_links:
-                    rl = existing_route_links[key]
-                else:
-                    rl = RouteLink(
-                        service_id=key[0],
-                        from_stop_id=key[1],
-                        to_stop_id=key[2],
-                    )
-                rl.geometry = geom.wkt
-                route_links[key] = rl
-
-            start_dist = end_dist
-
-    RouteLink.objects.bulk_update(
-        [rl for rl in route_links.values() if rl.id], fields=["geometry"]
-    )
-    RouteLink.objects.bulk_create([rl for rl in route_links.values() if not rl.id])

@@ -1,8 +1,6 @@
 import logging
 from functools import cache
-from itertools import pairwise
 from pathlib import Path
-import geopandas as gpd
 import pandas as pd
 
 import gtfs_kit
@@ -12,15 +10,14 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.db.models import Min, Subquery, OuterRef
-from django.contrib.gis.geos import LineString, Point
 
 from busstops.models import DataSource, Operator, Service, StopPoint
 from vosa.models import Registration
 from fares.models import Fare, FareRule
 
 from ...download_utils import download_if_modified
-from ...models import Route, StopTime, Trip, Note, RouteLink
-from ...gtfs_utils import get_calendars, MODES
+from ...models import Route, StopTime, Trip, Note
+from ...gtfs_utils import get_calendars, MODES, do_route_links
 
 logger = logging.getLogger(__name__)
 
@@ -157,58 +154,9 @@ class Command(BaseCommand):
 
             stop_times.append(stop_time)
 
-        existing_route_links = {
-            (rl.service.line_name, rl.from_stop_id, rl.to_stop_id): rl
-            for rl in RouteLink.objects.filter(service__in=existing_services.values())
-        }
-        route_links = {}
-
-        for trip in feed.trips.itertuples():
-            service = existing_routes[trip.route_id].service
-
-            shape = feed.shapes[feed.shapes.shape_id == trip.shape_id]
-            shape_gdf = gpd.GeoDataFrame(
-                shape,
-                geometry=gpd.points_from_xy(shape.shape_pt_lon, shape.shape_pt_lat),
-                crs="EPSG:4326",
-            )
-            if shape_gdf.empty:
-                continue
-
-            for a, b in pairwise(
-                feed.stop_times[feed.stop_times.trip_id == trip.trip_id].itertuples()
-            ):
-                from_stop = stops[a.stop_id]
-                to_stop = stops[b.stop_id]
-                key = (trip.route_id, from_stop.atco_code, to_stop.atco_code)
-
-                if key in route_links:
-                    continue
-
-                segment_gdf = shape_gdf[
-                    (shape_gdf.shape_dist_traveled >= a.shape_dist_traveled)
-                    & (shape_gdf.shape_dist_traveled <= b.shape_dist_traveled)
-                ]
-                if segment_gdf.empty:
-                    continue
-
-                if key in existing_route_links:
-                    rl = existing_route_links[key]
-                else:
-                    rl = RouteLink(
-                        service=service,
-                        from_stop=from_stop,
-                        to_stop=to_stop,
-                    )
-                rl.geometry = LineString(
-                    *(Point(p.x, p.y) for p in segment_gdf.geometry.values)
-                )
-                route_links[key] = rl
-
-        RouteLink.objects.bulk_update(
-            [rl for rl in route_links.values() if rl.id], fields=["geometry"]
-        )
-        RouteLink.objects.bulk_create([rl for rl in route_links.values() if not rl.id])
+        feed_stops = {row.stop_id: row for row in feed.stops.itertuples()}
+        stop_codes = {stop_id: stop.atco_code for stop_id, stop in stops.items()}
+        do_route_links(feed, source, existing_routes, feed_stops, stop_codes)
 
         fare_attributes_df = feed.fare_attributes
         fare_rules_df = feed.fare_rules
@@ -283,21 +231,24 @@ class Command(BaseCommand):
                 Fare.objects.filter(source=source).exclude(
                     fare_id__in=new_fare_ids
                 ).delete()
-                fares = {}
-                for row in fare_attributes_df.itertuples():
-                    fare, _ = Fare.objects.update_or_create(
+                fare_objs = [
+                    Fare(
                         source=source,
                         fare_id=row.fare_id,
-                        defaults={
-                            "price": row.price,
-                            "currency": row.currency_type,
-                            "payment_method": row.payment_method,
-                            "transfers": int(row.transfers)
-                            if pd.notna(row.transfers)
-                            else 0,
-                        },
+                        price=row.price,
+                        currency=row.currency_type,
+                        payment_method=row.payment_method,
+                        transfers=int(row.transfers) if pd.notna(row.transfers) else 0,
                     )
-                    fares[row.fare_id] = fare
+                    for row in fare_attributes_df.itertuples()
+                ]
+                Fare.objects.bulk_create(
+                    fare_objs,
+                    update_conflicts=True,
+                    unique_fields=["source", "fare_id"],
+                    update_fields=["price", "currency", "payment_method", "transfers"],
+                )
+                fares = {fare.fare_id: fare for fare in fare_objs}
                 FareRule.objects.filter(fare__source=source).delete()
                 if fare_rules_df is not None and not fare_rules_df.empty:
                     rules = []
