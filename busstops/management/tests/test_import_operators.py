@@ -61,7 +61,7 @@ class ImportOperatorsTest(TestCase):
                 return_value=mock_overrides,
             ),
         ):
-            with self.assertNumQueries(3589):
+            with self.assertNumQueries(3163):
                 call_command("import_noc")
 
             cassette.rewind()

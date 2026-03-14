@@ -196,15 +196,14 @@ class Command(BaseCommand):
                 operator = operators[noc]
 
                 slug = slugify(operator.name)
-                if slug in operators_by_slug:
-                    # duplicate name – save now to avoid slug collision
-                    operator.save(force_insert=True)
-                    to_update.append(operator)
-                else:
-                    operator.slug = slug
-                    to_create.append(operator)
-
-                operators_by_slug[operator.slug or slug] = operator
+                base_slug = slug
+                suffix = 0
+                while slug in operators_by_slug:
+                    suffix += 1
+                    slug = f"{base_slug}-{suffix}"
+                operator.slug = slug
+                operators_by_slug[slug] = operator
+                to_create.append(operator)
 
                 operator.url = url
 
