@@ -18,17 +18,14 @@ from .utils import get_calendars, get_descriptions, get_routes
 differ = Differ(charjunk=lambda _: True)
 
 
-def compare_trips(rows, trip_ids, a, b):
-    a_time = None
-    b_time = None
+def compare_trips(rows, trip_id_to_index, row_positions, a, b):
+    a_top = row_positions[a.top]
+    a_bottom = row_positions[a.bottom]
+    b_top = row_positions[b.top]
+    b_bottom = row_positions[b.bottom]
 
-    a_top = rows.index(a.top)
-    a_bottom = rows.index(a.bottom)
-    b_top = rows.index(b.top)
-    b_bottom = rows.index(b.bottom)
-
-    a_index = trip_ids.index(a.id)
-    b_index = trip_ids.index(b.id)
+    a_index = trip_id_to_index[a.id]
+    b_index = trip_id_to_index[b.id]
 
     for row in rows[max(a_top, b_top) : min(a_bottom, b_bottom) + 1]:
         if row.times[a_index] and row.times[b_index]:
@@ -690,19 +687,30 @@ class Grouping:
     def sort_columns(self):
         rows = self.rows
 
+        # Precompute row positions for O(1) lookup instead of O(n) rows.index()
+        row_position = {row: i for i, row in enumerate(rows)}
+
+        # Precompute top/bottom row positions for each trip
+        trip_bounds = [
+            (row_position[trip.top], row_position[trip.bottom])
+            for trip in self.trips
+        ]
+
         sorter = graphlib.TopologicalSorter()
         for a_index, a in enumerate(self.trips):
-            a_top = rows.index(a.top)
-            a_bottom = rows.index(a.bottom)
+            a_top, a_bottom = trip_bounds[a_index]
 
-            for b_index, b in enumerate(self.trips):
-                if a_index == b_index:
+            # Only process each pair once (b_index > a_index) to halve iterations
+            for b_index in range(a_index + 1, len(self.trips)):
+                b = self.trips[b_index]
+                b_top, b_bottom = trip_bounds[b_index]
+
+                overlap_start = max(a_top, b_top)
+                overlap_end = min(a_bottom, b_bottom)
+                if overlap_start > overlap_end:
                     continue
 
-                b_top = rows.index(b.top)
-                b_bottom = rows.index(b.bottom)
-
-                for row in rows[max(a_top, b_top) : min(a_bottom, b_bottom) + 1]:
+                for row in rows[overlap_start : overlap_end + 1]:
                     if row.times[a_index] and row.times[b_index]:
                         a_time = row.times[a_index].departure_or_arrival()
                         b_time = row.times[b_index].departure_or_arrival()
@@ -712,6 +720,8 @@ class Grouping:
                             sorter.add(b.id, a.id)
                         elif b.top is a.bottom:
                             sorter.add(b.id, a.id)
+                        elif a.top is b.bottom:
+                            sorter.add(a.id, b.id)
                         break
 
         trip_ids = [trip.id for trip in self.trips]
@@ -720,7 +730,12 @@ class Grouping:
             assert len(trip_ids) == len(indices)
             self.trips = [self.trips[i] for i in indices]
         except (graphlib.CycleError, AssertionError):
-            self.trips.sort(key=cmp_to_key(partial(compare_trips, self.rows, trip_ids)))
+            trip_id_to_index = {trip_id: i for i, trip_id in enumerate(trip_ids)}
+            self.trips.sort(
+                key=cmp_to_key(
+                    partial(compare_trips, self.rows, trip_id_to_index, row_position)
+                )
+            )
             new_trip_ids = [trip.id for trip in self.trips]
             indices = [trip_ids.index(trip_id) for trip_id in new_trip_ids]
 
@@ -861,11 +876,11 @@ class Grouping:
         in_a_row = 0
         prev_difference = None
 
-        max_notes = max(len(trip.notes.all()) for trip in self.trips)
+        all_notes = [list(trip.notes.all()) for trip in self.trips]
+        max_notes = max(len(notes) for notes in all_notes)
 
-        for i, trip in enumerate(self.trips):
+        for i, (trip, notes) in enumerate(zip(self.trips, all_notes)):
             difference = None
-            notes = trip.notes.all()
             note_ids = {note.id for note in notes}
 
             # add notes
