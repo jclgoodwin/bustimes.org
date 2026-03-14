@@ -5,7 +5,7 @@ from django.views.generic.detail import DetailView
 from busstops.models import Service
 
 from .forms import FaresForm
-from .models import DataSet, FareTable, Tariff
+from .models import DataSet, FareTable, Tariff, FareRule
 
 
 def index(request):
@@ -75,6 +75,11 @@ class FareTableDetailView(DetailView):
 
 def service_fares(request, slug):
     service = get_object_or_404(Service, slug=slug)
+
+    fare_rules = FareRule.objects.filter(service=service).select_related(
+        "fare", "origin", "destination"
+    )
+
     tariffs = Tariff.objects.filter(services=service).order_by("name", "valid_between")
 
     tariffs = tariffs.prefetch_related(
@@ -85,7 +90,7 @@ def service_fares(request, slug):
         "faretable_set__preassigned_fare_product",
     )
 
-    if not tariffs:
+    if not (fare_rules or tariffs):
         raise Http404
 
     return render(
@@ -94,6 +99,7 @@ def service_fares(request, slug):
         {
             "breadcrumb": [service],
             "service": service,
+            "fare_rules": fare_rules,
             "tariffs": tariffs,
         },
     )

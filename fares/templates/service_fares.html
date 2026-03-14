@@ -6,6 +6,40 @@
 
 {% block content %}
 
+
+
+
+{% if fare_rules %}
+
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">From</th>
+                <th scope="col">To</th>
+                <th scope="col">Price</th>
+                <th scope="col"></th>
+                <th scope="col">Payment method</th>
+                <th scope="col">Transfers</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for rule in fare_rules %}
+                <tr>
+                    <td>{{ rule.origin }}</td>
+                    <td>{{ rule.destination }}</td>
+                    <td>{{ rule.fare.price }}</td>
+                    <td>{{ rule.fare.currency }}</td>
+                    <td>{{ rule.fare.payment_method }}</td>
+                    <td>{{ rule.fare.transfers }}</td>
+                </tr>
+            {% endfor %}
+
+
+        </tbody>
+</table>
+
+{% endif %}
+
 {% for tariff in tariffs %}
     <p><a href="{{ tariff.get_absolute_url }}">{{ tariff }}{% if tariff.user_profile_id %} ({{ tariff.user_profile }} {{ tariff.trip_type }}){% endif %}</a></p>
 
