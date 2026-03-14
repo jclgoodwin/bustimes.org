@@ -934,7 +934,9 @@ class ImportTransXChangeTest(TestCase):
 
         call_command("import_transxchange", FIXTURES_DIR / filename)
 
-        route_1, route_2 = Route.objects.filter(code__contains=filename)
+        route_1, route_2 = Route.objects.filter(code__contains=filename).order_by(
+            "-line_name"
+        )
 
         trip = route_1.trip_set.first()
         self.assertEqual(trip.garage.name, "Barnstaple")
