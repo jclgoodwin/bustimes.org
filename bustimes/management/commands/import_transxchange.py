@@ -559,8 +559,7 @@ class Command(BaseCommand):
         )
         # do this first to prevent IntegrityError (VehicleJourney trip field)
         old_routes.update(service=None)
-        for route in old_routes:
-            route.delete()
+        old_routes.delete()
 
         old_services = self.source.service_set.filter(current=True, route=None)
         if old_services.update(current=False):
