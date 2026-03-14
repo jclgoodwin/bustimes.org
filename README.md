@@ -32,7 +32,7 @@
 | busstops/forms.py                                               |       46 |        0 |    100% |           |
 | busstops/management/\_\_init\_\_.py                             |        0 |        0 |    100% |           |
 | busstops/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
-| busstops/management/commands/import\_noc.py                     |      129 |        4 |     97% |156, 177, 184, 247 |
+| busstops/management/commands/import\_noc.py                     |      131 |        4 |     97% |156, 177, 184, 246 |
 | busstops/management/commands/jersey\_routes.py                  |       14 |        0 |    100% |           |
 | busstops/management/commands/jersey\_stops.py                   |       12 |        0 |    100% |           |
 | busstops/management/commands/lothian\_colours.py                |       17 |        1 |     94% |        19 |
@@ -67,19 +67,19 @@
 | bustimes/download\_utils.py                                     |       32 |        0 |    100% |           |
 | bustimes/fields.py                                              |       31 |        1 |     97% |        12 |
 | bustimes/formatting.py                                          |       23 |        0 |    100% |           |
-| bustimes/gtfs\_utils.py                                         |       15 |        0 |    100% |           |
+| bustimes/gtfs\_utils.py                                         |       63 |        1 |     98% |        89 |
 | bustimes/management/\_\_init\_\_.py                             |        0 |        0 |    100% |           |
 | bustimes/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
 | bustimes/management/commands/bank\_holidays.py                  |       52 |        1 |     98% |       102 |
 | bustimes/management/commands/import\_atco\_cif.py               |      235 |       25 |     89% |28-35, 40, 43-44, 71, 204, 206, 209, 211, 219, 225, 289, 322-327, 367-368, 435 |
 | bustimes/management/commands/import\_bod\_timetables.py         |      268 |       28 |     90% |35-43, 63, 106, 110, 113-116, 121, 126-127, 151, 179, 189, 200-201, 268, 285-289, 312, 328-329, 345 |
-| bustimes/management/commands/import\_gtfs.py                    |      227 |        6 |     97% |69, 122-123, 135, 142, 339 |
-| bustimes/management/commands/import\_gtfs\_ember.py             |      179 |        6 |     97% |46, 109, 176, 278, 307, 320 |
-| bustimes/management/commands/import\_gtfs\_flixbus.py           |      181 |       10 |     94% |45, 110, 192, 296-297, 321-322, 340-341, 346 |
+| bustimes/management/commands/import\_gtfs.py                    |      192 |        6 |     97% |66, 119-120, 132, 139, 337 |
+| bustimes/management/commands/import\_gtfs\_ember.py             |      154 |        5 |     97% |43, 106, 226, 258, 271 |
+| bustimes/management/commands/import\_gtfs\_flixbus.py           |      138 |        3 |     98% |43, 108, 190 |
 | bustimes/management/commands/import\_ni.py                      |       31 |        0 |    100% |           |
 | bustimes/management/commands/import\_passenger.py               |      116 |       35 |     70% |51-54, 56-58, 64, 103, 113-117, 143-180 |
 | bustimes/management/commands/import\_tnds.py                    |       42 |        0 |    100% |           |
-| bustimes/management/commands/import\_transxchange.py            |      831 |       93 |     89% |89, 104, 150-151, 234-235, 242, 246, 272-276, 325-326, 336, 344-345, 400, 404, 406, 507, 570-584, 604, 608, 611, 723, 765-766, 803-804, 806-807, 851, 862, 885, 891, 915, 941, 945-947, 996, 1003-1007, 1012-1032, 1060, 1069, 1077-1082, 1098, 1122, 1130, 1132-1135, 1140, 1156, 1186, 1225, 1265-1266, 1293-1295, 1302, 1307-1308, 1323, 1328, 1347, 1372, 1398-1399, 1436-1437, 1499-1500 |
+| bustimes/management/commands/import\_transxchange.py            |      830 |       93 |     89% |89, 104, 150-151, 234-235, 242, 246, 272-276, 325-326, 336, 344-345, 400, 404, 406, 507, 569-583, 603, 607, 610, 722, 764-765, 802-803, 805-806, 850, 861, 884, 890, 914, 940, 944-946, 995, 1002-1006, 1011-1031, 1059, 1068, 1076-1081, 1097, 1121, 1129, 1131-1134, 1139, 1155, 1185, 1224, 1264-1265, 1292-1294, 1301, 1306-1307, 1322, 1327, 1346, 1371, 1397-1398, 1435-1436, 1498-1499 |
 | bustimes/management/commands/suggest\_bod.py                    |       36 |       36 |      0% |      1-51 |
 | bustimes/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | bustimes/management/tests/test\_bank\_holidays.py               |       20 |        0 |    100% |           |
@@ -193,7 +193,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       59 |        0 |    100% |           |
-| **TOTAL**                                                       | **17321** | **1193** | **93%** |           |
+| **TOTAL**                                                       | **17267** | **1186** | **93%** |           |
 
 
 ## Setup coverage badge
