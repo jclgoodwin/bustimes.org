@@ -131,7 +131,7 @@
 | fares/test\_mytrip.py                                           |       47 |        0 |    100% |           |
 | fares/tests.py                                                  |       79 |        0 |    100% |           |
 | fares/urls.py                                                   |        3 |        0 |    100% |           |
-| fares/views.py                                                  |       44 |        0 |    100% |           |
+| fares/views.py                                                  |       45 |        0 |    100% |           |
 | manage.py                                                       |        6 |        0 |    100% |           |
 | transxchange/\_\_init\_\_.py                                    |        0 |        0 |    100% |           |
 | transxchange/test\_txc.py                                       |       23 |        0 |    100% |           |
@@ -193,7 +193,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       59 |        0 |    100% |           |
-| **TOTAL**                                                       | **17267** | **1186** | **93%** |           |
+| **TOTAL**                                                       | **17268** | **1186** | **93%** |           |
 
 
 ## Setup coverage badge
