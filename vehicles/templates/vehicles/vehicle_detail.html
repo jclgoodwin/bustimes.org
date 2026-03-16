@@ -3,11 +3,10 @@
 {% block title %}{{ title }}{% if vehicle.operator %} – {{ vehicle.operator }}{% endif %} – bustimes.org{% endblock %}
 
 {% block canonical %}
-    {% if vehicle and not request.GET.date %}
-        {{ block.super }}
-        {% if vehicle.reg %}<meta name="keywords" content="{{ vehicle.reg }}">{% endif %}
-    {% else %}
+    {% if not vehicle or request.GET.date or potential_duplicates %}
         <meta name="robots" content="noindex,noarchive">
+    {% else %}
+        {{ block.super }}
     {% endif %}
 {% endblock canonical %}
 
@@ -46,6 +45,26 @@
     </h1>
 
     {% include 'vehicle_info.html' %}
+
+    {% if potential_duplicates %}
+        <div class="message">
+        <p>Possible duplicate of</p>
+        <ul class="has-smalls">
+            {% for vehicle in potential_duplicates %}
+                <li><a href="{{ vehicle.get_absolute_url }}"><span>
+                    {% if vehicle.withdrawn %}
+                        <s>{{ vehicle }}</s>
+                    {% else %}
+                        {{ vehicle }}
+                    {% endif %}</span>
+                    {% if vehicle.operator %}
+                        <small>{{ vehicle.operator }}</small>
+                    {% endif %}
+                </a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
 
     {% if tracking %}
         <p><a href="{{ tracking }}" class="button">Track this bus</a></p>

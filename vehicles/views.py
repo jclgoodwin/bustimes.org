@@ -4,6 +4,7 @@ import logging
 from itertools import pairwise, groupby
 from urllib.parse import unquote
 from functools import partial
+from http import HTTPStatus
 import subprocess
 import xmltodict
 from django.conf import settings
@@ -728,6 +729,11 @@ class VehicleDetailView(DetailView):
             if len(garages) == 1:
                 context["garage"] = Garage.objects.get(id=garages.pop())
 
+        if self.object.withdrawn and self.object.reg:
+            context["potential_duplicates"] = Vehicle.objects.filter(
+                ~Q(id=self.object.id), reg__iexact=self.object.reg
+            )
+
         if self.object.operator:
             context["breadcrumb"] = [
                 self.object.operator,
@@ -738,6 +744,17 @@ class VehicleDetailView(DetailView):
             context["next"] = self.object.get_next()
 
         return context
+
+    def render_to_response(self, context):
+        response = super().render_to_response(context)
+
+        if self.object.withdrawn and "potential_duplicates" in context:
+            if not all(
+                vehicle.withdrawn for vehicle in context["potential_duplicates"]
+            ):
+                response.status_code = HTTPStatus.NOT_FOUND
+
+        return response
 
 
 def check_user(request):

@@ -1386,8 +1386,12 @@ input:not(:checked) + label {
     border: 1px solid var(--border-color);
     padding: 1em;
 
-    p {
+    p, h2 {
         margin-top: 0;
+    }
+
+    ul {
+        margin: 0;
     }
 }
 
