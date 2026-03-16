@@ -13,9 +13,11 @@ image: jclgoodwin/bustimes-org
 servers:
   web:
     hosts:
-      - 10.131.33.248
       - 10.131.240.93
-      - 10.131.240.95
+      - 10.131.240.98
+      - 10.131.240.99
+      - 10.131.240.100
+      - 10.131.240.101
     env:
       clear:
         WEB_CONCURRENCY: 8
@@ -24,6 +26,7 @@ servers:
       secret:
         - SECRET_KEY
         - DATABASE_URL
+        - READ_ONLY_DB_HOST
         - REDIS_URL
         - SENTRY_DSN
         - TURNSTILE_SECRET
@@ -34,6 +37,8 @@ servers:
         - NTA_API_KEY
         - AWS_ACCESS_KEY_ID
         - AWS_SECRET_ACCESS_KEY
+        - STADIA_MAPS_API_KEY
+        - FLICKR_API_KEY
 
 accessories:
   tileserver:
@@ -56,6 +61,8 @@ registry:
   server: localhost:5000
 
 asset_path: /staticfiles
+
+deploy_timeout: 60
 
 proxy:
   app_port: 8000
