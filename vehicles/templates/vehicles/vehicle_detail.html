@@ -8,9 +8,6 @@
     {% else %}
         {{ block.super }}
     {% endif %}
-    {% if vehicle.photo_set.all %}
-        <meta name="og:image" src="{{ vehicle.photo_set.all.0.image_1200_630.url }}">
-    {% endif %}
 {% endblock canonical %}
 
 {% block head %}
@@ -19,7 +16,9 @@
         <meta property="og:description" content="{% firstof object.vehicle_type object.operator %}{% if object.name %}
 
 {{ object.name }}{% endif %}">
-
+        {% if vehicle.photo_set.all %}
+            <meta property="og:image" content="{{ vehicle.photo_set.all.0.image_1200_630.url }}">
+        {% endif %}
     {% endif %}
 {% endblock head %}
 
