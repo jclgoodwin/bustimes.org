@@ -75,6 +75,11 @@ class Command(BaseCommand):
                 line_substring = substring(line_string, from_distance, to_distance)
 
                 key = (from_stop, to_stop)
+
+                if line_string.geom_type != "LineString":
+                    print(key, line_string)
+                    continue
+
                 if key not in to_create:
                     to_create[key] = RouteLink(
                         from_stop_id=from_stop,
@@ -92,7 +97,12 @@ class Command(BaseCommand):
 
         sleep(1)
 
-    def handle(self, *args, **kwargs):
+    @staticmethod
+    def add_arguments(parser):
+        parser.add_argument("resume_from", nargs="?", type=str)
+
+    def handle(self, *args, resume_from, **kwargs):
+
         self.session = requests.Session()
 
         response = self.session.get(
@@ -101,6 +111,9 @@ class Command(BaseCommand):
         ).json()
 
         line_names = [route["id"] for route in response]
+
+        if resume_from:
+            line_names = line_names[resume_from:]
 
         existing_service_codes = ServiceCode.objects.filter(
             scheme="TfL", service__current=1
