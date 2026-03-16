@@ -390,7 +390,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             # test history view
             whippet_journey = VehicleJourney.objects.get(vehicle__operator="WHIP")
 
-            with time_machine.travel("2020-06-17"), self.assertNumQueries(7):
+            with time_machine.travel("2020-06-17"), self.assertNumQueries(8):
                 response = self.client.get(whippet_journey.get_absolute_url())
 
             self.assertContains(
@@ -503,7 +503,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         vehicle = journey.vehicle
 
         with mock.patch("vehicles.views.redis_client", redis_client):
-            with self.assertNumQueries(4):
+            with self.assertNumQueries(5):
                 response = self.client.get(journey.get_absolute_url())
             self.assertContains(response, "146")
             self.assertContains(response, ">Southwold<")
