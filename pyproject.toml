@@ -46,6 +46,8 @@ dependencies = [
     "tqdm>=4.67.1",
     "polyline>=2.0.4",
     "django-timezone-field>=7.2.1",
+    "django-imagekit>=6.1.0",
+    "django-storages>=1.14.6",
 ]
 
 [dependency-groups]

@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "vosa",
     "email_obfuscator",
     "api",
+    "photos",
     "rest_framework",
     "django_filters",
     "simple_history",
@@ -165,6 +166,16 @@ HUEY = {
 STATIC_URL = "/static/"
 STATIC_ROOT = os.environ.get("STATIC_ROOT", BASE_DIR / "staticfiles")
 STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "region_name": "lon1",
+            "endpoint_url": "https://lon1.digitaloceanspaces.com",
+            "bucket_name": "bus-photos",
+            "default_acl": "public-read",
+            "querystring_auth": False,
+        },
+    },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
