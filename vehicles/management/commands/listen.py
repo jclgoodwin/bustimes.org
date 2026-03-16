@@ -8,7 +8,7 @@ from django.conf import settings
 def get_content(slug):
     content = f"[{slug}](https://bustimes.org/vehicles/{slug})"
 
-    if slug.startswith("sndr-") or slug.startswith("obus-"):
+    if slug[:4] in ("sndr", "obus", "scmy", "amsy", "kctb", "simo", "lynx"):
         content = f"{content} <@813528710404898817>"
 
     return content
