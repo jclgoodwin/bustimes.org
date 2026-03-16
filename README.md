@@ -33,6 +33,7 @@
 | busstops/management/\_\_init\_\_.py                             |        0 |        0 |    100% |           |
 | busstops/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
 | busstops/management/commands/import\_noc.py                     |      131 |        4 |     97% |156, 177, 184, 246 |
+| busstops/management/commands/import\_tfl.py                     |       58 |       58 |      0% |     1-113 |
 | busstops/management/commands/jersey\_routes.py                  |       14 |        0 |    100% |           |
 | busstops/management/commands/jersey\_stops.py                   |       12 |        0 |    100% |           |
 | busstops/management/commands/lothian\_colours.py                |       17 |        1 |     94% |        19 |
@@ -193,7 +194,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       59 |        0 |    100% |           |
-| **TOTAL**                                                       | **17268** | **1186** | **93%** |           |
+| **TOTAL**                                                       | **17326** | **1244** | **93%** |           |
 
 
 ## Setup coverage badge
