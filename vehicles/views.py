@@ -689,7 +689,7 @@ class VehicleDetailView(DetailView):
     model = Vehicle
     queryset = model.objects.select_related(
         "operator", "operator__region", "vehicle_type", "livery", "latest_journey"
-    ).prefetch_related("features")
+    ).prefetch_related("features", "photo_set")
 
     def get_object(self, **kwargs):
         try:

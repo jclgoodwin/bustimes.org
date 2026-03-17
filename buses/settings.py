@@ -180,6 +180,8 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+IMAGEKIT_DEFAULT_CACHEFILE_STRATEGY = "imagekit.cachefiles.strategies.Optimistic"
+
 WHITENOISE_ROOT = BASE_DIR / "busstops" / "static" / "root"
 WHITENOISE_MIMETYPES = {
     ".webmanifest": "application/manifest+json",

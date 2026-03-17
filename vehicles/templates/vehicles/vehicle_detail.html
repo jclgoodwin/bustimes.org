@@ -16,11 +16,11 @@
         <meta property="og:description" content="{% firstof object.vehicle_type object.operator %}{% if object.name %}
 
 {{ object.name }}{% endif %}">
-        {% if vehicle.photo_set.all %}
-            <meta property="og:image" content="{{ vehicle.photo_set.all.0.image_1200_630.url }}">
+        {% with photos=vehicle.photo_set.all %}{% if photos %}
+            <meta property="og:image" content="{{ photos.0.image_1200_630.url }}">
             <meta property="og:image:width" content="1200">
             <meta property="og:image:height" content="630">
-        {% endif %}
+        {% endif %}{% endwith %}
     {% endif %}
 {% endblock head %}
 
