@@ -76,8 +76,8 @@ class Command(BaseCommand):
 
                 key = (from_stop, to_stop)
 
-                if line_string.geom_type != "LineString":
-                    print(key, line_string)
+                if line_substring.geom_type != "LineString":
+                    print(key, line_substring)
                     continue
 
                 if key not in to_create:
@@ -113,6 +113,7 @@ class Command(BaseCommand):
         line_names = [route["id"] for route in response]
 
         if resume_from:
+            resume_from = line_names.index(resume_from)
             line_names = line_names[resume_from:]
 
         existing_service_codes = ServiceCode.objects.filter(
