@@ -265,6 +265,8 @@ def traces_sampler(context):
         url = context["wsgi_environ"]["RAW_URI"]
     except KeyError:
         return 0
+    if "__profile__" in url:
+        return 1
     if (
         url == "/version"
         or url.startswith("/vehicles.json")
@@ -276,7 +278,7 @@ def traces_sampler(context):
     if url.startswith("/stops/") or url.startswith("/services/"):
         return 0.000005
     if url.startswith("/vehicles"):
-        return 0.000001
+        return 0.001
     return 0.000003
 
 
