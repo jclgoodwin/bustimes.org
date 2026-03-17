@@ -174,6 +174,7 @@ STORAGES = {
             "bucket_name": "bus-photos",
             "default_acl": "public-read",
             "querystring_auth": False,
+            "custom_domain": "bus-photos.lon1.digitaloceanspaces.com",
         },
     },
     "staticfiles": {
