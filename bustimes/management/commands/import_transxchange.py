@@ -21,6 +21,7 @@ from django.contrib.gis.geos import GEOSGeometry, Point, LineString
 from django.db import IntegrityError
 from django.db.models import Count, Exists, OuterRef, Q
 from django.db.models.functions import Now, Upper
+from django.utils.timezone import localdate
 from titlecase import titlecase
 
 from busstops.models import (
@@ -428,6 +429,7 @@ class Command(BaseCommand):
         self.missing_operators = []
         self.notes = {}
         self.garages = {}
+        self.today = localdate()
 
     def handle(self, *args, **options):
         self.set_up()
@@ -549,12 +551,12 @@ class Command(BaseCommand):
                 ~Exists(
                     Route.objects.filter(
                         Q(source=OuterRef("source")) | Q(service=OuterRef("service")),
-                        Q(end_date=None) | Q(end_date__gte=self.source.datetime),
+                        Q(end_date=None) | Q(end_date__gte=self.today),
                         revision_number__lt=OuterRef("revision_number"),
                         service_code=OuterRef("service_code"),
                     )
                 ),
-                end_date__lt=self.source.datetime,
+                end_date__lt=self.today,
             ),
         )
         # do this first to prevent IntegrityError (VehicleJourney trip field)
@@ -1087,7 +1089,7 @@ class Command(BaseCommand):
         ).exists()
 
     def handle_service(
-        self, filename: str, transxchange, txc_service, today, stops, file_hash=None
+        self, filename: str, transxchange, txc_service, stops: dict, file_hash=None
     ):
         skip_journeys = False
 
@@ -1102,7 +1104,7 @@ class Command(BaseCommand):
 
         if (
             txc_service.operating_period.end
-            and txc_service.operating_period.end < today
+            and txc_service.operating_period.end < self.today
         ):
             logger.warning(
                 f"{filename}: {txc_service.service_code} end {txc_service.operating_period.end} is in the past"
@@ -1646,13 +1648,9 @@ class Command(BaseCommand):
 
         self.vehicle_types = {}
 
-        today = self.source.datetime.date()
-
         stops = self.do_stops(transxchange.stops)
 
         self.do_garages(transxchange.garages)
 
         for txc_service in transxchange.services.values():
-            self.handle_service(
-                filename, transxchange, txc_service, today, stops, file_hash
-            )
+            self.handle_service(filename, transxchange, txc_service, stops, file_hash)

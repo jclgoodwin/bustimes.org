@@ -13,7 +13,6 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import DataError
 from django.db.models import Exists, OuterRef, Q
-from django.utils import timezone
 
 from busstops.models import DataSource, Service
 
@@ -339,17 +338,19 @@ def ticketer(specific_operator=None):
 
             sha1 = get_sha1(path)
 
-            existing = DataSource.objects.filter(url__contains=".gov.uk", sha1=sha1)
-            if existing:
+            command.source.sha1 = sha1
+            command.source.datetime = last_modified
+
+            if existing := DataSource.objects.filter(
+                url__contains=".gov.uk", sha1=sha1
+            ):
                 # hash matches that hash of some BODS data
+                # (I think this is impossible these days)
                 logger.info(f"  skipping, {sha1=} matches {existing=}")
             else:
                 command.region_id = source.region_id
                 command.service_ids = set()
                 command.route_ids = set()
-
-                # for "end date is in the past" warnings
-                command.source.datetime = timezone.now()
 
                 with log_time_taken(logger):
                     handle_file(command, path)
@@ -360,8 +361,6 @@ def ticketer(specific_operator=None):
 
                     command.finish_services()
 
-            command.source.sha1 = sha1
-            command.source.datetime = last_modified
             command.source.save()
 
             logger.info(
@@ -375,15 +374,13 @@ def ticketer(specific_operator=None):
 def do_stagecoach_source(command, last_modified, filename, nocs):
     logger.info(f"{command.source.url} {last_modified}")
 
-    # avoid importing old data
-    command.source.datetime = timezone.now()
+    command.source.datetime = last_modified
 
     with log_time_taken(logger):
         handle_file(command, filename)
 
         command.mark_old_services_as_not_current()
 
-    command.source.datetime = last_modified
     command.source.save()
 
     logger.info(

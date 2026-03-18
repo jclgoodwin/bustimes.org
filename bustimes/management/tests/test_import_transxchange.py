@@ -760,7 +760,7 @@ class ImportTransXChangeTest(TestCase):
             self.assertLogs(
                 "bustimes.management.commands.import_transxchange", "WARNING"
             ) as cm,
-            patch("os.path.getmtime", return_value=1582385679),
+            time_machine.travel(1582385679),
         ):
             self.write_files_to_zipfile_and_import("EA.zip", ["SVRABAO421.xml"])
         service = Service.objects.get()
