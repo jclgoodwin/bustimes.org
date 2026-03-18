@@ -1671,3 +1671,27 @@ class ImportTransXChangeTest(TestCase):
             response,
             f'"UoN Main Campus Beeston La, East Mids Conf Ctr",,{trip.route.source_id}:3390UN48,18:45,then every 15 minutes until,23:15',
         )
+
+    @time_machine.travel("2025-12-31")
+    def test_highland_council(self):
+        Operator.objects.create(noc="HIGH", name="Highland Council")
+
+        # test the special Highland Council timetable data
+        # whose routelink geometries have to be multiplied by 1000000
+
+        self.handle_files(
+            "highlandcouncilbuses_1772097639.zip", ["hit_2-252-A-y20-1.xml"]
+        )
+
+        service = Service.objects.get(line_name="252A")
+        self.assertTrue(service.current)
+        self.assertEqual(10, service.stops.count())
+
+        route_link = service.routelink_set.get(
+            from_stop=f"{service.source_id}:6700713000"
+        )
+        self.assertEqual(4326, route_link.geometry.srid)
+        # geometry should be in Scotland (near Nairn, Highland)
+        x, y = route_link.geometry[0]
+        self.assertAlmostEqual(x, -3.883, places=2)
+        self.assertAlmostEqual(y, 57.578, places=2)
