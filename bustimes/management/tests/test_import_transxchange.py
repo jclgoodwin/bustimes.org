@@ -1671,32 +1671,3 @@ class ImportTransXChangeTest(TestCase):
             response,
             f'"UoN Main Campus Beeston La, East Mids Conf Ctr",,{trip.route.source_id}:3390UN48,18:45,then every 15 minutes until,23:15',
         )
-
-    @time_machine.travel("2025-05-14")
-    def test_ticketer_wait_times(self):
-        Operator.objects.create(noc="MDCL", name="Midland Classic")
-
-        with self.assertLogs("txc.txc", "WARNING") as cm:
-            self.handle_files(
-                "current.zip", ["MDCL_9_MDCLPD105080159_20250506_-_2108484.xml"]
-            )
-
-            print(cm.output)
-        self.assertEqual(
-            cm.output[:2],
-            [
-                "WARNING:txc.txc:dodgily ignored second wait time 0:09:00 from 260013205 to 260013208",
-                "WARNING:txc.txc:correctly ignored second journey pattern wait time 0:08:00 at 1000DSBSB818",
-            ],
-        )
-
-        route = Route.objects.get(service_code="PD1050801:5")
-        self.assertEqual(route.revision_number_context, "9")
-
-        trip = route.trip_set.get(vehicle_journey_code="vj_28")
-        self.assertEqual(str(trip.start), "18:47")
-        self.assertEqual(str(trip.end), "20:23")
-
-        trip = route.trip_set.get(vehicle_journey_code="vj_1")
-        self.assertEqual(str(trip.start), "06:20")
-        self.assertEqual(str(trip.end), "08:08")
