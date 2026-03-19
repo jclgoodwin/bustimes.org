@@ -139,11 +139,10 @@ class ImportBusOpenDataTest(TestCase):
             route.source.url,
             "https://data.bus-data.dft.gov.uk/category/dataset/35/download/",
         )
-        self.assertEqual(route.source.sha1, "a5eaa3ef8ddefd702833d52d0148adfa0a504e9a")
+        self.assertEqual(route.source.sha1, "ed6f5e835884781ea314bc13cc9054592a4c4f96")
 
         self.assertEqual(route.code, "")
         self.assertEqual(route.service_code, "54")
-
         with self.assertNumQueries(4):
             response = self.client.get(f"/services/{route.service_id}.json")
         self.assertTrue(response.json()["geometry"])
@@ -158,6 +157,10 @@ class ImportBusOpenDataTest(TestCase):
         response = self.client.get(route.service.get_absolute_url())
         self.assertContains(response, "school or works service")
 
+        self.assertEqual(route.service.colour.background, "#12198B")
+        self.assertEqual(route.service.colour.foreground, "#fff")
+
+        # LineColour
         response = self.client.get(f"/services/{route.service_id}/timetable")
 
         self.assertContains(
@@ -252,7 +255,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
             response = self.client.get("/stops/2900W0321/times.json?when=yesterday")
         self.assertEqual(400, response.status_code)
 
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(10):
             response = self.client.get("/stops/2900W0321?date=2038-01-19")
             self.assertEqual(str(response.context["when"]), "2038-01-19 00:00:00")
             self.assertEqual(
@@ -263,7 +266,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
         #     "departures.live.NorfolkDepartures.get_departures", return_value=[]
         # ) as mocked:
 
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(10):
             response = self.client.get("/stops/2900W0321?date=2020-05-02")
         self.assertEqual(1, len(response.context["departures"]))
         self.assertEqual(str(response.context["when"]), "2020-05-02 00:00:00")
@@ -271,7 +274,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
         self.assertContains(response, "Nearby stops")  # other stop in StopArea
         self.assertContains(response, "<small>54</small>")
 
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(9):
             response = self.client.get("/stops/2900W0321?date=2020-05-02&time=11:00")
         self.assertEqual(str(response.context["when"]), "2020-05-02 11:00:00")
         self.assertContains(response, '<a href="?date=2020-05-03"')  # next day
@@ -292,7 +295,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
         self.assertEqual(str(response.context["when"]), "2020-05-01 01:00:00+01:00")
         self.assertEqual(len(response.context["departures"]), 3)
 
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(10):
             response = self.client.get("/stops/2900W0321?date=2020-05-02")
         self.assertEqual(str(response.context["when"]), "2020-05-02 00:00:00")
 
