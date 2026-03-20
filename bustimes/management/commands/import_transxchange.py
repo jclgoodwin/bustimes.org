@@ -544,9 +544,9 @@ class Command(BaseCommand):
         return {key: value for key, value in operators.items() if value}
 
     def mark_old_services_as_not_current(self):
-        # delete old routes, if no longer in the dataset OR
+        # "delete" old routes, if no longer in the dataset OR
         # all the service's routes' end dates are in the past
-        old_routes = self.source.route_set.filter(
+        self.source.route_set.filter(
             ~Q(id__in=self.route_ids)
             | Q(
                 ~Exists(
@@ -559,10 +559,7 @@ class Command(BaseCommand):
                 ),
                 end_date__lt=self.today,
             ),
-        )
-        # do this first to prevent IntegrityError (VehicleJourney trip field)
-        old_routes.update(service=None)
-        old_routes.delete()
+        ).update(service=None)
 
         old_services = self.source.service_set.filter(current=True, route=None)
         if old_services.update(current=False):
