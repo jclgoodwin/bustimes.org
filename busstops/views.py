@@ -1240,8 +1240,8 @@ class ServiceDetailView(DetailView):
             "stop__locality"
         ).defer("stop__latlong", "stop__locality__latlong")
         context["has_minor_stops"] = SimpleLazyObject(
-            lambda: not all(
-                stop_usage.timing_point for stop_usage in context["stopusages"]
+            lambda: (
+                not all(stop_usage.timing_point for stop_usage in context["stopusages"])
             )
         )
 

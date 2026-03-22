@@ -58,16 +58,19 @@ class GTFSRTTest(TestCase):
         fakeredis.FakeStrictRedis(),
     )
     def test_vehicle_position(self):
-        with override_settings(
-            NTA_API_KEY="poopants",
-            CACHES={
-                "default": {
-                    "BACKEND": "django.core.cache.backends.redis.RedisCache",
-                    "LOCATION": "redis://",
-                    "OPTIONS": {"connection_class": fakeredis.FakeConnection},
-                }
-            },
-        ), vcr.use_cassette("fixtures/vcr/nta_ie_vehicle_positions.yaml"):
+        with (
+            override_settings(
+                NTA_API_KEY="poopants",
+                CACHES={
+                    "default": {
+                        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+                        "LOCATION": "redis://",
+                        "OPTIONS": {"connection_class": fakeredis.FakeConnection},
+                    }
+                },
+            ),
+            vcr.use_cassette("fixtures/vcr/nta_ie_vehicle_positions.yaml"),
+        ):
             c = Command()
             c.do_source()
             c.update()

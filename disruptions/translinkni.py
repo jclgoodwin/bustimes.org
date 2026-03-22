@@ -84,9 +84,7 @@ def handle_item(item: dict, source: DataSource, current_situations: dict):
             matching_services = services.filter(line_filter)
 
             if operator_ref := line["operator"].get("id"):
-                matching_services = matching_services.filter(
-                    operator=operator_ref
-                )
+                matching_services = matching_services.filter(operator=operator_ref)
 
             matching_services = matching_services.distinct()
 

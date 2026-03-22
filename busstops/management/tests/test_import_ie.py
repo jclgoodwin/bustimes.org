@@ -51,9 +51,12 @@ class ImportIrelandTest(TestCase):
 
         DataSource.objects.create(name="Irish NaPTAN")
 
-        with override_settings(DATA_DIR=fixtures_dir), patch(
-            "busstops.management.commands.naptan_new.download_if_modified",
-            return_value=(True, None),
+        with (
+            override_settings(DATA_DIR=fixtures_dir),
+            patch(
+                "busstops.management.commands.naptan_new.download_if_modified",
+                return_value=(True, None),
+            ),
         ):
             call_command("naptan_new", "ie_naptan")
 

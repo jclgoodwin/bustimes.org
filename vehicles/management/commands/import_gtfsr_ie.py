@@ -105,7 +105,7 @@ class Command(ImportLiveVehiclesCommand):
             services = Service.objects.filter(
                 current=True,
                 route__source=self.source,
-                route__code__endswith=f"_{item.vehicle.trip.route_id}"
+                route__code__endswith=f"_{item.vehicle.trip.route_id}",
             ).distinct()
 
         if services:
