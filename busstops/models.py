@@ -1001,12 +1001,11 @@ class Service(models.Model):
         )
         stop_times = stop_times.distinct(
             "trip__inbound", "trip__route__line_name", "stop_id"
-        ).order_by()
+        ).order_by("trip__inbound", "trip__route__line_name", "stop_id")
         stop_times = stop_times.values(
             "trip__route__line_name",
             "trip__inbound",
             "sequence",
-            "id",
             "stop_id",
             "timing_status",
         )
@@ -1015,7 +1014,6 @@ class Service(models.Model):
                 st["trip__route__line_name"],
                 st["trip__inbound"],
                 st["sequence"] or 0,
-                st["id"],
                 st["stop_id"],
                 st["timing_status"],
             )
@@ -1036,7 +1034,6 @@ class Service(models.Model):
                 line_name,
                 inbound,
                 sequence,
-                _,
                 stop_id,
                 timing_status,
             ) in enumerate(stop_usages)
