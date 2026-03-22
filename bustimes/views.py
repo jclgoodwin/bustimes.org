@@ -280,9 +280,8 @@ class SourceDetailView(DetailView):
         context = super().get_context_data(**kwargs)
 
         context["routes"] = (
-            self.object.route_set.order_by(
-                "service_code", "line_name", "start_date", "revision_number"
-            )
+            self.object.route_set.filter(service__isnull=False)
+            .order_by("service_code", "line_name", "start_date", "revision_number")
             .annotate(
                 trips=Count("trip"),
             )
