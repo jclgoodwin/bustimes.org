@@ -63,6 +63,7 @@ test = [
     "fakeredis>=2.12.1,<3",
     "tblib>=3.0.0,<4",
     "coverage>=7.6.1,<8",
+    "patchy>=2.10.0",
 ]
 dev = [
     "django-debug-toolbar>=6.0.0,<7",

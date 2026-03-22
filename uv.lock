@@ -203,6 +203,7 @@ test = [
     { name = "govuk-bank-holidays" },
     { name = "gtfs-kit" },
     { name = "lxml" },
+    { name = "patchy" },
     { name = "requests-toolbelt" },
     { name = "tblib" },
     { name = "time-machine" },
@@ -274,6 +275,7 @@ test = [
     { name = "govuk-bank-holidays", specifier = ">=0.15" },
     { name = "gtfs-kit", specifier = ">=11.0.0" },
     { name = "lxml", specifier = ">=6.0.0,<7" },
+    { name = "patchy", specifier = ">=2.10.0" },
     { name = "requests-toolbelt", specifier = ">=1.0.0,<2" },
     { name = "tblib", specifier = ">=3.0.0,<4" },
     { name = "time-machine", specifier = "~=3.2.0" },
@@ -1196,11 +1198,20 @@ wheels = [
 ]
 
 [[package]]
+name = "patchy"
+version = "2.10.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/e5/74/d45aa384235657e48010f893f20a4c65fcbf4f6733b32c6a8034c4368939/patchy-2.10.0.tar.gz", hash = "sha256:e7dc3610d20b8ce30af2ddbfa4a1ed67f066269fa6b10094f16dc798b80119da", size = 50007, upload-time = "2025-09-09T10:35:24.981Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/98/23/6b13a9a05d82428d9903789a51ae5687f72537715b5a599ccc5e5171012b/patchy-2.10.0-py3-none-any.whl", hash = "sha256:f5c13adee5db3eea36a702ae3ab95f24d2c62d28d3a2246cc2f329e2e3e0cd74", size = 9512, upload-time = "2025-09-09T10:35:23.229Z" },
+]
+
+[[package]]
 name = "pexpect"
 version = "4.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "ptyprocess" },
+    { name = "ptyprocess", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/42/92/cc564bf6381ff43ce1f4d06852fc19a2f11d180f23dc32d9588bee2f149d/pexpect-4.9.0.tar.gz", hash = "sha256:ee7d41123f3c9911050ea2c2dac107568dc43b2d3b0c7557a33212c398ead30f", size = 166450, upload-time = "2023-11-25T09:07:26.339Z" }
 wheels = [
