@@ -1,4 +1,5 @@
 from django.contrib.admin import site
+from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 from django.urls import reverse
 
@@ -56,6 +57,9 @@ class BusStopsAdminTests(TestCase):
         cls.staff_user = User.objects.create(
             username="josh", is_staff=True, is_superuser=True, email="j@example.com"
         )
+
+    def setUp(self):
+        ContentType.objects.clear_cache()
 
     def make_url(self, site, model, page: str) -> str:
         return reverse(
