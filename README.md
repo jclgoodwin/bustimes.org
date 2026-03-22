@@ -55,7 +55,7 @@
 | busstops/templatetags/date\_range.py                            |       25 |        3 |     88% | 9, 22, 28 |
 | busstops/templatetags/test\_urlise.py                           |        8 |        0 |    100% |           |
 | busstops/templatetags/urlise.py                                 |       18 |        0 |    100% |           |
-| busstops/test\_admin.py                                         |       66 |        0 |    100% |           |
+| busstops/test\_admin.py                                         |       69 |        0 |    100% |           |
 | busstops/test\_middleware.py                                    |       25 |        0 |    100% |           |
 | busstops/test\_models.py                                        |      137 |        0 |    100% |           |
 | busstops/test\_popular\_pages.py                                |       21 |        0 |    100% |           |
@@ -80,7 +80,7 @@
 | bustimes/management/commands/import\_ni.py                      |       31 |        0 |    100% |           |
 | bustimes/management/commands/import\_passenger.py               |      116 |       35 |     70% |51-54, 56-58, 64, 103, 113-117, 143-180 |
 | bustimes/management/commands/import\_tnds.py                    |       42 |        0 |    100% |           |
-| bustimes/management/commands/import\_transxchange.py            |      835 |       88 |     89% |90, 105, 151-152, 235-236, 247, 327-328, 338, 346-347, 402, 406, 408, 510, 572-586, 606, 610, 613, 725, 767-768, 805-806, 808-809, 853, 864, 888, 894, 918, 944, 948-950, 999, 1006-1010, 1015-1035, 1063, 1072, 1080-1085, 1101, 1125, 1133, 1135-1138, 1143, 1159, 1189, 1228, 1268-1269, 1305, 1310-1311, 1326, 1331, 1350, 1375, 1401-1402, 1439-1440, 1489, 1502-1503 |
+| bustimes/management/commands/import\_transxchange.py            |      833 |       88 |     89% |90, 105, 151-152, 235-236, 247, 327-328, 338, 346-347, 402, 406, 408, 510, 569-583, 603, 607, 610, 722, 764-765, 802-803, 805-806, 850, 861, 885, 891, 915, 941, 945-947, 996, 1003-1007, 1012-1032, 1060, 1069, 1077-1082, 1098, 1122, 1130, 1132-1135, 1140, 1156, 1186, 1225, 1265-1266, 1302, 1307-1308, 1323, 1328, 1347, 1372, 1398-1399, 1436-1437, 1486, 1499-1500 |
 | bustimes/management/commands/suggest\_bod.py                    |       36 |       36 |      0% |      1-51 |
 | bustimes/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
 | bustimes/management/tests/test\_bank\_holidays.py               |       20 |        0 |    100% |           |
@@ -98,7 +98,7 @@
 | bustimes/timetables.py                                          |      646 |       50 |     92% |39-52, 162-173, 204-205, 293, 307-312, 325, 344, 419, 422, 438-441, 443, 470, 582-597, 748-749, 820, 966-968, 1017 |
 | bustimes/urls.py                                                |        3 |        0 |    100% |           |
 | bustimes/utils.py                                               |      210 |       13 |     94% |175, 244, 275, 284-286, 307-308, 375, 393, 410-411, 485 |
-| bustimes/views.py                                               |      453 |      111 |     75% |138-241, 314-315, 318-319, 335-337, 345-354, 356-364, 371, 393, 482, 491, 527, 533, 724, 748-750, 767, 771-799, 827-838, 847-853, 895 |
+| bustimes/views.py                                               |      453 |      111 |     75% |138-241, 313-314, 317-318, 334-336, 344-353, 355-363, 370, 392, 481, 490, 526, 532, 723, 747-749, 766, 770-798, 826-837, 846-852, 894 |
 | departures/\_\_init\_\_.py                                      |        0 |        0 |    100% |           |
 | departures/avl.py                                               |       12 |        1 |     92% |        14 |
 | departures/gtfsr.py                                             |       91 |        4 |     96% |91, 111, 117-120 |
@@ -118,7 +118,7 @@
 | disruptions/test\_translinkni.py                                |       25 |        0 |    100% |           |
 | disruptions/tests.py                                            |       16 |        0 |    100% |           |
 | disruptions/tfl\_disruptions.py                                 |       91 |        2 |     98% |    49, 85 |
-| disruptions/translinkni.py                                      |       80 |        7 |     91% |45, 56-59, 68, 112 |
+| disruptions/translinkni.py                                      |       80 |        7 |     91% |45, 56-59, 68, 110 |
 | disruptions/urls.py                                             |        3 |        0 |    100% |           |
 | disruptions/views.py                                            |       23 |        0 |    100% |           |
 | fares/\_\_init\_\_.py                                           |        0 |        0 |    100% |           |
@@ -196,7 +196,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       59 |        0 |    100% |           |
-| **TOTAL**                                                       | **16905** | **1260** | **93%** |           |
+| **TOTAL**                                                       | **16906** | **1260** | **93%** |           |
 
 
 ## Setup coverage badge
