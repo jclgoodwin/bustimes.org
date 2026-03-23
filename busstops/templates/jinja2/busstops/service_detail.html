@@ -51,7 +51,7 @@
     {% endif %}
 </p>
 
-{% if object.public_use is false %}
+{% if object.actual_public_use is false %}
     <p>🧑‍🎓 This may be a “closed-door” school or works service, not open to the public</p>
 {% endif %}
 
@@ -124,7 +124,7 @@
     {% include 'operator-contact-details.html' %}
 {% endfor %}
 
-{% if object.public_use is not false and payment_methods %}
+{% if object.actual_public_use is not false and payment_methods %}
     <p>
         {% for method in payment_methods %}
             {% if not loop.first %}{% if loop.last %} or {% else %}, {% endif %}{% endif %}{% if method.url %}<a href="{{ method.url }}">{% endif %}

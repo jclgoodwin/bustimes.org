@@ -294,7 +294,7 @@ class ServiceAdmin(GISModelAdmin):
     readonly_fields = ["search_vector", "modified_at"]
     list_editable = ["colour", "line_brand"]
     list_select_related = ["colour"]
-    actions = ["current_false", "merge", "unmerge"]
+    actions = ["current_false", "public_use_true", "merge", "unmerge"]
 
     @admin.display(ordering="routes")
     def routes(self, obj):
@@ -333,6 +333,11 @@ class ServiceAdmin(GISModelAdmin):
     def current_false(self, request, queryset):
         result = queryset.order_by().update(current=False)
         log_change(request, queryset, ["current"])
+        self.message_user(request, f"{result}")
+
+    def public_use_true(self, request, queryset):
+        result = queryset.order_by().update(public_use=True)
+        log_change(request, queryset, ["public_use"])
         self.message_user(request, f"{result}")
 
     @transaction.atomic

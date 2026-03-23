@@ -1265,14 +1265,6 @@ class Command(BaseCommand):
                 logger.warning(f"{txc_service.service_code} has no journeys")
                 continue
 
-            match txc_service.public_use:
-                case "0" | "false":
-                    service.public_use = False
-                case "1" | "true":
-                    service.public_use = True
-                case _:
-                    service.public_use = None
-
             if txc_service.mode:
                 service.mode = txc_service.mode
 
@@ -1426,10 +1418,17 @@ class Command(BaseCommand):
                     transxchange.attributes["ModificationDateTime"]
                 ),
                 "service_code": txc_service.service_code,
-                "public_use": service.public_use,
                 "version": self.version,
                 "source": self.source,
             }
+
+            match txc_service.public_use:
+                case "0" | "false":
+                    route_defaults["public_use"] = False
+                case "1" | "true":
+                    route_defaults["public_use"] = True
+                case _:
+                    route_defaults["public_use"] = None
 
             for key in ("outbound_description", "inbound_description"):
                 if len(route_defaults[key]) > 255:

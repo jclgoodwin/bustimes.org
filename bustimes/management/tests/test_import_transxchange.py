@@ -425,13 +425,14 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(
             1, CalendarDate.objects.filter(summary="Christmas Week").count()
         )
-        self.assertTrue(service.public_use)
+        self.assertIsNone(service.public_use)
 
         response = self.client.get(f"{service.get_absolute_url()}/debug")
         self.assertContains(response, "not 2021-12-31 (Christmas week)")
 
         trip = Trip.objects.first()
         self.assertEqual("09:02", str(trip))
+        self.assertTrue(trip.route.public_use)
 
         # test matching to traffic commissioner (VOSA) registration
         response = self.client.get(service.get_absolute_url())

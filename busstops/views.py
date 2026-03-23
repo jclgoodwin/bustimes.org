@@ -1029,6 +1029,7 @@ class ServiceDetailView(DetailView):
     queryset = (
         model.objects.with_line_names()
         .select_related("region", "source", "colour")
+        .annotate(actual_public_use=Coalesce("public_use", "route__public_use"))
         .prefetch_related("operator")
         .defer("search_vector")
     )
@@ -1357,7 +1358,7 @@ class ServiceDetailView(DetailView):
                 permanent=(type(context["redirect_to"]) is self.model),
             )
 
-        if not (settings.TEST or "debug-toolbar" in self.request.GET):
+        if not (settings.TEST or "debug_toolbar" in self.request.GET):
             template = get_template("busstops/service_detail.html")
             generator = template.template.generate(
                 **context, ad=True, request=self.request
