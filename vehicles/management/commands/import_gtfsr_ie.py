@@ -101,11 +101,12 @@ class Command(ImportLiveVehiclesCommand):
             route__source=self.source,
             route__code=item.vehicle.trip.route_id,
         ).distinct()
-        if not services and "_" not in item.vehicle.trip.route_id:
+        if not services and "_" in item.vehicle.trip.route_id:
+            suffix = item.vehicle.trip.route_id.split("_", 1)[1]
             services = Service.objects.filter(
                 current=True,
                 route__source=self.source,
-                route__code__endswith=f"_{item.vehicle.trip.route_id}",
+                route__code__endswith=f"_{suffix}",
             ).distinct()
 
         if services:
