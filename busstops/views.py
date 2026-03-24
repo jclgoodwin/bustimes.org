@@ -12,7 +12,7 @@ from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import Point
-from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.aggregates import ArrayAgg, BoolOr
 from itertools import groupby
 from django.contrib.postgres.search import SearchHeadline, SearchQuery, SearchRank
 from django.contrib.sitemaps import Sitemap
@@ -887,9 +887,9 @@ class OperatorDetailView(DetailView):
     model = Operator
     queryset = model.objects.select_related("region").prefetch_related("licences")
 
-    def get_object(self, **kwargs):
+    def get_object(self):
         try:
-            return super().get_object(**kwargs)
+            return super().get_object()
         except Http404:
             if "slug" in self.kwargs:
                 try:
@@ -900,7 +900,7 @@ class OperatorDetailView(DetailView):
                     )
                 except Http404:
                     self.kwargs["pk"] = self.kwargs["slug"].upper()
-                    return super().get_object(**kwargs)
+                    return super().get_object()
             raise
 
     def get_context_data(self, **kwargs):
@@ -1029,16 +1029,16 @@ class ServiceDetailView(DetailView):
     queryset = (
         model.objects.with_line_names()
         .select_related("region", "source", "colour")
-        .annotate(actual_public_use=Coalesce("public_use", "route__public_use"))
+        .annotate(actual_public_use=Coalesce("public_use", BoolOr("route__public_use")))
         .prefetch_related("operator")
         .defer("search_vector")
     )
 
-    def get_object(self, **kwargs):
+    def get_object(self):
         services = Service.objects
 
         try:
-            service = super().get_object(**kwargs)
+            service = super().get_object()
         except Http404 as e:
             slug = self.kwargs["slug"]
 
