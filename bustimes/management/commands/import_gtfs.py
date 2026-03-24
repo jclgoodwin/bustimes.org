@@ -1,6 +1,7 @@
 import logging
 from pathlib import Path
 import gtfs_kit
+import pandas as pd
 from shapely.errors import EmptyPartError
 from zipfile import BadZipFile
 from django.conf import settings
@@ -192,7 +193,9 @@ class Command(BaseCommand):
                 inbound=line.direction_id == 1,
                 headsign=line.trip_headsign,
                 ticket_machine_code=line.trip_id,
-                block=getattr(line, "block_id", ""),
+                block=""
+                if pd.isna(block_id := getattr(line, "block_id", ""))
+                else block_id,
                 vehicle_journey_code=getattr(line, "trip_short_name", ""),
                 operator=self.route_operators[line.route_id],
             )

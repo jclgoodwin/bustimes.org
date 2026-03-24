@@ -12,7 +12,7 @@ from django.test import TestCase, override_settings
 
 from busstops.models import AdminArea, DataSource, Operator, Region, Service, StopPoint
 
-from ...models import Route
+from ...models import Route, Trip
 from ...download_utils import download_if_modified
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
@@ -182,6 +182,10 @@ class GTFSTest(TestCase):
         )
 
         # self.assertTrue(service.geometry)
+
+        # block_id missing or <NA> should not result in the string "<NA>"
+        trip = Trip.objects.get(ticket_machine_code="2.Mo-Fr.21-963-1-y11-1.2.O")
+        self.assertEqual(trip.block, "")
 
         self.assertEqual(str(service.source), "Seamus Doherty")
 
