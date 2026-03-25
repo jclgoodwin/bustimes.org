@@ -3,8 +3,8 @@ import io
 import zipfile
 from datetime import timedelta
 
-import xmltodict
 import sentry_sdk
+from lxml import etree
 from ciso8601 import parse_datetime
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
@@ -26,6 +26,27 @@ from bustimes.models import Route, Trip
 
 from ...models import Vehicle, VehicleJourney, VehicleLocation
 from ..import_live_vehicles import ImportLiveVehiclesCommand, Status
+
+
+_SIRI_NS = "http://www.siri.org.uk/siri"
+
+
+def _elem_to_dict(elem):
+    children = list(elem)
+    if not children:
+        return elem.text
+    d = {}
+    for child in children:
+        key = child.tag.split("}", 1)[1] if "}" in child.tag else child.tag
+        value = _elem_to_dict(child)
+        existing = d.get(key)
+        if existing is not None:
+            if not isinstance(existing, list):
+                d[key] = [existing]
+            d[key].append(value)
+        else:
+            d[key] = value
+    return d
 
 
 occupancies = {
@@ -587,12 +608,14 @@ class Command(ImportLiveVehiclesCommand):
             data = response.content
 
         with sentry_sdk.start_span(name="parse XML"):
-            data = xmltodict.parse(data, force_list=["VehicleActivity"])
+            root = etree.fromstring(data)
 
+        ns = _SIRI_NS
+        service_delivery = root.find(f"{{{ns}}}ServiceDelivery")
         previous_time = self.source.datetime
 
         self.source.datetime = parse_datetime(
-            data["Siri"]["ServiceDelivery"]["ResponseTimestamp"]
+            service_delivery.findtext(f"{{{ns}}}ResponseTimestamp")
         )
 
         if (
@@ -602,9 +625,8 @@ class Command(ImportLiveVehiclesCommand):
         ):
             return  # don't return old data
 
-        return data["Siri"]["ServiceDelivery"]["VehicleMonitoringDelivery"].get(
-            "VehicleActivity"
-        )
+        delivery = service_delivery.find(f"{{{ns}}}VehicleMonitoringDelivery")
+        return [_elem_to_dict(a) for a in delivery.findall(f"{{{ns}}}VehicleActivity")]
 
     @staticmethod
     def get_vehicle_identity(item):
