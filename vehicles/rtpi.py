@@ -74,6 +74,7 @@ def get_progress(item, stop_time=None):
     if "service_id" in item:
         for rl in RouteLink.objects.filter(
             service=item["service_id"],
+            geometry__dwithin=(point, 0.01),  # ~1km in degrees
         ).annotate(
             progress=LineLocatePoint("geometry", point),
             distance=Distance("geometry", point),
