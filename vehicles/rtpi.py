@@ -6,6 +6,7 @@ from itertools import pairwise
 from ciso8601 import parse_datetime
 from django.contrib.gis.geos import LineString, Point
 from django.contrib.gis.db.models.functions import Distance, LineLocatePoint
+from django.contrib.gis.measure import D
 from django.utils import timezone
 
 from bustimes.models import RouteLink, StopTime, Trip
@@ -74,6 +75,7 @@ def get_progress(item, stop_time=None):
     if "service_id" in item:
         for rl in RouteLink.objects.filter(
             service=item["service_id"],
+            geometry__dwithin=(point, D(km=1)),
         ).annotate(
             progress=LineLocatePoint("geometry", point),
             distance=Distance("geometry", point),
