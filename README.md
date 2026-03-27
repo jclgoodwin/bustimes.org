@@ -38,7 +38,7 @@
 | busstops/management/commands/jersey\_stops.py                   |       12 |        0 |    100% |           |
 | busstops/management/commands/lothian\_colours.py                |       17 |        1 |     94% |        19 |
 | busstops/management/commands/naptan\_new.py                     |      159 |        5 |     97% |41, 43, 175, 223, 272 |
-| busstops/management/commands/nptg\_new.py                       |       96 |        9 |     91% |145, 156, 161, 166-167, 173-174, 176-177 |
+| busstops/management/commands/nptg\_new.py                       |       96 |        9 |     91% |142, 155, 160, 165-166, 172-173, 175-176 |
 | busstops/management/commands/osm\_iom\_stops.py                 |       34 |       34 |      0% |      1-63 |
 | busstops/management/commands/update\_search\_indexes.py         |       11 |        0 |    100% |           |
 | busstops/management/commands/update\_slugs.py                   |       20 |       20 |      0% |      1-29 |
@@ -178,7 +178,7 @@
 | vehicles/management/tests/test\_stats.py                        |       24 |        0 |    100% |           |
 | vehicles/management/tests/test\_translink\_avl.py               |       22 |        0 |    100% |           |
 | vehicles/models.py                                              |      517 |       35 |     93% |75, 193, 218, 285, 304, 310, 382, 388, 439, 460, 581-582, 595, 603, 620-622, 630-631, 634-635, 637-642, 647-648, 679, 760-763, 818, 827, 853 |
-| vehicles/rtpi.py                                                |       93 |        6 |     94% |37, 81-82, 88-90 |
+| vehicles/rtpi.py                                                |       93 |        6 |     94% |37, 82-83, 89-91 |
 | vehicles/signals.py                                             |       11 |        0 |    100% |           |
 | vehicles/tasks.py                                               |      163 |       36 |     78% |96, 101, 113, 120-123, 126, 143, 156, 160-161, 183, 208, 216-217, 225, 288-289, 292, 313-333 |
 | vehicles/test\_models.py                                        |       62 |        0 |    100% |           |
