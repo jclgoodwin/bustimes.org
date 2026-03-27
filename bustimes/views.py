@@ -265,10 +265,10 @@ def maybe_download_file(local_path, s3_key):
 class SourceListView(ListView):
     model = DataSource
     queryset = (
-        DataSource.objects.annotate(
+        DataSource.objects.filter(route__service__isnull=False)
+        .annotate(
             routes=Count("route"),
         )
-        .filter(routes__gt=0)
         .order_by("url")
     )
 
