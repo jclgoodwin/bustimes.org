@@ -12,77 +12,74 @@ from ...utils import get_datetime
 logger = logging.getLogger(__name__)
 
 
-class Command(BaseCommand):
-    def handle_regions(self, element):
-        for region_element in element:
-            region = Region(
-                id=region_element.findtext("RegionCode"),
-                name=region_element.findtext("Name"),
-            )
-            if len(region.id) > 2:
-                if region.id == "ULS_NI":
-                    region.id = "NI"
-                else:
-                    region.id = region.id[:2]
-            yield region
+def get_locality(locality_element: ET.Element) -> Locality:
+    lon = locality_element.findtext("Location/Translation/Longitude")
+    lat = locality_element.findtext("Location/Translation/Latitude")
+    return Locality(
+        id=locality_element.findtext("NptgLocalityCode"),
+        name=locality_element.findtext("Descriptor/LocalityName"),
+        qualifier_name=locality_element.findtext(
+            "Descriptor/Qualify/QualifierName", ""
+        ),
+        created_at=get_datetime(locality_element.attrib["CreationDateTime"]),
+        admin_area_id=locality_element.findtext("AdministrativeAreaRef"),
+        district_id=locality_element.findtext("NptgDistrictRef"),
+        parent_id=locality_element.findtext("ParentNptgLocalityRef"),
+        modified_at=get_datetime(locality_element.attrib["ModificationDateTime"]),
+        latlong=GEOSGeometry(f"POINT({lon} {lat})"),
+    )
 
-            for admin_area_element in region_element.find("AdministrativeAreas"):
-                admin_area = AdminArea(
-                    id=int(admin_area_element.findtext("AdministrativeAreaCode")),
-                    atco_code=admin_area_element.findtext("AtcoAreaCode"),
-                    name=admin_area_element.findtext("Name"),
-                    short_name=admin_area_element.findtext("ShortName", ""),
-                    country=region_element.findtext("Country")[:3],
-                    region=region,
+
+def handle_regions(element: ET.Element):
+    for region_element in element:
+        region = Region(
+            id=region_element.findtext("RegionCode"),
+            name=region_element.findtext("Name"),
+        )
+        if len(region.id) > 2:
+            if region.id == "ULS_NI":
+                region.id = "NI"
+            else:
+                region.id = region.id[:2]
+        yield region
+
+        for admin_area_element in region_element.find("AdministrativeAreas"):
+            admin_area = AdminArea(
+                id=int(admin_area_element.findtext("AdministrativeAreaCode")),
+                atco_code=admin_area_element.findtext("AtcoAreaCode"),
+                name=admin_area_element.findtext("Name"),
+                short_name=admin_area_element.findtext("ShortName", ""),
+                country=region_element.findtext("Country")[:3],
+                region=region,
+                created_at=get_datetime(admin_area_element.attrib["CreationDateTime"]),
+                modified_at=get_datetime(
+                    admin_area_element.attrib["ModificationDateTime"]
+                ),
+            )
+            yield admin_area
+
+            for district_element in admin_area_element.findall(
+                "NptgDistricts/NptgDistrict"
+            ):
+                yield District(
+                    id=int(district_element.findtext("NptgDistrictCode")),
+                    name=district_element.findtext("Name"),
+                    admin_area=admin_area,
                     created_at=get_datetime(
-                        admin_area_element.attrib["CreationDateTime"]
+                        district_element.attrib["CreationDateTime"]
                     ),
                     modified_at=get_datetime(
-                        admin_area_element.attrib["ModificationDateTime"]
+                        district_element.attrib["ModificationDateTime"]
                     ),
                 )
-                yield admin_area
 
-                for district_element in admin_area_element.findall(
-                    "NptgDistricts/NptgDistrict"
-                ):
-                    yield District(
-                        id=int(district_element.findtext("NptgDistrictCode")),
-                        name=district_element.findtext("Name"),
-                        admin_area=admin_area,
-                        created_at=get_datetime(
-                            district_element.attrib["CreationDateTime"]
-                        ),
-                        modified_at=get_datetime(
-                            district_element.attrib["ModificationDateTime"]
-                        ),
-                    )
 
-    def handle_localities(self, element):
-        for locality_element in element:
-            lon = locality_element.findtext("Location/Translation/Longitude")
-            lat = locality_element.findtext("Location/Translation/Latitude")
-            yield Locality(
-                id=locality_element.findtext("NptgLocalityCode"),
-                name=locality_element.findtext("Descriptor/LocalityName"),
-                qualifier_name=locality_element.findtext(
-                    "Descriptor/Qualify/QualifierName", ""
-                ),
-                created_at=get_datetime(locality_element.attrib["CreationDateTime"]),
-                admin_area_id=locality_element.findtext("AdministrativeAreaRef"),
-                district_id=locality_element.findtext("NptgDistrictRef"),
-                parent_id=locality_element.findtext("ParentNptgLocalityRef"),
-                modified_at=get_datetime(
-                    locality_element.attrib["ModificationDateTime"]
-                ),
-                latlong=GEOSGeometry(f"POINT({lon} {lat})"),
-            )
+def download():
+    url = "https://naptan.api.dft.gov.uk/v1/nptg"
+    return requests.get(url, timeout=60, stream=True)
 
-    def download(self):
-        url = "https://naptan.api.dft.gov.uk/v1/nptg"
 
-        return requests.get(url, timeout=60, stream=True)
-
+class Command(BaseCommand):
     @staticmethod
     def add_arguments(parser):
         parser.add_argument("filename", nargs="?", type=str)
@@ -97,7 +94,7 @@ class Command(BaseCommand):
             path = settings.DATA_DIR / "nptg.xml"
 
             # download new data if there is any
-            response = self.download()
+            response = download()
             if response:
                 with path.open("wb") as open_file:
                     for chunk in response.iter_content(chunk_size=102400):
@@ -127,7 +124,7 @@ class Command(BaseCommand):
             element.tag = element.tag.removeprefix("{http://www.naptan.org.uk/}")
 
             if element.tag == "Regions":
-                for item in self.handle_regions(element):
+                for item in handle_regions(element):
                     if type(item) is Region:
                         if item.pk not in regions:
                             item.save()
@@ -150,7 +147,9 @@ class Command(BaseCommand):
                 localities = Locality.objects.only("modified_at").in_bulk()
                 localities_with_parents = []
 
-                for item in self.handle_localities(element):
+                for locality_element in element:
+                    item = get_locality(locality_element)
+
                     if item.district_id and int(item.district_id) not in districts:
                         if item.district_id != "310":
                             logger.warning(
