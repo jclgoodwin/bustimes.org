@@ -166,6 +166,7 @@ dependencies = [
     { name = "huey" },
     { name = "jinja2" },
     { name = "lightningcss-cli" },
+    { name = "lxml" },
     { name = "numpy" },
     { name = "polyline" },
     { name = "psycopg", extra = ["c"] },
@@ -202,7 +203,6 @@ test = [
     { name = "fakeredis" },
     { name = "govuk-bank-holidays" },
     { name = "gtfs-kit" },
-    { name = "lxml" },
     { name = "requests-toolbelt" },
     { name = "tblib" },
     { name = "time-machine" },
@@ -237,6 +237,7 @@ requires-dist = [
     { name = "huey", specifier = ">=2.4.3,<3" },
     { name = "jinja2", specifier = ">=3.1.6,<4" },
     { name = "lightningcss-cli", specifier = ">=1.29.2,<2" },
+    { name = "lxml", specifier = ">=6.0.0,<7" },
     { name = "numpy", specifier = "~=2.4.3" },
     { name = "polyline", specifier = ">=2.0.4" },
     { name = "psycopg", extras = ["c"], specifier = ">=3.1.8,<4" },
@@ -273,7 +274,6 @@ test = [
     { name = "fakeredis", specifier = ">=2.12.1,<3" },
     { name = "govuk-bank-holidays", specifier = ">=0.15" },
     { name = "gtfs-kit", specifier = ">=11.0.0" },
-    { name = "lxml", specifier = ">=6.0.0,<7" },
     { name = "requests-toolbelt", specifier = ">=1.0.0,<2" },
     { name = "tblib", specifier = ">=3.0.0,<4" },
     { name = "time-machine", specifier = "~=3.2.0" },
@@ -866,7 +866,7 @@ wheels = [
 
 [[package]]
 name = "ipython"
-version = "9.11.0"
+version = "9.12.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "colorama", marker = "sys_platform == 'win32'" },
@@ -880,9 +880,9 @@ dependencies = [
     { name = "stack-data" },
     { name = "traitlets" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/86/28/a4698eda5a8928a45d6b693578b135b753e14fa1c2b36ee9441e69a45576/ipython-9.11.0.tar.gz", hash = "sha256:2a94bc4406b22ecc7e4cb95b98450f3ea493a76bec8896cda11b78d7752a6667", size = 4427354, upload-time = "2026-03-05T08:57:30.549Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/3a/73/7114f80a8f9cabdb13c27732dce24af945b2923dcab80723602f7c8bc2d8/ipython-9.12.0.tar.gz", hash = "sha256:01daa83f504b693ba523b5a407246cabde4eb4513285a3c6acaff11a66735ee4", size = 4428879, upload-time = "2026-03-27T09:42:45.312Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b2/90/45c72becc57158facc6a6404f663b77bbcea2519ca57f760e2879ae1315d/ipython-9.11.0-py3-none-any.whl", hash = "sha256:6922d5bcf944c6e525a76a0a304451b60a2b6f875e86656d8bc2dfda5d710e19", size = 624222, upload-time = "2026-03-05T08:57:28.94Z" },
+    { url = "https://files.pythonhosted.org/packages/59/22/906c8108974c673ebef6356c506cebb6870d48cedea3c41e949e2dd556bb/ipython-9.12.0-py3-none-any.whl", hash = "sha256:0f2701e8ee86e117e37f50563205d36feaa259d2e08d4a6bc6b6d74b18ce128d", size = 625661, upload-time = "2026-03-27T09:42:42.831Z" },
 ]
 
 [[package]]

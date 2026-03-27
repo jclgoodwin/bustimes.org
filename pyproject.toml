@@ -42,6 +42,7 @@ dependencies = [
     "django-multidb-router>=0.10",
     "folium>=0.20.0",
     "xmltodict>=1.0.2",
+    "lxml>=6.0.0,<7",
     "django-http-compression>=1.2.0",
     "tqdm>=4.67.1",
     "polyline>=2.0.4",
@@ -53,7 +54,6 @@ dependencies = [
 
 [dependency-groups]
 test = [
-    "lxml>=6.0.0,<7",
     "govuk-bank-holidays>=0.15",
     "asgiref>=3.4.1,<4",
     "gtfs-kit>=11.0.0",
