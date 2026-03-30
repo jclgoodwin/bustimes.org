@@ -159,7 +159,7 @@
 | vehicles/management/commands/import\_stagecoach\_avl.py         |       72 |        7 |     90% |119, 129, 134-136, 168-169 |
 | vehicles/management/commands/import\_translink\_avl.py          |       57 |        7 |     88% |14, 67-70, 104-105 |
 | vehicles/management/commands/listen.py                          |       24 |        0 |    100% |           |
-| vehicles/management/commands/lothian.py                         |       56 |        0 |    100% |           |
+| vehicles/management/commands/lothian.py                         |       55 |        0 |    100% |           |
 | vehicles/management/commands/newport.py                         |       44 |        2 |     95% |    46, 64 |
 | vehicles/management/commands/signalr.py                         |       82 |        0 |    100% |           |
 | vehicles/management/commands/siri\_vm\_subscribe.py             |       43 |        2 |     95% |    41, 49 |
@@ -196,7 +196,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       59 |        0 |    100% |           |
-| **TOTAL**                                                       | **16938** | **1269** | **93%** |           |
+| **TOTAL**                                                       | **16937** | **1269** | **93%** |           |
 
 
 ## Setup coverage badge
