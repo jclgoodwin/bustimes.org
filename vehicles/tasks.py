@@ -106,7 +106,7 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
         vehicle = vehicle.removeprefix(f"{operator_ref}-")
 
     vehicle = (
-        vehicle.removeprefix("WCM-").removeprefix("SHU-").removeprefix("MCG_Fleet-")
+        vehicle.removeprefix("WCM-").removeprefix("SHU-").removeprefix("MCG_Fleet-").removeprefix("112-")
     )
 
     if not vehicle or vehicle == "-":
