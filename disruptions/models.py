@@ -76,6 +76,15 @@ class Situation(models.Model):
             for period in validity_periods
         ]
 
+        if len(periods) == 1:
+            lower, upper = periods[0]
+            if upper and lower:
+                if upper.date() == lower.date():
+                    return [
+                        f"""{time_range(lower, upper)}, {date_range(lower=lower, upper=upper)}"""
+                    ]
+                return [date_range(validity_periods[0].period)]
+
         # Group consecutive periods with matching start/end times into runs
         runs = [[0]]
         for i in range(1, len(periods)):

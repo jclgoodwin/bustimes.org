@@ -82,7 +82,5 @@ class DisruptionsTest(TestCase):
         )
         self.assertEqual(
             self.situation.list_validity_periods(),
-            [
-                "21:00\u2009\u2013\u200907:00, Monday 10\u2009\u2013\u2009Tuesday 11 May 2021"
-            ],
+            ["Monday 10\u2009\u2013\u2009Tuesday 11 May 2021"],
         )
