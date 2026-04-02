@@ -110,7 +110,7 @@
 | departures/test\_scheduled\_departures.py                       |       18 |        0 |    100% |           |
 | disruptions/\_\_init\_\_.py                                     |        0 |        0 |    100% |           |
 | disruptions/admin.py                                            |       33 |        1 |     97% |        69 |
-| disruptions/models.py                                           |       86 |        6 |     93% |48, 77, 101, 109, 119, 147 |
+| disruptions/models.py                                           |       97 |       10 |     90% |48, 78, 98, 105-111, 126, 136, 164 |
 | disruptions/siri\_sx.py                                         |      124 |       14 |     89% |54, 74, 86-89, 100-101, 132, 142-146 |
 | disruptions/tasks.py                                            |        5 |        0 |    100% |           |
 | disruptions/test\_siri\_sx.py                                   |       48 |        0 |    100% |           |
@@ -196,7 +196,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       59 |        0 |    100% |           |
-| **TOTAL**                                                       | **16937** | **1269** | **93%** |           |
+| **TOTAL**                                                       | **16948** | **1273** | **92%** |           |
 
 
 ## Setup coverage badge
