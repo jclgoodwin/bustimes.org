@@ -39,7 +39,7 @@ class DisruptionsTest(TestCase):
         self.assertEqual(
             self.situation.list_validity_periods(),
             [
-                "10:00\u2009\u2013\u200911:00,\nMonday 10\u2009\u2013\u2009Tuesday 11 May 2021"
+                "10:00\u2009\u2013\u200911:00, Monday 10\u2009\u2013\u2009Tuesday 11 May 2021"
             ],
         )
 
@@ -64,6 +64,25 @@ class DisruptionsTest(TestCase):
         self.assertEqual(
             self.situation.list_validity_periods(),
             [
-                "21:00\u2009\u2013\u200907:00,\nMonday 10\u2009\u2013\u2009Wednesday 12 May 2021"
+                "21:00\u2009\u2013\u200907:00, Monday 10\u2009\u2013\u2009Wednesday 12 May 2021"
+            ],
+        )
+
+    def test_validity_periods_one_night(self):
+        self.assertEqual(self.situation.list_validity_periods(), [])
+        ValidityPeriod.objects.bulk_create(
+            [
+                ValidityPeriod(
+                    situation=self.situation,
+                    period=DateTimeTZRange(
+                        "2021-05-10T20:00:00Z", "2021-05-11T06:00:00Z", "[]"
+                    ),
+                )
+            ]
+        )
+        self.assertEqual(
+            self.situation.list_validity_periods(),
+            [
+                "21:00\u2009\u2013\u200907:00, Monday 10\u2009\u2013\u2009Tuesday 11 May 2021"
             ],
         )

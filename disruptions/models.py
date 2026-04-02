@@ -11,6 +11,10 @@ def from_now():
     return [timezone.now()]
 
 
+def time_range(lower, upper):
+    return f"{lower.strftime('%H:%M')}\u2009\u2013\u2009{upper.strftime('%H:%M')}"
+
+
 class Situation(models.Model):
     source = models.ForeignKey(
         "busstops.DataSource",
@@ -72,14 +76,6 @@ class Situation(models.Model):
             for period in validity_periods
         ]
 
-        if len(periods) == 1:
-            lower, upper = periods[0]
-            if upper and lower and upper.date() == lower.date():
-                return [
-                    f"""{lower.strftime("%H:%M")}\u2009\u2013\u2009{upper.strftime("%H:%M, %-d %B %Y")}"""
-                ]
-            return [date_range(validity_periods[0].period)]
-
         # Group consecutive periods with matching start/end times into runs
         runs = [[0]]
         for i in range(1, len(periods)):
@@ -101,20 +97,12 @@ class Situation(models.Model):
         for run in runs:
             first = periods[run[0]]
             last = periods[run[-1]]
-            if len(run) == 1:
-                lower, upper = first
-                if upper and lower and upper.date() == lower.date():
-                    result.append(
-                        f"""{lower.strftime("%H:%M")}\u2009\u2013\u2009{upper.strftime("%H:%M, %-d %B %Y")}"""
-                    )
-                else:
-                    result.append(
-                        date_range(validity_periods[run[0]].period, time=True)
-                    )
-            else:
+            if first[1] and last[1]:
                 result.append(
-                    f"""{first[0].strftime("%H:%M")}\u2009\u2013\u2009{first[1].strftime("%H:%M")},\n{date_range(lower=first[0], upper=last[1])}"""
+                    f"""{time_range(*first)}, {date_range(lower=first[0], upper=last[1])}"""
                 )
+            else:
+                return [date_range(lower=first[0], upper=last[1])]
         return result
 
 
