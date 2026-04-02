@@ -57,10 +57,11 @@ class Situation(models.Model):
         ]
 
     def list_validity_periods(self) -> list[str]:
-        validity_periods = self.validityperiod_set.all()
+        validity_periods = list(self.validityperiod_set.all())
         if not validity_periods:
             return []
         current_timezone = timezone.get_current_timezone()
+        validity_periods.sort(key=lambda p: p.period)
         periods = [
             (
                 period.period.lower
@@ -70,7 +71,7 @@ class Situation(models.Model):
             )
             for period in validity_periods
         ]
-        periods.sort()
+
         if len(periods) == 1:
             lower, upper = periods[0]
             if upper and lower and upper.date() == lower.date():
@@ -78,27 +79,43 @@ class Situation(models.Model):
                     f"""{lower.strftime("%H:%M")}\u2009\u2013\u2009{upper.strftime("%H:%M, %-d %B %Y")}"""
                 ]
             return [date_range(validity_periods[0].period)]
-        elif len(validity_periods) > 1:
-            first = periods[0]
-            last = periods[-1]
+
+        # Group consecutive periods with matching start/end times into runs
+        runs = [[0]]
+        for i in range(1, len(periods)):
+            prev, curr = periods[i - 1], periods[i]
             if (
-                first[0]
-                and last[0]
-                and first[0].date() - last[0].date()
-                == -timezone.timedelta(days=len(periods) - 1)
-                and all(
-                    period[0]
-                    and period[1]
-                    and first[0].time() == period[0].time()
-                    and first[1].time() == period[1].time()
-                    for period in periods[1:]
-                )
+                prev[0]
+                and curr[0]
+                and prev[1]
+                and curr[1]
+                and curr[0].date() - prev[0].date() == timezone.timedelta(days=1)
+                and curr[0].time() == prev[0].time()
+                and curr[1].time() == prev[1].time()
             ):
-                return [
-                    f"""{first[0].strftime("%H:%M")}\u2009\u2013\u2009{first[1].strftime("%H:%M")},
-{date_range(lower=first[0], upper=last[1])}"""
-                ]
-        return []
+                runs[-1].append(i)
+            else:
+                runs.append([i])
+
+        result = []
+        for run in runs:
+            first = periods[run[0]]
+            last = periods[run[-1]]
+            if len(run) == 1:
+                lower, upper = first
+                if upper and lower and upper.date() == lower.date():
+                    result.append(
+                        f"""{lower.strftime("%H:%M")}\u2009\u2013\u2009{upper.strftime("%H:%M, %-d %B %Y")}"""
+                    )
+                else:
+                    result.append(
+                        date_range(validity_periods[run[0]].period, time=True)
+                    )
+            else:
+                result.append(
+                    f"""{first[0].strftime("%H:%M")}\u2009\u2013\u2009{first[1].strftime("%H:%M")},\n{date_range(lower=first[0], upper=last[1])}"""
+                )
+        return result
 
 
 class Link(models.Model):
