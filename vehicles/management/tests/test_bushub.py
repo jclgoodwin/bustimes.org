@@ -3,7 +3,14 @@ from unittest.mock import patch
 import fakeredis
 from django.test import TestCase
 
-from busstops.models import DataSource, Operator, Region, Service, ServiceCode
+from busstops.models import (
+    DataSource,
+    Operator,
+    OperatorGroup,
+    Region,
+    Service,
+    ServiceCode,
+)
 
 from ...models import Vehicle, VehicleJourney
 from ..commands import import_bushub
@@ -14,11 +21,15 @@ class BusHubTest(TestCase):
     def setUpTestData(cls):
         DataSource.objects.create()
         Region.objects.create(id="WM")
+        rotala_group = OperatorGroup.objects.create(name="Rotala", slug="rotala")
         Operator.objects.create(
-            noc="DIAM", name="Graphite Buses", region_id="WM", parent="Rotala"
+            noc="DIAM", name="Graphite Buses", region_id="WM", group=rotala_group
         )
         Operator.objects.create(
-            noc="WNGS", name="Paul McCartney & Wings", region_id="WM", parent="Rotala"
+            noc="WNGS",
+            name="Paul McCartney & Wings",
+            region_id="WM",
+            group=rotala_group,
         )
         service_a = Service.objects.create(
             service_code="44a", line_name="44", tracking=True
@@ -79,15 +90,13 @@ class BusHubTest(TestCase):
             "Destination": None,
         }
 
-        with self.assertNumQueries(9), patch("builtins.print") as mocked_print:
+        with self.assertNumQueries(11), patch("builtins.print") as mocked_print:
             command.handle_item(item)
             command.save()
 
         mocked_print.assert_called()
 
-        item["OperatorRef"] = "DIAM"
-
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(2):
             command.handle_item(item)
             command.save()
 
@@ -100,7 +109,7 @@ class BusHubTest(TestCase):
         item["OperatorRef"] = "WNGS"
         item["VehicleRef"] = "20052"
         item["Bearing"] = "-1"
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(8):
             command.handle_item(item)
             command.save()
         self.assertEqual(2, Vehicle.objects.count())

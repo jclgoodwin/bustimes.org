@@ -1,4 +1,4 @@
-name: bustimes.org
+name: Run tests
 
 on:
   push:
@@ -9,19 +9,22 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
 
-    steps:
-    - uses: actions/checkout@v4
+    permissions:
+      contents: read
 
-    - uses: actions/setup-node@v4
+    steps:
+    - uses: actions/checkout@v6
+
+    - uses: actions/setup-node@v6
       with:
         node-version: '20'
         cache: 'npm'
-    - run: npm install
+
+    - run: npm install-ci-test
     - run: npm run lint
-    - run: npm test
     - run: npm run build
 
-    - uses: actions/upload-artifact@v4.4.3
+    - uses: actions/upload-artifact@v7
       with:
         name: dist
         path: busstops/static
@@ -29,8 +32,10 @@ jobs:
 
   test-backend:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 8
     needs: test-frontend
+    container:
+      image: ghcr.io/jclgoodwin/bustimes.org/bustimes-base:3.14
 
     permissions:
       # Gives the action the necessary permissions for publishing new
@@ -43,12 +48,13 @@ jobs:
 
     services:
       postgres:
-        image: postgis/postgis
+        image: postgis/postgis:18-3.6
+
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_INITDB_ARGS: "--no-sync"
         options: >-
-          --mount type=tmpfs,destination=/var/lib/postgresql/data
+          --mount type=tmpfs,destination=/var/lib/postgresql
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
@@ -57,41 +63,31 @@ jobs:
           - 5432:5432
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
-    - name: Install Geospatial libraries
-      # required by GeoDjango
-      # see https://docs.djangoproject.com/en/dev/ref/contrib/gis/install/geolibs/
-      run: |
-        sudo apt-get update && sudo apt-get install binutils libproj-dev gdal-bin
+    - uses: astral-sh/setup-uv@v7
 
-    - name: Install poetry
-      run: pipx install poetry
-
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
-        cache: 'poetry'
-
-    - run: poetry install --with test
+    - run: uv sync --group test --frozen
 
     - run: rm -r busstops/static
 
-    - uses: actions/download-artifact@v4
+    - uses: actions/download-artifact@v8
       with:
         name: dist
         path: busstops/static
 
     - name: run tests
       env:
-        SECRET_KEY: gdffesgfxc1as9rsxgv4
-        DATABASE_URL: postgis://postgres:postgres@localhost/postgres
+        DATABASE_URL: postgis://postgres:postgres@postgres/postgres
+        SECRET_KEY: secret
       run: |
-        poetry run ./manage.py collectstatic --noinput && \
-        poetry run coverage run --concurrency=multiprocessing ./manage.py test --parallel 2 --keepdb
+        uv run ./manage.py collectstatic --noinput && \
+        uv run coverage run --parallel-mode --concurrency=multiprocessing ./manage.py test --parallel=2 --keepdb --durations 10
 
     - name: generate coverage report
-      run: poetry run coverage combine && poetry run coverage html
+      run: |
+        uv run coverage combine && \
+        uv run coverage html
 
     - name: Coverage comment
       uses: py-cov-action/python-coverage-comment-action@v3

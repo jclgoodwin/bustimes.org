@@ -15,7 +15,7 @@
         <input type="submit" value="Go">
     </form>
 
-    <h2>{{ date.date }}</h2>
+    <h2>{{ date }}</h2>
 
     <div class="table-wrapper">
         <table>
@@ -34,10 +34,12 @@
                 <a href="{{ trip.get_absolute_url }}">{{ trip }}</a>
             </td>
             <td>{{ trip.ticket_machine_code }}</td>
-            <td>{{ trip.destination.locality }}</td>
-            {% if journey.locations %}
-                <td class="link"><a href="#journeys/{{ journey.id }}">Map</a></td>
-            {% endif %}
+            <td>{{ trip.destination_name }}</td>
+            <td class="link">
+                {% for j in trip.vehicle_journeys %}
+                    <a href="{{ j.get_absolute_url }}">{{ j.vehicle }}</a>
+                {% endfor %}
+            </td>
         </tr>
     {% endfor %}
 

@@ -3,8 +3,10 @@ import xml.etree.ElementTree as ET
 import zipfile
 from datetime import datetime, timedelta
 from pathlib import Path
+from itertools import pairwise
 
 import requests
+import folium
 from ciso8601 import parse_datetime
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
@@ -18,6 +20,7 @@ from django.db.models import (
     Q,
     FilteredRelation,
 )
+from django.db.models.functions import Coalesce
 from django.http import (
     FileResponse,
     Http404,
@@ -35,8 +38,11 @@ from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.lexers import JsonLexer, XmlLexer
 from rest_framework.renderers import JSONRenderer
+from shapely.geometry import LineString, Point
+from shapely.ops import substring
 
 from api.serializers import TripSerializer
+from api.views import TripViewSet
 from busstops.models import (
     DataSource,
     Operator,
@@ -46,12 +52,13 @@ from busstops.models import (
 )
 from departures import avl, gtfsr, live
 from vehicles.forms import DateForm
-from vehicles.models import Vehicle, VehicleCode
+from vehicles.models import Vehicle, VehicleJourney, VehicleLocation
 from vehicles.rtpi import add_progress_and_delay
+from vehicles.utils import redis_client
 
 from .download_utils import download
-from .models import Route, StopTime, Trip
-from .utils import contiguous_stoptimes_only, get_other_trips_in_block
+from .models import Route, StopTime, Trip, RouteLink
+from .utils import get_other_trips_in_block
 
 
 class ServiceDebugView(DetailView):
@@ -100,6 +107,149 @@ class ServiceDebugView(DetailView):
         return context
 
 
+@require_GET
+def route_link_view(request, pk):
+    route_link = get_object_or_404(RouteLink, pk=pk)
+
+    start = [route_link.from_stop.latlong.y, route_link.from_stop.latlong.x]
+    end = [route_link.to_stop.latlong.y, route_link.to_stop.latlong.x]
+
+    m = folium.Map()
+    m.fit_bounds([start, end])
+
+    folium.Marker(
+        location=start,
+        tooltip=f"from {route_link.from_stop}",
+    ).add_to(m)
+
+    folium.Marker(
+        location=end,
+        tooltip=f"to {route_link.to_stop}",
+    ).add_to(m)
+
+    folium.vector_layers.PolyLine([[(y, x) for (x, y) in route_link.geometry]]).add_to(
+        m
+    )
+
+    return HttpResponse(m.get_root().render())
+
+
+def snap(request, trip_id=None, journey_id=None):
+    if trip_id:
+        journey = None
+        trip = get_object_or_404(
+            Trip.objects.filter(route__service__isnull=False), pk=trip_id
+        )
+    else:
+        journey = get_object_or_404(
+            VehicleJourney.objects.filter(service__isnull=False, trip__isnull=False),
+            pk=journey_id,
+        )
+        trip = journey.trip
+
+    session = requests.Session()
+    session.params.update({"api_key": settings.STADIA_MAPS_API_KEY})
+    url = "https://api.stadiamaps.com/map_match/v1"
+
+    stop_times = trip.stoptime_set.filter(stop__latlong__isnull=False).select_related(
+        "stop"
+    )
+
+    if journey:
+        locations = redis_client.lrange(journey.get_redis_key(), 0, -1)
+
+        locations = [
+            VehicleLocation.decode_appendage(location) for location in locations
+        ]
+        locations.sort(key=lambda location: location["datetime"])
+        points = [
+            {
+                "lon": location["coordinates"][0],
+                "lat": location["coordinates"][1],
+                "time": location["datetime"].timestamp(),
+            }
+            for location in locations
+        ]
+
+    # if not trip - calculate using time and first loca
+    else:
+        points = [
+            {
+                "lat": stop_time.stop.latlong.y,
+                "lon": stop_time.stop.latlong.x,
+                "time": stop_time.arrival_or_departure().total_seconds(),
+            }
+            for stop_time in stop_times
+        ]
+    response = session.post(url, json={"costing": "bus", "shape": points}).json()
+
+    route_links = []
+
+    import polyline
+
+    if "trip" in response:
+        leg = response["trip"]["legs"][0]
+        shape = LineString(
+            [(lon, lat) for lat, lon in polyline.decode(leg["shape"], precision=6)]
+        )
+
+        start_dist = None
+
+        for from_st, to_st in pairwise(stop_times):
+            from_point = Point(from_st.stop.latlong.coords)
+            to_point = Point(to_st.stop.latlong.coords)
+
+            if start_dist is None:
+                start_dist = shape.project(from_point)
+
+            # project onto remaining shape only
+            remaining = substring(shape, start_dist, shape.length)
+            if remaining.geom_type != "LineString":
+                start_dist = None
+                continue
+            end_dist_on_remaining = remaining.project(to_point)
+            end_dist = start_dist + end_dist_on_remaining
+
+            # skip if either stop is too far from the matched route (~0.1km at UK latitudes)
+            if (
+                from_point.distance(shape.interpolate(start_dist)) > 0.001
+                or to_point.distance(remaining.interpolate(end_dist_on_remaining))
+                > 0.001
+            ):
+                start_dist = None
+                continue
+
+            line_substring = substring(shape, start_dist, end_dist)
+            start_dist = end_dist
+
+            if type(line_substring) is not LineString:
+                continue
+
+            route_link = RouteLink.objects.filter(
+                service_id=trip.route.service_id,
+                from_stop=from_st.stop,
+                to_stop=to_st.stop,
+            ).first() or RouteLink(
+                service_id=trip.route.service_id,
+                from_stop=from_st.stop,
+                to_stop=to_st.stop,
+            )
+            route_link.geometry = line_substring.wkt
+            route_links.append(route_link)
+            route_link.save()
+
+    return render(
+        request,
+        "snap.html",
+        {
+            "object": trip,
+            "breadcrumb": [trip],
+            "response": response,
+            "route_links": route_links,
+        },
+    )
+
+
 def maybe_download_file(local_path, s3_key):
     if not local_path.exists():
         import boto3
@@ -115,10 +265,10 @@ def maybe_download_file(local_path, s3_key):
 class SourceListView(ListView):
     model = DataSource
     queryset = (
-        DataSource.objects.annotate(
+        DataSource.objects.filter(route__service__isnull=False)
+        .annotate(
             routes=Count("route"),
         )
-        .filter(routes__gt=0)
         .order_by("url")
     )
 
@@ -130,9 +280,8 @@ class SourceDetailView(DetailView):
         context = super().get_context_data(**kwargs)
 
         context["routes"] = (
-            self.object.route_set.order_by(
-                "service_code", "line_name", "start_date", "revision_number"
-            )
+            self.object.route_set.filter(service__isnull=False)
+            .order_by("service_code", "line_name", "start_date", "revision_number")
             .annotate(
                 trips=Count("trip"),
             )
@@ -151,10 +300,13 @@ class SourceDetailView(DetailView):
 def route_xml(request, source, code=""):
     source = get_object_or_404(DataSource, id=source)
 
-    if "ftp.tnds.basemap" in source.url:
+    if not source.datetime:
+        raise Http404
+
+    if source.is_tnds():
         filename = Path(source.url).name
         path = settings.DATA_DIR / "TNDS" / filename
-        maybe_download_file(path, f"TNDS/{filename}")
+        maybe_download_file(path, source.get_s3_path())
         with zipfile.ZipFile(path) as archive:
             if code:
                 if code.endswith(".zip"):
@@ -247,7 +399,6 @@ def stop_time_json(stop_time, date) -> dict:
             {
                 "id": trip.operator.noc,
                 "name": trip.operator.name,
-                "parent": trip.operator.parent,
                 "vehicle_mode": trip.operator.vehicle_mode,
             }
         )
@@ -412,7 +563,6 @@ def stop_debug(request, atco_code: str):
         [
             f"TflDepartures:{stop.pk}",
             f"SiriSmDepartures:{stop.pk}",
-            f"EdinburghDepartures:{stop.pk}",
         ]
     ).items():
         response_text = response.text
@@ -446,40 +596,33 @@ def stop_debug(request, atco_code: str):
 
 class TripDetailView(DetailView):
     model = Trip
-    queryset = model.objects.select_related(
-        "route__service", "operator", "route__source"
-    ).defer("route__service__search_vector")
+    queryset = (
+        model.objects.select_related(
+            "route__service", "operator", "route__source", "calendar"
+        )
+        .defer("route__service__search_vector")
+        .prefetch_related("notes")
+    )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        route = self.object.route
+
         if self.object.operator:
             operators = [self.object.operator]
-        elif self.object.route.service:
+        elif route and route.service:
             operators = list(self.object.route.service.operator.all())
         else:
             operators = []
 
-        if self.object.route.service:
-            self.object.route.service.line_name = self.object.route.line_name
+        context["breadcrumb"] = operators
 
-        context["breadcrumb"] = operators + [self.object.route.service]
+        if route and route.service:
+            route.service.line_name = route.line_name
+            context["breadcrumb"] += [route.service]
 
-        trips = self.object.get_trips()
-
-        stops = (
-            StopTime.objects.filter(trip__in=trips)
-            .select_related("stop__locality")
-            .defer(
-                "stop__search_vector",
-                "stop__locality__search_vector",
-                "stop__locality__latlong",
-            )
-            .order_by("trip__start", "id")
-        )
-        stops = list(stops)
-        if len(trips) > 1:
-            stops = contiguous_stoptimes_only(stops, self.object.id)
+        stops = list(TripViewSet.get_stops(self.object))
 
         if stops:
             if stops[0].stop:
@@ -487,20 +630,39 @@ class TripDetailView(DetailView):
             if stops[-1].stop:
                 context["destination"] = stops[-1].stop.locality
 
-            if self.object.route.source.name == "Realtime Transport Operators":
-                trip_update = gtfsr.get_trip_update(self.object)
+            if route and (
+                route.source.name == "Realtime Transport Operators"
+                or route.source.name == "Ember"
+            ):
+                feed_name = "ember" if route.source.name == "Ember" else "ntaie"
+                trip_update = gtfsr.get_trip_update(self.object, feed_name)
                 if trip_update:
                     context["trip_update"] = trip_update
                     gtfsr.apply_trip_update(stops, trip_update)
 
+            else:
+                # no real-time data - cache for an hour
+                context["max_age"] = 3600
+
         context["stops"] = stops
         self.object.stops = stops
         trip_serializer = TripSerializer(self.object)
+        self.object.destination_name = self.object.headsign
         stops_json = JSONRenderer().render(trip_serializer.data)
 
         context["stops_json"] = mark_safe(stops_json.decode())
 
         return context
+
+    def render_to_response(self, context):
+        response = super().render_to_response(context)
+
+        if "max_age" in context:
+            response["CDN-Cache-Control"] = (
+                f"public, max-age={context['max_age']}, stale-if-error={context['max_age']}"
+            )
+
+        return response
 
 
 @require_GET
@@ -518,13 +680,32 @@ def trip_block(request, pk: int):
 
     trips = get_other_trips_in_block(trip, date)
 
-    trips = trips.select_related("route", "destination__locality")
+    trips = trips.annotate(
+        destination_name=Coalesce(
+            "headsign",
+            "destination__locality__name",
+            "destination__common_name",
+        ),
+    ).select_related("route")
+
+    if trips := list(trips):
+        prefetch_related_objects(
+            trips,
+            Prefetch(
+                "vehiclejourney_set",
+                VehicleJourney.objects.filter(
+                    date=date,
+                ).select_related("vehicle"),
+                to_attr="vehicle_journeys",
+            ),
+        )
 
     return render(
         request,
         "bustimes/block_detail.html",
         {
             "object": trip.block,
+            "breadcrumb": [trip.operator],
             "form": form,
             "date": date,
             "trips": trips,
@@ -590,14 +771,7 @@ def tfl_vehicle(request, reg: str):
             operator = service.operator.get()
         except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):
             operator = None
-        else:
-            if vehicle is None and not (reg.startswith("TMP") or len(reg) > 10):
-                vehicle = Vehicle.objects.create(code=reg, reg=reg, operator=operator)
-                VehicleCode.objects.create(
-                    vehicle=vehicle, code=f"TFLO:{reg}", scheme="BODS"
-                )
 
-    if service:
         stops = StopPoint.objects.annotate(
             stopusages=FilteredRelation(
                 "stopusage", condition=Q(stopusage__service=service)
@@ -609,7 +783,7 @@ def tfl_vehicle(request, reg: str):
         prev_sequence = prev_trip_sequence = 0
         prev_destination = None
         for item in data:
-            if item["destinationName"] != prev_destination:
+            if item.get("destinationName") != prev_destination:
                 prev_trip_sequence = prev_sequence
 
             atco_code = item["naptanId"]
@@ -619,7 +793,7 @@ def tfl_vehicle(request, reg: str):
             else:
                 item["sequence"] = prev_sequence
 
-            prev_destination = item["destinationName"]
+            prev_destination = item.get("destinationName")
             prev_sequence = item["sequence"]
         data.sort(key=lambda item: item.get("sequence", 0))
     else:
@@ -693,19 +867,47 @@ def tfl_vehicle(request, reg: str):
     )
 
 
+trip_updates_sources = {
+    "ember": {
+        "source_name": "Ember",
+    },
+    "ntaie": {
+        "source_name": "Realtime Transport Operators",
+    },
+}
+
+
+@require_GET
+def trip_updates_json(request, feed_name: str):
+    if feed_name in trip_updates_sources:
+        if feed := cache.get(f"{feed_name}_trip_updates"):
+            return JsonResponse(feed)
+
+    raise Http404
+
+
 @require_GET
 def trip_updates(request):
-    feed = gtfsr.get_feed_entities()
+    feed_name = request.GET.get("feed_name", "ntaie")
 
-    journey_codes = feed["entity"].keys()
-    trips = Trip.objects.filter(ticket_machine_code__in=journey_codes)
+    if feed_name not in trip_updates_sources:
+        raise Http404
+
+    source = DataSource.objects.get(name=trip_updates_sources[feed_name]["source_name"])
+
+    trip_updates = gtfsr.get_trip_updates(feed_name)
+
+    journey_codes = trip_updates.keys()
+    trips = Trip.objects.filter(
+        route__source=source, ticket_machine_code__in=journey_codes
+    )
     operators = Operator.objects.filter(
         service__route__in=set(trip.route_id for trip in trips)
     ).distinct()
     trips = {trip.ticket_machine_code: trip for trip in trips}
 
     trip_updates = [
-        (entity, trips.get(trip_id)) for trip_id, entity in feed["entity"].items()
+        (entity, trips.get(trip_id)) for trip_id, entity in trip_updates.items()
     ]
 
     return render(
@@ -714,7 +916,6 @@ def trip_updates(request):
         {
             "trips": len(trips),
             "operators": operators,
-            "timestamp": datetime.fromtimestamp(int(feed["header"]["timestamp"])),
             "trip_updates": trip_updates,
         },
     )

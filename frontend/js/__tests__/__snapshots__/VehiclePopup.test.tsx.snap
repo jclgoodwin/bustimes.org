@@ -1,27 +1,35 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`shows delay 1`] = `
 <div>
-  4 minutes late
+  <div>
+    4 minutes late
+  </div>
 </div>
 `;
 
 exports[`shows delay 2`] = `
 <div>
-  4 minutes early
+  <div>
+    4 minutes early
+  </div>
 </div>
 `;
 
 exports[`shows delay 3`] = `
 <div>
-  On time
+  <div>
+    On time
+  </div>
 </div>
 `;
 
 exports[`shows delay 4`] = `
 <div>
-  On time
+  <div>
+    On time
+  </div>
 </div>
 `;
 
-exports[`shows delay 5`] = `null`;
+exports[`shows delay 5`] = `<div />`;

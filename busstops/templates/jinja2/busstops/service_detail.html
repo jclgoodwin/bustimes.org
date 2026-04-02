@@ -6,13 +6,39 @@
     <meta property="og:title" content="{{ object }}">
     <meta property="og:description" content="{{ operators.0 }}">
     <link rel="stylesheet" href="{{ static('dist/js/app.css') }}">
+
+    {% if object.colour %}
+    <style>
+        .colour-{{ object.colour_id }} {
+            background: {{ object.colour.background }};
+            border-color: {{ object.colour.foreground }};
+            color: {{ object.colour.foreground }};
+        }
+    </style>
+    {% endif %}
 {% endblock head %}
 
 {% block bodyclass %}{% endblock %}
 
 {% block content %}
 
-<h1>{{ object }}</h1>
+<h1 class="service-header">
+    <span class="names">
+    {% for line_name in object.get_line_names() %}
+        {% if line_name and line_name not in object.line_brand %}
+            {% if ' ' not in line_name or line_name not in object.description %}
+                <strong class="name{% if ' ' not in line_name %} is-short{% endif %}{% if object.colour_id %} colour colour-{{ object.colour_id }}{% endif %}">
+                    {{ line_name }}
+                </strong>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+    {% if object.line_brand %}
+        <strong class="name{% if object.colour_id %} colour colour-{{ object.colour_id }}{% endif %}">{{ object.line_brand }}</strong>
+    {% endif %}
+    </span>
+    <span class="description">{{ object.description }}</span>
+</h1>
 
 <p>
     {% if operators %}
@@ -25,8 +51,8 @@
     {% endif %}
 </p>
 
-{% if object.public_use is false %}
-    <p>🧑‍🎓 This may be a "closed-door" school or works service, not open to the public</p>
+{% if object.actual_public_use is false %}
+    <p>🧑‍🎓 This may be a “closed-door” school or works service, not open to the public</p>
 {% endif %}
 
 {% include 'situations.html' %}
@@ -35,42 +61,32 @@
     <div id="AFM_inContentTop_ad"></div>
 </div>
 
-
 {% if object.geometry %}
     <div id="map"><div class="service-map"><a href="#" class="map-button">Close map</a></div></div>
-
-    <ul class="tabs">
-        <li>Timetable</li>
-        <li id="map-link"><a href="#map">Map</a></li>
-        {% if tickets_link %}
-            <li><a href="{{ tickets_link }}">Tickets</a></li>
-        {% endif %}
-    </ul>
-
-    <script>
-        SERVICE_ID = {{ object.id }};
-        EXTENT = [{{ object.geometry.extent|join(",") }}];
-        LIVERIES_CSS_URL  = "/liveries.{{ liveries_css_version() }}.css";
-    </script>
-    <script async src="{{ static('dist/js/app.js') }}"></script>
-{% else %}
-    <script>
-        SERVICE_ID = {{ object.id }};
-    </script>
 {% endif %}
+
+<ul class="tabs">
+    <li>Timetable</li>
+    {% if object.geometry %}
+        <li id="map-link"><a href="#map">Map{% if tracking_count %} (tracking {{ tracking_count }} bus{% if tracking_count != 1 %}es{% endif %}){% endif %}</a></li>
+    {% endif %}
+    {% if tickets_link %}
+        <li><a href="{{ tickets_link }}">Tickets</a></li>
+    {% endif %}
+    {% if vehicles %}
+        <li><a href="{{ object.get_absolute_url() }}/vehicles">Vehicles</a>
+    {% endif %}
+</ul>
 
 <div id="timetable">
     {% include 'timetable.html' %}
 </div>
 
-{% if registrations or vehicles %}
+{% if registrations %}
     <ul class="horizontal">
         {% for registration in registrations %}
             <li><a href="{{ registration.get_absolute_url() }}">{{ registration.registration_number }}</a>
         {% endfor %}
-        {% if vehicles %}
-            <li><a href="{{ object.get_absolute_url() }}/vehicles">Vehicles</a>
-        {% endif %}
     </ul>
 {% endif %}
 
@@ -108,7 +124,7 @@
     {% include 'operator-contact-details.html' %}
 {% endfor %}
 
-{% if object.public_use is not false and payment_methods %}
+{% if object.actual_public_use is not false and payment_methods %}
     <p>
         {% for method in payment_methods %}
             {% if not loop.first %}{% if loop.last %} or {% else %}, {% endif %}{% endif %}{% if method.url %}<a href="{{ method.url }}">{% endif %}
@@ -124,6 +140,27 @@
 {% endblock content %}
 
 {% block foot %}
+    {% if object.geometry %}
+    <script>
+        SERVICE_ID = {{ object.id }};
+        EXTENT = [{{ object.geometry.extent|join(",") }}];
+        LIVERIES_CSS_URL  = "/liveries.{{ liveries_css_version() }}.css";
+    {% if related %}
+        SERVICES = [
+            {"id": {{ object.id }}, "line_names": {{ object.line_names|tojson }}},
+        {% for service in related %}
+            {"id": {{ service.id }}, "line_names": {{ service.line_names|tojson }}},
+        {% endfor %}
+        ];
+    {% endif %}
+    </script>
+    <script async src="{{ static('dist/js/app.js') }}"></script>
+    {% else %}
+    <script>
+        SERVICE_ID = {{ object.id }};
+    </script>
+    {% endif %}
+
     <script src="{{ static('js/reqwest.min.js') }}"></script>
     <script async src="{{ static('js/timetable.js') }}"></script>
     {% if fare_tables %}

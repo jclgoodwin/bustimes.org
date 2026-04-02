@@ -19,7 +19,7 @@ export function decodeTimeAwarePolyline(
   let lat = 0;
   let lng = 0;
   let timestamp = 0;
-  const response = [] as [number, number, number][];
+  const response: [number, number, number][] = [];
 
   const length = polyline.length;
 

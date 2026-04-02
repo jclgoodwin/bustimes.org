@@ -1,69 +1,33 @@
 import logging
+from functools import cache
 from pathlib import Path
+import pandas as pd
 
 import gtfs_kit
+import requests
+from google.transit import gtfs_realtime_pb2
 from django.conf import settings
-
 from django.core.management.base import BaseCommand
 from django.db import transaction
+from django.db.models import Min, Subquery, OuterRef
 
 from busstops.models import DataSource, Operator, Service, StopPoint
+from vosa.models import Registration
+from fares.models import Fare, FareRule
 
 from ...download_utils import download_if_modified
-from ...models import Calendar, CalendarDate, Route, StopTime, Trip
+from ...models import Route, StopTime, Trip, Note
+from ...gtfs_utils import get_calendars, MODES, do_route_links
 
 logger = logging.getLogger(__name__)
 
 
-def get_calendars(feed) -> dict:
-    calendars = {
-        row.service_id: Calendar(
-            mon=row.monday,
-            tue=row.tuesday,
-            wed=row.wednesday,
-            thu=row.thursday,
-            fri=row.friday,
-            sat=row.saturday,
-            sun=row.sunday,
-            start_date=row.start_date,
-            end_date=row.end_date,
-        )
-        for row in feed.calendar.itertuples()
-    }
+note_codes = ["¶", "‖", "§", "‡", "†", "*"]
 
-    calendar_dates = []
 
-    if feed.calendar_dates is not None:
-        for row in feed.calendar_dates.itertuples():
-            operation = row.exception_type == 1
-            # 1: operates, 2: does not operate
-
-            if (calendar := calendars.get(row.service_id)) is None:
-                calendar = Calendar(
-                    mon=False,
-                    tue=False,
-                    wed=False,
-                    thu=False,
-                    fri=False,
-                    sat=False,
-                    sun=False,
-                    start_date=row.date,  # dummy date
-                )
-                calendars[row.service_id] = calendar
-            calendar_dates.append(
-                CalendarDate(
-                    calendar=calendar,
-                    start_date=row.date,
-                    end_date=row.date,
-                    operation=operation,
-                    special=operation,  # additional date of operation
-                )
-            )
-
-    Calendar.objects.bulk_create(calendars.values())
-    CalendarDate.objects.bulk_create(calendar_dates)
-
-    return calendars
+@cache
+def get_note(note_text):
+    return Note.objects.get_or_create(code=note_codes.pop(), text=note_text[:255])[0]
 
 
 class Command(BaseCommand):
@@ -71,10 +35,15 @@ class Command(BaseCommand):
         path = settings.DATA_DIR / Path("ember_gtfs.zip")
 
         source = DataSource.objects.get(name="Ember")
-        source.url = "https://api.ember.to/v1/gtfs/static/"
+        source.url = "https://cdn.ember.to/gtfs/static/Ember_GTFS_latest.zip"
 
         modified, last_modified = download_if_modified(path, source)
-        assert modified
+
+        if not modified:
+            return  # no new data to import
+        source.datetime = last_modified
+
+        logger.info(f"{source} {last_modified}")
 
         feed = gtfs_kit.read_feed(path, dist_units="km")
 
@@ -87,10 +56,29 @@ class Command(BaseCommand):
         routes = []
 
         stops = StopPoint.objects.in_bulk(feed.stops.stop_id.to_list())
+        new_stops = [
+            StopPoint(
+                atco_code=f"ember-{stop.stop_id}",
+                common_name=stop.stop_name,
+                active=True,
+                source=source,
+                latlong=f"POINT({stop.stop_lon} {stop.stop_lat})",
+            )
+            for stop in feed.stops.itertuples()
+            if stop.stop_id not in stops
+        ]
+        StopPoint.objects.bulk_create(
+            new_stops,
+            update_conflicts=True,
+            unique_fields=["atco_code"],
+            update_fields=["common_name", "latlong"],
+        )
+        for stop in new_stops:
+            stops[stop.atco_code.removeprefix("ember-")] = stop
 
-        calendars = get_calendars(feed)
+        calendars = get_calendars(feed, source)
 
-        for row in gtfs_kit.routes.get_routes(feed, as_gdf=True).itertuples():
+        for row in feed.get_routes(as_gdf=True).itertuples():
             if row.route_id in existing_services:
                 service = existing_services[row.route_id]
             else:
@@ -107,8 +95,15 @@ class Command(BaseCommand):
             service.description = route.description = row.route_long_name
             service.current = True
             service.colour_id = operator.colour_id
+            service.route_type = MODES[row.route_type]
             if row.geometry:
                 service.geometry = row.geometry.wkt
+
+            registrations = Registration.objects.filter(
+                licence__licence_number="PM2025892", service_number=row.route_id
+            )
+            if len(registrations) == 1:
+                route.registration = registrations[0]
 
             service.save()
             service.operator.add(operator)
@@ -127,8 +122,10 @@ class Command(BaseCommand):
                 route=existing_routes[row.route_id],
                 calendar=calendars[row.service_id],
                 inbound=row.direction_id == 1,
+                ticket_machine_code=row.trip_id,
                 vehicle_journey_code=row.trip_id,
                 operator=operator,
+                headsign=row.trip_headsign,
             )
             if trip.vehicle_journey_code in existing_trips:
                 # reuse existing trip id
@@ -149,14 +146,43 @@ class Command(BaseCommand):
                 sequence=row.stop_sequence,
                 trip=trip,
                 timing_status="PTP" if row.timepoint else "OTH",
+                pick_up=(row.pickup_type != 1),
+                set_down=(row.drop_off_type != 1),
             )
 
-            stop_time.stop = trip.destination = stops.get(row.stop_id)
-
-            if stop_time.stop is None:
-                stop_time.stop_code = row.stop_id
+            stop_time.stop = trip.destination = stops[row.stop_id]
 
             stop_times.append(stop_time)
+
+        feed_stops = {row.stop_id: row for row in feed.stops.itertuples()}
+        stop_codes = {stop_id: stop.atco_code for stop_id, stop in stops.items()}
+        do_route_links(feed, source, existing_routes, feed_stops, stop_codes)
+
+        fare_attributes_df = feed.fare_attributes
+        fare_rules_df = feed.fare_rules
+
+        # get TripUpdates from the GTFS-RT feed - to mark some stops as "pre-book only":
+
+        realtime_url = "https://api.ember.to/v1/gtfs/realtime/"
+        response = requests.get(realtime_url, timeout=10)
+        response.raise_for_status()
+
+        feed = gtfs_realtime_pb2.FeedMessage()
+        feed.ParseFromString(response.content)
+
+        stop_notes = {}  # map of notes to lists of stop ids
+
+        for item in feed.entity:
+            if item.HasField("alert"):
+                header = item.alert.header_text.translation[0].text
+                description = item.alert.description_text.translation[0].text
+                if header == "Pre-booking":
+                    stop_id = item.alert.informed_entity[0].stop_id
+                    note = get_note(description)
+                    if note in stop_notes:
+                        stop_notes[note].append(stop_id)
+                    else:
+                        stop_notes[note] = [stop_id]
 
         with transaction.atomic():
             Trip.objects.bulk_create([trip for trip in trips.values() if not trip.id])
@@ -171,27 +197,103 @@ class Command(BaseCommand):
                     "destination",
                     "block",
                     "vehicle_journey_code",
+                    "ticket_machine_code",
                     "inbound",
+                    "headsign",
                 ],
             )
 
             StopTime.objects.filter(trip__in=existing_trips).delete()
             StopTime.objects.bulk_create(stop_times)
 
+            existing_notes = {
+                (note.code, note.text): note
+                for note in Note.objects.filter(trip__operator="EMBR")
+            }
+            for note, stop_ids in stop_notes.items():
+                note_stop_times = [
+                    stop_time
+                    for stop_time in stop_times
+                    if stop_time.stop_id in stop_ids
+                ]
+                note_trips = [stop_time.trip_id for stop_time in note_stop_times]
+                note.stoptime_set.set(note_stop_times)
+                note.trip_set.set(note_trips)
+
+            # remove old notes
+            for note in existing_notes.values():
+                if note not in stop_notes:
+                    note.trip_set.clear()
+
+            # fares
+            if fare_attributes_df is not None and not fare_attributes_df.empty:
+                new_fare_ids = set(fare_attributes_df.fare_id.tolist())
+                Fare.objects.filter(source=source).exclude(
+                    fare_id__in=new_fare_ids
+                ).delete()
+                fare_objs = [
+                    Fare(
+                        source=source,
+                        fare_id=row.fare_id,
+                        price=row.price,
+                        currency=row.currency_type,
+                        payment_method=row.payment_method,
+                        transfers=int(row.transfers) if pd.notna(row.transfers) else 0,
+                    )
+                    for row in fare_attributes_df.itertuples()
+                ]
+                Fare.objects.bulk_create(
+                    fare_objs,
+                    update_conflicts=True,
+                    unique_fields=["source", "fare_id"],
+                    update_fields=["price", "currency", "payment_method", "transfers"],
+                )
+                fares = {fare.fare_id: fare for fare in fare_objs}
+                FareRule.objects.filter(fare__source=source).delete()
+                if fare_rules_df is not None and not fare_rules_df.empty:
+                    rules = []
+                    for row in fare_rules_df.itertuples():
+                        fare = fares.get(row.fare_id)
+                        if fare is None:
+                            continue
+                        rule = FareRule(fare=fare)
+                        if pd.notna(getattr(row, "route_id", float("nan"))):
+                            route = existing_routes.get(row.route_id)
+                            if route:
+                                rule.service = route.service
+                        if pd.notna(getattr(row, "origin_id", float("nan"))):
+                            rule.origin = stops.get(row.origin_id)
+                        if pd.notna(getattr(row, "destination_id", float("nan"))):
+                            rule.destination = stops.get(row.destination_id)
+                        rules.append(rule)
+                    FareRule.objects.bulk_create(rules)
+            else:
+                Fare.objects.filter(source=source).delete()
+
             for service in source.service_set.filter(current=True):
                 service.do_stop_usages()
                 service.update_search_vector()
 
-            print(
+            logger.info(
                 source.route_set.exclude(id__in=[route.id for route in routes]).delete()
             )
-            print(
+            logger.info(
                 operator.trip_set.exclude(
                     id__in=[trip.id for trip in trips.values()]
                 ).delete()
             )
-            print(
+            logger.info(
                 operator.service_set.filter(current=True, route__isnull=True).update(
                     current=False
                 )
             )
+
+            source.route_set.update(
+                start_date=Subquery(
+                    Route.objects.filter(pk=OuterRef("pk"))
+                    .annotate(min_date=Min("trip__calendar__start_date"))
+                    .values("min_date")[:1]
+                )
+            )
+
+            source.save(update_fields=["url", "datetime"])

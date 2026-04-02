@@ -1,6 +1,7 @@
-from django import forms
+from django.forms import ModelForm, Textarea
 from django.contrib import admin
-from django.contrib.postgres.aggregates import StringAgg
+from django.db.models import Value
+from django.db.models.aggregates import StringAgg
 
 from .models import Licence, Registration, Variation
 
@@ -10,10 +11,10 @@ class OperatorInline(admin.TabularInline):
     autocomplete_fields = ["operator"]
 
 
-class LicenceAdminForm(forms.ModelForm):
+class LicenceAdminForm(ModelForm):
     class Meta:
         widgets = {
-            "trading_name": forms.Textarea,
+            "trading_name": Textarea,
         }
 
 
@@ -28,7 +29,7 @@ class LicenceAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         if "changelist" in request.resolver_match.view_name:
-            queryset = queryset.annotate(operators=StringAgg("operator", " "))
+            queryset = queryset.annotate(operators=StringAgg("operator", Value(" ")))
         return queryset
 
     @admin.display(ordering="operators")

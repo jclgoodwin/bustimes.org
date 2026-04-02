@@ -2,6 +2,7 @@ import xml.etree.ElementTree as ET
 
 import requests
 import yaml
+import logging
 from ciso8601 import parse_datetime
 from django.conf import settings
 from django.core.management import BaseCommand
@@ -168,21 +169,22 @@ class Command(BaseCommand):
                 url = url.removesuffix("#")
                 url = url.split("#")[-1]
 
-            twitter = public_name.findtext("Twitter").removeprefix("@")
-
             if noc in overrides:
-                override = overrides[noc]
+                override_data = overrides[noc]
 
-                if "url" in override:
-                    url = override["url"]
+                if "url" in override_data:
+                    if url == override_data["url"]:
+                        logging.warning(
+                            "%s url %s no longer needs overriding", noc, url
+                        )
+                    url = override_data["url"]
 
-                if "twitter" in override:
-                    twitter = override["twitter"]
-
-                if "name" in override:
-                    if override["name"] == name:
-                        print(name)
-                    name = override["name"]
+                if "name" in override_data:
+                    if name == override_data["name"]:
+                        logging.warning(
+                            "%s name %s no longer needs overriding", noc, name
+                        )
+                    name = override_data["name"]
 
             if noc not in operators:
                 operators[noc] = Operator(
@@ -194,18 +196,16 @@ class Command(BaseCommand):
                 operator = operators[noc]
 
                 slug = slugify(operator.name)
-                if slug in operators_by_slug:
-                    # duplicate name – save now to avoid slug collision
-                    operator.save(force_insert=True)
-                    to_update.append(operator)
-                else:
-                    operator.slug = slug
-                    to_create.append(operator)
-
-                operators_by_slug[operator.slug or slug] = operator
+                base_slug = slug
+                suffix = 0
+                while slug in operators_by_slug:
+                    suffix += 1
+                    slug = f"{base_slug}-{suffix}"
+                operator.slug = slug
+                operators_by_slug[slug] = operator
+                to_create.append(operator)
 
                 operator.url = url
-                operator.twitter = twitter
 
                 operator_codes += get_operator_codes(
                     code_sources, noc, operator, noc_line
@@ -222,12 +222,10 @@ class Command(BaseCommand):
                 if (
                     name != operator.name
                     or url != operator.url
-                    or twitter != operator.twitter
                     or vehicle_mode != operator.vehicle_mode
                 ):
                     operator.name = name
                     operator.url = url
-                    operator.twitter = twitter
                     operator.vehicle_mode = vehicle_mode
                     to_update.append(operator)
 
@@ -235,6 +233,8 @@ class Command(BaseCommand):
                     operator_licences += get_operator_licences(
                         operator, noc_line, licences_by_number
                     )
+
+            operator.modified_at = generation_date
 
             try:
                 operator.clean_fields(exclude=["noc", "slug", "region"])
@@ -249,16 +249,16 @@ class Command(BaseCommand):
             to_create,
             update_fields=(
                 "url",
-                "twitter",
                 "name",
                 "vehicle_mode",
                 "slug",
                 "region_id",
                 "vehicle_mode",
+                "modified_at",
             ),
         )
         Operator.objects.bulk_update(
-            to_update, ("url", "twitter", "name", "vehicle_mode")
+            to_update, ("url", "name", "vehicle_mode", "modified_at")
         )
 
         OperatorCode.objects.bulk_create(operator_codes)

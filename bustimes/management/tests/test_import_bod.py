@@ -2,7 +2,7 @@ import datetime
 import zipfile
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from unittest.mock import patch
+from unittest.mock import patch, ANY
 
 import fakeredis
 import time_machine
@@ -45,12 +45,8 @@ class ImportBusOpenDataTest(TestCase):
     def setUpTestData(cls):
         ea = Region.objects.create(pk="EA", name="East Anglia")
         lynx = Operator.objects.create(noc="LYNX", region=ea, name="Lynx")
-        scpb = Operator.objects.create(
-            noc="SCCM", region=ea, name="Stagecoach East", parent="Stagecoach"
-        )
-        schu = Operator.objects.create(
-            noc="SCHU", region=ea, name="Huntingdon", parent="Stagecoach"
-        )
+        scpb = Operator.objects.create(noc="SCCM", region=ea, name="Stagecoach East")
+        schu = Operator.objects.create(noc="SCHU", region=ea, name="Huntingdon")
         source = DataSource.objects.create(name="National Operator Codes")
         OperatorCode.objects.bulk_create(
             [
@@ -113,6 +109,7 @@ class ImportBusOpenDataTest(TestCase):
         with (
             TemporaryDirectory() as directory,
             override_settings(DATA_DIR=Path(directory)),
+            patch("busstops.models.DataSource.upload_to_s3_etc") as upload_to_s3_etc,
         ):
             api_key = "0123456789abc19abc190123456789abc19abc19"
 
@@ -133,16 +130,19 @@ class ImportBusOpenDataTest(TestCase):
             self.assertEqual(200, response.status_code)
             self.client.logout()
 
+        upload_to_s3_etc.assert_called_once_with(
+            Path(directory) / f"bod/{route.source_id}"
+        )
+
         self.assertEqual(route.source.name, "Lynx_Clenchwarton_54_20200330")
         self.assertEqual(
             route.source.url,
             "https://data.bus-data.dft.gov.uk/category/dataset/35/download/",
         )
-        self.assertEqual(route.source.sha1, "a5eaa3ef8ddefd702833d52d0148adfa0a504e9a")
+        self.assertEqual(route.source.sha1, "ed6f5e835884781ea314bc13cc9054592a4c4f96")
 
         self.assertEqual(route.code, "")
         self.assertEqual(route.service_code, "54")
-
         with self.assertNumQueries(4):
             response = self.client.get(f"/services/{route.service_id}.json")
         self.assertTrue(response.json()["geometry"])
@@ -157,6 +157,10 @@ class ImportBusOpenDataTest(TestCase):
         response = self.client.get(route.service.get_absolute_url())
         self.assertContains(response, "school or works service")
 
+        self.assertEqual(route.service.colour.background, "#12198B")
+        self.assertEqual(route.service.colour.foreground, "#fff")
+
+        # LineColour
         response = self.client.get(f"/services/{route.service_id}/timetable")
 
         self.assertContains(
@@ -182,9 +186,14 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
 
         trip = route.trip_set.first()
 
+        response = self.client.get(f"{trip.get_absolute_url()}/block")
+        self.assertEqual(response.status_code, 404)  # no block
+
         response = self.client.get(f"/api/trips/{trip.id}.json")
-        json = response.json()
-        self.assertEqual(27, len(json["times"]))
+        self.assertEqual(27, len(response.json()["times"]))
+
+        response = self.client.get(f"/api/trips/?service={route.service_id}")
+        self.assertEqual(4, len(response.json()["results"]))
 
         response = self.client.get(trip.get_absolute_url())
 
@@ -203,7 +212,6 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
                             {
                                 "id": "LYNX",
                                 "name": "Lynx",
-                                "parent": "",
                                 "vehicle_mode": "",
                             }
                         ],
@@ -247,7 +255,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
             response = self.client.get("/stops/2900W0321/times.json?when=yesterday")
         self.assertEqual(400, response.status_code)
 
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(10):
             response = self.client.get("/stops/2900W0321?date=2038-01-19")
             self.assertEqual(str(response.context["when"]), "2038-01-19 00:00:00")
             self.assertEqual(
@@ -258,7 +266,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
         #     "departures.live.NorfolkDepartures.get_departures", return_value=[]
         # ) as mocked:
 
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(10):
             response = self.client.get("/stops/2900W0321?date=2020-05-02")
         self.assertEqual(1, len(response.context["departures"]))
         self.assertEqual(str(response.context["when"]), "2020-05-02 00:00:00")
@@ -266,20 +274,28 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
         self.assertContains(response, "Nearby stops")  # other stop in StopArea
         self.assertContains(response, "<small>54</small>")
 
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(9):
             response = self.client.get("/stops/2900W0321?date=2020-05-02&time=11:00")
         self.assertEqual(str(response.context["when"]), "2020-05-02 11:00:00")
-        self.assertContains(response, '<a href="?date=2020-05-03">')  # next day
+        self.assertContains(response, '<a href="?date=2020-05-03"')  # next day
 
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(10):
             response = self.client.get("/stops/2900w0321/departures?date=poop")
         self.assertEqual(str(response.context["when"]), "2020-05-01 01:00:00+01:00")
+        self.assertEqual(len(response.context["departures"]), 1)
 
-        with self.assertNumQueries(7):
-            response = self.client.get("/stations/2900A")
-        self.assertEqual(str(response.context["when"]), "2020-05-01 01:00:00+01:00")
+        # services with current=False should be excluded
+        Service.objects.update(current=False)
+        response = self.client.get("/stops/2900w0321/departures")
+        self.assertEqual(len(response.context["departures"]), 0)
+        Service.objects.update(current=True)
 
         with self.assertNumQueries(8):
+            response = self.client.get("/stations/2900A")
+        self.assertEqual(str(response.context["when"]), "2020-05-01 01:00:00+01:00")
+        self.assertEqual(len(response.context["departures"]), 3)
+
+        with self.assertNumQueries(10):
             response = self.client.get("/stops/2900W0321?date=2020-05-02")
         self.assertEqual(str(response.context["when"]), "2020-05-02 00:00:00")
 
@@ -320,10 +336,12 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
         trip = route.trip_set.first()
         trip.copy(datetime.timedelta(hours=1))
 
+        fake_redis = fakeredis.FakeStrictRedis()
         # test journey with trip json
-        with patch(
-            "vehicles.views.redis_client", fakeredis.FakeStrictRedis()
-        ) as fake_redis:
+        with (
+            patch("vehicles.views.redis_client", fake_redis),
+            patch("api.views.redis_client", fake_redis),
+        ):
             response = self.client.get(f"/journeys/{journey.id}.json")
             json = response.json()
             self.assertIn("stops", json)
@@ -350,8 +368,13 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
             response = self.client.get(f"/journeys/{journey.id}.json")
             json = response.json()
             self.assertEqual(
-                json["stops"][2]["actual_departure_time"], "2019-05-29T12:03:34Z"
+                json["stops"][2]["actual_departure_time"], "2019-05-29T13:03:34+01:00"
             )
+
+            # newer API
+            response = self.client.get(f"/api/vehiclejourneys/{journey.id}/")
+            json = response.json()
+            self.assertEqual(json["time_aware_polyline"], "o|k@gsy`Ikpyx|{A")
 
     def test_ticketer(self):
         source = TimetableDataSource.objects.create(
@@ -364,7 +387,12 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
             TemporaryDirectory() as directory,
             override_settings(DATA_DIR=Path(directory)),
         ):
-            with use_cassette(str(FIXTURES_DIR / "bod_ticketer.yaml")):
+            with (
+                use_cassette(str(FIXTURES_DIR / "bod_ticketer.yaml")),
+                patch(
+                    "busstops.models.DataSource.upload_to_s3_etc"
+                ) as upload_to_s3_etc,
+            ):
                 with self.assertLogs(
                     "bustimes.management.commands.import_transxchange", "WARNING"
                 ) as cm:
@@ -378,6 +406,8 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
                         "import_bod_timetables", "ticketer", "POOP"
                     )  # no matching operator
 
+            upload_to_s3_etc.assert_called_once()
+
             source = DataSource.objects.get(name="Completely Coach Travel")
             service = source.service_set.first()
             route = service.route_set.first()
@@ -385,6 +415,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
             self.client.force_login(self.user)
             response = self.client.get(route.get_absolute_url())
             self.assertEqual(response.status_code, 200)
+            self.client.logout()
 
         response = self.client.get(service.get_absolute_url())
         self.assertContains(
@@ -464,38 +495,38 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
                 "bustimes.management.commands.import_bod_timetables.download_if_modified",
                 return_value=(True, parse_datetime("2020-06-10T12:00:00+01:00")),
             ) as download_if_modified:
-                with self.assertNumQueries(110):
+                with self.assertNumQueries(118):
                     call_command("import_bod_timetables", "stagecoach")
                 download_if_modified.assert_called_with(
-                    path, DataSource.objects.get(name="Stagecoach East")
+                    path, DataSource.objects.get(name="Stagecoach East"), ANY
                 )
 
                 route_links = RouteLink.objects.order_by("id")
-                self.assertEqual(len(route_links), 4)
+                self.assertEqual(len(route_links), 210)
                 route_link = route_links[0]
                 route_link.geometry = (
                     "SRID=4326;LINESTRING(0 0, 0 0)"  # should be overwritten later
                 )
                 route_link.save()
 
-                with self.assertNumQueries(5):
+                with self.assertNumQueries(6):
                     call_command("import_bod_timetables", "stagecoach")
 
                 with self.assertNumQueries(1):
                     call_command("import_bod_timetables", "stagecoach", "SCOX")
 
-                with self.assertNumQueries(118):
+                with self.assertNumQueries(55):
                     call_command("import_bod_timetables", "stagecoach", "SCCM")
 
                 route_link.refresh_from_db()
-                self.assertEqual(len(route_link.geometry.coords), 32)
+                self.assertEqual(len(route_link.geometry.coords), 14)
 
             self.client.force_login(self.user)
             source = DataSource.objects.filter(name="Stagecoach East").first()
             response = self.client.get(f"/sources/{source.id}/routes/")
 
             self.assertEqual(
-                response.content.decode(),
+                response.text,
                 "904_FE_PF_904_20210102.xml\n904_VI_PF_904_20200830.xml",
             )
 
@@ -504,8 +535,10 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
             self.assertEqual(200, response.status_code)
             self.assertEqual("", response.filename)
 
+            self.client.logout()
+
         self.assertEqual(BankHoliday.objects.count(), 13)
-        self.assertEqual(CalendarBankHoliday.objects.count(), 130)
+        self.assertEqual(CalendarBankHoliday.objects.count(), 65)
         self.assertEqual(VehicleType.objects.count(), 3)
         self.assertEqual(Garage.objects.count(), 4)
 
@@ -516,11 +549,13 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
         self.assertEqual(2, Service.objects.count())
         self.assertEqual(2, Route.objects.count())
 
+        self.assertEqual(RouteLink.objects.count(), 210)
+
         trip = route.trip_set.last()
         response = self.client.get(f"/api/trips/{trip.id}/")
         self.assertTrue(response.json()["times"][8]["track"])
 
-        with self.assertNumQueries(17):
+        with self.assertNumQueries(19):
             response = self.client.get("/services/904-huntingdon-peterborough")
         self.assertContains(response, "Possibly similar services")
         self.assertContains(
@@ -538,7 +573,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
         BankHolidayDate.objects.create(
             bank_holiday=BankHoliday.objects.get(name="ChristmasDay"), date="2020-12-25"
         )
-        with self.assertNumQueries(15):
+        with self.assertNumQueries(17):
             response = self.client.get(
                 "/services/904-huntingdon-peterborough?date=2020-12-25"
             )

@@ -1,5 +1,5 @@
 import datetime
-import lightningcss
+import subprocess
 import re
 import struct
 import uuid
@@ -7,17 +7,17 @@ from collections import Counter
 from math import ceil
 from urllib.parse import quote
 
-from autoslug import AutoSlugField
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.db.models import Q, UniqueConstraint
-from django.db.models.functions import TruncDate, Upper
+from django.db.models.functions import Upper
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import escape, format_html
 from simple_history.models import HistoricalRecords
-from webcolors import html5_parse_legacy_color
+from webcolors import HTML5SimpleColor, html5_parse_legacy_color
 
+from busstops.fields import AutoSlugField
 from busstops.models import DataSource, Operator, Service
 from bustimes.utils import get_trip
 from .fields import ColourField, ColoursField, CSSField
@@ -64,11 +64,13 @@ def get_css(colours, direction=None, horizontal=False, angle=None):
     return background
 
 
-def get_brightness(colour):
-    return (0.299 * colour.red + 0.587 * colour.green + 0.114 * colour.blue) / 255
+def get_brightness(colour: HTML5SimpleColor) -> float:
+    """Returns a "relative luminance" between 0 and 255"""
+    return 0.299 * colour.red + 0.587 * colour.green + 0.114 * colour.blue
 
 
-def get_text_colour(colours):
+def get_text_colour(colours) -> str:
+    """Returns "#fff" if the colour is dark, otherwise None"""
     if not colours:
         return
     colours = colours.split()
@@ -76,22 +78,20 @@ def get_text_colour(colours):
     brightnesses = [get_brightness(colour) for colour in colours]
     colours_length = len(colours)
     if colours_length > 2:
-        middle_brightness = sum(brightnesses[1:-1])
-        outer_brightness = brightnesses[0] + brightnesses[-1]
-        brightness = (middle_brightness * 2 + outer_brightness) / (
-            (colours_length - 2) * 2 + 2
-        )
-    else:
-        brightness = sum(brightnesses) / colours_length
-    if brightness < 0.5:
+        # ignore the leftmost and rightmost strips
+        brightnesses = brightnesses[1:-1]
+        colours_length -= 2
+    if (sum(brightnesses) / colours_length) <= 186:
         return "#fff"
 
 
 class VehicleTypeType(models.TextChoices):
+    SINGLE_DECKER = "", "single decker"
     DOUBLE_DECKER = "double decker", "double decker"
     MINIBUS = "minibus", "minibus"
     COACH = "coach", "coach"
-    ARTICULATED = "articulated", "articulated"
+    DOUBLE_DECK_COACH = "decker coach", "double decker coach"
+    ARTICULATED = "articulated", "bendy bus"
     TRAIN = "train", "train"
     TRAM = "tram", "tram"
     AMPHIBIOUS = "amphibious", "amphibious"
@@ -149,7 +149,7 @@ class Livery(models.Model):
     horizontal = models.BooleanField(
         default=False, help_text="Equivalent to setting the angle to 90"
     )
-    updated_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(null=True, blank=True, auto_now=True)
     published = models.BooleanField(
         default=False,
         help_text="Tick to include in the CSS and be able to apply this livery to vehicles",
@@ -168,7 +168,11 @@ class Livery(models.Model):
     def minify(css):
         prefix = ".livery{background:"
         suffix = "}"
-        css = lightningcss.process_stylesheet(prefix + css + suffix)
+        css = prefix + css + suffix
+        completed_process = subprocess.run(
+            ["lightningcss", "--minify"], input=css.encode(), capture_output=True
+        )
+        css = completed_process.stdout.decode().strip()
         assert css.startswith(prefix)
         assert css.endswith(suffix)
         return css[19:-1]
@@ -199,7 +203,6 @@ class Livery(models.Model):
             return format_html(div + ' title="{}"></div>', self.name)
 
     def save(self, *args, update_fields=None, **kwargs):
-        self.updated_at = timezone.now()
         if update_fields is None:
             if self.colours:
                 self.set_css()
@@ -210,21 +213,22 @@ class Livery(models.Model):
                 self.left_css = self.minify(self.left_css)
         super().save(*args, update_fields=update_fields, **kwargs)
 
-    def get_styles(self):
+    def get_styles(self, livery_ids=None):
         if not self.left_css:
             return []
-        selector = f".livery-{self.id}"
-        css = f"background: {self.left_css}"
+        if not livery_ids:
+            livery_ids = (self.id,)
+        selector = ",".join(f".livery-{livery_id}" for livery_id in livery_ids)
+        css = f"  background: {self.left_css}"
         if self.text_colour:
-            css = f"{css};\n  color:{self.text_colour};fill:{self.text_colour}"
+            css = f"{css};\n  color: {self.text_colour}"
         elif self.white_text:
-            css = f"{css};\n  color:#fff;fill:#fff"
+            css = f"{css};\n  color: #fff"
         if self.stroke_colour:
-            css = f"{css};stroke:{self.stroke_colour}"
-        styles = [f"{selector} {{\n  {css}\n}}\n"]
+            css = f"{css};\n  stroke: {self.stroke_colour}"
         if self.right_css != self.left_css:
-            styles.append(f"{selector}.right {{\n  background: {self.right_css}\n}}\n")
-        return styles
+            css += f";\n  &.right{{\n    background:{self.right_css}\n  }}"
+        return [f"{selector}{{\n{css}\n}}\n"]
 
 
 class VehicleFeature(models.Model):
@@ -456,18 +460,13 @@ class VehicleCode(models.Model):
         return f"{self.scheme} {self.code}"
 
     class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=["code", "scheme"],
+                name="unique_vehicle_code",
+            ),
+        ]
         indexes = [models.Index(fields=("code", "scheme"))]
-
-
-class VehicleEditVote(models.Model):
-    by_user = models.ForeignKey(settings.AUTH_USER_MODEL, models.CASCADE)
-    for_revision = models.ForeignKey(
-        "VehicleRevision", models.CASCADE, null=True, blank=True
-    )
-    positive = models.BooleanField()
-
-    class Meta:
-        unique_together = (("by_user", "for_revision"),)
 
 
 class VehicleRevisionFeature(models.Model):
@@ -532,8 +531,6 @@ class VehicleRevision(models.Model):
     pending = models.BooleanField(default=False)
     disapproved = models.BooleanField(default=False)
     disapproved_reason = models.TextField(null=True, blank=True)
-
-    score = models.SmallIntegerField(default=0)
 
     class Meta:
         constraints = [
@@ -636,6 +633,13 @@ class VehicleRevision(models.Model):
                     if vehicle.withdrawn and after == "Yes":
                         vehicle.withdrawn = False
                         fields.append("withdrawn")
+                elif key == "fleet number":
+                    vehicle.fleet_code = before
+                    if before.isdigit():
+                        vehicle.fleet_number = int(vehicle.fleet_number)
+                    else:
+                        vehicle.fleet_number = None
+                    fields += ["fleet_number", "fleet_code"]
                 else:
                     yield f"vehicle {vehicle.id} {key} not reverted"
 
@@ -646,20 +650,28 @@ class VehicleRevision(models.Model):
 
 class VehicleJourney(models.Model):
     datetime = models.DateTimeField()
-    service = models.ForeignKey(Service, models.SET_NULL, null=True, blank=True)
+    date = models.DateField()
+    service = models.ForeignKey(
+        Service, models.SET_NULL, null=True, blank=True, db_index=False
+    )
     route_name = models.CharField(max_length=64, blank=True)
     source = models.ForeignKey(DataSource, models.CASCADE)
-    vehicle = models.ForeignKey(Vehicle, models.CASCADE, null=True, blank=True)
+    vehicle = models.ForeignKey(
+        Vehicle, models.CASCADE, null=True, blank=True, db_index=False
+    )
     code = models.CharField(max_length=255, blank=True)
     destination = models.CharField(max_length=255, blank=True)
-    direction = models.CharField(max_length=8, blank=True)
-    trip = models.ForeignKey("bustimes.Trip", models.SET_NULL, null=True, blank=True)
+    direction = models.CharField(max_length=13, blank=True)
+    trip = models.ForeignKey(
+        "bustimes.Trip", models.SET_NULL, null=True, blank=True, db_index=False
+    )
     # trip_matched = models.BooleanField(default=True)
     # block = models.ForeignKey("bustimes.Block", models.SET_NULL, null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
 
     def get_absolute_url(self):
-        return f"/vehicles/{self.vehicle_id}?date={self.datetime.date()}#journeys/{self.id}"
+        # TODO: change to "/journeys/{self.id}" (actually using `reverse()`)
+        return f"/vehicles/{self.vehicle_id}?date={self.date}#journey-{self.id}"
 
     def __str__(self):
         when = f"{self.datetime:%-d %b %y %H:%M} {self.route_name} {self.code} {self.direction}"
@@ -670,29 +682,44 @@ class VehicleJourney(models.Model):
     class Meta:
         ordering = ("id",)
         indexes = [
+            models.Index("service", "date", name="vehiclejourney_service_date"),
             models.Index(
-                "service", TruncDate("datetime").asc(), name="service_datetime_date"
+                "vehicle",
+                "date",
+                name="vehiclejourney_vehicle_date",
+                condition=Q(vehicle__isnull=False),
             ),
             models.Index(
-                "vehicle", TruncDate("datetime").asc(), name="vehicle_datetime_date"
+                "trip",
+                "date",
+                name="vehiclejourney_trip_date",
+                condition=Q(trip__isnull=False),
+            ),
+            models.Index(
+                "route_name",
+                "date",
+                name="route_name__date",
+                condition=Q(service__isnull=True),
             ),
         ]
-        unique_together = (("vehicle", "datetime"),)
 
     def get_redis_key(self):
         return self.uuid.bytes
 
     get_trip = get_trip
 
+    def get_trip_block_url(self):
+        url = reverse("block_detail", args=(self.trip_id,))
+        return f"{url}?date={self.date}"
 
-# class VehiclePosition:
-#     journey = models.ForeignKey(VehicleJourney, on_delete)
-
-
-class Occupancy(models.TextChoices):
-    SEATS_AVAILABLE = "seatsAvailable", "Seats available"
-    STANDING_AVAILABLE = "standingAvailable", "Standing available"
-    FULL = "full", "Full"
+    def get_service_link(self):
+        if self.service:
+            slug = self.service.slug
+        else:
+            slug = f"{self.vehicle.operator_id}:{self.route_name}"
+        return (
+            reverse("service_vehicles", args=(slug,)) + "?date=" + self.date.isoformat()
+        )
 
 
 class VehicleLocation:
@@ -713,9 +740,6 @@ class VehicleLocation:
         self.occupancy_thresholds = None
         self.block = block
         self.tfl_code = None
-
-    def get_occupancy_display(self):
-        return Occupancy(self.occupancy).label
 
     def __str__(self):
         return f"{self.datetime:%-d %b %Y %H:%M:%S}"
@@ -759,8 +783,8 @@ class VehicleLocation:
             "coordinates": location[1:3],
             "delta": (location[5] or None) and location[6],
             "direction": (location[3] or None) and location[4],
-            "datetime": datetime.datetime.fromtimestamp(
-                location[0], datetime.timezone.utc
+            "datetime": timezone.localtime(
+                datetime.datetime.fromtimestamp(location[0], datetime.timezone.utc)
             ),
         }
 
@@ -772,7 +796,7 @@ class VehicleLocation:
             "journey_id": journey.id,
             "coordinates": self.latlong.coords,
             "heading": self.heading,
-            "datetime": self.datetime,
+            "datetime": timezone.localtime(self.datetime),
             "destination": journey.destination,
             "block": self.block,
         }
@@ -790,12 +814,12 @@ class VehicleLocation:
             json["service"] = {"line_name": journey.route_name}
 
         if self.seated_occupancy is not None and self.seated_capacity is not None:
-            if self.occupancy == "full":
+            if self.occupancy == "Full":
                 json["seats"] = self.occupancy
             else:
                 json["seats"] = f"{self.seated_capacity - self.seated_occupancy} free"
         elif self.occupancy:
-            json["seats"] = self.get_occupancy_display()
+            json["seats"] = self.occupancy
         if self.wheelchair_occupancy is not None and self.wheelchair_capacity:
             if self.wheelchair_occupancy < self.wheelchair_capacity:
                 json["wheelchair"] = "free"
@@ -806,9 +830,24 @@ class VehicleLocation:
 
 
 class SiriSubscription(models.Model):
-    name = models.CharField(max_length=64, blank=True, unique=True)
+    name = models.CharField(
+        max_length=64,
+        blank=True,
+        unique=True,
+        help_text="There should be a DataSource with the same name as this",
+    )
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     sample = models.TextField(null=True, blank=True)
+    producer_url = models.URLField(null=True, blank=True, max_length=64)
+    username = models.CharField(null=True, blank=True, max_length=64)
+    password = models.CharField(null=True, blank=True, max_length=64)
+    requestor_ref = models.CharField(null=True, blank=True, max_length=64)
 
     def __str__(self):
         return self.name
+
+    def get_status_key(self):
+        return f"{self.name.replace(' ', '_')}_status"
+
+    def get_absolute_url(self):
+        return reverse("siri_post", args=(self.uuid,))

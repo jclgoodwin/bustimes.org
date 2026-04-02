@@ -5,7 +5,8 @@ from django.core.exceptions import ValidationError
 
 from busstops.models import Operator
 
-from . import fields
+from .fields import validate_colours
+from .form_fields import RegField, SummaryField
 from .models import Livery, Vehicle, VehicleFeature, VehicleType
 
 
@@ -56,11 +57,11 @@ class EditVehicleForm(forms.Form):
     withdrawn = forms.BooleanField(
         label="Remove from list",
         required=False,
-        help_text="Rarely necessary, unless you're sure this vehicle has definitely been withdrawn for good",
+        help_text="Rarely necessary, unless you're sure this vehicle has definitely been permenantly withdrawn",
     )
 
     fleet_number = forms.CharField(required=False, max_length=24)
-    reg = fields.RegField(label="Number plate", required=False, max_length=24)
+    reg = RegField(label="Number plate", required=False, max_length=24)
 
     operator = forms.ModelChoiceField(
         queryset=Operator.objects,
@@ -87,7 +88,7 @@ class EditVehicleForm(forms.Form):
     other_colour = forms.CharField(
         label="Other colours",
         help_text="E.g. '#c0c0c0 #ff0000 #ff0000' (red with a silver front)",
-        validators=[fields.validate_colours],
+        validators=[validate_colours],
         required=False,
         max_length=255,
     )
@@ -103,9 +104,8 @@ class EditVehicleForm(forms.Form):
         required=False,
         max_length=40,
     )
-    previous_reg = fields.RegField(
+    previous_reg = RegField(
         required=False,
-        max_length=24,
         help_text="Separate multiple regs with a comma (,)",
     )
 

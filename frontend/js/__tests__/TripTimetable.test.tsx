@@ -1,5 +1,8 @@
-import React from "react";
-import renderer from "react-test-renderer";
+/**
+ * @jest-environment jsdom
+ */
+
+import { render, screen } from "@testing-library/react";
 import TripTimetable, { type Trip } from "../TripTimetable";
 import type { Vehicle } from "../VehicleMarker";
 
@@ -153,23 +156,20 @@ const vehicle: Vehicle = {
   delay: 252,
 };
 
-it("shows delay", () => {
-  const component = renderer.create(<TripTimetable trip={trip} />);
+it("renders trip timetable", async () => {
+  const { container, rerender } = render(<TripTimetable trip={trip} />);
 
-  let tree = component.toJSON();
-  expect(tree).toMatchSnapshot();
+  expect(container).toMatchSnapshot();
 
-  component.update(<TripTimetable trip={trip} vehicle={vehicle} />);
-  tree = component.toJSON();
-  expect(tree).toMatchSnapshot();
+  rerender(<TripTimetable trip={trip} vehicle={vehicle} />);
+  expect(container).toMatchSnapshot();
 
-  component.update(
+  rerender(
     <TripTimetable
       trip={trip}
       vehicle={vehicle}
       highlightedStop="/stops/2900N12245"
     />,
   );
-  tree = component.toJSON();
-  expect(tree).toMatchSnapshot();
+  expect(container).toMatchSnapshot();
 });

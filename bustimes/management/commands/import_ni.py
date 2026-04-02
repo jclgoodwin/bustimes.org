@@ -15,7 +15,7 @@ from .import_atco_cif import Command as ImportAtcoCif
 
 class Command(BaseCommand):
     """
-    Check the Open Data NI (Northern Ireland) website API for any new
+    Check the Open Data NI (Northern Ireland) website CKAN API for any new
     Translink Metro and Ulsterbus data,
     and download it and call the import_atco_cif command if necessary
     """

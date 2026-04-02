@@ -20,15 +20,18 @@ class ImportNPTGTest(TestCase):
     def test_nptg(self):
         fixtures_dir = Path(__file__).resolve().parent / "fixtures"
 
-        with TemporaryDirectory() as temp_dir, vcr.use_cassette(
-            str(fixtures_dir / "nptg.yml"), decode_compressed_response=True
-        ) as cassette:
+        with (
+            TemporaryDirectory() as temp_dir,
+            vcr.use_cassette(
+                str(fixtures_dir / "nptg.yml"), decode_compressed_response=True
+            ) as cassette,
+        ):
             temp_dir_path = Path(temp_dir)
 
             with override_settings(DATA_DIR=temp_dir_path):
                 self.assertFalse((temp_dir_path / "nptg.xml").exists())
 
-                with self.assertNumQueries(565):
+                with self.assertNumQueries(586):
                     call_command("nptg_new")
 
                 source = DataSource.objects.get(name="NPTG")

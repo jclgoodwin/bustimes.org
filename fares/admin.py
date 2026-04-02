@@ -1,5 +1,6 @@
 from django.contrib import admin
-from django.contrib.postgres.aggregates import StringAgg
+from django.db.models import Value
+from django.db.models.aggregates import StringAgg
 
 from .models import (
     DataSet,
@@ -22,7 +23,9 @@ class DataSetAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         if "changelist" in request.resolver_match.view_name:
-            return queryset.annotate(noc=StringAgg("operators", ", ", distinct=True))
+            queryset = queryset.annotate(
+                noc=StringAgg("operators", Value(", "), distinct=True)
+            )
         return queryset
 
     def noc(self, obj):

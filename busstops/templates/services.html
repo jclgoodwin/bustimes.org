@@ -17,6 +17,7 @@
 {% endifchanged %}
     <li>
         <a href="{{ service.get_absolute_url }}">
+            <span class="names">
             {% for line_name in service.get_line_names %}
                 {% if line_name and line_name not in service.line_brand %}
                     {% if ' ' not in service.line_name or service.line_name not in service.description %}
@@ -29,6 +30,7 @@
             {% if service.line_brand %}
                 <strong class="name{% if service.colour_id %} colour colour-{{ service.colour_id }}{% endif %}">{{ service.line_brand }}</strong>
             {% endif %}
+            </span>
             <span class="description">
                 {{ service.description }}
             </span>

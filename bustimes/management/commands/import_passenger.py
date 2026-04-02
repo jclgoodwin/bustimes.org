@@ -15,14 +15,12 @@ from requests import Session
 from busstops.models import DataSource
 
 from ...download_utils import write_file
-from ...models import TimetableDataSource
+from ...models import TimetableDataSource, Version
 from .import_bod_timetables import clean_up, get_operator_ids, handle_file, logger
 from .import_transxchange import Command as TransXChangeCommand
 
 
-def get_version(dates, url):
-    modified = False
-
+def get_version(source, dates, url):
     filename = os.path.basename(urlparse(url).path)
     path = os.path.join(settings.DATA_DIR, filename)
 
@@ -34,36 +32,40 @@ def get_version(dates, url):
 
         if not os.path.exists(path):
             write_file(path, response)
-            modified = True
 
-    return {
-        "dates": dates,
-        "url": url,
-        "filename": filename,
-        "modified": modified,
-    }
+    return Version.objects.update_or_create(
+        {
+            "start_date": dates[0],
+            "end_date": dates[1],
+            "url": url,
+        },
+        source=source,
+        name=filename,
+    )
 
 
-def get_versions(session, url):
+def get_versions(session, source):
     versions = []
     try:
-        response = session.get(url, timeout=61)
+        response = session.get(source.url, timeout=61)
     except requests.RequestException as e:
-        logger.warning(f"{url} {e}")
+        logger.warning(f"{source.url} {e}")
         sleep(5)
         return
     if not response.ok:
-        logger.warning(f"{url} {response}")
+        logger.warning(f"{source.url} {response}")
         sleep(5)
         return
 
     soup = bs4.BeautifulSoup(response.text, "lxml")
 
     for heading in soup.find_all("h3"):
-        text = heading.text
-        assert " to " in text
+        if " to " not in heading.text:
+            continue
 
-        dates = text.removeprefix("Current Data (").removesuffix(")").split(" to ")
+        dates = (
+            heading.text.removeprefix("Current Data (").removesuffix(")").split(" to ")
+        )
         assert len(dates) == 2
 
         for element in heading.next_siblings:
@@ -73,7 +75,7 @@ def get_versions(session, url):
             assert link.text == "Download TransXChange"
             url = urljoin(response.url, link.attrs["href"])
             assert "/txc" in url
-            versions.append(get_version(dates, url))
+            versions.append(get_version(source, dates, url))
 
             break
 
@@ -92,40 +94,34 @@ class Command(BaseCommand):
         session = Session()
 
         prefix = "https://data.discoverpassenger.com/operator"
-
-        sources = DataSource.objects.filter(url__startswith=prefix)
+        suffix = "/open-data"
 
         timetable_data_sources = TimetableDataSource.objects.filter(
-            active=True, url__startswith=prefix
+            Q(url__startswith=prefix) | Q(url__endswith=suffix), active=True
         )
         if operator_name:
             timetable_data_sources = timetable_data_sources.filter(name=operator_name)
 
         for source in timetable_data_sources:
-            versions = get_versions(session, source.url)
+            versions = get_versions(session, source)
 
             if versions:
-                prefix = versions[0]["filename"].split("_")[0]
+                prefix = versions[0][0].name.split("_")[0]
                 prefix = f"{prefix}_"  # eg 'transdevblazefield_'
                 for filename in os.listdir(settings.DATA_DIR):
                     if filename.startswith(prefix):
-                        if not any(
-                            filename == version["filename"] for version in versions
-                        ):
+                        if not any(filename == version.name for version, _ in versions):
                             os.remove(os.path.join(settings.DATA_DIR, filename))
             else:
                 sleep(2)
                 continue
 
-            new_versions = any(version["modified"] for version in versions)
+            new_versions = any(modified for _, modified in versions)
 
             command.source, _ = DataSource.objects.get_or_create(
                 {"name": source.name}, url=source.url
             )
-
-            command.source.settings = {
-                version["filename"]: version["dates"] for version in versions
-            }
+            command.source.source = source
 
             if new_versions or operator_name:
                 logger.info(source.name)
@@ -138,12 +134,13 @@ class Command(BaseCommand):
                 command.route_ids = set()
                 command.garages = {}
 
-                for version in versions:  # newest first
-                    if version["modified"] or operator_name:
+                for version, modified in versions:  # newest first
+                    if modified or operator_name:
                         logger.info(version)
-                        handle_file(command, version["filename"], qualify_filename=True)
+                        command.version = version
+                        handle_file(command, version.name, qualify_filename=True)
 
-                clean_up(source, sources)
+                clean_up(source, [command.source])
 
                 operator_ids = get_operator_ids(command.source)
                 logger.info(f"  {operator_ids}")
@@ -151,24 +148,28 @@ class Command(BaseCommand):
                 foreign_operators = [o for o in operator_ids if o not in operators]
                 logger.info(f"  {foreign_operators}")
 
-            # even if there are no new versions, delete old routes from expired versions
-            old_routes = command.source.route_set
-            for version in versions:
-                old_routes = old_routes.filter(~Q(code__startswith=version["filename"]))
-            old_routes = old_routes.delete()
+            # even if there are no new versions, delete non-current
+            old_versions = source.version_set.filter(
+                ~Q(id__in=[version.id for version, _ in versions])
+            )
+            command.source.route_set.filter(
+                version__in=old_versions, service__isnull=False
+            ).update(service=None, version=None)
+            old_versions = old_versions.delete()
+
             if not (new_versions or operator_name):
-                if old_routes[0]:
+                if old_versions[0]:
                     logger.info(source.name)
                 else:
                     sleep(2)
                     continue
-            logger.info(f"  {old_routes=}")
+            logger.info(f"  {old_versions=}")
 
             # mark old services as not current
             old_services = command.source.service_set.filter(current=True, route=None)
             logger.info(f"  old services: {old_services.update(current=False)}")
 
-            if new_versions or operator_name or old_routes:
+            if new_versions or operator_name or old_versions:
                 if not (new_versions or operator_name):
                     remaining_services = command.source.service_set.filter(current=True)
                     command.service_ids = remaining_services.values_list(

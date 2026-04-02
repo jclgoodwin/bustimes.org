@@ -1,11 +1,11 @@
 """Import timetable data "fresh from the cow" """
 
-import hashlib
 import logging
-import xml.etree.cElementTree as ET
+import xml.etree.ElementTree as ET
 import zipfile
 from pathlib import Path
 from time import sleep
+from urllib.parse import parse_qs
 
 import requests
 from ciso8601 import parse_datetime
@@ -13,30 +13,45 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import DataError
 from django.db.models import Exists, OuterRef, Q
-from django.utils import timezone
 
-from busstops.models import DataSource, Operator, Service
+from busstops.models import DataSource, Service
 
 from ...download_utils import download, download_if_modified
-from ...models import Route, TimetableDataSource
-from ...utils import log_time_taken
+from ...models import Route, TimetableDataSource, Trip
+from ...utils import get_sha1, log_time_taken
 from .import_transxchange import Command as TransXChangeCommand
 
 logger = logging.getLogger(__name__)
-session = requests.Session()
 
 
-def clean_up(timetable_data_source, sources, incomplete=False):
+# delete routes from any sources that have been made inactive
+def clean_up(timetable_data_source, current_sources, incomplete=False):
+    # if there's no current data, it's probably an error, so don't automatically delete
+    if not Service.objects.filter(
+        Q(source__in=current_sources) | Q(route__source__in=current_sources),
+        current=True,
+    ).exists():
+        if Service.objects.filter(
+            current=True,
+            route__source__source=timetable_data_source,
+        ).exists():
+            logger.warning(
+                f"""{timetable_data_source} has no current data
+https://bustimes.org/admin/busstops/service/?route__source__source={timetable_data_source.id}"""
+            )
+        return
+
     service_operators = Service.operator.through.objects.filter(
         service=OuterRef("service")
     )
     operators = timetable_data_source.operators.values_list("noc", flat=True)
 
     routes = Route.objects.filter(
-        ~Q(source__in=sources),
+        ~Q(source__in=current_sources),
         Q(source__source=timetable_data_source)
         | Q(
-            ~Q(source__name__in=("L", "bustimes.org")),
+            ~Q(source__name="L"),
+            ~Q(source__url=""),
             Exists(service_operators.filter(operator__in=operators)),
             ~Exists(
                 service_operators.filter(~Q(operator__in=operators))
@@ -52,7 +67,7 @@ def clean_up(timetable_data_source, sources, incomplete=False):
     routes.update(service=None)
     # routes.delete()
     Service.objects.filter(
-        ~Q(source__name="bustimes.org"),
+        ~Q(source__url=""),
         operator__in=operators,
         current=True,
         route=None,
@@ -66,25 +81,17 @@ def is_noc(search_term: str) -> bool:
 
 def get_operator_ids(source) -> list:
     operators = (
-        Operator.objects.filter(service__route__source=source).distinct().values("noc")
+        Trip.objects.filter(route__source=source, route__service__isnull=False)
+        .values("operator_id")
+        .distinct()
     )
-    return [operator["noc"] for operator in operators]
+    return [operator["operator_id"] for operator in operators]
 
 
 def get_command():
     command = TransXChangeCommand()
     command.set_up()
     return command
-
-
-def get_sha1(path):
-    sha1 = hashlib.sha1()
-    with path.open("rb") as open_file:
-        while True:
-            data = open_file.read(65536)
-            if not data:
-                return sha1.hexdigest()
-            sha1.update(data)
 
 
 def handle_file(command, path, qualify_filename=False):
@@ -108,7 +115,7 @@ def handle_file(command, path, qualify_filename=False):
                             logger.exception(e)
     except zipfile.BadZipFile:
         # plain XML
-        with full_path.open() as open_file:
+        with full_path.open("rb") as open_file:
             if qualify_filename:
                 filename = path
             else:
@@ -118,12 +125,16 @@ def handle_file(command, path, qualify_filename=False):
             except (AttributeError, DataError) as e:
                 logger.exception(e)
 
+    if not qualify_filename:
+        command.source.upload_to_s3_etc(full_path)
+
 
 def get_bus_open_data_paramses(sources, api_key):
-    searches = [
-        source.search for source in sources if not is_noc(source.search)
-    ]  # e.g. 'TM Travel'
-    nocs = [source.search for source in sources if is_noc(source.search)]  # e.g. 'TMTL'
+    # e.g. 'noc=TMTL&adminArea=092'
+    searches = [s.search for s in sources if not is_noc(s.search)]
+
+    # e.g. 'TMTL'
+    nocs = [s.search for s in sources if is_noc(s.search)]
 
     # chunk – we will search for nocs 20 at a time
     nocses = [nocs[i : i + 20] for i in range(0, len(nocs), 20)]
@@ -134,21 +145,20 @@ def get_bus_open_data_paramses(sources, api_key):
         "limit": 100,
     }
 
-    # and search phrases one at a time
+    # and search paramses one at a time
     for search in searches:
-        yield {
-            **base_params,
-            "search": search,
-        }
+        yield base_params | parse_qs(search)
 
     for nocs in nocses:
-        yield {**base_params, "noc": ",".join(nocs)}
+        yield base_params | {"noc": ",".join(nocs)}
 
 
 def bus_open_data(api_key, specific_operator):
     assert len(api_key) == 40
 
     command = get_command()
+
+    session = requests.Session()
 
     url_prefix = "https://data.bus-data.dft.gov.uk"
     path_prefix = settings.DATA_DIR / "bod"
@@ -171,25 +181,24 @@ def bus_open_data(api_key, specific_operator):
         url = f"{url_prefix}/api/v1/dataset/"
         while url:
             response = session.get(url, params=params)
-            assert response.ok
+            response.raise_for_status()
             json = response.json()
             results = json["results"]
             if not results:
                 logger.warning(f"no results: {response.url}")
             for dataset in results:
                 dataset["modified"] = parse_datetime(dataset["modified"])
+                dataset["params"] = params
                 datasets.append(dataset)
             url = json["next"]
-            params = None
 
     all_source_ids = []
 
     for source in timetable_data_sources:
         if not is_noc(source.search):
+            params = parse_qs(source.search)
             operator_datasets = [
-                item
-                for item in datasets
-                if source.search in item["name"] or source.search in item["description"]
+                item for item in datasets if (item["params"] | params) == item["params"]
             ]
         else:
             operator_datasets = [
@@ -220,6 +229,7 @@ def bus_open_data(api_key, specific_operator):
                     name=dataset["name"], url=dataset["url"]
                 )
             command.source.name = dataset["name"]
+            command.source.description = dataset["description"]
             command.source.url = dataset["url"]
             if command.source.source_id != source.id:
                 command.source.source = source
@@ -241,7 +251,7 @@ def bus_open_data(api_key, specific_operator):
                 command.source.datetime = dataset["modified"]
 
                 with log_time_taken(logger):
-                    download(path, command.source.url)
+                    download(path, url=command.source.url, session=session)
 
                     handle_file(command, path)
 
@@ -258,20 +268,7 @@ def bus_open_data(api_key, specific_operator):
 
                 service_ids |= command.service_ids
 
-        # delete routes from any sources that have been made inactive
-        if Service.objects.filter(
-            Q(source__in=sources) | Q(route__source__in=sources),
-            current=True,
-        ).exists():
-            clean_up(source, sources, not source.complete)
-        elif Service.objects.filter(
-            current=True,
-            route__source__source=source,
-        ).exists():
-            logger.warning(
-                f"""{operators} has no current data
-https://bustimes.org/admin/busstops/service/?operator__noc__in={",".join(operators)}"""
-            )
+        clean_up(source, sources, not source.complete)
 
         command.service_ids = service_ids
         command.finish_services()
@@ -284,13 +281,17 @@ https://bustimes.org/admin/busstops/service/?operator__noc__in={",".join(operato
             url__startswith=f"{url_prefix}/timetable/",
         )
         if to_delete:
-            logger.info(to_delete)
+            logger.info(f"{to_delete=}")
             for source in to_delete:  # one by one to use less memory
-                source.delete()
+                logger.info(source.calendar_set.exclude(trip=None).update(source=None))
+                logger.info(source.stoppoint_set.all().delete())
+                logger.info(source.delete())
 
 
 def ticketer(specific_operator=None):
     command = get_command()
+
+    session = requests.Session()
 
     base_dir = settings.DATA_DIR / "ticketer"
 
@@ -326,7 +327,7 @@ def ticketer(specific_operator=None):
             sleep(2)
             need_to_sleep = False
 
-        modified, last_modified = download_if_modified(path, command.source)
+        modified, last_modified = download_if_modified(path, command.source, session)
 
         if (
             specific_operator
@@ -337,17 +338,19 @@ def ticketer(specific_operator=None):
 
             sha1 = get_sha1(path)
 
-            existing = DataSource.objects.filter(url__contains=".gov.uk", sha1=sha1)
-            if existing:
+            command.source.sha1 = sha1
+            command.source.datetime = last_modified
+
+            if existing := DataSource.objects.filter(
+                url__contains=".gov.uk", sha1=sha1
+            ):
                 # hash matches that hash of some BODS data
+                # (I think this is impossible these days)
                 logger.info(f"  skipping, {sha1=} matches {existing=}")
             else:
                 command.region_id = source.region_id
                 command.service_ids = set()
                 command.route_ids = set()
-
-                # for "end date is in the past" warnings
-                command.source.datetime = timezone.now()
 
                 with log_time_taken(logger):
                     handle_file(command, path)
@@ -358,8 +361,6 @@ def ticketer(specific_operator=None):
 
                     command.finish_services()
 
-            command.source.sha1 = sha1
-            command.source.datetime = last_modified
             command.source.save()
 
             logger.info(
@@ -373,15 +374,13 @@ def ticketer(specific_operator=None):
 def do_stagecoach_source(command, last_modified, filename, nocs):
     logger.info(f"{command.source.url} {last_modified}")
 
-    # avoid importing old data
-    command.source.datetime = timezone.now()
+    command.source.datetime = last_modified
 
     with log_time_taken(logger):
         handle_file(command, filename)
 
         command.mark_old_services_as_not_current()
 
-    command.source.datetime = last_modified
     command.source.save()
 
     logger.info(
@@ -397,8 +396,12 @@ def do_stagecoach_source(command, last_modified, filename, nocs):
 def stagecoach(specific_operator=None):
     command = get_command()
 
+    session = requests.Session()
+
     timetable_data_sources = TimetableDataSource.objects.filter(
-        url__startswith="https://opendata.stagecoachbus.com", active=True
+        Q(url__startswith="https://opendata.stagecoachbus.com/")
+        | Q(url__endswith="/TfGMtxcnew.zip"),
+        active=True,
     )
     if specific_operator:
         timetable_data_sources = timetable_data_sources.filter(
@@ -424,7 +427,7 @@ def stagecoach(specific_operator=None):
             {"name": source.name}, url=source.url
         )
 
-        modified, last_modified = download_if_modified(path, command.source)
+        modified, last_modified = download_if_modified(path, command.source, session)
         sha1 = get_sha1(path)
 
         if command.source.datetime != last_modified:

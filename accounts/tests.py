@@ -2,51 +2,58 @@ from http import HTTPStatus
 from unittest.mock import patch
 
 from django.core import mail
-from django.test import TransactionTestCase, override_settings
+from django.test import TransactionTestCase, override_settings, Client
 
-from .models import User
+from .models import User, Invitation
 
 
 class RegistrationTest(TransactionTestCase):
-    @override_settings(DISABLE_REGISTRATION=True)
-    def test_registration_disabled(self):
-        with self.assertNumQueries(0):
-            response = self.client.post("/accounts/register/")
-        self.assertContains(
-            response, "Registration is currently closed", status_code=503
-        )
-
-    @override_settings(DISABLE_REGISTRATION=False)
     def test_blank_email(self):
         with self.assertNumQueries(0):
             response = self.client.post("/accounts/register/")
         self.assertContains(response, "This field is required")
 
     @override_settings(
-        DISABLE_REGISTRATION=False,
+        # use an old, insecure password hasher, because it's fast
         PASSWORD_HASHERS=["django.contrib.auth.hashers.MD5PasswordHasher"],
     )
     @patch("turnstile.fields.TurnstileField.validate", return_value=True)
     def test_registration(self, mocked_validate):
-        response = self.client.get("/accounts/register/")
-        self.assertContains(response, "Email address")
+        dummy_uuid = "b4fcbc02-1920-4d0d-b07b-756db0cb2cd0"
 
-        # IP address banned:
-        naughty_user = User.objects.create(trusted=False, ip_address="6.6.6.6")
+        response = self.client.get(f"/accounts/register/?invite_code={dummy_uuid}")
+        self.assertContains(response, "Email address")
+        self.assertContains(response, dummy_uuid)
+
+        # no invite code
         with self.assertNumQueries(1):
-            # create new account
             response = self.client.post(
                 "/accounts/register/",
-                {"email": "rufus@herring.pizza", "turnstile": "foo"},
-                headers={"CF-Connecting-IP": "6.6.6.6"},
+                {
+                    "email": "rufus@herring.pizza",
+                    "turnstile": "foo",
+                    "invite_code": dummy_uuid,
+                },
             )
-            self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+        self.assertContains(response, "is not valid or has expired")
+
+        invitation = Invitation.objects.create(
+            uuid=dummy_uuid, expires_at="3000-01-01 00:00:00+00:00"
+        )
+        self.assertEqual(
+            invitation.get_absolute_url(),
+            f"/accounts/register/?invite_code={dummy_uuid}",
+        )
 
         # create new account successfully:
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(3):
             response = self.client.post(
                 "/accounts/register/",
-                {"email": "rufus@herring.pizza", "turnstile": "foo"},
+                {
+                    "email": "rufus@herring.pizza",
+                    "turnstile": "foo",
+                    "invite_code": dummy_uuid,
+                },
                 headers={"CF-Connecting-IP": "1.2.3.4"},
             )
         self.assertContains(response, "Check your email (rufus@herring.pizza")
@@ -54,15 +61,18 @@ class RegistrationTest(TransactionTestCase):
         self.assertIn("a bustimes.org account", mail.outbox[0].body)
 
         user = User.objects.get(email="rufus@herring.pizza")
-        self.assertEqual(user.ip_address, "1.2.3.4")
         user.is_active = False
         user.save()
 
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(3):
             # reactivate existing account
             response = self.client.post(
                 "/accounts/register/",
-                {"email": "RUFUS@HeRRInG.piZZa", "turnstile": "foo"},
+                {
+                    "email": "RUFUS@HeRRInG.piZZa",
+                    "turnstile": "foo",
+                    "invite_code": dummy_uuid,
+                },
             )
 
         user.refresh_from_db()
@@ -71,10 +81,14 @@ class RegistrationTest(TransactionTestCase):
         self.assertIs(True, user.is_active)
         self.assertEqual(str(user), str(user.id))
 
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(3):
             response = self.client.post(
                 "/accounts/register/",
-                {"email": "ROY@HotMail.com", "turnstile": "foo"},
+                {
+                    "email": "ROY@HotMail.com",
+                    "turnstile": "foo",
+                    "invite_code": dummy_uuid,
+                },
             )
 
         user = User.objects.get(email__iexact="ROY@HotMail.com")
@@ -85,14 +99,24 @@ class RegistrationTest(TransactionTestCase):
         self.assertEqual(3, len(mail.outbox))
 
         # username (email address) should be case insensitive
-        user.set_password("swim green twenty eggs")
+        dummy_password = "swim green twenty eggs"
+        user.set_password(dummy_password)
         user.save()
+        data = {"username": "roY@hoTmail.com", "password": dummy_password}
         with self.assertNumQueries(9):
-            response = self.client.post(
-                "/accounts/login/",
-                {"username": "roY@hoTmail.com", "password": "swim green twenty eggs"},
-            )
+            response = self.client.post("/accounts/login/", data)
             self.assertEqual(302, response.status_code)
+
+        # test CSDRF middeware
+        csrf_client = Client(enforce_csrf_checks=True)
+        with self.assertNumQueries(0), self.assertLogs():
+            response = csrf_client.post("/accounts/login/", data)
+        self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
+
+        csrf_client.force_login(user)
+        with self.assertNumQueries(2), self.assertLogs():
+            response = csrf_client.post("/accounts/login/", data)
+        self.assertEqual(302, response.status_code)
 
     def test_update_user(self):
         super_user = User.objects.create(
@@ -109,6 +133,9 @@ class RegistrationTest(TransactionTestCase):
         self.client.force_login(super_user)
 
         response = self.client.get(other_user.get_absolute_url())
+
+        self.assertContains(response, f'"/vehicles/edits?user={other_user.id}"')
+        self.assertContains(response, f'"/vehicles/edits?user={other_user.id}&amp;')
 
         self.assertContains(response, "/change/")
 
@@ -151,10 +178,18 @@ class RegistrationTest(TransactionTestCase):
         other_user.refresh_from_db()
         self.assertEqual(other_user.username, "kenton_schweppes")
 
-        response = self.client.post(other_user.get_absolute_url(), {"name": "josh"})
-        self.assertContains(
-            response, '<ul class="errorlist"><li>Username taken</li></ul>'
+        # try setting a looong username:
+        response = self.client.post(
+            other_user.get_absolute_url(),
+            {"name": "Hubert Blaine Wolfeschlegelsteinhausenbergerdorff Sr."},
         )
+        self.assertContains(
+            response, ">Ensure this value has at most 50 characters (it has 53).</"
+        )
+
+        # try copying someone else's username
+        response = self.client.post(other_user.get_absolute_url(), {"name": "josh"})
+        self.assertContains(response, ">Username taken<")
 
         self.assertContains(response, "That's you!")
 
@@ -164,13 +199,13 @@ class RegistrationTest(TransactionTestCase):
 
         # user can delete own account:
 
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(6):
             self.client.post(other_user.get_absolute_url(), {"confirm_delete": False})
             # confirm delete not ticked
         other_user.refresh_from_db()
         self.assertTrue(other_user.is_active)
 
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(7):
             self.client.post(other_user.get_absolute_url(), {"confirm_delete": "on"})
         other_user.refresh_from_db()
         self.assertFalse(other_user.is_active)

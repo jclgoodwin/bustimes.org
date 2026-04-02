@@ -1474,6 +1474,7 @@
       <OperatorCode>MEGA</OperatorCode>
       <OperatorShortName>Megabus</OperatorShortName>
       <OperatorNameOnLicence>Stagecoach Megabus</OperatorNameOnLicence>
+      <Note>You must book this service in advance via the operator's website or telephone</Note>
     </Operator>
   </Operators>
   <Services>

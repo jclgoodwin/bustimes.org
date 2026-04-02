@@ -2,8 +2,7 @@
 
 import datetime
 
-from django.conf import settings
-from django.db.models import Prefetch, prefetch_related_objects
+from django.db.models import Prefetch, prefetch_related_objects, Q
 from django.utils import timezone
 
 from busstops.models import Service, SIRISource, StopPoint
@@ -14,7 +13,6 @@ from vehicles.tasks import log_vehicle_journey
 
 from . import avl, gtfsr
 from .sources import (
-    EdinburghDepartures,
     SiriSmDepartures,
     TflDepartures,
     TimetableDepartures,
@@ -109,9 +107,9 @@ def get_departures(stop, services, when) -> dict:
     ).select_related("source")
     departures = None
 
-    gtfsr_available = any(
-        route.source.name == "Realtime Transport Operators" for route in routes
-    )
+    ntaie = any(route.source.name == "Realtime Transport Operators" for route in routes)
+    ember = any(route.source.name == "Ember" for route in routes)
+    gtfsr_available = ntaie or ember
 
     if not when and live_departures is None and not gtfsr_available:
         vehicle_locations = avl.get_tracking(stop, services)
@@ -126,6 +124,7 @@ def get_departures(stop, services, when) -> dict:
                 ).get_departures()
 
                 if by_trip:
+                    # prefetch stoptimes, for calculating delay
                     prefetch_related_objects(
                         [
                             departure["stop_time"].trip
@@ -185,7 +184,7 @@ def get_departures(stop, services, when) -> dict:
     one_hour_ago = now - one_hour
 
     if departures and gtfsr_available:
-        gtfsr.update_stop_departures(departures)
+        gtfsr.update_stop_departures(departures, "ember" if ember else "ntaie")
 
     if when or live_departures or type(stop) is not StopPoint:
         pass
@@ -200,28 +199,18 @@ def get_departures(stop, services, when) -> dict:
     ):
         live_rows = None
 
-        operators = set()
+        operator_names: set[str] = set()
         for service in services:
             if service.operators:
-                operators.update(service.operators)
+                operator_names.update(service.operators)
 
         if departures:
-            # Edinburgh
-            if stop.naptan_code and not operators.isdisjoint(settings.TFE_OPERATORS):
-                live_rows = EdinburghDepartures(stop, services, now).get_departures()
-                if live_rows:
-                    update_trip_ids(departures, live_rows)
-                    live_services = {r["service"] for r in live_rows}
-                    departures = [
-                        d for d in departures if d["service"] not in live_services
-                    ]
-
             source = None
 
-            # Aberdeen, Glasgow, Bristol?
             if stop.admin_area_id:
                 for possible_source in SIRISource.objects.filter(
-                    admin_areas=stop.admin_area_id
+                    Q(admin_areas=stop.admin_area_id)
+                    | Q(operators__service__in=list(services))
                 ):
                     if not possible_source.is_poorly():
                         source = possible_source
@@ -233,7 +222,7 @@ def get_departures(stop, services, when) -> dict:
             if live_rows:
                 blend(departures, live_rows)
 
-                if source and source.name in ("Aberdeen", "Pembrokeshire", "SPT"):
+                if source:
                     # Record some information about the vehicle and journey,
                     # for enthusiasts,
                     # because the source doesn't support vehicle locations

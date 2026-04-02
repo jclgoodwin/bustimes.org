@@ -3,27 +3,30 @@
 import datetime
 import logging
 import re
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlparse
 
 import yaml
-from autoslug import AutoSlugField
+from botocore.exceptions import NoCredentialsError
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models import Extent
 from django.contrib.gis.geos import Polygon
-from django.contrib.postgres.aggregates import ArrayAgg, StringAgg
+from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.core.cache import cache
-from django.db.models import Q
-from django.db.models.functions import Coalesce, Now, Upper
+from django.db.models import Q, Value
+from django.db.models.aggregates import StringAgg
+from django.db.models.functions import Coalesce, Concat, Upper
 from django.urls import reverse
 from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
+from timezone_field import TimeZoneField
 
-from bustimes.models import Route, StopTime, TimetableDataSource, Trip
-from bustimes.timetables import Timetable, get_stop_usages
+from bustimes.models import Route, TimetableDataSource, StopTime
+from bustimes.timetables import Timetable
 from bustimes.utils import get_descriptions
+from .fields import AutoSlugField
 
 TIMING_STATUS_CHOICES = (
     ("PPT", "Principal point"),
@@ -76,7 +79,7 @@ class AdminArea(models.Model):
     """
 
     id = models.PositiveSmallIntegerField(primary_key=True)
-    atco_code = models.CharField(max_length=3)
+    atco_code = models.CharField(verbose_name="ATCO code", max_length=3)
     name = models.CharField(max_length=48)
     short_name = models.CharField(max_length=48, blank=True)
     country = models.CharField(max_length=3, blank=True)
@@ -133,12 +136,7 @@ class Locality(SearchMixin, models.Model):
     name = models.CharField(max_length=48)
     short_name = models.CharField(max_length=48, blank=True)
     qualifier_name = models.CharField(max_length=48, blank=True)
-    slug = AutoSlugField(
-        always_update=False,
-        populate_from="get_qualified_name",
-        editable=True,
-        unique=True,
-    )
+    slug = AutoSlugField(populate_from="get_qualified_name", editable=True, unique=True)
     admin_area = models.ForeignKey(AdminArea, models.CASCADE)
     district = models.ForeignKey(District, models.SET_NULL, null=True, blank=True)
     parent = models.ForeignKey("self", models.SET_NULL, null=True, blank=True)
@@ -199,6 +197,7 @@ class StopArea(models.Model):
 
 class DataSource(models.Model):
     name = models.CharField(max_length=255, db_index=True)
+    description = models.CharField(blank=True)
     url = models.URLField(blank=True, db_index=True)
     datetime = models.DateTimeField(null=True, blank=True)
     sha1 = models.CharField(max_length=40, null=True, blank=True, db_index=True)
@@ -206,6 +205,7 @@ class DataSource(models.Model):
     source = models.ForeignKey(
         TimetableDataSource, models.CASCADE, null=True, blank=True
     )
+    # for HTTP "if-modified-since" and "if-none-match":
     last_modified = models.DateTimeField(null=True, blank=True)
     etag = models.CharField(max_length=255, blank=True)
 
@@ -222,43 +222,80 @@ class DataSource(models.Model):
         return self.name.split("_")[0]
 
     def get_nice_url(self):
+        if not self.url:
+            return
+
+        parsed_url = urlparse(self.url)
+
         # BODS
-        if self.url.startswith("https://data.bus-data.dft.gov.uk"):
+        if parsed_url.hostname.endswith(".bus-data.dft.gov.uk"):
             return self.url.replace("download/", "")
         # Passenger
-        if "open-data" in self.url or "data.discover" in self.url:
+        if (
+            parsed_url.path == "/open-data"
+            or parsed_url.hostname == "data.discoverpassenger.com"
+        ):
             return self.url
-        # Stagecoach
-        if "stagecoach" in self.url:
-            return "https://www.stagecoachbus.com/open-data"
+        match parsed_url.hostname:
+            case "opendata.stagecoachbus.com":
+                return "https://www.stagecoachbus.com/open-data"
+            case "www.transportforireland.ie":
+                return f"https://www.transportforireland.ie/transitData/PT_Data.html#:~:text={self.name}"
+
+    def is_tnds(self):
+        match self.name:
+            case (
+                "L"
+                | "GB"
+                | "Y"
+                | "SW"
+                | "SE"
+                | "EM"
+                | "EA"
+                | "WM"
+                | "S"
+                | "NE"
+                | "NW"
+                | "W"
+                | "IM"
+            ):
+                return True
+        return False
 
     def credit(self, route=None):
         url = self.get_nice_url()
         text = None
         date = self.datetime
 
-        if self.name == "L":
-            text = "Transport for London"
-        elif self.name == "GB":
-            url = "https://data.bus-data.dft.gov.uk/coach/download"
-            text = "the Bus Open Data Service (BODS)"
-        elif "tnds" in self.url:
-            url = "https://www.travelinedata.org.uk/"
-            text = "the Traveline National Dataset (TNDS)"
+        if self.is_tnds():
+            match self.name:
+                case "L":
+                    text = "Transport for London"
+                case "GB":
+                    url = "https://data.bus-data.dft.gov.uk/coach/download"
+                    text = "the Bus Open Data Service (BODS)"
+                case _:
+                    url = "https://www.travelinedata.org.uk/"
+                    text = "the Traveline National Dataset (TNDS)"
         elif url:
             text = self.get_nice_name()
-            if url and "bus-data.dft.gov.uk" in url:
+            hostname = urlparse(url).hostname
+            if hostname.endswith(".bus-data.dft.gov.uk"):
                 text = f"{text}/Bus Open Data Service (BODS)"
-        elif "transportforireland" in self.url:
-            url = f"https://www.transportforireland.ie/transitData/PT_Data.html#:~:text={self.name}"
-            text = "Transport for Ireland"
-        elif self.url.startswith("https://opendata.ticketer.com/uk/"):
+            elif hostname == "www.transportforireland.ie":
+                text = "National Transport Authority"
+        elif urlparse(self.url).hostname == "opendata.ticketer.com":
             text = self.url
         elif self.name == "MET" or self.name == "ULB":
             url = self.url
             text = "Translink open data"
         else:
             text = self.name
+
+        if text == "FlixBus":
+            url = "https://transport.data.gouv.fr/datasets/flixbus-horaires-theoriques-du-reseau-europeen-1"
+        elif text == "TfGM":
+            url = "https://www.data.gov.uk/dataset/c3ca6469-7955-4a57-8bfc-58ef2361b797/gm-public-transport-schedules-gtfs"
 
         if route:
             # get date from 'bluestar_1611829131.zip/Bluestar 31 01 2021_SER2.xml'
@@ -286,6 +323,18 @@ class DataSource(models.Model):
             return True
         return False
 
+    def get_s3_path(self):
+        return f"source/{self.id}/{self.datetime.isoformat()}"
+
+    def upload_to_s3_etc(self, path):
+        import boto3
+
+        client = boto3.client("s3", endpoint_url="https://ams3.digitaloceanspaces.com")
+        try:
+            client.upload_file(path, "bustimes-data", self.get_s3_path())
+        except NoCredentialsError:
+            pass
+
 
 class StopPoint(models.Model):
     """The smallest type of geographical point.
@@ -293,8 +342,12 @@ class StopPoint(models.Model):
 
     source = models.ForeignKey(DataSource, models.DO_NOTHING, null=True, blank=True)
 
-    atco_code = models.CharField(max_length=36, primary_key=True)
-    naptan_code = models.CharField(max_length=16, null=True, blank=True)
+    atco_code = models.CharField(
+        verbose_name="ATCO code", max_length=36, primary_key=True
+    )
+    naptan_code = models.CharField(
+        verbose_name="NaPTAN code", max_length=16, null=True, blank=True
+    )
 
     common_name = models.CharField(max_length=48)
     short_common_name = models.CharField(max_length=48, blank=True)
@@ -305,6 +358,7 @@ class StopPoint(models.Model):
 
     latlong = models.PointField(null=True, blank=True)
 
+    parents = models.ManyToManyField("self", blank=True)
     stop_area = models.ForeignKey(StopArea, models.SET_NULL, null=True, blank=True)
     locality = models.ForeignKey("Locality", models.SET_NULL, null=True, blank=True)
     suburb = models.CharField(max_length=48, blank=True)
@@ -312,6 +366,11 @@ class StopPoint(models.Model):
     locality_centre = models.BooleanField(null=True)
 
     heading = models.PositiveIntegerField(null=True, blank=True)
+
+    timezone = TimeZoneField(null=True, blank=True)
+
+    description = models.CharField(null=True, blank=True)
+    notes = models.CharField(null=True, blank=True)
 
     BEARING_CHOICES = (
         ("N", "north \u2191"),
@@ -439,7 +498,7 @@ class StopPoint(models.Model):
             )
             if self.common_name and locality_name.endswith(self.common_name):
                 return locality_name.replace(self.common_name, name)  # Cardiff Airport
-            if slugify(locality_name) not in slugify(self.common_name):
+            if slugify(locality_name).split("-", 1)[0] not in slugify(self.common_name):
                 if self.indicator.lower() in self.prepositions:
                     indicator = self.indicator.lower()
                     if not short:
@@ -501,6 +560,9 @@ class OperatorGroup(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse("group_vehicles", args=(self.slug,))
+
 
 class OperatorManager(models.Manager):
     def with_documents(self):
@@ -519,9 +581,8 @@ class Operator(SearchMixin, models.Model):
     name = models.CharField(max_length=100, db_index=True)
     qualifier_name = models.CharField(max_length=100, blank=True)
     aka = models.CharField(max_length=100, blank=True)
-    slug = AutoSlugField(populate_from=str, unique=True, editable=True)
+    slug = AutoSlugField(populate_from=str, editable=True, unique=True)
     vehicle_mode = models.CharField(max_length=48, blank=True)
-    parent = models.CharField(max_length=48, blank=True, db_index=True)
     group = models.ForeignKey(OperatorGroup, models.SET_NULL, null=True, blank=True)
     siblings = models.ManyToManyField("self", blank=True)
     region = models.ForeignKey(Region, models.SET_NULL, null=True, blank=True)
@@ -553,6 +614,9 @@ class Operator(SearchMixin, models.Model):
 
     def get_absolute_url(self):
         return reverse("operator_detail", args=(self.slug or self.noc,))
+
+    def get_vehicles_url(self):
+        return reverse("operator_vehicles", args=(self.slug,))
 
     def mode(self):
         return self.vehicle_mode
@@ -610,14 +674,13 @@ class StopUsage(models.Model):
 
     service = models.ForeignKey("Service", models.CASCADE)
     stop = models.ForeignKey(StopPoint, models.CASCADE)
-    direction = models.CharField(max_length=8)
-    order = models.PositiveIntegerField()
-    timing_status = models.CharField(max_length=3, choices=TIMING_STATUS_CHOICES)
+    order = models.PositiveSmallIntegerField()
+    timing_point = models.BooleanField(default=True)
+    inbound = models.BooleanField(default=False)
+    line_name = models.CharField()
 
     class Meta:
-        ordering = ("-direction", "order")  # outbound then inbound
-
-    is_minor = StopTime.is_minor
+        ordering = ("inbound", "order")
 
 
 class ServiceColour(models.Model):
@@ -642,28 +705,28 @@ class ServiceColour(models.Model):
 class ServiceManager(models.Manager):
     def with_documents(self):
         vector = SearchVector(
-            StringAgg("route__line_name", delimiter=" ", distinct=True, default=""),
+            StringAgg("route__line_name", Value(" "), distinct=True, default=""),
             weight="A",
+            config="english",
         )
         vector += SearchVector("line_brand", weight="A", config="english")
         vector += SearchVector("description", weight="B", config="english")
         vector += SearchVector(
-            StringAgg("operator__noc", delimiter=" ", default=""),
-            weight="B",
-        )
-        vector += SearchVector(
-            StringAgg("operator__name", delimiter=" ", default=""),
+            StringAgg(
+                Concat("operator__noc", Value(" "), "operator__name"),
+                Value(" "),
+                default="",
+            ),
             weight="B",
             config="english",
         )
         vector += SearchVector(
-            StringAgg("stops__locality__name", delimiter=" ", default=""),
+            StringAgg(
+                Concat("stops__locality__name", Value(" "), "stops__common_name"),
+                Value(" "),
+                default="",
+            ),
             weight="C",
-            config="english",
-        )
-        vector += SearchVector(
-            StringAgg("stops__common_name", delimiter=" ", default=""),
-            weight="D",
             config="english",
         )
         return self.get_queryset().annotate(document=vector)
@@ -716,13 +779,7 @@ class Service(models.Model):
 
     def __str__(self):
         line_name = self.get_line_name()
-        description = None
-        if hasattr(self, "direction") and hasattr(
-            self, f"{self.direction}_description"
-        ):
-            description = getattr(self, f"{self.direction}_description")
-        if not description or description.lower() == self.direction:
-            description = self.description
+        description = self.description
         if description == line_name:
             description = None
         elif (
@@ -783,7 +840,7 @@ class Service(models.Model):
             return ("", number, prefix, suffix)
         return (prefix, number, suffix)
 
-    def get_tfl_url(self):
+    def get_tfl_url(self) -> str:
         return f"https://tfl.gov.uk/bus/timetable/{self.line_name}/"
 
     def get_trapeze_link(self):
@@ -792,17 +849,16 @@ class Service(models.Model):
         query = (("serviceId", self.service_code.replace("_", " ")),)
         return f"https://www.{domain}/timetables?{urlencode(query)}", name
 
-    def get_traveline_links(self, date=None):
+    def get_traveline_links(self, date=None) -> list:
         if not self.source_id:
-            return
+            return []
 
         if (
             self.source.name == "S"
             and "_" in self.service_code
             and not self.service_code.startswith("S_")
         ):
-            yield self.get_trapeze_link()
-            return
+            return [self.get_trapeze_link()]
 
         if self.source.name == "W" or self.region_id == "W":
             for service_code in self.servicecode_set.filter(scheme="Traveline Cymru"):
@@ -812,61 +868,16 @@ class Service(models.Model):
                     ("timetable_key", service_code.code),
                 )
                 url = "https://www.traveline.cymru/timetables/?" + urlencode(query)
-                yield (url, "Timetable on the Traveline Cymru website")
-            return
+                return [(url, "Timetable on the Traveline Cymru website")]
 
-        base_url = (
-            "https://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST?"
-        )
-
-        base_query = [("command", "direct"), ("outputFormat", 0)]
-
-        if (
-            self.source.name in {"SE", "SW", "EM", "WM", "EA", "L"}
-            or ".gov." in self.source.url
+        elif (
+            self.source.name == "L"
+            and self.servicecode_set.filter(scheme="TfL").exists()
         ):
-            if self.servicecode_set.filter(scheme="TfL").exists():
-                yield (
-                    self.get_tfl_url(),
-                    "Timetable on the Transport for London website",
-                )
-                return
-
-            if self.service_code.startswith("tfl_") or self.service_code.startswith(
-                "nrc_"
-            ):
-                return
-
-            try:
-                routes = self.route_set.filter(
-                    Q(end_date__gte=Now()) | Q(end_date=None),
-                    code__contains="swe_",
-                ).order_by("start_date")
-                for i, route in enumerate(routes):
-                    parts = route.code.split("-")
-                    net, line = parts[0].split("_")
-                    if not net.isalpha() or not net.islower():
-                        break
-                    line_ver = parts[4][:-4]
-                    line = line.zfill(2) + parts[1].zfill(3)
-
-                    query = [
-                        ("line", line),
-                        ("lineVer", line_ver),
-                        ("net", net),
-                        ("project", parts[3]),
-                    ]
-                    if parts[2] != "_":
-                        query.append(("sup", parts[2]))
-
-                    text = "Timetable"
-                    if i:  # probably a future-dated version
-                        text = f"{text} from {route.start_date:%-d %B}"
-                    text = f"{text} on the Traveline South West website"
-
-                    yield (f"{base_url}{urlencode(query + base_query)}", text)
-            except (ValueError, IndexError):
-                pass
+            return [
+                (self.get_tfl_url(), "Timetable on the Transport for London website"),
+            ]
+        return []
 
     def get_similar_services(self):
         ids = self.link_from.values("to_service").union(
@@ -893,6 +904,19 @@ class Service(models.Model):
             ).values("service")
         )
 
+        if ":" not in self.service_code:
+            if match := re.match(r"^(?P<number>\d+)[A-Za-z]?$", self.line_name):
+                number = match.group("number")
+                ids = ids.union(
+                    Service.objects.filter(
+                        ~Q(id=self.id),
+                        source=self.source_id,
+                        current=True,
+                        operator__service=self,
+                        line_name__regex=rf"^{number}[A-Za-z]?$",
+                    ).values("id")
+                )
+
         services = (
             Service.objects.with_line_names()
             .filter(id__in=ids, current=True)
@@ -917,40 +941,35 @@ class Service(models.Model):
     ):
         """Given a Service, return a Timetable"""
 
-        if self.region_id == "NI" or self.source and "ireland" in self.source.url:
-            timetable = Timetable(
-                self.route_set, day, calendar_id=calendar_id, detailed=detailed
-            )
-        else:
+        routes = self.route_set.all()
+
+        if line_names:
             if also_services:
                 routes = Route.objects.filter(service__in=[self] + also_services)
-            else:
-                routes = self.route_set.all()
 
-            if line_names:
-                line_name_query = Q()
-                for line_name in line_names:
-                    if ":" in line_name:
-                        service_id, line_name = line_name.split(":", 1)
-                        line_name_query |= Q(service=service_id, line_name=line_name)
-                    else:
-                        line_name_query |= Q(line_name=line_name)
-                routes = routes.filter(line_name_query)
+            line_name_query = Q()
+            for line_name in line_names:
+                if ":" in line_name:
+                    service_id, line_name = line_name.split(":", 1)
+                    line_name_query |= Q(service=service_id, line_name=line_name)
+                else:
+                    line_name_query |= Q(line_name=line_name)
+            routes = routes.filter(line_name_query)
 
-            operators = self.operator.all()
-            try:
-                timetable = Timetable(
-                    routes,
-                    day,
-                    calendar_id=calendar_id,
-                    detailed=detailed,
-                    operators=operators,
-                )
-            except (IndexError, UnboundLocalError, AssertionError) as e:
-                logger = logging.getLogger(__name__)
+        operators = self.operator.all()
+        try:
+            timetable = Timetable(
+                routes,
+                day,
+                calendar_id=calendar_id,
+                detailed=detailed,
+                operators=operators,
+            )
+        except (IndexError, UnboundLocalError, AssertionError) as e:
+            logger = logging.getLogger(__name__)
 
-                logger.exception(e)
-                return
+            logger.exception(e)
+            return
 
         cache_key = [
             str(self.id),
@@ -975,43 +994,74 @@ class Service(models.Model):
         return timetable
 
     def do_stop_usages(self):
-        outbound, inbound = get_stop_usages(Trip.objects.filter(route__service=self))
+        existing = self.stopusage_set.order_by("id")
 
-        existing = self.stopusage_set.all()
-
+        stop_times = StopTime.objects.filter(
+            trip__route__service=self, stop__isnull=False
+        )
+        stop_times = stop_times.distinct(
+            "trip__inbound", "trip__route__line_name", "stop_id"
+        ).order_by("trip__inbound", "trip__route__line_name", "stop_id")
+        stop_times = stop_times.values(
+            "trip__route__line_name",
+            "trip__inbound",
+            "sequence",
+            "stop_id",
+            "timing_status",
+        )
         stop_usages = [
+            (
+                st["trip__route__line_name"],
+                st["trip__inbound"],
+                st["sequence"] or 0,
+                st["stop_id"],
+                st["timing_status"],
+            )
+            for st in stop_times
+        ]
+        stop_usages.sort()
+
+        proposed = [
             StopUsage(
                 service=self,
-                stop_id=stop_time.stop_id,
-                timing_status=stop_time.timing_status,
-                direction="outbound",
+                stop_id=stop_id,
+                timing_point=(timing_status == "PTP"),
+                inbound=inbound,
                 order=i,
+                line_name=line_name,
             )
-            for i, stop_time in enumerate(outbound)
-        ] + [
-            StopUsage(
-                service=self,
-                stop_id=stop_time.stop_id,
-                timing_status=stop_time.timing_status,
-                direction="inbound",
-                order=i,
-            )
-            for i, stop_time in enumerate(inbound)
+            for i, (
+                line_name,
+                inbound,
+                sequence,
+                stop_id,
+                timing_status,
+            ) in enumerate(stop_usages)
         ]
 
         existing_hash = [
-            (su.stop_id, su.timing_status, su.direction, su.order) for su in existing
+            (su.stop_id, su.timing_point, su.inbound, su.order, su.line_name)
+            for su in existing
         ]
         proposed_hash = [
-            (su.stop_id, su.timing_status, su.direction, su.order) for su in stop_usages
+            (su.stop_id, su.timing_point, su.inbound, su.order, su.line_name)
+            for su in proposed
         ]
 
         if existing_hash != proposed_hash:
-            if existing:
-                existing.delete()
-            StopUsage.objects.bulk_create(stop_usages)
-
-        return stop_usages
+            if len(existing_hash) >= len(proposed_hash):  # reuse ids
+                for proposed_su, existing_su in zip(proposed, existing):
+                    proposed_su.id = existing_su.id
+                StopUsage.objects.bulk_update(
+                    proposed,
+                    ["stop_id", "timing_point", "inbound", "order", "line_name"],
+                )
+                if len(existing_hash) > len(proposed_hash):
+                    existing.filter(~Q(id__in=[su.id for su in proposed])).delete()
+            else:
+                if existing_hash:
+                    existing.delete()
+                StopUsage.objects.bulk_create(proposed)
 
     def update_description(self):
         routes = self.route_set.all()

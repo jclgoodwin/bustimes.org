@@ -2,7 +2,7 @@
 
 # Usage:
 #
-#     poetry run ./import.sh username password
+#     ./import.sh username password
 #
 # Where 'username' and 'password' are your username and password for the
 # Traveline National Dataset FTP server

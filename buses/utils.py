@@ -2,7 +2,7 @@ import re
 from functools import wraps
 
 from django.contrib.auth.models import AnonymousUser
-from django.middleware.cache import FetchFromCacheMiddleware, UpdateCacheMiddleware
+from django.conf import settings
 
 
 def minify(template_source):
@@ -12,27 +12,27 @@ def minify(template_source):
     return template_source
 
 
-def cache_page(max_age):
+def cdn_cache_control(max_age):
     def _cache_controller(view_func):
-        fetch_from_cache_middleware = FetchFromCacheMiddleware(view_func)
-        update_cache_middleware = UpdateCacheMiddleware(view_func)
-
         @wraps(view_func)
         def _cache_controlled(request, *args, **kw):
             # anonymise request
             request.user = AnonymousUser
 
-            response = fetch_from_cache_middleware.process_request(request)
-            if response:
-                return response
-
             response = view_func(request, *args, **kw)
-
-            update_cache_middleware.cache_timeout = max_age
-            update_cache_middleware.process_response(request, response)
+            response["CDN-Cache-Control"] = (
+                f"public, max-age={max_age}, stale-if-error={max_age}"
+            )
 
             return response
 
         return _cache_controlled
 
     return _cache_controller
+
+
+def show_toolbar(request):
+    if request.META.get("REMOTE_ADDR") in settings.INTERNAL_IPS:
+        return True
+    if request.META.get("HTTP_DO_CONNECTING_IP") in settings.INTERNAL_IPS:
+        return True

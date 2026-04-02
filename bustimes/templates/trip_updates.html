@@ -14,16 +14,14 @@
 
 <p>{{ operators }}</p>
 
-<p>{{ timestamp }}</p>
-
 {% for entity, trip in trip_updates %}
     <details>
         <summary>
-            {{ entity.tripUpdate.trip.tripId }}
+            {{ entity.trip.tripId }}
             {% if trip %}
                 <a href="{{ trip.get_absolute_url }}">{{ trip }}</a>
             {% endif %}
-            {{ entity.tripUpdate.trip.scheduleRelationship }}
+            {{ entity.trip.scheduleRelationship }}
         </summary>
         <code>{{ entity }}</code>
     </details>

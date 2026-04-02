@@ -19,7 +19,10 @@
     <li><a href="https://beta-naptan.dft.gov.uk/download">NaPTAN (National Public Transport Access Nodes)</a> (bus stops)</li>
     <li><a href="https://www.travelinedata.org.uk/traveline-open-data/transport-operations/about-2/">NOC (National Operator Codes)</a> (operators)</li>
     <li><a href="https://www.travelinedata.org.uk/traveline-open-data/traveline-national-dataset/">TNDS (Traveline National Dataset)</a> (timetables)</li>
-    <li><a href="https://www.data.gov.uk/dataset/3a3b32f3-d727-4623-aa17-daa2f39aaf92/national-coach-services-ncsd/">NCSD (National Coach Services Database)</a> (timetables)</li>
+    <li><a href="https://www.data.gov.uk/dataset/c3ca6469-7955-4a57-8bfc-58ef2361b797/gm-public-transport-schedules-gtfs/">TfGM (Transport for Greater Manchester)</a> (timetables).
+        Contains Transport for Greater Manchester data.
+        Contains OS data © Crown copyright and database right 2025.
+        © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a></li>
     <li><a href="https://data.bus-data.dft.gov.uk/">BODS (Bus Open Data Service)</a> (timetables and fares)</li>
     <li><a href="https://www.data.gov.uk/dataset/9ea90ed8-de54-4274-92c6-272edd518bfb/traffic-commissioners-local-bus-service-registration">Traffic Commissioners: local bus service registration</a> (timetable changes)</li>
     <li><a href="https://tfl.gov.uk/info-for/open-data-users/">TfL (Transport for London) open data</a> (live departure times)</li>
@@ -27,26 +30,16 @@
 
 <p>The source of each timetable (Traveline/BODS/other) is shown on each timetable page.</p>
 
-<p><a href="https://www.legislation.gov.uk/uksi/2020/749/regulation/16/made">The Public Service Vehicles (Open Data) (England) Regulations 2020</a> require me to state that:</p>
-
-<ul class="bulleted" id="shapps">
-    <li>information has been taken from the bus open data digital service internet site</li>
-    <li>while the Secretary of State strives to preserve the integrity and quality of information on the bus open data digital service internet site, they cannot warrant the accuracy or quality of the information on the site</li>
-    <li>bustimes.org does not have the endorsement, affiliation, support or approval of the Secretary of State</li>
-</ul>
-
 <p>Live vehicle tracking data comes from a number of different sources, including:</p>
 
 <ul class="bulleted">
     <li><a href="https://data.bus-data.dft.gov.uk/avl/">BODS (Bus Open Data Service)</a></li>
-    <li><a href="https://tfe-opendata.readme.io/">Transport for Edinburgh open data</a></li>
     <!-- <li><a href="https://api-portal.tfwm.org.uk/">TfWM (Transport for West Midlands) API</a></li> -->
     <li>The Welsh Bus Data Service</li>
+    <li>Ember</li>
 </ul>
 
-<p>Information about vehicles (colours, registrations, fleet numbers, etc.) has been contributed by dozens of enthusiastic contributors, and is available from <a href="/api/">the bustimes.org API</a>.</p>
-
-<p>Postcode search is powered by <a href="https://postcodes.io/about">Postcodes.io</a>.</p>
+<p>Postcode search is powered by <a href="https://postcodes.io/">Postcodes.io</a>.</p>
 
 <h2>Northern Ireland</h2>
 
@@ -58,7 +51,7 @@
 
 <ul class="bulleted">
     <li><a href="https://developer.nationaltransport.ie/">National Transport Authority API</a></li>
-    <!-- <li><a href="https://www.transportforireland.ie/transitData/PT_Data.html">Transport for Ireland</a></li> -->
+    <li><a href="https://www.transportforireland.ie/transitData/PT_Data.html">Transport for Ireland public transport data</a></li>
 </ul>
 
 <h2>Jersey</h2>
@@ -66,5 +59,9 @@
 <ul class="bulleted">
     <li><a href="https://opendata.gov.je/dataset/live-bus-times">States of Jersey</a></li>
 </ul>
+
+<h2>Vehicle information</h2>
+
+<p>Information about vehicles (liveries, registrations, fleet numbers, etc.) has been contributed by dozens of enthusiastic contributors, and is available from <a href="/api/">the bustimes.org API</a>.</p>
 
 {% endblock content %}

@@ -12,21 +12,7 @@ from busstops.models import DataSource
 class TNDSTest(TestCase):
     @mock.patch("bustimes.management.commands.import_tnds.call_command")
     @mock.patch("ftplib.FTP", autospec=True)
-    @mock.patch("boto3.client", autospec=True)
-    def test_import_tnds(self, boto3_client, ftp, mock_call_command):
-        boto3_client.return_value.head_object = mock.Mock(
-            return_value={
-                "ResponseMetadata": {
-                    "HTTPHeaders": {
-                        "content-length": "555737",
-                        "etag": '"ef44b21891607052e5bab3a74e85bba3"',
-                    }
-                },
-                "ContentLength": 555737,
-                "ETag": '"ef44b21891607052e5bab3a74e85bba3"',
-            }
-        )
-
+    def test_import_tnds(self, ftp, mock_call_command):
         ftp.return_value.mlsd = mock.Mock(
             return_value=[
                 (
@@ -64,10 +50,6 @@ class TNDSTest(TestCase):
             ],
         )
 
-        boto3_client.assert_called_with(
-            "s3", endpoint_url="https://ams3.digitaloceanspaces.com"
-        )
-
         ftp.assert_called_with(
             host="ftp.tnds.basemap.co.uk", user="u", passwd="p", timeout=120
         )
@@ -75,4 +57,4 @@ class TNDSTest(TestCase):
         mock_call_command.assert_called()
 
         source = DataSource.objects.first()
-        self.assertEqual(source.sha1, '"ef44b21891607052e5bab3a74e85bba3"')
+        self.assertEqual(source.sha1, "da39a3ee5e6b4b0d3255bfef95601890afd80709")

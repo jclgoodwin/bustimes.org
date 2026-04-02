@@ -25,7 +25,7 @@ def get_operator(code, source):
     if code:
         try:
             return Operator.objects.get(noc=code)
-        except Operator.DoesNotExist as e:
+        except Operator.DoesNotExist:
             pass
         try:
             return Operator.objects.get(
@@ -54,6 +54,11 @@ def parse_time(string):
 
 
 class Command(BaseCommand):
+    """Imports timetable data in ATCO-CIF format.
+    Specifically, it's assumed that this is Northern Irish (Ulsterbus or Translink Metro) data.
+    See also import_ni.py
+    """
+
     @staticmethod
     def add_arguments(parser):
         parser.add_argument("filenames", nargs="+", type=str)
@@ -83,7 +88,12 @@ class Command(BaseCommand):
 
         with zipfile.ZipFile(archive_name) as archive:
             for filename in archive.namelist():
-                if filename.endswith(".cif") and "/archive/" not in filename.lower() and "/Y20/" not in filename.upper():
+                if (
+                    filename.endswith(".cif")
+                    and "/archive/" not in filename.lower()
+                    and "/Y20/" not in filename.upper()
+                    and "/old" not in filename.lower()
+                ):
                     with archive.open(filename) as open_file:
                         self.handle_file(open_file)
         assert self.stop_times == []
@@ -187,6 +197,7 @@ class Command(BaseCommand):
             sun=line[35:36] == b"1",
             start_date=parse_date(line[13:21]),
             end_date=parse_date(line[21:29]),
+            source=self.source,
         )
         summary = []
         if line[36:37] == b"S":

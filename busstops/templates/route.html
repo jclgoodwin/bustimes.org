@@ -1,19 +1,13 @@
 <div class="groupings">
 {% for stopusage in stopusages %}
-    {% ifchanged stopusage.direction %}
+    {% ifchanged stopusage.inbound %}
         {% if not forloop.first %}</ul></div>{% endif %}
         <div class="grouping">
-        <h2>
-            {{ stopusage.direction.capitalize }}
-        </h2>
-        {% if has_minor_stops %}
-            <input type="checkbox" id="show-all-stops-{{ forloop.counter }}"{% if stopusages|length < 20 %} checked{% endif %}>
-            <label for="show-all-stops-{{ forloop.counter }}">Show all stops</label>
-        {% endif %}
+        <h2>{% if stopusage.inbound %}In{% else %}Out{% endif %}bound</h2>
         <ul class="route">
     {% endifchanged %}
-    {% ifchanged stopusage.stop stopusage.direction %}{% if not stopusage.suspended %}
-        <li{% if stopusage.is_minor %} class="minor"{% endif %}>
+    {% ifchanged stopusage.stop stopusage.inbound %}{% if not stopusage.suspended %}
+        <li{% if not stopusage.timing_point %} class="minor"{% endif %}>
             <a href="{{ stopusage.stop.get_absolute_url }}">{% if stopusage.situation %}⚠️&#xfe0f; {% endif %}{{ stopusage.stop.get_qualified_name }}</a>
         </li>
     {% endif %}{% endifchanged %}

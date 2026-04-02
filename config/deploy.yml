@@ -1,3 +1,8 @@
+# I use Kamal (https://kamal-deploy.org) for deploying and stuff, and this is the configuration for that.
+# (Secrets live in `.kamal/secrets`, quite rightly omitted from the git repo!)
+
+# (yes, DHH is a bellend. I'm sorry)
+
 # Name of your application. Used to uniquely configure containers.
 service: bustimes
 
@@ -8,19 +13,20 @@ image: jclgoodwin/bustimes-org
 servers:
   web:
     hosts:
-      - 10.131.29.248  # everglory
-      - 10.131.0.24    # eveready
-      - 10.131.240.95  # evergood
+      - 10.131.240.102
+      - 10.131.240.103
+      - 10.131.240.104
+      - 10.131.3.251
+      - 10.131.33.248
     env:
       clear:
         WEB_CONCURRENCY: 8
-        ALLOWED_HOSTS: "*"
         EMAIL_HOST: email-smtp.eu-west-1.amazonaws.com
-        DISABLE_EDITING: ""
-        DISABLE_REGISTRATION: yes
+        ALLOWED_HOSTS: bustimes.org
       secret:
         - SECRET_KEY
         - DATABASE_URL
+        - READ_ONLY_DB_HOST
         - REDIS_URL
         - SENTRY_DSN
         - TURNSTILE_SECRET
@@ -31,32 +37,42 @@ servers:
         - NTA_API_KEY
         - AWS_ACCESS_KEY_ID
         - AWS_SECRET_ACCESS_KEY
+        - STADIA_MAPS_API_KEY
+        - FLICKR_API_KEY
+
+accessories:
+  tileserver:
+    image: maptiler/tileserver-gl-light
+    host: 167.99.89.1
+    port: 80:8080
+    volumes:
+      - /root/data:/data
+
+    # to upgrade,
+    # first run `docker image pull maptiler/tileserver-gl-light` on the host
+    # then `kamal accessory reboot tileserver`
 
 builder:
   arch: amd64
   cache:
     type: registry
-    options: mode=max
 
-# Credentials for your image host.
 registry:
-  # Specify the registry server, if you're not using Docker Hub
-  server: registry.digitalocean.com/hobsbawm
-  # see https://github.com/settings/tokens
-  username:
-    - KAMAL_REGISTRY_PASSWORD
-  password:
-    - KAMAL_REGISTRY_PASSWORD
+  server: localhost:5000
 
 asset_path: /staticfiles
 
+deploy_timeout: 60
+
 proxy:
   app_port: 8000
-  healthcheck:
-    path: /version
   buffering:
+    # we go to great effort to _stream_ certain big slow responses (big timetables)
+    # to reduce the time-to-first-byte,
+    # so we disable response buffering which would undo all that hard work
     responses: false
   logging:
     request_headers:
       - Referer
+      - CF-IPCountry
     response_headers: []

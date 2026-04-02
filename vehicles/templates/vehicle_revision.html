@@ -1,26 +1,39 @@
 {% load humanize %}
 <li id="revision-{{ revision.id }}">
-    <p>
+    <form method="GET" action="/contact"><p>
         {% if not vehicle %}
-            <a href="{{ revision.vehicle.get_absolute_url }}">{{ revision.vehicle }}</a> &bull;
+            <a href="{{ revision.vehicle.get_absolute_url }}">{{ revision.vehicle }}</a> &centerdot;
         {% endif %}
         {{ revision.created_at|naturaltime }}
         {% if revision.user %}
-            &bull; <a href="{{ revision.user.get_absolute_url }}">{{ revision.user }}</a>
+            &centerdot; <a href="{{ revision.user.get_absolute_url }}">{{ revision.user }}</a>
         {% endif %}
         {% if user.is_superuser %}
-            &bull; <a href="{% url 'admin:vehicles_vehiclerevision_change' revision.pk %}">✎</a>
+            &centerdot; <a href="{% url 'admin:vehicles_vehiclerevision_change' revision.pk %}">✎</a>
         {% endif %}
+        &centerdot;
+            <button class="button" type="submit" name="message" value="I wish to report this harmful or illegal content:
+
+https://bustimes.org{% url 'admin:vehicles_vehiclerevision_change' revision.pk %}
+
+">Report</button>
+    </p></form>
     <p>
+        {% if revision.disapproved %}<s>{% endif %}
+        {% include "vehicle_revision_changes.html" %}
+        {% if revision.disapproved %}</s>{% endif %}
 
-    {% if revision.disapproved %}<del>{% endif %}
-    {% include "vehicle_revision_changes.html" %}
-    {% if revision.disapproved %}</del>{% endif %}
-
-    {% if revision.disapproved or revision.approved_by_id %}
-        <p><strong>{% if revision.disapproved %}Disa{% else %}A{% endif %}pproved</strong>
-            {% if revision.approved_by_id %}by {% if user.trusted %}<a href="{% url 'user_detail' revision.approved_by_id %}">user {{ revision.approved_by_id }}</a>{% else %}trusted user{% endif %}{% if revision.disapproved_reason %}:{% endif %}{% endif %}
-            {% if revision.disapproved_reason %}{{ revision.disapproved_reason }}{% endif %}
+    {% if revision.disapproved or revision.approved_at or revision.approved_by_id %}
+        <p>
+            <strong>
+                {% if revision.disapproved %}Disa{% else %}A{% endif %}pproved
+            </strong>
+            {% if revision.approved_by_id and user.trusted %}
+                by <a href="{% url 'user_detail' revision.approved_by_id %}">user {{ revision.approved_by_id }}</a>
+            {% endif %}
+            {% if revision.disapproved_reason %}
+                &centerdot; <i>{{ revision.disapproved_reason }}</i>
+            {% endif %}
     {% endif %}
 
     <p class="actions" hx-target="#revision-{{ revision.id }}">
@@ -33,9 +46,7 @@
             {% else %}
                 Pending
             {% endif %}
-        {% else %}
-            {% if user.trusted and revision.disapproved and revision.approved_by_id == user.id %}
-                <button type="button" class="button" hx-post="{% url 'vehicle_revision_action' revision.id 'apply' %}" hx-prompt="Reason for approving">👍 Apply changes</button>
-            {% endif %}
-    {% endif %}
+        {% elif user.trusted and revision.disapproved and revision.approved_by_id == user.id or user.is_superuser %}
+            <button type="button" class="button" hx-post="{% url 'vehicle_revision_action' revision.id 'apply' %}" hx-prompt="Reason for approving">👍 Apply changes</button>
+        {% endif %}
 </li>

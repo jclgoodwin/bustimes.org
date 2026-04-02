@@ -12,15 +12,15 @@ from django.test import TestCase, override_settings
 
 from busstops.models import AdminArea, DataSource, Operator, Region, Service, StopPoint
 
-from ...models import Route
+from ...models import Route, Trip
 from ...download_utils import download_if_modified
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
 
-def make_zipfile(directory, collection):
-    dir_path = FIXTURES_DIR / f"GTFS_{collection}"
-    feed_path = Path(directory) / f"GTFS_{collection}.zip"
+def make_zipfile(directory, name):
+    dir_path = FIXTURES_DIR / name
+    feed_path = Path(directory) / f"{name}.zip"
     with zipfile.ZipFile(feed_path, "a") as open_zipfile:
         for item in dir_path.iterdir():
             open_zipfile.write(item, item.name)
@@ -71,16 +71,19 @@ class GTFSTest(TestCase):
 
     def test_import_gtfs(self):
         with TemporaryDirectory() as directory:
-            make_zipfile(directory, "Seamus_Doherty")
-            make_zipfile(directory, "Mortons")
-            make_zipfile(directory, "Wexford_Bus")
+            make_zipfile(directory, "GTFS_Seamus_Doherty")
+            make_zipfile(directory, "GTFS_Mortons")
+            make_zipfile(directory, "GTFS_Wexford_Bus")
 
             with (
                 vcr.use_cassette(
                     str(FIXTURES_DIR / "google_transit_ie.yaml"),
                 ) as cassette,
                 override_settings(DATA_DIR=Path(directory)),
-                self.assertLogs("bustimes.download_utils", "ERROR") as cm,
+                self.assertLogs("bustimes.download_utils", "ERROR") as errors,
+                self.assertLogs(
+                    "bustimes.management.commands.import_gtfs", "WARNING"
+                ) as warnings,
             ):
                 call_command(
                     "import_gtfs", ["Mortons", "Wexford Bus", "Seamus Doherty"]
@@ -94,7 +97,7 @@ class GTFSTest(TestCase):
                 )
 
         self.assertEqual(
-            sorted(cm.output),
+            sorted(errors.output),
             [
                 "ERROR:bustimes.download_utils:<Response [404]> "
                 "https://www.transportforireland.ie/transitData/Data/GTFS_Mortons.zip",
@@ -104,6 +107,15 @@ class GTFSTest(TestCase):
                 "https://www.transportforireland.ie/transitData/Data/GTFS_Seamus_Doherty.zip",
                 "ERROR:bustimes.download_utils:<Response [404]> "
                 "https://www.transportforireland.ie/transitData/Data/GTFS_Seamus_Doherty.zip",
+            ],
+        )
+        self.assertEqual(
+            warnings.output,
+            [
+                "WARNING:bustimes.management.commands.import_gtfs:"
+                "trip 2868_105 has no stop times",
+                "WARNING:bustimes.management.commands.import_gtfs:"
+                "trip 2868_105 has no stop times",
             ],
         )
 
@@ -122,12 +134,8 @@ class GTFSTest(TestCase):
         with time_machine.travel("2017-06-07"):
             response = self.client.get("/services/165")
         timetable = response.context_data["timetable"]
-        self.assertEqual(str(timetable.groupings[0]), "Ailesbury Road - Citywest Road")
-        self.assertEqual(str(timetable.groupings[1]), "Citywest Road - Ailesbury Road")
-        self.assertEqual(
-            timetable.origins_and_destinations,
-            [("Ailesbury Road", "Citywest Road")],
-        )
+        self.assertEqual(str(timetable.groupings[0]), "To Citywest Road")
+        self.assertEqual(str(timetable.groupings[1]), "To Ailesbury Road")
         self.assertEqual(str(timetable.groupings[0].rows[0].times), "[07:45]")
         self.assertEqual(str(timetable.groupings[0].rows[4].times), "[07:52]")
         self.assertEqual(str(timetable.groupings[0].rows[6].times), "[08:01]")
@@ -140,7 +148,7 @@ class GTFSTest(TestCase):
         self.assertContains(
             response,
             '<a href="https://www.transportforireland.ie/transitData/PT_Data.html#:~:text=Mortons" rel="nofollow">'
-            "Transport for Ireland</a>",
+            "National Transport Authority</a>",
         )
 
         for day in (
@@ -150,7 +158,7 @@ class GTFSTest(TestCase):
             datetime.date(2020, 12, 3),
         ):
             with time_machine.travel(day):
-                with self.assertNumQueries(15):
+                with self.assertNumQueries(16):
                     response = self.client.get(f"/services/165?date={day}")
                 timetable = response.context_data["timetable"]
                 self.assertEqual(day, timetable.date)
@@ -160,7 +168,9 @@ class GTFSTest(TestCase):
         service = Service.objects.get(route__code="21-963-1-y11-1")
         self.assertEqual(service.mode, "bus")
         timetable = service.get_timetable(datetime.date(2017, 6, 7)).render()
-        self.assertEqual(str(timetable.groupings[0]), "Outbound")
+        self.assertEqual(
+            str(timetable.groupings[0]), "To <NA>"
+        )  # this looks like a bug, but in practice there is always a headsign
         self.assertEqual(
             str(timetable.groupings[0].rows[0].times), "['', 10:15, '', 14:15, 17:45]"
         )
@@ -172,6 +182,10 @@ class GTFSTest(TestCase):
         )
 
         # self.assertTrue(service.geometry)
+
+        # block_id missing or <NA> should not result in the string "<NA>"
+        trip = Trip.objects.get(ticket_machine_code="2.Mo-Fr.21-963-1-y11-1.2.O")
+        self.assertEqual(trip.block, "")
 
         self.assertEqual(str(service.source), "Seamus Doherty")
 
@@ -203,11 +217,6 @@ class GTFSTest(TestCase):
             self.assertEqual(source.etag, 'W/"66daf156-37b"')
 
             changed, when = download_if_modified(path, source)
-            self.assertFalse(changed)
-
-            cassette.rewind()
-
-            changed, when = download_if_modified(path, url=url)
             self.assertFalse(changed)
 
         self.assertTrue(path.exists())

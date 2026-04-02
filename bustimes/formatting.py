@@ -2,14 +2,18 @@ import datetime
 from django.utils.timezone import make_aware
 
 
-def format_timedelta(duration):
+def format_timedelta(duration, plus_one=False):
     if duration is not None:
         duration = duration.total_seconds()
         hours = int(duration / 3600)
+        after_midnight = 0
         while hours >= 24:
             hours -= 24
+            after_midnight += 1
         minutes = int(duration % 3600 / 60)
         duration = f"{hours:0>2}:{minutes:0>2}"
+        if after_midnight and plus_one:
+            duration += "⁺¹"
         return duration
 
 

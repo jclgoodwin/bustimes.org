@@ -4,19 +4,24 @@ Usage:
     ./manage.py import_transxchange EA.zip [EM.zip etc]
 """
 
-import csv
 import datetime
+import hashlib
 import logging
 import os
+import sys
 from pathlib import Path
 import re
 import zipfile
 from functools import cache
 
+from tqdm import tqdm
+
 from django.core.management.base import BaseCommand
+from django.contrib.gis.geos import GEOSGeometry, Point
 from django.db import IntegrityError
 from django.db.models import Count, Exists, OuterRef, Q
 from django.db.models.functions import Now, Upper
+from django.utils.timezone import localdate
 from titlecase import titlecase
 
 from busstops.models import (
@@ -24,10 +29,14 @@ from busstops.models import (
     Operator,
     Service,
     ServiceCode,
+    ServiceColour,
     StopPoint,
     StopUsage,
 )
-from transxchange.txc import TransXChange
+from busstops.management.commands.naptan_new import get_stop
+from busstops.utils import get_datetime
+from txc import TransXChange
+from vehicles.models import get_text_colour
 from vosa.models import Registration
 
 from ...models import (
@@ -75,9 +84,13 @@ ________________________________________________________________________________
 """
 
 
+# a callback for titlecase
 def initialisms(word, **kwargs):
     if word in ("YMCA", "PH"):
         return word
+
+
+STUPID_ORIGINS_DESTINATIONS = {"Origin", "Destination", "Unknown"}
 
 
 def get_summary(summary: str):
@@ -173,8 +186,8 @@ def get_calendar_date(
     )
 
 
-def get_registration(service_code):
-    parts = service_code.split("_")[0].split(":")
+def get_registration(service_code: str) -> Registration | None:
+    parts = service_code.split(":")
     if len(parts[0]) != 9:
         prefix = parts[0][:2]
         suffix = str(int(parts[0][2:]))
@@ -182,29 +195,246 @@ def get_registration(service_code):
     if parts[1] and parts[1].isdigit():
         try:
             return Registration.objects.get(
-                registration_number=f"{parts[0]}/{int(parts[1])}"
+                Q(registration_number=f"{parts[0]}/{int(parts[1])}")
+                | Q(registration_number=service_code.replace(":", "/"))
             )
         except Registration.DoesNotExist:
             pass
 
 
+def get_route_links(journeys, transxchange: TransXChange):
+    patterns = {
+        journey.journey_pattern.id: journey.journey_pattern for journey in journeys
+    }
+    route_refs = [
+        pattern.route_ref for pattern in patterns.values() if pattern.route_ref
+    ]
+    if route_refs:
+        routes = [
+            transxchange.routes[route_id]
+            for route_id in transxchange.routes
+            if route_id in route_refs
+        ]
+        for route in routes:
+            for section_ref in route.route_section_refs:
+                route_section = transxchange.route_sections[section_ref]
+                for route_link in route_section.links:
+                    if route_link.track:
+                        yield route_link
+    else:
+        route_links = {}
+        for route_section in transxchange.route_sections.values():
+            for route_section_link in route_section.links:
+                route_links[route_section_link.id] = route_section_link
+        for journey in journeys:
+            if journey.journey_pattern:
+                for section in journey.journey_pattern.sections:
+                    for timing_link in section.timinglinks:
+                        try:
+                            route_link = route_links[timing_link.route_link_ref]
+                        except KeyError:
+                            continue
+                        if route_link.track:
+                            yield route_link
+
+
+def route_link_is_dodgy(point: Point, stop: StopPoint, context: str) -> bool:
+    if point.srid and point.srid != 4326:
+        point.transform(4326)
+
+    if stop.latlong:
+        if stop.latlong.srid and stop.latlong.srid != 4326:
+            stop.latlong.transform(4326)
+        distance = stop.latlong.distance(point)
+        if distance > 0.1:
+            logger.warning(f"{context}: {stop.atco_code} is {distance} from {point}")
+            return True
+    return False
+
+
+def do_route_links(journeys, transxchange, stops, service):
+    route_links = list(get_route_links(journeys, transxchange))
+
+    # we're not interested in straight lines between stops
+    if any(len(link.track) > 2 for link in route_links):
+        stops_to_update = []
+
+        route_links_to_create = {}  # or update
+
+        for route_link in route_links:
+            from_stop = stops.get(route_link.from_stop)
+            to_stop = stops.get(route_link.to_stop)
+
+            if type(from_stop) is StopPoint and type(to_stop) is StopPoint:
+                start_point = GEOSGeometry(route_link.track[0].wkt())
+
+                # Highland Council - eastings and northings are 1000000x off
+                if 0 < start_point.x < 1 and 0 < start_point.y < 1:
+                    start_point = Point(
+                        start_point.x * 1000000, start_point.y * 1000000, srid=27700
+                    )
+
+                    for point in route_link.track:
+                        point.longitude = float(point.longitude) * 1000000
+                        point.latitude = float(point.latitude) * 1000000
+                        point.srid = 27700
+                    route_link.srid = 27700
+
+                if route_link_is_dodgy(start_point, from_stop, service.slug):
+                    continue
+
+                end_point = GEOSGeometry(route_link.track[-1].wkt())
+
+                if route_link_is_dodgy(end_point, to_stop, service.slug):
+                    continue
+
+                key = (from_stop.atco_code, to_stop.atco_code)
+                route_links_to_create[key] = RouteLink(
+                    from_stop_id=from_stop.atco_code,
+                    to_stop_id=to_stop.atco_code,
+                    geometry=route_link.wkt(),
+                    service=service,
+                )
+
+                # deduce stop location from start or end of track
+                if from_stop.latlong is None:
+                    from_stop.latlong = start_point
+                    stops_to_update.append(from_stop)
+                elif to_stop.latlong is None:
+                    to_stop.latlong = end_point
+                    stops_to_update.append(to_stop)
+
+        RouteLink.objects.bulk_create(
+            route_links_to_create.values(),
+            update_conflicts=True,
+            update_fields=["geometry"],
+            unique_fields=["from_stop", "to_stop", "service"],
+        )
+
+        StopPoint.objects.bulk_update(stops_to_update, ["latlong"])
+
+
+def get_stop_time(trip, cell, stops: dict):
+    timing_status = cell.stopusage.timingstatus or ""
+    if len(timing_status) > 3:
+        match timing_status:
+            case "otherPoint":
+                timing_status = "OTH"
+            case "timeInfoPoint":
+                timing_status = "TIP"
+            case "principleTimingPoint" | "principalTimingPoint":
+                timing_status = "PTP"
+            case _:
+                logger.warning(timing_status)
+
+    stop_time = StopTime(
+        trip=trip,
+        sequence=cell.stopusage.sequencenumber,
+        timing_status=timing_status,
+    )
+    if (
+        stop_time.sequence is not None and stop_time.sequence > 32767
+    ):  # too big for smallint
+        stop_time.sequence = None
+
+    match cell.activity:
+        case "pickUp":
+            stop_time.set_down = False
+        case "setDown":
+            stop_time.pick_up = False
+        case "pass":
+            stop_time.pick_up = False
+            stop_time.set_down = False
+
+    stop_time.departure = cell.departure_time
+    if cell.arrival_time != cell.departure_time:
+        stop_time.arrival = cell.arrival_time
+
+    if trip.start is None:
+        trip.start = stop_time.departure_or_arrival()
+
+    atco_code = cell.stopusage.stop.atco_code.upper()
+    if atco_code in stops:
+        if type(stops[atco_code]) is str:
+            stop_time.stop_code = stops[atco_code]
+        else:
+            stop_time.stop = stops[atco_code]
+            trip.destination = stop_time.stop
+    else:
+        # stop missing from TransXChange StopPoints - this should never happen
+        try:
+            stops[atco_code] = StopPoint.objects.get(atco_code__iexact=atco_code)
+        except StopPoint.DoesNotExist:
+            logger.warning(atco_code)
+            stops[atco_code] = atco_code
+            stop_time.stop_code = atco_code  # !
+        else:
+            stop_time.stop = stops[atco_code]
+            trip.destination = stop_time.stop
+
+    return stop_time
+
+
+def get_description(txc_service):
+    description = txc_service.description
+
+    if description and description.isupper():
+        description = titlecase(description, callback=initialisms)
+
+    origin = txc_service.origin
+    destination = txc_service.destination
+
+    if origin and destination:
+        if origin[:4].isdigit() and destination[:4].isdigit():
+            print(origin, destination)
+
+        if origin.isupper() and destination.isupper():
+            txc_service.origin = origin = titlecase(origin, callback=initialisms)
+            txc_service.destination = destination = titlecase(
+                destination, callback=initialisms
+            )
+
+        if not description and origin not in STUPID_ORIGINS_DESTINATIONS:
+            description = f"{origin} - {destination}"
+            vias = txc_service.vias
+            if vias:
+                if all(via.isupper() for via in vias):
+                    vias = [titlecase(via, callback=initialisms) for via in vias]
+                if len(vias) == 1:
+                    via = vias[0]
+                    if "via " in via:
+                        return f"{description} {via}"
+                    elif "," in via or " and " in via or "&" in via:
+                        return f"{description} via {via}"
+                description = " - ".join([origin] + vias + [destination])
+    return description
+
+
 class Command(BaseCommand):
     bank_holidays = None
+    version = None
 
     @staticmethod
     def add_arguments(parser):
         parser.add_argument("archives", nargs=1, type=str)
         parser.add_argument("files", nargs="*", type=str)
+        parser.add_argument(
+            "--progress",
+            action="store_true",
+            default=sys.stdout.isatty(),
+            help="Show progress bar (default: auto-detect based on terminal)",
+        )
 
     def set_up(self):
-        self.service_descriptions = {}
         self.calendar_cache = {}
         self.missing_operators = []
         self.notes = {}
         self.garages = {}
+        self.today = localdate()
 
     def handle(self, *args, **options):
         self.set_up()
+        self.show_progress = options["progress"]
 
         self.open_data_operators, self.incomplete_operators = get_open_data_operators()
 
@@ -230,8 +460,10 @@ class Command(BaseCommand):
         if self.region_id:
             url = f"ftp://ftp.tnds.basemap.co.uk/{archive_name}"
             self.source, _ = DataSource.objects.get_or_create(
-                {"name": self.region_id}, url=url
+                {"url": url},
+                name=self.region_id,
             )
+            assert self.source.is_tnds()
         else:
             self.source, _ = DataSource.objects.get_or_create(name=archive_name)
 
@@ -241,21 +473,15 @@ class Command(BaseCommand):
         """
 
         operator_code = operator_element.findtext("NationalOperatorCode")
-        if not self.is_tnds() and not operator_code:
-            operator_code = operator_element.findtext("OperatorCode")
+        if not operator_code:
+            if not self.source.is_tnds() or self.source.name == "L":
+                operator_code = operator_element.findtext("OperatorCode")
 
         if operator_code:
-            if operator_code == "GAHL":
-                match operator_element.findtext("OperatorCode"):
-                    case "LC":
-                        operator_code = "LONC"
-                    case "LG":
-                        operator_code = "LGEN"
-                    case "BE":
-                        operator_code = "BTRI"
-
-            operator = get_operator_by("National Operator Codes", operator_code)
-            if operator:
+            if self.source.name == "L":
+                if operator := get_operator_by("L", operator_code):
+                    return operator
+            elif operator := get_operator_by("National Operator Codes", operator_code):
                 return operator
 
         licence_number = operator_element.findtext("LicenceNumber")
@@ -278,11 +504,11 @@ class Command(BaseCommand):
             if operator_code.startswith("Rail"):
                 operator_code = operator_code.removeprefix("Rail")
 
-            if self.region_id:
-                operator = get_operator_by(self.region_id, operator_code)
-            if not operator:
-                operator = get_operator_by("National Operator Codes", operator_code)
-            if operator:
+            if self.region_id and (
+                operator := get_operator_by(self.region_id, operator_code)
+            ):
+                return operator
+            if operator := get_operator_by("National Operator Codes", operator_code):
                 return operator
 
         missing_operator = {
@@ -298,6 +524,7 @@ class Command(BaseCommand):
         operators = transxchange.operators
 
         if len(operators) > 1:
+            # if more than one operator listed, which ones listed actually operate any journeys?
             journey_operators = {
                 journey.operator
                 for journey in transxchange.journeys
@@ -316,51 +543,27 @@ class Command(BaseCommand):
 
         return {key: value for key, value in operators.items() if value}
 
-    def set_service_descriptions(self, archive):
-        """
-        If there's a file named 'IncludedServices.csv', as there is in 'NCSD.zip', use it
-        """
-        if "IncludedServices.csv" in archive.namelist():
-            with archive.open("IncludedServices.csv") as csv_file:
-                reader = csv.DictReader(line.decode("utf-8") for line in csv_file)
-                # e.g. {'NATX323': 'Cardiff - Liverpool'}
-                for row in reader:
-                    key = f"{row['Operator']}{row['LineName']}{row['Dir']}"
-                    self.service_descriptions[key] = row["Description"]
-
-    def get_service_descriptions(self, filename):
-        parts = filename.split("_")
-        operator = parts[-2]
-        line_name = parts[-1][:-4]
-        key = f"{operator}{line_name}"
-        outbound = self.service_descriptions.get(f"{key}O", "")
-        inbound = self.service_descriptions.get(f"{key}I", "")
-        return outbound, inbound
-
     def mark_old_services_as_not_current(self):
-        old_routes = self.source.route_set.filter(
+        # "delete" old routes, if no longer in the dataset OR
+        # all the service's routes' end dates are in the past
+        self.source.route_set.filter(
             ~Q(id__in=self.route_ids)
             | Q(
                 ~Exists(
                     Route.objects.filter(
                         Q(source=OuterRef("source")) | Q(service=OuterRef("service")),
-                        Q(end_date=None) | Q(end_date__gte=self.source.datetime),
+                        Q(end_date=None) | Q(end_date__gte=self.today),
+                        revision_number__lt=OuterRef("revision_number"),
                         service_code=OuterRef("service_code"),
                     )
                 ),
-                end_date__lte=self.source.datetime,
+                end_date__lt=self.today,
             ),
-        )
-        # do this first to prevent IntegrityError (VehicleJourney trip field)
-        old_routes.update(service=None)
-        for route in old_routes:
-            route.delete()
+        ).update(service=None)
 
         old_services = self.source.service_set.filter(current=True, route=None)
-        old_services = old_services.filter(~Q(id__in=self.service_ids))
-        deleted = old_services.update(current=False)
-        if deleted:
-            logger.info(f"  old services: {deleted}")
+        if old_services.update(current=False):
+            logger.info(f"  {old_services=}")
 
     def handle_sub_archive(self, archive, sub_archive_name):
         if sub_archive_name.startswith("__MACOSX"):
@@ -393,26 +596,24 @@ class Command(BaseCommand):
 
         try:
             with zipfile.ZipFile(archive_path) as archive:
-                self.set_service_descriptions(archive)
-
                 namelist = archive.namelist()
 
-                if "NCSD_TXC_2_4/" in namelist:
-                    namelist = [
-                        filename
-                        for filename in namelist
-                        if filename.startswith("NCSD_TXC_2_4/")
-                    ]
+                items = filenames or namelist
+                if self.show_progress:
+                    items = tqdm(items, desc=basename)
 
-                for filename in filenames or namelist:
+                for filename in items:
+                    if filename.startswith("__MACOSX"):
+                        continue
+
                     if filename.endswith(".zip"):
                         self.handle_sub_archive(archive, filename)
 
                     if filename.endswith(".xml"):
                         with archive.open(filename) as open_file:
                             self.handle_file(open_file, filename)
-        except zipfile.BadZipfile:
-            with archive_path.open() as open_file:
+        except zipfile.BadZipFile:
+            with archive_path.open("rb") as open_file:
                 self.handle_file(open_file, str(archive_path))
 
         if not filenames:
@@ -425,20 +626,7 @@ class Command(BaseCommand):
 
         self.source.save(update_fields=["datetime"])
 
-        StopPoint.objects.filter(
-            ~Exists(
-                StopUsage.objects.filter(stop=OuterRef("pk"), service__current=True)
-            ),
-            active=False,
-        ).update(active=True)
-
-        if basename in ("NCSD.zip", "L.zip"):
-            import boto3
-
-            client = boto3.client(
-                "s3", endpoint_url="https://ams3.digitaloceanspaces.com"
-            )
-            client.upload_file(archive_path, "bustimes-data", "TNDS/" + basename)
+        self.source.upload_to_s3_etc(archive_path)
 
     def finish_services(self):
         """update/create StopUsages, search_vector and geometry fields"""
@@ -503,15 +691,9 @@ class Command(BaseCommand):
             return self.calendar_cache[calendar_hash]
 
         calendar = Calendar(
-            mon=False,
-            tue=False,
-            wed=False,
-            thu=False,
-            fri=False,
-            sat=False,
-            sun=False,
             start_date=operating_period.start,
             end_date=operating_period.end,
+            source=self.source,
         )
         for day in operating_profile.regular_days:
             match day:
@@ -535,6 +717,10 @@ class Command(BaseCommand):
             for date_range in operating_profile.nonoperation_days
         ]
         for date_range in operating_profile.operation_days:
+            if not date_range.start:
+                # this should never happen
+                continue
+
             calendar_date = get_calendar_date(
                 date_range=date_range, operation=True, special=True
             )
@@ -630,69 +816,11 @@ class Command(BaseCommand):
 
         return calendar
 
-    def get_stop_time(self, trip, cell, stops: dict):
-        timing_status = cell.stopusage.timingstatus or ""
-        if len(timing_status) > 3:
-            match timing_status:
-                case "otherPoint":
-                    timing_status = "OTH"
-                case "timeInfoPoint":
-                    timing_status = "TIP"
-                case "principleTimingPoint" | "principalTimingPoint":
-                    timing_status = "PTP"
-                case _:
-                    logger.warning(timing_status)
-
-        stop_time = StopTime(
-            trip=trip,
-            sequence=cell.stopusage.sequencenumber,
-            timing_status=timing_status,
-        )
-        if (
-            stop_time.sequence is not None and stop_time.sequence > 32767
-        ):  # too big for smallint
-            stop_time.sequence = None
-
-        match cell.activity:
-            case "pickUp":
-                stop_time.set_down = False
-            case "setDown":
-                stop_time.pick_up = False
-            case "pass":
-                stop_time.pick_up = False
-                stop_time.set_down = False
-
-        stop_time.departure = cell.departure_time
-        if cell.arrival_time != cell.departure_time:
-            stop_time.arrival = cell.arrival_time
-
-        if trip.start is None:
-            trip.start = stop_time.departure_or_arrival()
-
-        atco_code = cell.stopusage.stop.atco_code.upper()
-        if atco_code in stops:
-            if type(stops[atco_code]) is str:
-                stop_time.stop_code = stops[atco_code]
-            else:
-                stop_time.stop = stops[atco_code]
-                trip.destination = stop_time.stop
-        else:
-            # stop missing from TransXChange StopPoints
-            try:
-                stops[atco_code] = StopPoint.objects.get(atco_code__iexact=atco_code)
-            except StopPoint.DoesNotExist:
-                logger.warning(atco_code)
-                stops[atco_code] = atco_code
-                stop_time.stop_code = atco_code  # !
-            else:
-                stop_time.stop = stops[atco_code]
-                trip.destination = stop_time.stop
-
-        return stop_time
-
     @cache
-    def get_note(self, note_code, note_text):
-        return Note.objects.get_or_create(code=note_code or "", text=note_text[:255])[0]
+    def get_note(self, note_code=None, note_text=None):
+        return Note.objects.get_or_create(
+            code=note_code or "", text=(note_text or "")[:255]
+        )[0]
 
     def handle_journeys(
         self,
@@ -702,6 +830,7 @@ class Command(BaseCommand):
         journeys,
         txc_service,
         operators: dict,
+        operator_notes: dict,
     ):
         default_calendar = None
 
@@ -731,19 +860,35 @@ class Command(BaseCommand):
             else:
                 calendar = None
 
+            operator_ref = journey.operator or txc_service.operator
+
             trip = Trip(
-                inbound=journey.journey_pattern.is_inbound(),
+                inbound=journey.journey_pattern.direction
+                in ("inbound", "anticlockwise"),
                 calendar=calendar,
                 route=route,
                 journey_pattern=journey.journey_pattern.id,
                 vehicle_journey_code=journey.code or "",
                 ticket_machine_code=journey.ticket_machine_journey_code or "",
                 sequence=journey.sequencenumber,
-                operator=operators.get(journey.operator or txc_service.operator),
+                operator=operators.get(operator_ref),
             )
 
             if journey.block and journey.block.code:
                 trip.block = journey.block.code
+                if (
+                    trip.operator
+                    and trip.block[:1] == "B"
+                    and trip.block < "B99"
+                    and trip.operator.noc in ("SNDR", "OBUS")
+                ):
+                    trip.block = None
+            elif (
+                journey.journey_pattern
+                and journey.journey_pattern.block
+                and journey.journey_pattern.block.code
+            ):
+                trip.block = journey.journey_pattern.block.code
 
             if journey.vehicle_type and journey.vehicle_type.code:
                 if journey.vehicle_type.code not in self.vehicle_types:
@@ -760,8 +905,10 @@ class Command(BaseCommand):
                 trip.garage = self.garages.get(journey.garage_ref)
 
             blank = False
-            for cell in journey.get_times():
-                stop_time = self.get_stop_time(trip, cell, stops)
+            for sequence, cell in enumerate(journey.get_times()):
+                stop_time = get_stop_time(trip, cell, stops)
+                if stop_time.sequence is None:
+                    stop_time.sequence = sequence
                 stop_times.append(stop_time)
 
                 if not stop_time.timing_status:
@@ -808,6 +955,10 @@ class Command(BaseCommand):
                 ):
                     trip_notes.append(Trip.notes.through(trip=trip, note=note))
 
+            if operator_ref in operator_notes:
+                note = self.get_note(note_text=operator_notes[operator_ref])
+                trip_notes.append(Trip.notes.through(trip=trip, note=note))
+
             if journey.frequency_interval:
                 if len(journeys) > i + 1:
                     next_journey = journeys[i + 1]
@@ -830,7 +981,7 @@ class Command(BaseCommand):
                             )
                             journey.departure_time = trip.start
                             for cell in journey.get_times():
-                                stop_time = self.get_stop_time(trip, cell, stops)
+                                stop_time = get_stop_time(trip, cell, stops)
                                 stop_times.append(stop_time)
                             trip.end = stop_time.arrival_or_departure()
                             trips.append(trip)
@@ -840,13 +991,11 @@ class Command(BaseCommand):
             existing_trips = route.trip_set.order_by("id")
             try:
                 if len(existing_trips) == len(trips):
-                    for i, old_trip in enumerate(existing_trips):
-                        if old_trip.start == trips[i].start:
-                            trips[i].id = old_trip.id
+                    for trip, old_trip in zip(trips, existing_trips):
+                        if old_trip.start == trip.start:
+                            trip.id = old_trip.id
                         else:
-                            logger.info(
-                                f"{route.code} {old_trip.start} {trips[i].start}"
-                            )
+                            logger.info(f"{route.code} {old_trip.start} {trip.start}")
                             existing_trips.delete()
                             existing_trips = None
                             break
@@ -892,100 +1041,54 @@ class Command(BaseCommand):
 
         StopTime.notes.through.objects.bulk_create(stop_time_notes, batch_size=1000)
 
-    def get_description(self, txc_service):
-        description = txc_service.description
-
-        if description and description.isupper():
-            description = titlecase(description, callback=initialisms)
-
-        origin = txc_service.origin
-        destination = txc_service.destination
-
-        if origin and destination:
-            if origin[:4].isdigit() and destination[:4].isdigit():
-                print(origin, destination)
-
-            if origin.isupper() and destination.isupper():
-                txc_service.origin = origin = titlecase(origin, callback=initialisms)
-                txc_service.destination = destination = titlecase(
-                    destination, callback=initialisms
-                )
-
-            if not description:
-                description = f"{origin} - {destination}"
-                vias = txc_service.vias
-                if vias:
-                    if all(via.isupper() for via in vias):
-                        vias = [titlecase(via, callback=initialisms) for via in vias]
-                    if len(vias) == 1:
-                        via = vias[0]
-                        if "via " in via:
-                            return f"{description} {via}"
-                        elif "," in via or " and " in via or "&" in via:
-                            return f"{description} via {via}"
-                    description = " - ".join([origin] + vias + [destination])
-        return description
-
-    def is_tnds(self):
-        return self.source.url.startswith("ftp://ftp.tnds.basemap.co.uk/")
-
     def should_defer_to_other_source(self, operators: dict, line_name: str):
-        if self.source.name == "L" or not operators:
+        nocs = {operator.noc for operator in operators.values()}
+
+        go_ahead_london_nocs = {
+            "LGEN",
+            "LONC",
+            "MBGA",
+            "BTRI",
+            "DLBU",
+            "KNCO",
+            "GAHL",
+        }
+
+        if not (self.source.is_tnds() or self.source.name == "TfGM"):
+            if not nocs.isdisjoint(go_ahead_london_nocs):
+                # defer to TfL source
+                return Route.objects.filter(
+                    source__name="L",
+                    service__current=True,
+                    service__operator__in=go_ahead_london_nocs,
+                    line_name__iexact=line_name,
+                ).exists()
+
+            return False
+        elif self.source.name == "L":  # TfL data is always best
+            return False
+        elif not operators:
             return False
 
-        nocs = [operator.noc for operator in operators.values()]
-
-        if any(noc not in self.incomplete_operators for noc in nocs):
-            return False  # jointly-operated service?
+        if self.source.name != "TfGM":
+            if any(noc not in self.incomplete_operators for noc in nocs):
+                return False  # jointly-operated service?
 
         if "FHAL" in nocs:
-            nocs.append("FHUD")
+            nocs.add("FHUD")
         elif "FHUD" in nocs:
-            nocs.append("FHAL")
+            nocs.add("FHAL")
 
-        return Service.objects.filter(
+        return Route.objects.filter(
             ~Q(source=self.source),
-            current=True,
-            operator__in=nocs,
-            route__line_name__iexact=line_name,
+            service__current=True,
+            service__operator__in=nocs,
+            line_name__iexact=line_name,
         ).exists()
 
-    def get_route_links(self, journeys, transxchange):
-        patterns = {
-            journey.journey_pattern.id: journey.journey_pattern for journey in journeys
-        }
-        route_refs = [
-            pattern.route_ref for pattern in patterns.values() if pattern.route_ref
-        ]
-        if route_refs:
-            routes = [
-                transxchange.routes[route_id]
-                for route_id in transxchange.routes
-                if route_id in route_refs
-            ]
-            for route in routes:
-                for section_ref in route.route_section_refs:
-                    route_section = transxchange.route_sections[section_ref]
-                    for route_link in route_section.links:
-                        if route_link.track:
-                            yield route_link
-        else:
-            route_links = {}
-            for route_section in transxchange.route_sections.values():
-                for route_section_link in route_section.links:
-                    route_links[route_section_link.id] = route_section_link
-            for journey in journeys:
-                if journey.journey_pattern:
-                    for section in journey.journey_pattern.sections:
-                        for timing_link in section.timinglinks:
-                            try:
-                                route_link = route_links[timing_link.route_link_ref]
-                            except KeyError:
-                                continue
-                            if route_link.track:
-                                yield route_link
-
-    def handle_service(self, filename: str, transxchange, txc_service, today, stops):
+    def handle_service(
+        self, filename: str, transxchange, txc_service, stops: dict, file_hash=None
+    ):
         skip_journeys = False
 
         if (
@@ -999,7 +1102,7 @@ class Command(BaseCommand):
 
         if (
             txc_service.operating_period.end
-            and txc_service.operating_period.end < today
+            and txc_service.operating_period.end < self.today
         ):
             logger.warning(
                 f"{filename}: {txc_service.service_code} end {txc_service.operating_period.end} is in the past"
@@ -1008,10 +1111,17 @@ class Command(BaseCommand):
 
         operators = self.get_operators(transxchange, txc_service)
 
-        if "NATX-National_Express_Ireland" in filename:
+        operator_notes = {
+            element.get("id"): element.findtext("Note")
+            for element in transxchange.operators
+            if element.findtext("Note")
+        }
+
+        if "-Dublin_Express-" in filename:
+            # defer to Transport for Ireland open data
             return
 
-        if self.is_tnds():
+        if self.source.is_tnds():
             if self.source.name != "L":
                 if operators and all(
                     operator.noc in self.open_data_operators
@@ -1024,7 +1134,7 @@ class Command(BaseCommand):
             )
             return
 
-        description = self.get_description(txc_service)
+        description = get_description(txc_service)
 
         if description == "Origin - Destination":
             description = ""
@@ -1038,15 +1148,11 @@ class Command(BaseCommand):
 
         service = None
 
-        for i, line in enumerate(txc_service.lines):
+        for line in txc_service.lines:
             line.line_name = line.line_name.replace("_", " ")
-            if "FLIX" in filename:
-                line.line_name = line.line_name.removeprefix("UK")
 
             # prefer a BODS-type source over TNDS
-            if self.is_tnds() and self.should_defer_to_other_source(
-                operators, line.line_name
-            ):
+            if self.should_defer_to_other_source(operators, line.line_name):
                 continue
 
             existing = None
@@ -1062,16 +1168,19 @@ class Command(BaseCommand):
 
             if operators:
                 q = Q(operator__in=operators.values())
+
+                # prevent certain seemingly-the-same services being merged
                 if (
                     description
                     and self.source.name.startswith("Stagecoach")
                     and (
                         line.line_name == "1"
                         and "Chester" in description
-                        or line.line_name == "59"
-                        and self.source.name == "Stagecoach East Scotland"
+                        or (
+                            line.line_name == "59"
+                            and self.source.name == "Stagecoach East Scotland"
+                        )
                         or line.line_name == "700"
-                        and "Stagecoach" in self.source.name
                     )
                 ):
                     q = (Q(source=self.source) | q) & Q(description=description)
@@ -1106,23 +1215,32 @@ class Command(BaseCommand):
 
             service_code = None
 
-            if self.is_tnds():
+            if self.source.is_tnds():
                 service_code = get_service_code(filename)
                 if service_code is None:
                     service_code = txc_service.service_code
 
-                if service_code[:4] == "tfl_":
-                    # London: assume line_name is unique within region:
-                    existing = self.source.service_set.filter(
-                        Q(service_code=service_code)
-                        | Q(line_name__iexact=line.line_name)
-                    ).first()
-                elif not existing:
-                    # assume service code is at least unique within a TNDS region:
-                    existing = self.source.service_set.filter(
-                        Q(service_code=service_code, operator__in=operators.values())
-                        | Q(description=description, line_name__iexact=line.line_name)
-                    ).first()
+                if not existing:
+                    if service_code[:4] == "tfl_":
+                        existing = self.source.service_set.filter(
+                            Q(service_code=service_code)
+                            | Q(line_name__iexact=line.line_name)
+                            & (
+                                Q(description=description)
+                                | Q(operator__in=operators.values())
+                            )
+                        ).first()
+                    else:
+                        existing = self.source.service_set.filter(
+                            Q(
+                                service_code=service_code,
+                                operator__in=operators.values(),
+                            )
+                            | Q(
+                                description=description,
+                                line_name__iexact=line.line_name,
+                            )
+                        ).first()
             elif unique_service_code:
                 service_code = unique_service_code
 
@@ -1147,14 +1265,6 @@ class Command(BaseCommand):
                 logger.warning(f"{txc_service.service_code} has no journeys")
                 continue
 
-            match txc_service.public_use:
-                case "0" | "false":
-                    service.public_use = False
-                case "1" | "true":
-                    service.public_use = True
-                case _:
-                    service.public_use = None
-
             if txc_service.mode:
                 service.mode = txc_service.mode
 
@@ -1171,18 +1281,31 @@ class Command(BaseCommand):
             ):
                 service.description = description
 
-            # London bus red
-            if service_code and service.mode == "bus" and service_code[:4] == "tfl_":
+            if line.colour:
+                background = f"#{line.colour}"
+                foreground = get_text_colour(background) or "#000"
+                service.colour, _ = ServiceColour.objects.get_or_create(
+                    background=background,
+                    foreground=foreground,
+                    use_name_as_brand=False,
+                )
+            elif service_code and service.mode == "bus" and service_code[:4] == "tfl_":
+                # London bus red
                 service.colour_id = 127
             else:
+                # use the operator's colour
                 for operator in operators.values():
                     if operator.colour_id:
                         service.colour_id = operator.colour_id
                         break
 
+            # Lines and Services can have a MarketingName
+            # (a line_brand is a thing I've made up)
+
             line_brand = line.line_brand or line.marketing_name
             if line_brand:
                 logger.info(line_brand)
+
             if txc_service.marketing_name:
                 logger.info(txc_service.marketing_name)
                 if txc_service.marketing_name in (
@@ -1197,6 +1320,12 @@ class Command(BaseCommand):
                     service.public_use = False
                 else:
                     line_brand = txc_service.marketing_name
+
+                    if service.description and " [" in service.description:
+                        service.description = service.description.removesuffix(
+                            f" [{line_brand}]"
+                        )
+
             if (
                 not line_brand
                 and service.colour
@@ -1218,7 +1347,7 @@ class Command(BaseCommand):
 
             if (
                 line.outbound_description != line.inbound_description
-                or txc_service.origin == "Origin"
+                or txc_service.origin in STUPID_ORIGINS_DESTINATIONS
             ):
                 out_desc = line.outbound_description
                 in_desc = line.inbound_description
@@ -1234,30 +1363,7 @@ class Command(BaseCommand):
                     if not service.description:
                         service.description = in_desc
 
-            if self.service_descriptions:  # NCSD
-                (
-                    outbound_description,
-                    inbound_description,
-                ) = self.get_service_descriptions(filename)
-                if outbound_description or inbound_description:
-                    service.description = outbound_description or inbound_description
-
-            # does is the service already exist in the database?
-
-            if service.id:
-                service_created = False
-            else:
-                service_created = True
             service.save()
-
-            # if not service_created:
-            #     if (
-            #         "_" in service.slug
-            #         or "-" not in service.slug
-            #         or not existing_current_service
-            #     ):
-            #         service.slug = ""
-            #         service.save(update_fields=["slug"])
 
             if operators:
                 if existing and not existing_current_service:
@@ -1297,6 +1403,7 @@ class Command(BaseCommand):
             # timetable data:
 
             route_defaults = {
+                "line_id": line.id,
                 "line_name": line.line_name,
                 "line_brand": line_brand or "",
                 "outbound_description": line.outbound_description or "",
@@ -1305,21 +1412,41 @@ class Command(BaseCommand):
                 "end_date": txc_service.operating_period.end,
                 "service": service,
                 "revision_number": transxchange.attributes["RevisionNumber"],
+                "revision_number_context": "",
+                "created_at": get_datetime(transxchange.attributes["CreationDateTime"]),
+                "modified_at": get_datetime(
+                    transxchange.attributes["ModificationDateTime"]
+                ),
                 "service_code": txc_service.service_code,
-                "public_use": service.public_use,
+                "version": self.version,
+                "source": self.source,
             }
+
+            match txc_service.public_use:
+                case "0" | "false":
+                    route_defaults["public_use"] = False
+                case "1" | "true":
+                    route_defaults["public_use"] = True
+                case _:
+                    route_defaults["public_use"] = None
 
             for key in ("outbound_description", "inbound_description"):
                 if len(route_defaults[key]) > 255:
                     logger.warning(f"{key} too long in {filename}")
                     route_defaults[key] = route_defaults[key][:255]
 
-            if txc_service.origin and txc_service.origin != "Origin":
+            if (
+                txc_service.origin
+                and txc_service.origin not in STUPID_ORIGINS_DESTINATIONS
+            ):
                 route_defaults["origin"] = txc_service.origin
             else:
                 route_defaults["origin"] = ""
 
-            if txc_service.destination and txc_service.destination != "Destination":
+            if (
+                txc_service.destination
+                and txc_service.destination not in STUPID_ORIGINS_DESTINATIONS
+            ):
                 if " via " in txc_service.destination:
                     (
                         route_defaults["destination"],
@@ -1343,46 +1470,7 @@ class Command(BaseCommand):
 
             # route links (geometry between stops):
             if transxchange.route_sections:
-                route_links = list(self.get_route_links(journeys, transxchange))
-
-                # we're not interested in straight lines between stops
-                if any(len(link.track) > 2 for link in route_links):
-                    if service_created:
-                        existing_route_links = {}
-                    else:
-                        existing_route_links = {
-                            (link.from_stop_id, link.to_stop_id): link
-                            for link in service.routelink_set.all()
-                        }
-                    route_links_to_update = {}
-                    route_links_to_create = {}
-
-                    for route_link in route_links:
-                        from_stop = stops.get(route_link.from_stop)
-                        to_stop = stops.get(route_link.to_stop)
-
-                        if type(from_stop) is StopPoint and type(to_stop) is StopPoint:
-                            key = (from_stop.atco_code, to_stop.atco_code)
-                            if key in existing_route_links:
-                                if key not in route_links_to_update:
-                                    route_links_to_update[key] = existing_route_links[
-                                        key
-                                    ]
-                                    route_links_to_update[
-                                        key
-                                    ].geometry = route_link.track
-                            else:
-                                route_links_to_create[key] = RouteLink(
-                                    from_stop_id=from_stop.atco_code,
-                                    to_stop_id=to_stop.atco_code,
-                                    geometry=route_link.track,
-                                    service=service,
-                                )
-
-                    RouteLink.objects.bulk_update(
-                        route_links_to_update.values(), ["geometry"]
-                    )
-                    RouteLink.objects.bulk_create(route_links_to_create.values())
+                do_route_links(journeys, transxchange, stops, service)
 
             route_code = filename
             if len(transxchange.services) > 1:
@@ -1390,19 +1478,75 @@ class Command(BaseCommand):
             if len(txc_service.lines) > 1:
                 route_code += f"#{line.id}"
 
+            # diabolical trick - detect Ticketer data and set revision_number_context
+            if "tkt_oid" in operators:
+                parts = route_code.split("_")
+                if len(parts) > 5:
+                    route_defaults["revision_number_context"] = parts[1]
+                else:
+                    logger.warning(
+                        f"{filename} has {operators} but unexpected filename format"
+                    )
+            # detect TransMach data too, and do likewise
+            elif "_" in route_code and route_code.endswith(".xml"):
+                parts = route_code.split("_")
+                if (
+                    len(parts) == 2
+                    and parts[1][:-4].isdigit()
+                    and parts[0] == line.line_name.upper()
+                ):
+                    route_defaults["revision_number_context"] = parts[0]
+                    logger.info(f"{filename} looks like TransMach")
+
+            if file_hash:
+                route_defaults["file_hash"] = file_hash
+
+            route_defaults["code"] = route_code
+
+            # TfGM: all files are in a subfolder
+            # with a name like "TfGM TXC 260225 OpenData" that changes every release
+            # even if the file didn't change
+
+            if file_hash:
+                existing_route = self.source.route_set.filter(
+                    code=route_code, file_hash=file_hash
+                ).first()
+
+                if not existing_route and "/" in route_code:
+                    part = route_code.split("/")[-1]
+
+                    existing_route = self.source.route_set.filter(
+                        version=self.version,
+                        code__endswith=f"/{part}",
+                        file_hash=file_hash,
+                    ).first()
+
+                if existing_route:
+                    route, route_created = Route.objects.update_or_create(
+                        route_defaults, id=existing_route.id
+                    )
+                    self.route_ids.add(route.id)
+                    # file hasn't changed, so we don't need to re-load journeys
+                    continue
+
             route, route_created = Route.objects.update_or_create(
-                route_defaults, source=self.source, code=route_code
+                route_defaults, code=route_code, source=self.source
             )
 
             self.route_ids.add(route.id)
 
             if not skip_journeys:
                 self.handle_journeys(
-                    route, route_created, stops, journeys, txc_service, operators
+                    route,
+                    route_created,
+                    stops,
+                    journeys,
+                    txc_service,
+                    operators,
+                    operator_notes,
                 )
 
-    @staticmethod
-    def do_stops(transxchange_stops: dict) -> dict:
+    def do_stops(self, transxchange_stops: dict) -> dict:
         stops = list(transxchange_stops.keys())
         for atco_code in transxchange_stops:
             # deal with leading 0 being removed by Microsoft Excel maybe
@@ -1416,11 +1560,12 @@ class Command(BaseCommand):
         stops = (
             StopPoint.objects.annotate(atco_code_upper=Upper("atco_code"))
             .filter(atco_code_upper__in=stops)
-            .only("atco_code")
+            .only("atco_code", "latlong")
             .order_by()
         )
-
         stops = {stop.atco_code_upper: stop for stop in stops}
+
+        ad_hoc_stops = {}
 
         for atco_code, stop in transxchange_stops.items():
             atco_code_upper = atco_code.upper()
@@ -1433,7 +1578,23 @@ class Command(BaseCommand):
                 elif atco_code[:3] == "910" and atco_code[:-1] in stops:
                     stops[atco_code_upper] = stops[atco_code[:-1]]
                 else:
-                    stops[atco_code_upper] = str(stop)[:255]  # stop not in NaPTAN
+                    stoppoint = get_stop(
+                        stop.element, f"{self.source.id}:{atco_code_upper}"
+                    )
+                    stoppoint.common_name = str(stop)[:48]
+                    stoppoint.source = self.source
+                    stoppoint.timing_status = ""
+                    stoppoint.bus_stop_type = ""
+                    stoppoint.stop_type = ""
+                    ad_hoc_stops[atco_code_upper] = stoppoint
+                    stops[atco_code_upper] = stoppoint
+
+        StopPoint.objects.bulk_create(
+            ad_hoc_stops.values(),
+            update_conflicts=True,
+            unique_fields=["atco_code"],
+            update_fields=["common_name", "naptan_code", "latlong", "bearing"],
+        )
 
         return stops
 
@@ -1470,6 +1631,12 @@ class Command(BaseCommand):
                 self.garages[garage_code] = garage
 
     def handle_file(self, open_file, filename: str):
+        sha1 = hashlib.sha1(usedforsecurity=False)
+        while chunk := open_file.read(65536):
+            sha1.update(chunk)
+        file_hash = sha1.hexdigest()
+        open_file.seek(0)
+
         transxchange = TransXChange(open_file)
 
         if not transxchange.journeys:
@@ -1478,11 +1645,9 @@ class Command(BaseCommand):
 
         self.vehicle_types = {}
 
-        today = self.source.datetime.date()
-
         stops = self.do_stops(transxchange.stops)
 
         self.do_garages(transxchange.garages)
 
         for txc_service in transxchange.services.values():
-            self.handle_service(filename, transxchange, txc_service, today, stops)
+            self.handle_service(filename, transxchange, txc_service, stops, file_hash)

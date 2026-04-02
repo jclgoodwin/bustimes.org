@@ -169,13 +169,13 @@ function getTimestamp(datetime) {
   var ago = Math.round((now.getTime() - then.getTime()) / 1000);
 
   if (ago >= 1800) {
-    return "Updated at " + then.toTimeString().slice(0, 8);
+    return "Updated at " + datetime.slice(11, 19);
   } else {
     var content =
       '<time datetime="' +
       datetime +
       '" title="' +
-      then.toTimeString().slice(0, 8) +
+      datetime.slice(11, 19) +
       '">';
     if (ago >= 59) {
       content += getTimeDelta(ago);

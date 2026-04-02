@@ -15,6 +15,14 @@ urlpatterns = [
     path("stops/<atco_code>/debug", views.stop_debug),
     path("vehicles/tfl/<reg>", views.tfl_vehicle, name="tfl_vehicle"),
     path("trips/<int:pk>", views.TripDetailView.as_view(), name="trip_detail"),
-    path("trips/<int:pk>/block", views.trip_block),
+    path("trips/<int:pk>/block", views.trip_block, name="block_detail"),
+    path("trips/<int:trip_id>/snap", views.snap),
+    path("journeys/<int:journey_id>/snap", views.snap),
     path("trip_updates", views.trip_updates),
+    path("trip_updates/<slug:feed_name>.json", views.trip_updates_json),
+    path(
+        "routelinks/<int:pk>",
+        views.route_link_view,
+        name="routelink_detail",
+    ),
 ]

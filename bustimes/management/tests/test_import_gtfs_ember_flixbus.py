@@ -1,6 +1,7 @@
 import datetime
 from pathlib import Path
 from unittest.mock import patch
+from tempfile import TemporaryDirectory
 
 import fakeredis
 import time_machine
@@ -11,6 +12,7 @@ from django.test import TestCase, override_settings
 from busstops.models import DataSource, Operator, Region, Service, StopCode, StopPoint
 from vehicles.management.commands import import_gtfsr_ember
 
+from .test_import_gtfs import make_zipfile
 from ...models import Route, Trip
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
@@ -69,10 +71,13 @@ class FlixbusTest(TestCase):
         )
 
     def test_not_modified(self):
-        with patch(
-            "bustimes.management.commands.import_gtfs_flixbus.download_if_modified",
-            return_value=(False, None),
-        ), self.assertNumQueries(2):
+        with (
+            patch(
+                "bustimes.management.commands.import_gtfs_flixbus.download_if_modified",
+                return_value=(False, None),
+            ),
+            self.assertNumQueries(2),
+        ):
             call_command("import_gtfs_flixbus")
 
     @time_machine.travel("2023-01-01")
@@ -93,7 +98,7 @@ class FlixbusTest(TestCase):
         self.assertContains(response, "London - Northampton - Nottingham")
         self.assertContains(response, "London - Cambridge")
 
-        service = Service.objects.get(line_name="004")
+        service = Service.objects.get(line_name="UK004")
 
         response = self.client.get(service.get_absolute_url())
         self.assertContains(
@@ -101,22 +106,25 @@ class FlixbusTest(TestCase):
         )
         self.assertContains(response, "/stops/3390C11")
 
+        # Uni of Nottm
         response = self.client.get(
-            "/stops/89251c5e-72da-49e5-9077-e8549874c710?date=2024-04-01"
-        )  # Uni of Nottm
+            "/stops/89251c5e-72da-49e5-9077-e8549874c710", [("date", "2024-04-01")]
+        )
         self.assertContains(
             response, ">University of Nottingham - North Entrance (Stop UN15)<"
         )
         self.assertEqual(7, len(response.context["departures"]))
 
+        # Vicky Coach Stn
         response = self.client.get(
-            "/stops/dcc0f769-9603-11e6-9066-549f350fcb0c?date=2024-04-01"
-        )  # Vicky Coach Stn
+            "/stops/dcc0f769-9603-11e6-9066-549f350fcb0c", [("date", "2024-04-01")]
+        )
         self.assertContains(response, ">London Victoria Coach Station<")
-        # self.assertEqual(0, len(response.context["departures"]))  # no departures, only arrivals
+        # no departures, only arrivals
+        self.assertEqual(7, len(response.context["departures"]))
 
         # British Summer Time:
-        response = self.client.get(f"{service.get_absolute_url()}?date=2024-04-01")
+        response = self.client.get(service.get_absolute_url(), [("date", "2024-04-01")])
         self.assertContains(
             response, "<td>10:30</td><td>15:00</td><td>19:15</td><td>23:40</td>"
         )
@@ -125,15 +133,24 @@ class FlixbusTest(TestCase):
 
     @time_machine.travel("2023-01-01")
     def test_import_gtfs_ember(self):
-        with patch(
-            "bustimes.management.commands.import_gtfs_ember.download_if_modified",
-            return_value=(
-                True,
-                datetime.datetime(2024, 6, 18, 10, 0, 0, tzinfo=datetime.timezone.utc),
+        with (
+            patch(
+                "bustimes.management.commands.import_gtfs_ember.download_if_modified",
+                return_value=(
+                    True,
+                    datetime.datetime(
+                        2024, 6, 18, 10, 0, 0, tzinfo=datetime.timezone.utc
+                    ),
+                ),
             ),
+            TemporaryDirectory() as directory,
+            override_settings(DATA_DIR=directory),
         ):
-            call_command("import_gtfs_ember")
-            call_command("import_gtfs_ember")
+            make_zipfile(directory, "ember_gtfs")
+
+            with vcr.use_cassette(str(FIXTURES_DIR / "ember_gtfsr.yml")):
+                call_command("import_gtfs_ember")
+                call_command("import_gtfs_ember")
 
         response = self.client.get("/operators/ember")
 
@@ -149,13 +166,16 @@ class FlixbusTest(TestCase):
         command = import_gtfsr_ember.Command()
         command.do_source()
 
-        with patch(
-            "vehicles.management.import_live_vehicles.redis_client",
-            fakeredis.FakeStrictRedis(),
-        ), vcr.use_cassette(str(FIXTURES_DIR / "ember_gtfsr.yml")):
-            with self.assertNumQueries(58):
+        with (
+            patch(
+                "vehicles.management.import_live_vehicles.redis_client",
+                fakeredis.FakeStrictRedis(),
+            ),
+            vcr.use_cassette(str(FIXTURES_DIR / "ember_gtfsr.yml")),
+        ):
+            with self.assertNumQueries(84):
                 command.update()
-            with self.assertNumQueries(41):
+            with self.assertNumQueries(32):
                 command.update()
 
         response = self.client.get(service.get_absolute_url())

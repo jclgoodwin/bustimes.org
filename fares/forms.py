@@ -1,12 +1,13 @@
 from django.db.models import Q, Exists, OuterRef
 from django.db.utils import OperationalError
+from django.forms import Form, ChoiceField
+
 from .models import FareZone, DistanceMatrixElement
-from django import forms
 
 
-class FaresForm(forms.Form):
-    origin = forms.ChoiceField(label="From")
-    destination = forms.ChoiceField(label="To")
+class FaresForm(Form):
+    origin = ChoiceField(label="From")
+    destination = ChoiceField(label="To")
 
     def __init__(self, tariffs, *args, **kwargs):
         self.tariffs = tariffs

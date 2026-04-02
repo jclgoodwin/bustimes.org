@@ -1,42 +1,51 @@
 import datetime
-from http import HTTPStatus
 import json
 import logging
-from itertools import pairwise
+from itertools import pairwise, groupby
 from urllib.parse import unquote
-
-import lightningcss
+from functools import partial
+from http import HTTPStatus
+import subprocess
 import xmltodict
 from django.conf import settings
 from django.contrib.auth.models import Permission
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.gis.geos import GEOSException, Point
-from django.contrib.postgres.aggregates import StringAgg
 from django.core.cache import cache
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, BadRequest
 from django.core.paginator import Paginator
 from django.db import IntegrityError, OperationalError, connection, transaction
-from django.db.models import Case, F, Max, OuterRef, Q, When
+from django.db.models import Case, F, Max, OuterRef, Q, When, Value
+from django.db.models.aggregates import StringAgg
 from django.db.models.functions import Coalesce, Now
-from django.http import Http404, HttpResponse, HttpResponseBadRequest, JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.http import Http404, HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.cache import get_conditional_response, set_response_etag
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_safe
+from django.utils.decorators import method_decorator
 from django.views.generic.detail import DetailView
 from haversine import Unit, haversine, haversine_vector
 from redis.exceptions import ConnectionError
 from sql_util.utils import Exists, SubqueryMax, SubqueryMin
 
 from accounts.models import User
-from buses.utils import cache_page
-from busstops.models import SERVICE_ORDER_REGEX, Operator, Service
+from buses.utils import cdn_cache_control
+from busstops.models import (
+    SERVICE_ORDER_REGEX,
+    Operator,
+    OperatorGroup,
+    Service,
+    StopUsage,
+)
 from busstops.utils import get_bounding_box
 from bustimes.models import Garage, Route, StopTime
 from bustimes.utils import contiguous_stoptimes_only, get_other_trips_in_block
+from photos.forms import PhotoForm
+from photos.utils import add_flickr_photo
 
 from . import filters, forms
 from .management.commands import import_bod_avl
@@ -52,6 +61,13 @@ from .models import (
 from .rtpi import add_progress_and_delay
 from .tasks import handle_siri_post
 from .utils import apply_revision, get_revision, redis_client  # calculate_bearing,
+
+
+def get_redirect_view(*args, **kwargs):
+    def redirect_view(request):
+        return redirect(*args, **kwargs)
+
+    return redirect_view
 
 
 class Vehicles:
@@ -113,16 +129,20 @@ def vehicles(request):
 @cache_control(max_age=3600)
 def liveries_css(request, version=0):
     styles = []
-    liveries = Livery.objects.filter(published=True).order_by("id")
-    for livery in liveries:
-        styles += livery.get_styles()
+    liveries = Livery.objects.filter(published=True).order_by("left_css")
+    for _, liveries in groupby(liveries, lambda livery: livery.right_css):
+        liveries = list(liveries)
+        styles += liveries[0].get_styles([livery.id for livery in liveries])
     styles = "".join(styles)
-    styles = lightningcss.process_stylesheet(styles)
+    completed_process = subprocess.run(
+        ["lightningcss", "--minify"], input=styles.encode(), capture_output=True
+    )
+    styles = completed_process.stdout
     return HttpResponse(styles, content_type="text/css")
 
 
 features_string_agg = StringAgg(
-    "features__name", ", ", ordering=["features__name"], default=""
+    "features__name", Value(", "), order_by=["features__name"], default=""
 )
 
 
@@ -154,11 +174,20 @@ def get_vehicle_order(vehicle) -> tuple[str, int, str]:
 
 
 @require_safe
-def operator_vehicles(request, slug=None, parent=None):
+def operator_vehicles(request, slug=None, group_slug=None):
     """fleet list"""
 
-    operators = Operator.objects.select_related("region")
-    if slug:
+    operators = Operator.objects.select_related("region", "group")
+    if group_slug:
+        try:
+            group = OperatorGroup.objects.get(slug=group_slug)
+        except OperatorGroup.DoesNotExist:
+            # cool URIs don't change
+            group = get_object_or_404(OperatorGroup, name=group_slug)
+        operators = group.operator_set.in_bulk()
+        vehicles = Vehicle.objects.filter(operator__group=group)
+    elif slug:
+        group = None
         try:
             operator = operators.get(slug=slug.lower())
         except Operator.DoesNotExist:
@@ -166,20 +195,14 @@ def operator_vehicles(request, slug=None, parent=None):
                 operators, operatorcode__code=slug, operatorcode__source__name="slug"
             )
         vehicles = operator.vehicle_set
-    else:
-        assert parent
-        operators = operators.filter(parent=parent).in_bulk()
-        if not operators:
-            raise Http404
-        vehicles = Vehicle.objects.filter(operator__in=operators)
 
     if "withdrawn" not in request.GET:
         vehicles = vehicles.filter(withdrawn=False)
 
     vehicles = vehicles.order_by("fleet_number", "fleet_code", "reg", "code")
 
-    if parent:
-        context = {}
+    if group_slug:
+        context = {"object": group}
     else:
         vehicles = vehicles.annotate(feature_names=features_string_agg)
         vehicles = vehicles.annotate(
@@ -187,10 +210,13 @@ def operator_vehicles(request, slug=None, parent=None):
         )
         vehicles = vehicles.select_related("latest_journey")
 
-        context = {"object": operator, "breadcrumb": [operator.region, operator]}
+        context = {
+            "object": operator,
+            "breadcrumb": [operator.group or operator.region, operator],
+        }
 
     vehicles = vehicles.annotate(
-        livery_name=F("livery__name"),
+        livery_name=Case(When(livery__show_name=True, then="livery__name")),
         vehicle_type_name=F("vehicle_type__name"),
         garage_name=Case(
             When(garage__name="", then="garage__code"),
@@ -202,16 +228,17 @@ def operator_vehicles(request, slug=None, parent=None):
         raise Http404
 
     vehicles = sorted(vehicles, key=get_vehicle_order)
-    if not parent and operator.noc in settings.ALLOW_VEHICLE_NOTES_OPERATORS:
+    if not group and operator.noc in settings.ALLOW_VEHICLE_NOTES_OPERATORS:
         vehicles = sorted(vehicles, key=lambda v: v.notes)
 
-    if parent:
+    if group:
         paginator = Paginator(vehicles, 1000)
         page = request.GET.get("page")
         vehicles = paginator.get_page(page)
 
         for v in vehicles:
             v.operator = operators[v.operator_id]
+            v.operator_name = v.operator.name.removeprefix(f"{group} ")
 
         context["paginator"] = paginator
     else:
@@ -226,7 +253,7 @@ def operator_vehicles(request, slug=None, parent=None):
         ]
     context["columns"] = columns
 
-    if not parent:
+    if not group:
         now = timezone.localtime()
 
         # midnight or 12 hours ago, whichever happened first
@@ -258,7 +285,7 @@ def operator_vehicles(request, slug=None, parent=None):
 
     context = {
         **context,
-        "parent": parent,
+        "parent": group,
         "vehicles": vehicles,
         "branding_column": any(vehicle.branding for vehicle in vehicles),
         "name_column": any(vehicle.name for vehicle in vehicles),
@@ -272,7 +299,7 @@ def operator_vehicles(request, slug=None, parent=None):
     return render(request, "operator_vehicles.html", context)
 
 
-@cache_page(max_age=300)
+@cdn_cache_control(max_age=300)
 @require_safe
 def operator_map(request, slug):
     operator = get_object_or_404(Operator.objects.select_related("region"), slug=slug)
@@ -339,18 +366,7 @@ def vehicles_json(request) -> JsonResponse:
     except KeyError:
         bounds = None
     except (GEOSException, ValueError):
-        return HttpResponseBadRequest()
-
-    all_vehicles = (
-        Vehicle.objects.select_related("vehicle_type")
-        .annotate(
-            feature_names=features_string_agg,
-            service_line_name=F("latest_journey__trip__route__line_name"),
-            service_slug=F("latest_journey__service__slug"),
-            colour=F("livery__colour"),
-        )
-        .defer("data", "latest_journey_data")
-    )
+        raise BadRequest
 
     vehicle_ids = None
     set_names = None
@@ -365,8 +381,8 @@ def vehicles_json(request) -> JsonResponse:
             # convert to kilometres (only for Redis to convert back to degrees)
             width = haversine((ymin, xmax), (ymin, xmin))
             height = haversine((ymin, xmax), (ymax, xmax))
-        except ValueError as e:
-            return HttpResponseBadRequest(e)
+        except ValueError:
+            raise BadRequest
 
         vehicle_ids = redis_client.geosearch(
             "vehicle_location_locations",
@@ -383,7 +399,7 @@ def vehicles_json(request) -> JsonResponse:
                 int(service_id) for service_id in request.GET["service"].split(",")
             ]
         except ValueError:
-            return HttpResponseBadRequest()
+            raise BadRequest
         set_names = [f"service{service_id}vehicles" for service_id in service_ids]
     elif "operator" in request.GET:
         operator_ids = request.GET["operator"].split(",")
@@ -423,9 +439,18 @@ def vehicles_json(request) -> JsonResponse:
         [f"journey{item['journey_id']}" for item in vehicle_locations if item]
     )
 
-    # get vehicles from the database if they have unexpired locations, and weren't in the cache
+    # get vehicles from the database IF they have unexpired locations AND weren't in the cache
     try:
-        vehicles = all_vehicles.in_bulk(
+        vehicles = (
+            Vehicle.objects.select_related("vehicle_type")
+            .annotate(
+                feature_names=features_string_agg,
+                service_line_name=F("latest_journey__trip__route__line_name"),
+                service_slug=F("latest_journey__service__slug"),
+                colour=F("livery__colour"),
+            )
+            .defer("data", "latest_journey_data")
+        ).in_bulk(
             [
                 vehicle_id
                 for vehicle_id, item in zip(vehicle_ids, vehicle_locations)
@@ -463,7 +488,12 @@ def vehicles_json(request) -> JsonResponse:
                             or item.get("service")
                             and item["service"]["line_name"],
                         }
-                    journeys_to_cache_later[journey_cache_key] = journey
+                    if vehicle.latest_journey_id == item["journey_id"]:
+                        journeys_to_cache_later[journey_cache_key] = journey
+                    else:
+                        logging.warning(
+                            f"{vehicle=} {vehicle.latest_journey_id=} {item['journey_id']=}"
+                        )
                     item.update(journey)
 
             if (
@@ -488,8 +518,6 @@ def vehicles_json(request) -> JsonResponse:
         cache.set_many(journeys_to_cache_later, 3600)  # an hour
 
     response = JsonResponse(locations, safe=False)
-    if not locations:
-        response.status_code = HTTPStatus.NOT_FOUND
 
     return respond_conditionally(request, response)
 
@@ -499,43 +527,30 @@ def get_dates(vehicle=None, service=None):
         # the database query for a service is too slow
         return
 
-    key = f"vehicle:{vehicle.id}:dates"
     journeys = vehicle.vehiclejourney_set
 
-    dates = cache.get(key)
+    dates = (
+        journeys.filter(date__isnull=False)
+        .values_list("date", flat=True)
+        .order_by("date")
+        .distinct()
+    )
 
-    if dates and vehicle.latest_journey:
-        latest_date = timezone.localdate(vehicle.latest_journey.datetime)
-        if dates[-1] < latest_date:
-            dates.append(latest_date)
-            # we'll update the cache below
-        else:
-            return dates
-
-    if not dates:
-        try:
-            dates = list(journeys.dates("datetime", "day"))
-        except OperationalError:
-            return
-
-    if dates:
-        now = timezone.localtime()
-        time_to_midnight = datetime.timedelta(days=1) - datetime.timedelta(
-            hours=now.hour, minutes=now.minute, seconds=now.second
-        )
-        if dates[-1] == now.date():  # today
-            time_to_midnight += datetime.timedelta(days=1)
-        time_to_midnight = time_to_midnight.total_seconds()
-        if time_to_midnight > 0:
-            cache.set(key, dates, time_to_midnight)
-
-    return dates
+    return list(dates)
 
 
 def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
     """list of VehicleJourneys (and dates) for a service or vehicle"""
 
-    dates = get_dates(service=service, vehicle=vehicle)
+    if vehicle and vehicle.latest_journey:
+        last_date = vehicle.latest_journey.date
+        dates = cache.get_or_set(
+            f"vehicle{vehicle.id}dates{last_date}",
+            partial(get_dates, vehicle=vehicle),
+            timeout=86400,
+        )
+    else:
+        dates = get_dates(vehicle=vehicle, service=service)
 
     context = {}
 
@@ -547,9 +562,9 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
 
     if not date and dates is None:
         if vehicle and vehicle.latest_journey:
-            date = timezone.localdate(vehicle.latest_journey.datetime)
+            date = last_date
         else:
-            date = journeys.aggregate(max_date=Max("datetime__date"))["max_date"]
+            date = journeys.aggregate(max_date=Max("date"))["max_date"]
 
     if dates:
         context["dates"] = dates
@@ -559,16 +574,12 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
     if date:
         context["date"] = date
 
-        journeys = (
-            journeys.filter(datetime__date=date).select_related("trip").order_by("id")
-        )
+        journeys = journeys.filter(date=date).select_related("trip").order_by("id")
 
         if dates:
             if date not in dates:
                 dates.append(date)
                 dates.sort()
-            elif not journeys:
-                cache.delete(f"vehicle:{vehicle.id}:dates")
 
         context["journeys"] = journeys
 
@@ -618,7 +629,8 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
                         )
                         .annotate(
                             destination_name=Coalesce(
-                                F("destination__locality__name"),
+                                "headsign",
+                                "destination__locality__name",
                                 "destination__common_name",
                             ),
                             line_name=F("route__line_name"),
@@ -633,24 +645,42 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
 
 
 @require_safe
-def service_vehicles_history(request, slug):
-    service: Service = get_object_or_404(Service.objects.with_line_names(), slug=slug)
+def service_vehicles_history(request, slug=None, noc=None, line_name=None):
+    if slug:
+        service: Service = get_object_or_404(
+            Service.objects.with_line_names(), slug=slug
+        )
+        operator = service.operator.first()
+        journeys = service.vehiclejourney_set
+    else:
+        service = None
+        operator = get_object_or_404(Operator, noc=noc)
+        journeys = VehicleJourney.objects.filter(
+            service=None, route_name=line_name, vehicle__operator=operator
+        )
 
     context = journeys_list(
-        request, service.vehiclejourney_set.select_related("vehicle"), service=service
+        request, journeys.select_related("vehicle"), service=service
     )
 
-    operator = service.operator.select_related("region").first()
+    if not context:
+        raise Http404
+
+    if service:
+        context["garages"] = Garage.objects.filter(
+            trip__route__service=service
+        ).distinct()
+        context["title"] = f"Vehicles \u2013 {service.get_line_name_and_brand()}"
+    else:
+        context["title"] = f"Vehicles \u2013 {line_name}"
+
     return render(
         request,
         "vehicles/vehicle_detail.html",
         {
             **context,
-            "garages": Garage.objects.filter(
-                Exists("trip__route", filter=Q(route__service=service))
-            ),
             "breadcrumb": [operator, service],
-            "object": service,
+            "object": service or line_name,
         },
     )
 
@@ -659,7 +689,17 @@ class VehicleDetailView(DetailView):
     model = Vehicle
     queryset = model.objects.select_related(
         "operator", "operator__region", "vehicle_type", "livery", "latest_journey"
-    ).prefetch_related("features")
+    ).prefetch_related("features", "photo_set")
+
+    def get_object(self, **kwargs):
+        try:
+            return super().get_object(**kwargs)
+        except Http404:
+            if slug := self.kwargs.get("slug"):
+                return get_object_or_404(
+                    self.queryset, vehiclecode__code=slug, vehiclecode__scheme="slug"
+                )
+            raise
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -692,6 +732,11 @@ class VehicleDetailView(DetailView):
             if len(garages) == 1:
                 context["garage"] = Garage.objects.get(id=garages.pop())
 
+        if self.object.withdrawn and self.object.reg:
+            context["potential_duplicates"] = Vehicle.objects.filter(
+                ~Q(id=self.object.id), reg__iexact=self.object.reg
+            )
+
         if self.object.operator:
             context["breadcrumb"] = [
                 self.object.operator,
@@ -701,26 +746,36 @@ class VehicleDetailView(DetailView):
             context["previous"] = self.object.get_previous()
             context["next"] = self.object.get_next()
 
+        if self.request.user.has_perm("photos.add_photo"):
+            context["form"] = PhotoForm()
+
         return context
 
+    def render_to_response(self, context):
+        response = super().render_to_response(context)
 
-def record_ip_address(request):
-    ip_address = request.headers.get("cf-connecting-ip")
-    if request.user.ip_address != ip_address:
-        request.user.ip_address = ip_address
-        request.user.save(update_fields=["ip_address"])
+        if self.object.withdrawn and "potential_duplicates" in context:
+            if not all(
+                vehicle.withdrawn for vehicle in context["potential_duplicates"]
+            ):
+                response.status_code = HTTPStatus.NOT_FOUND
+
+        return response
+
+    @method_decorator(permission_required("photos.add_photo", raise_exception=True))
+    def post(self, *args, **kwargs):
+        form = PhotoForm(self.request.POST)
+        vehicle = self.get_object()
+        if form.is_valid():
+            try:
+                add_flickr_photo(form.cleaned_data["url"], vehicle, self.request)
+            except IndexError:
+                pass
+
+        return self.get(*args, **kwargs)
 
 
 def check_user(request):
-    if settings.DISABLE_EDITING and not request.user.has_perm(
-        "vehicles.change_vehicle"
-    ):
-        raise PermissionDenied(
-            """This bit of the website is in “read-only” mode.
-            Sorry for the inconvenience.
-            Don’t worry, you can still enjoy all of the main features of the website."""
-        )
-
     if request.user.trusted is False:
         raise PermissionDenied
 
@@ -746,7 +801,6 @@ revision_display_related_fields = (
 
 @login_required
 def edit_vehicle(request, **kwargs):
-    record_ip_address(request)
     check_user(request)
 
     vehicle = get_object_or_404(
@@ -865,7 +919,7 @@ def edit_vehicle(request, **kwargs):
     else:
         context["breadcrumb"] = [vehicle]
 
-    return render(
+    response = render(
         request,
         "edit_vehicle.html",
         {
@@ -875,6 +929,11 @@ def edit_vehicle(request, **kwargs):
             "vehicle": vehicle,
         },
     )
+
+    # for the ImgBB upload widget
+    response["Cross-Origin-Opener-Policy"] = "unsafe-none"
+
+    return response
 
 
 @require_POST
@@ -927,10 +986,11 @@ def vehicle_edits(request):
         request.GET or {"status": "approved"}, queryset=revisions
     )
     if request.user.is_anonymous or not (
-        request.user.trusted or request.user.is_superuser
+        request.user.trusted
+        or request.user.is_superuser
+        or request.GET.get("user") == str(request.user.id)
     ):
         f.filters["status"].field.choices = [("approved", "approved")]
-        # TODO: only show users' own disapproved edits
 
     if f.is_valid():
         paginator = Paginator(f.qs, 100)
@@ -962,7 +1022,7 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
         "vehicle_id": journey.vehicle_id,
         "service_id": journey.service_id,
         "trip_id": journey.trip_id,
-        "datetime": journey.datetime,
+        "datetime": timezone.localtime(journey.datetime),
         "route_name": journey.route_name,
         "code": journey.code,
         "destination": journey.destination,
@@ -1040,6 +1100,7 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
             #         previous_latlong = stop.latlong
             data["stops"].append(
                 {
+                    "id": stoptime.id,
                     "atco_code": stoptime.stop_id,
                     "name": (
                         stop.get_name_for_timetable() if stop else stoptime.stop_code
@@ -1051,10 +1112,37 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
                     "coordinates": stop and stop.latlong and stop.latlong.coords,
                 }
             )
+    elif journey.service_id:
+        stop_usages = StopUsage.objects.filter(
+            service_id=journey.service_id
+        ).select_related("stop")
+        data["stops"] = [
+            {
+                "id": su.id,
+                "atco_code": su.stop_id,
+                "name": su.stop.get_name_for_timetable(),
+                "heading": su.stop.get_heading(),
+                "coordinates": su.stop.latlong and su.stop.latlong.coords,
+                "minor": not su.timing_point,
+                "inbound": su.inbound,
+                "line_name": su.line_name.upper(),
+            }
+            for i, su in enumerate(stop_usages)
+        ]
+        del stop_usages
 
-    if "stops" in data and "locations" in data:
+    if data.get("stops") and data.get("locations"):
+        # filter by line name
+        if "line_name" in data["stops"][0]:
+            line_name = journey.route_name.upper()
+            if any(stop["line_name"] == line_name for stop in data["stops"]):
+                data["stops"] = [
+                    stop for stop in data["stops"] if stop["line_name"] == line_name
+                ]
+
         # only stops with coordinates
         stops = [stop for stop in data["stops"] if stop["coordinates"]]
+
         if stops:
             stop_coords = [stop["coordinates"][::-1] for stop in stops]
             vehicle_coords = [
@@ -1079,23 +1167,47 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
                     if distance < 100:
                         nearest_stop["actual_departure_time"] = location["datetime"]
 
-    if vehicle_id:
-        next_previous_filter = {"vehicle_id": vehicle_id}
-    elif service_id:
-        next_previous_filter = {
-            "service_id": service_id,
-            "datetime__date": journey.datetime,
-        }
+            # work out which direction we're going in
+            inbound = datetime.timedelta()
+            outbound = datetime.timedelta()
+            previous = None
+
+            for stop in stops:
+                if "inbound" in stop and "actual_departure_time" in stop:
+                    if previous and previous["inbound"] == stop["inbound"]:
+                        difference = (
+                            stop["actual_departure_time"]
+                            - previous["actual_departure_time"]
+                        )
+                        if stop["inbound"]:
+                            inbound += difference
+                        else:
+                            outbound += difference
+
+                    previous = stop
+
+            # whichever sum-of-differences is bigger is the direction of travel
+            if inbound > outbound:
+                data["stops"] = [stop for stop in data["stops"] if stop["inbound"]]
+            elif inbound < outbound:
+                data["stops"] = [stop for stop in data["stops"] if not stop["inbound"]]
+
+    next_previous_filter = {"date": journey.date}
+    if service_id:
+        next_previous_filter["service_id"] = service_id
         data["vehicle"] = str(journey.vehicle)
     else:
-        next_previous_filter = {"vehicle_id": journey.vehicle_id}
+        next_previous_filter["vehicle_id"] = journey.vehicle_id
 
     try:
         next_journey = journey.get_next_by_datetime(**next_previous_filter)
     except VehicleJourney.DoesNotExist:
         pass
     else:
-        data["next"] = {"id": next_journey.id, "datetime": next_journey.datetime}
+        data["next"] = {
+            "id": next_journey.id,
+            "datetime": timezone.localtime(next_journey.datetime),
+        }
 
     try:
         previous_journey = journey.get_previous_by_datetime(**next_previous_filter)
@@ -1104,7 +1216,7 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
     else:
         data["previous"] = {
             "id": previous_journey.id,
-            "datetime": previous_journey.datetime,
+            "datetime": timezone.localtime(previous_journey.datetime),
         }
 
     return JsonResponse(data)
@@ -1112,10 +1224,15 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
 
 @require_safe
 def latest_journey_debug(request, **kwargs):
-    vehicle = get_object_or_404(Vehicle, **kwargs)
-    if not vehicle.latest_journey_data:
-        raise Http404
-    return JsonResponse(vehicle.latest_journey_data)
+    vehicle = get_object_or_404(Vehicle, **kwargs, latest_journey_data__isnull=False)
+
+    # redact possible personal information
+    try:
+        del vehicle.latest_journey_data["Extensions"]["VehicleJourney"]["DriverRef"]
+    except (KeyError, TypeError):
+        pass
+
+    return JsonResponse(vehicle.latest_journey_data, safe=False)
 
 
 def debug(request):
@@ -1154,22 +1271,47 @@ def debug(request):
 
 
 @csrf_exempt
-@require_POST
 def siri_post(request, uuid):
-    get_object_or_404(SiriSubscription, uuid=uuid)
+    subscription = get_object_or_404(SiriSubscription, uuid=uuid)
+    last_post_key = subscription.get_status_key().replace("_status", "_last_post")
+
+    if request.method == "GET":
+        last_post = cache.get(last_post_key)
+        return HttpResponse(
+            last_post["body"], content_type=last_post["headers"]["content-type"]
+        )
 
     body = request.body.decode()
-    data = xmltodict.parse(body, dict_constructor=dict, force_list=["VehicleActivity"])
+    data = xmltodict.parse(body, force_list=["VehicleActivity"])
 
     handle_siri_post(uuid, data)
 
-    return HttpResponse("")
+    cache.set(last_post_key, {"headers": request.headers, "body": body}, None)
+
+    return HttpResponse(
+        xmltodict.unparse(
+            {
+                "Siri": {
+                    "@xmlns": "http://www.siri.org.uk/siri",
+                    "@version": "2.0",
+                    "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+                    "@xsi:schemaLocation": "http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.0/xsd/siri.xsd",
+                    "DataReceivedAcknowledgement": {
+                        "ResponseTimestamp": timezone.now().isoformat(),
+                        "ConsumerRef": subscription.requestor_ref,
+                        "Status": True,
+                    },
+                }
+            }
+        ),
+        content_type="application/xml",
+    )
 
 
 @csrf_exempt
 @require_POST
 def overland(request, uuid):
-    get_object_or_404(SiriSubscription, uuid=uuid)
+    subscription = get_object_or_404(SiriSubscription, uuid=uuid)
 
     data = json.loads(request.body)
 
@@ -1200,12 +1342,17 @@ def overland(request, uuid):
                         "ResponseTimestamp": when,
                         "VehicleMonitoringDelivery": {
                             "VehicleActivity": [activity],
-                            "SubscriptionRef": "",
                         },
                     }
                 }
             },
         )
+
+    cache.set(
+        subscription.get_status_key().replace("_status", "_last_post"),
+        {"headers": request.headers, "body": request.body.decode()},
+        None,
+    )
 
     # https://github.com/aaronpk/Overland-iOS#api
     return JsonResponse({"result": "ok"})

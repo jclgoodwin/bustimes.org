@@ -9,7 +9,7 @@ from django.contrib.auth.models import Permission
 from django.test import TestCase, override_settings
 
 from accounts.models import User
-from busstops.models import DataSource, Operator, Region, Service
+from busstops.models import DataSource, Operator, OperatorGroup, Region, Service
 
 from .models import (
     Livery,
@@ -39,19 +39,18 @@ class VehiclesTests(TestCase):
         cls.wifi = VehicleFeature.objects.create(name="Wi-Fi")
         cls.usb = VehicleFeature.objects.create(name="USB")
 
+        group = OperatorGroup.objects.create(
+            name="Madrigal Electromotive", slug="madrigal-electromotive"
+        )
         cls.bova = Operator.objects.create(
             region=ea,
             name="Bova and Over",
             noc="BOVA",
             slug="bova-and-over",
-            parent="Madrigal Electromotive",
+            group=group,
         )
         cls.lynx = Operator.objects.create(
-            region=ea,
-            name="Lynx",
-            noc="LYNX",
-            slug="lynx",
-            parent="Madrigal Electromotive",
+            region=ea, name="Lynx", noc="LYNX", slug="lynx", group=group
         )
         cls.chicken = Operator.objects.create(
             region=ea, name="Chicken Bus", noc="CLUCK", slug="chicken"
@@ -85,7 +84,10 @@ class VehiclesTests(TestCase):
             branding="",
         )
         cls.livery = Livery.objects.create(
-            name="black with lemon piping", colours="#FF0000 #0000FF", published=True
+            name="black with lemon piping",
+            colours="#FF0000 #0000FF",
+            colour="#FF0000",
+            published=True,
         )
         cls.vehicle_2 = Vehicle.objects.create(
             code="50",
@@ -103,6 +105,7 @@ class VehiclesTests(TestCase):
         cls.journey = VehicleJourney.objects.create(
             vehicle=cls.vehicle_1,
             datetime=cls.datetime,
+            date="2020-10-20",
             source=source,
             service=service,
             route_name="2",
@@ -110,6 +113,7 @@ class VehiclesTests(TestCase):
         VehicleJourney.objects.create(
             vehicle=cls.vehicle_1,
             datetime="2020-10-16 12:00:00+00:00",
+            date="2020-10-16",
             source=source,
             service=service,
             route_name="2",
@@ -117,6 +121,7 @@ class VehiclesTests(TestCase):
         VehicleJourney.objects.create(
             vehicle=cls.vehicle_1,
             datetime="2020-10-20 12:00:00+00:00",
+            date="2020-10-20",
             source=source,
             service=service,
             route_name="2",
@@ -159,13 +164,13 @@ class VehiclesTests(TestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_parent(self):
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(5):
             response = self.client.get("/groups/Madrigal Electromotive/vehicles")
         self.assertContains(response, "Lynx")
         self.assertContains(response, "Madrigal Electromotive")
         self.assertContains(response, "Optare")
 
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(2):
             response = self.client.get("/groups/Shatton Group/vehicles")
         self.assertEqual(404, response.status_code)
 
@@ -227,7 +232,7 @@ class VehiclesTests(TestCase):
         self.assertContains(response, "/vehicles/edits?operator=LYNX")
         self.assertContains(response, "/operators/lynx/map")
 
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(7):
             response = self.client.get("/operators/lynx")
         self.assertContains(response, "/operators/lynx/vehicles")
         self.assertNotContains(response, "/operators/lynx/map")
@@ -239,7 +244,7 @@ class VehiclesTests(TestCase):
         self.assertNotContains(response, "/operators/lynx/map")
 
     def test_vehicle_views(self):
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(7):
             response = self.client.get(self.vehicle_1.get_absolute_url() + "?date=poop")
         self.assertContains(response, "Optare Tempo")
         self.assertContains(response, "Trent Barton")
@@ -248,14 +253,14 @@ class VehiclesTests(TestCase):
         self.assertContains(response, ">00:47<")
         self.assertContains(response, ">13:00<")
 
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(6):
             response = self.client.get(self.vehicle_2.get_absolute_url())
         self.assertEqual(200, response.status_code)
 
         # can't connect to redis - no drama
         with (
             override_settings(REDIS_URL="redis://localhose:69"),
-            self.assertNumQueries(3),
+            self.assertNumQueries(4),
         ):
             response = self.client.get(
                 f"/vehicles/{self.vehicle_1.id}/journeys/{self.journey.id}.json"
@@ -264,18 +269,22 @@ class VehiclesTests(TestCase):
             {
                 "code": "",
                 "current": True,
-                "datetime": "2020-10-19T23:47:00Z",
+                "datetime": "2020-10-20T00:47:00+01:00",
                 "destination": "",
                 "direction": "",
-                "next": {"datetime": "2020-10-20T12:00:00Z", "id": self.journey.id + 2},
-                "previous": {
-                    "datetime": "2020-10-16T12:00:00Z",
-                    "id": self.journey.id + 1,
+                "next": {
+                    "datetime": "2020-10-20T13:00:00+01:00",
+                    "id": self.journey.id + 2,
                 },
+                # "previous": {
+                #     "datetime": "2020-10-16T13:00:00+01:00",
+                #     "id": self.journey.id + 1,
+                # },
                 "route_name": "2",
                 "service_id": self.journey.service_id,
                 "trip_id": None,
                 "vehicle_id": self.journey.vehicle_id,
+                "stops": [],
             },
             response.json(),
         )
@@ -284,7 +293,7 @@ class VehiclesTests(TestCase):
         self.assertEqual(str(self.journey), "19 Oct 20 23:47 2  ")
         self.assertEqual(
             self.journey.get_absolute_url(),
-            f"/vehicles/{self.vehicle_1.id}?date=2020-10-19#journeys/{self.journey.id}",
+            f"/vehicles/{self.vehicle_1.id}?date=2020-10-20#journey-{self.journey.id}",
         )
 
         response = self.client.get(f"/api/vehiclejourneys/{self.journey.id}.json")
@@ -300,7 +309,7 @@ class VehiclesTests(TestCase):
 
         self.assertEqual(location.get_redis_json()["coordinates"], (0.0, 51.0))
 
-        location.occupancy = "seatsAvailable"
+        location.occupancy = "Seats available"
         self.assertEqual(location.get_redis_json()["seats"], "Seats available")
 
         location.wheelchair_occupancy = 0
@@ -408,22 +417,41 @@ class VehiclesTests(TestCase):
         )
         self.assertContains(response, '<td class="field-vehicles">1</td>')
 
-    #         self.assertContains(
-    #             response,
-    #             """<td class="field-left">\
-    # <svg height="24" width="36" style="line-height:24px;font-size:24px;\
-    # background:linear-gradient(90deg,red 50%,#00f 50%)">
-    #                 <text x="50%" y="80%" fill="#fff" text-anchor="middle" style="">42</text>
-    #             </svg></td>""",
-    #         )
-    #         self.assertContains(
-    #             response,
-    #             """<td class="field-right">\
-    # <svg height="24" width="36" style="line-height:24px;font-size:24px;\
-    # background:linear-gradient(270deg,red 50%,#00f 50%)">
-    #                 <text x="50%" y="80%" fill="#fff" text-anchor="middle" style="">42</text>
-    #             </svg>""",
-    #         )
+        livery_2 = Livery.objects.create()
+
+        response = self.client.post(
+            "/admin/vehicles/livery/",
+            {
+                "action": "merge",
+                "_selected_action": [
+                    self.livery.id,
+                    livery_2.id,
+                ],
+            },
+            follow=True,
+        )
+        self.assertEqual(
+            list(response.context["messages"])[0].message,
+            "You can only merge liveries that are the same",
+        )
+
+        livery_2.colours = self.livery.colours
+        livery_2.left_css = self.livery.left_css
+        livery_2.right_css = self.livery.right_css
+        livery_2.save()
+
+        response = self.client.post(
+            "/admin/vehicles/livery/",
+            {
+                "action": "merge",
+                "_selected_action": [
+                    self.livery.id,
+                    livery_2.id,
+                ],
+            },
+            follow=True,
+        )
+        self.assertEqual(list(response.context["messages"])[0].message, "Merged")
 
     def test_vehicle_type_admin(self):
         self.client.force_login(self.staff_user)
@@ -462,11 +490,11 @@ class VehiclesTests(TestCase):
     def test_liveries_css(self):
         response = self.client.get("/liveries.44.css")
 
-    #         self.assertEqual(
-    #             response.content.decode(),
-    #             f""".livery-{self.livery.id}{{color:#fff;fill:#fff;background:linear-gradient(90deg,red 50%,#00f 50%)}}\
-    # .livery-{self.livery.id}.right{{background:linear-gradient(270deg,red 50%,#00f 50%)}}""",
-    #         )
+        self.assertEqual(
+            response.text,
+            f""".livery-{self.livery.id}{{color:#fff;background:linear-gradient(90deg,red 50%,#00f 50%);\
+&.right{{background:linear-gradient(270deg,red 50%,#00f 50%)}}}}\n""",
+        )
 
     def test_vehicle_edit_1(self):
         response = self.client.get("/vehicles/edits?status=pending")
@@ -556,6 +584,12 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             '<td class="field-pending">'
             f'<a href="/admin/vehicles/vehiclerevision/?user={self.staff_user.id}&pending=True">1</a></td>',
         )
+
+        response = self.client.get(
+            "/admin/vehicles/vehiclerevision/?change=changes__reg"
+        )
+        self.assertContains(response, "0 vehicle revisions")
+
         with self.assertNumQueries(5):
             response = self.client.get("/vehicles/edits?status=pending")
         self.assertContains(response, "<strong>previous reg</strong>", html=True)
@@ -573,8 +607,6 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         response = self.client.get(revision.vehicle.get_absolute_url())
         self.assertContains(response, "B EAN")
         self.assertContains(response, "Wi-Fi")
-        self.assertNotContains(response, "Pending edits")
-        self.assertContains(response, "History")
         self.assertEqual(revision.vehicle.fleet_number, 2)
 
         self.client.force_login(self.staff_user)
@@ -624,8 +656,6 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         response = self.client.get(revision.vehicle.get_absolute_url())
         self.assertNotContains(response, "B EAN")
         self.assertNotContains(response, "Wi-Fi")
-        self.assertNotContains(response, "Pending edits")
-        self.assertContains(response, "History")
 
     def test_vehicle_edit_2(self):
         self.client.force_login(self.staff_user)
@@ -916,7 +946,11 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
     def test_big_map(self):
         with self.assertNumQueries(1):
             response = self.client.get("/map")
-        self.assertContains(response, "latitude: 54,")
+            self.assertContains(response, "latitude: 54,")
+
+        with self.assertNumQueries(1):
+            response = self.client.get("/maps")
+            self.assertRedirects(response, "/map", 301)
 
         # 🇮🇪
         response = self.client.get("/map", headers={"CF-IPCountry": "IE"})
@@ -965,6 +999,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                         "fleet_number": 1,
                         "fleet_code": "1",
                         "reg": "FD54JYA",
+                        "previous_reg": "",
                         "vehicle_type": {
                             "id": self.vehicle_1.vehicle_type_id,
                             "name": "Optare Tempo",
@@ -985,7 +1020,6 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                             "id": "LYNX",
                             "slug": "lynx",
                             "name": "Lynx",
-                            "parent": "Madrigal Electromotive",
                         },
                         "garage": None,
                         "name": "",
@@ -999,6 +1033,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                         "fleet_number": 50,
                         "fleet_code": "50",
                         "reg": "UWW2X",
+                        "previous_reg": "",
                         "vehicle_type": {
                             "id": self.vehicle_2.vehicle_type_id,
                             "name": "Optare Spectra",
@@ -1021,7 +1056,6 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                             "id": "LYNX",
                             "slug": "lynx",
                             "name": "Lynx",
-                            "parent": "Madrigal Electromotive",
                         },
                         "garage": None,
                         "name": "",
@@ -1040,3 +1074,21 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         with self.assertNumQueries(2):
             response = self.client.get("/api/vehicles/?search=fd54jya")
         self.assertEqual(1, response.json()["count"])
+
+    def test_vehicles_json(self):
+        with self.assertNumQueries(0):
+            response = self.client.get(
+                "/vehicles.json?xmax=984.375&xmin=694.688&ymax=87.043&ymin=-89.261"
+            )
+        # Longitude 984.375 is out of range [-180, 180]
+        self.assertEqual(response.status_code, 400)
+
+        with self.assertNumQueries(0):
+            response = self.client.get("/vehicles.json?xmax=x&xmin=x&ymax=x&ymin=x")
+        # String input unrecognized as WKT EWKT, and HEXEWKB.
+        self.assertEqual(response.status_code, 400)
+
+        with self.assertNumQueries(0):
+            response = self.client.get("/vehicles.json?id=1,2")
+        self.assertEqual(response.json(), [])
+        self.assertEqual(response.headers["ETag"], '"d751713988987e9331980363e24189ce"')

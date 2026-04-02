@@ -17,11 +17,13 @@
             <dt>Type</dt>
             <dd>{{ object.service_type_description|linebreaksbr }}</dd>
 
-            <dt>Supported by subsidy?</dt>
-            <dd>{{ object.subsidies_description }}{% if object.subsidies_details %}<br>
-                    {{ object.subsidies_details|linebreaksbr }}
-                {% endif %}
-            </dd>
+            {% if object.subsidies_description or object.subsidies_details %}
+                <dt>Supported by subsidy?</dt>
+                <dd>{{ object.subsidies_description }}{% if object.subsidies_details %}<br>
+                        {{ object.subsidies_details|linebreaksbr }}
+                    {% endif %}
+                </dd>
+            {% endif %}
 
             <dt>Authorities</dt>
             <dd>{{ object.authority_description|linebreaksbr }}</dd>
@@ -42,7 +44,7 @@
 <ol class="history">
     {% for variation in variations %}
         <li value="{{ variation.variation_number }}">
-        {% if variation.registration_status == "Withdrawn" or variation.registration_status == "Expired" %}<del>{% endif %}
+        {% if variation.registration_status == "Withdrawn" or variation.registration_status == "Expired" %}<s>{% endif %}
             <ul>
                 {% if variation.date_received %}<li>
                     <strong>Received</strong>
@@ -72,7 +74,7 @@
 
             {{ variation.publication_text|linebreaks }}
         </li>
-        {% if variation.registration_status == "Withdrawn" or variation.registration_status == "Expired" %}</del>{% endif %}
+        {% if variation.registration_status == "Withdrawn" or variation.registration_status == "Expired" %}</s>{% endif %}
     {% endfor %}
 </ol>
 

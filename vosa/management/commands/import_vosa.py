@@ -19,8 +19,11 @@ def parse_date(date_string: str):
 
 
 def download_if_modified(path: str):
-    url = f"https://content.mgmt.dvsacloud.uk/olcs.prod.dvsa.aws/data-gov-uk-export/{path}"
-    source, _ = DataSource.objects.get_or_create(name=path, url=url)
+    url = f"https://content.mgmt.dvsacloud.uk/olcs.app.prod.dvsa.aws/data-gov-uk-export/{path}"
+    source, _ = DataSource.objects.get_or_create({"url": url}, name=path)
+    if url != source.url:
+        source.url = url
+        source.save(update_fields=["url"])
     return download_utils.download_if_modified(settings.DATA_DIR / path, source)
 
 
@@ -126,8 +129,8 @@ class Command(BaseCommand):
             else:
                 licence.traffic_area = line["Current Traffic Area"]
 
-            licence.discs = line["Discs in Possession"] or 0
-            licence.authorised_discs = line["AUTHDISCS"] or 0
+            licence.discs = line["Discs in Possession"] or None
+            licence.authorised_discs = line["AUTHDISCS"] or None
             licence.description = line["Description"]
             licence.granted_date = parse_date(line["Granted_Date"])
             licence.expiry_date = parse_date(line["Exp_Date"])

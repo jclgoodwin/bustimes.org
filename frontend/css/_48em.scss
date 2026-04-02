@@ -14,20 +14,10 @@ header .search label {
     }
 }
 
-h1 {
-    font-size: 2em;
-}
-
 .panes {
     display: flex;
     margin: -1em 0;
     justify-content: space-between;
-}
-
-.services,
-.contact-details {
-    column-count: 2;
-    column-gap: 1em;
 }
 
 .contact-details {

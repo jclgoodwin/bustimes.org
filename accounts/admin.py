@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 from sql_util.utils import SubqueryCount
 
-from .models import OperatorUser, User
+from .models import OperatorUser, User, Invitation
 
 
 def get_count(obj, attribute, approved):
@@ -80,3 +80,13 @@ class UserAdmin(admin.ModelAdmin):
     def distrust(self, request, queryset):
         count = queryset.order_by().update(trusted=False)
         self.message_user(request, f"Disusted {count} users")
+
+
+@admin.register(OperatorUser)
+class OperatorUserAdmin(admin.ModelAdmin):
+    raw_id_fields = ["user", "operator"]
+
+
+@admin.register(Invitation)
+class InvitationAdmin(admin.ModelAdmin):
+    raw_id_fields = ["operators"]

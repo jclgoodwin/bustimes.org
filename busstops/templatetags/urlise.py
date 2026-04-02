@@ -1,3 +1,5 @@
+import re
+
 from django import template
 from django.template.defaultfilters import stringfilter
 from django.utils.html import urlize
@@ -16,15 +18,33 @@ def urlise(value, autoescape=None):
 
     markup = (
         urlize(value, nofollow=True)
-        .replace('">https://', '">', 1)
-        .replace('">http://', '">', 1)
-        .replace('">www.', '">', 1)
+        .replace('">https://', '">')
+        .replace('">http://', '">')
+        .replace('">www.', '">')
     )
-    markup = markup.replace("/</a>", "</a>", 1)
-    if "megabus" in markup:
-        megabus = '"https://www.awin1.com/awclick.php?mid=2678&amp;id=242611&amp;clickref=urlise"'
-        markup = markup.replace('"https://www.megabus.co.uk"', megabus, 1)
-    elif "nationalexpress" in markup:
-        replacement = '"https://nationalexpress.prf.hn/click/camref:1011ljPYw"'
-        markup = markup.replace('"http://www.nationalexpress.com"', replacement, 1)
+    markup = markup.replace("/</a>", "</a>")
+    for url, affiliate_url in (
+        (
+            "http://www.nationalexpress.com",
+            "https://nationalexpress.prf.hn/click/camref:1011ljPYw",
+        ),
+        (
+            "https://www.flixbus.co.uk",
+            "https://www.awin1.com/cread.php?awinmid=110896&awinaffid=242611&clickref=u",
+        ),
+    ):
+        url = f'"{url}"'
+        if url in markup:
+            markup = markup.replace(url, f'"{affiliate_url}"', 1)
+            break
+
+    # find a string like ' href="https://www.nationalexpress.com/en/destinations/manchester"'
+    # (i.e. a deep link to any page on the national express website)
+    # and prefix the url...
+    markup = re.sub(
+        r' href="(https://www\.nationalexpress\.com/en/[^"]+)"',
+        r' href="https://nationalexpress.prf.hn/click/camref:1011ljPYw/destination:\1"',
+        markup,
+    )
+
     return mark_safe(markup)

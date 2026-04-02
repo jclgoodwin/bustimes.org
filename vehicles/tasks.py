@@ -1,22 +1,32 @@
 import functools
+import json
 from datetime import timedelta
+import zipfile
 
 from ciso8601 import parse_datetime
 from django.core.cache import cache
 from django.db import IntegrityError
 from django.db.models import Count, Q
 from django.utils import timezone
+from django.conf import settings
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task, db_task
 
 from busstops.models import DataSource, Operator
 
+from .utils import archive_avl_data
 from .management.commands import import_bod_avl
-from .models import SiriSubscription, Vehicle, VehicleJourney, VehicleRevision
+from .models import (
+    SiriSubscription,
+    Vehicle,
+    VehicleJourney,
+    VehicleRevision,
+    VehicleCode,
+)
 
 
 @functools.cache
-def get_bod_avl_command(source_name):
+def get_bod_avl_command(source_name: str):
     command = import_bod_avl.Command()
     command.source_name = source_name
     command.do_source()
@@ -24,7 +34,7 @@ def get_bod_avl_command(source_name):
 
 
 @db_task()
-def handle_siri_post(uuid, data):
+def handle_siri_post(uuid, data: dict):
     now = timezone.now()
 
     data = data["Siri"]
@@ -33,8 +43,8 @@ def handle_siri_post(uuid, data):
 
     if "HeartbeatNotification" in data:
         timestamp = parse_datetime(data["HeartbeatNotification"]["RequestTimestamp"])
-        total_items = 0
-        subscription_ref = None
+        total_items = None
+        changed_items = changed_journey_items = ()
     else:
         data = data["ServiceDelivery"]
 
@@ -56,27 +66,33 @@ def handle_siri_post(uuid, data):
         command.handle_items(changed_items, changed_item_identities)
         command.handle_items(changed_journey_items, changed_journey_identities)
 
-        subscription_ref = data["VehicleMonitoringDelivery"]["SubscriptionRef"]
+        archive_avl_data(
+            command.source,
+            json.dumps(items),
+            timestamp.strftime("%Y-%m-%d_%H%M%S.json"),
+        )
 
     # stats for last 50 updates:
-    if subscription.name == "Transport for Wales":
-        stats = cache.get("tfw_status", [])
-        stats.append(
-            (
-                now,
-                timestamp,
-                total_items,
-                subscription_ref,
-            )
+    key = subscription.get_status_key()
+    stats = cache.get(key, [])
+    stats.append(
+        import_bod_avl.Status(
+            now,
+            timestamp,
+            now - timestamp,
+            total_items,
+            len(changed_items) + len(changed_journey_items),
+            timezone.now() - now,
         )
-        stats = stats[-50:]
-        cache.set("tfw_status", stats, None)
+    )
+    stats = stats[-50:]
+    cache.set(key, stats, 800)
 
 
 @db_task()
 def log_vehicle_journey(service, data, time, destination, source_name, url, trip_id):
     operator_ref = data.get("OperatorRef")
-    if operator_ref in ("McG", "SWB", "MID"):  # McGills/Stagecoach/
+    if operator_ref == "SWB":  # Stagecoach
         return
 
     if not time:
@@ -89,7 +105,9 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
     if operator_ref:
         vehicle = vehicle.removeprefix(f"{operator_ref}-")
 
-    vehicle = vehicle.removeprefix("WCM-").removeprefix("SHU-")
+    vehicle = (
+        vehicle.removeprefix("WCM-").removeprefix("SHU-").removeprefix("MCG_Fleet-").removeprefix("112-")
+    )
 
     if not vehicle or vehicle == "-":
         return
@@ -104,42 +122,57 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
         except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):
             return
 
-    if operator.noc == "FABD":  # Aberdeen
-        vehicle = vehicle.removeprefix("111-").removeprefix("S-")
-    elif operator.parent == "Stagecoach" or operator.noc == "MCGL":
+    if operator.name.startswith("Stagecoach "):
         return
+
+    vehicle_code_code = f"{operator_ref}:{vehicle}"
+    vehicle_code = VehicleCode.objects.filter(
+        scheme=source_name, code=vehicle_code_code
+    ).first()
 
     data_source, _ = DataSource.objects.get_or_create({"url": url}, name=source_name)
 
-    # get or create vehicle
-    defaults = {"source": data_source, "operator": operator, "code": vehicle}
-
-    operator_query = Q(operator=operator)
-    if operator.parent:
-        operator_query |= Q(operator__parent=operator.parent)
-    vehicles = Vehicle.objects.filter(
-        operator_query | Q(source=data_source)
-    ).select_related("latest_journey")
-
-    if vehicle.isdigit():
-        defaults["fleet_number"] = vehicle
-        vehicles = vehicles.filter(
-            Q(code=vehicle)
-            | Q(code__endswith=f"-{vehicle}")
-            | Q(code__startswith=f"{vehicle}_-_")
-        )
+    if vehicle_code:
+        vehicle = vehicle_code.vehicle
     else:
-        vehicles = vehicles.filter(code__iexact=vehicle)
+        # get or create vehicle
+        defaults = {"source": data_source, "operator": operator, "code": vehicle}
 
-    try:
-        vehicle, _ = vehicles.get_or_create(defaults)
-    except Vehicle.MultipleObjectsReturned:
-        vehicle = vehicles.filter(operator=operator).first()
+        operator_query = Q(operator=operator)
+        if operator.group_id:
+            operator_query |= Q(operator__group=operator.group_id)
+        vehicles = Vehicle.objects.filter(
+            operator_query | Q(source=data_source)
+        ).select_related("latest_journey")
+
+        if vehicle.isdigit():
+            defaults["fleet_number"] = vehicle
+            vehicles = vehicles.filter(
+                Q(code=vehicle)
+                | Q(code__endswith=f"-{vehicle}")
+                | Q(code__startswith=f"{vehicle}_-_")
+            )
+        else:
+            vehicles = vehicles.filter(code__iexact=vehicle)
+
+        try:
+            vehicle, _ = vehicles.get_or_create(defaults)
+        except Vehicle.MultipleObjectsReturned:
+            vehicle = vehicles.filter(operator=operator).first()
+
+        VehicleCode.objects.create(
+            scheme=source_name, code=vehicle_code_code, vehicle=vehicle
+        )
 
     time = parse_datetime(time)
 
-    if vehicle.latest_journey and vehicle.latest_journey.datetime == time:
-        return
+    if last_journey := vehicle.latest_journey:
+        last_time = last_journey.datetime
+        if last_time == time or (
+            last_journey.source_id != data_source.id
+            and time - last_time < timedelta(hours=2)
+        ):
+            return
 
     if (
         "FramedVehicleJourneyRef" in data
@@ -152,39 +185,58 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
     destination = destination or ""
     route_name = data.get("LineName") or data.get("LineRef")
 
-    journeys = vehicle.vehiclejourney_set
-    if journeys.filter(datetime=time).exists():
-        return
+    date = timezone.localdate(time)
+    journeys = vehicle.vehiclejourney_set.filter(date=date)
     if (
-        journey_ref
-        and journeys.filter(
-            route_name=route_name, code=journey_ref, datetime__date=time.date()
-        ).exists()
+        journeys.filter(datetime=time).exists()
+        or journey_ref
+        and journeys.filter(route_name=route_name, code=journey_ref).exists()
     ):
         return
 
-    try:
-        journey = VehicleJourney.objects.create(
-            vehicle=vehicle,
-            service_id=service,
-            route_name=route_name,
-            code=journey_ref,
-            datetime=time,
-            source=data_source,
-            destination=destination,
-            trip_id=trip_id,
+    journey = VehicleJourney(
+        vehicle=vehicle,
+        service_id=service,
+        route_name=route_name,
+        code=journey_ref,
+        datetime=time,
+        source=data_source,
+        destination=destination,
+        trip_id=trip_id,
+    )
+    if not trip_id:
+        journey.trip = journey.get_trip(
+            departure_time=time, destination_ref=data.get("DestinationRef")
         )
+    if not journey.date:
+        journey.date = date
+
+    try:
+        journey.save()
     except IntegrityError:
         return
 
     if not vehicle.latest_journey or vehicle.latest_journey.datetime < journey.datetime:
+        if (
+            journey.trip
+            and journey.trip.garage_id
+            and journey.trip.garage_id != vehicle.garage_id
+        ):
+            vehicle.garage_id = journey.trip.garage_id
         vehicle.latest_journey = journey
         vehicle.latest_journey_data = data
-        vehicle.save(update_fields=["latest_journey", "latest_journey_data"])
+        vehicle.save(update_fields=["garage", "latest_journey", "latest_journey_data"])
 
 
 @db_periodic_task(crontab(minute="*/5"))
 def stats():
+    """
+    count the number of current vehicle journeys
+    (in total, with services, and with trips)
+    and pending vehicle revisions
+    for the /status graphs
+    """
+
     now = timezone.now()
     half_hour_ago = now - timedelta(minutes=30)
     journeys = VehicleJourney.objects.filter(
@@ -210,6 +262,10 @@ def stats():
 
 @db_periodic_task(crontab(minute=4, hour=10))
 def timetable_source_stats():
+    """
+    update the other /status graph
+    """
+
     now = timezone.now()
 
     sources = (
@@ -243,3 +299,35 @@ def timetable_source_stats():
     history.append(stats)
 
     cache.set("timetable-source-stats", history, None)
+
+
+@db_periodic_task(crontab(minute=10, hour=1))
+def compress_avl_archive():
+    """
+    move files named things like
+    2024-03-15_060942.json
+    into
+    2024-03-15.zip
+    """
+
+    today_str = timezone.now().date().isoformat()
+
+    for path in settings.AVL_ARCHIVE_DIR.iterdir():
+        if not path.name.isdigit():
+            continue
+
+        date_str = None
+        archive = None
+
+        for file_path in sorted(path.iterdir()):
+            if file_path.suffix != ".json":
+                continue
+            if file_path.name.startswith(today_str):
+                break
+            if not date_str or not file_path.name.startswith(date_str):
+                date_str = file_path.name[:10]
+                archive = zipfile.ZipFile(
+                    path / f"{date_str}.zip", "a", compression=zipfile.ZIP_DEFLATED
+                )
+            archive.write(file_path, file_path.name)
+            file_path.unlink()

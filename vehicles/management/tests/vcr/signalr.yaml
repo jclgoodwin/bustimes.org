@@ -1,0 +1,111 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python-requests/2.32.4
+    method: POST
+    uri: https://example.com/hub/negotiate?negotiateVersion=1
+  response:
+    body:
+      string: '{"negotiateVersion":1,"connectionId":"exampleid","connectionToken":"exampletoken","availableTransports":[{"transport":"WebSockets","transferFormats":["Text","Binary"]},{"transport":"ServerSentEvents","transferFormats":["Text"]},{"transport":"LongPolling","transferFormats":["Text","Binary"]}]}'
+    headers:
+      content-length:
+      - '316'
+      content-type:
+      - application/json
+      date:
+      - Fri, 20 Jun 2025 14:10:44 GMT
+    status:
+      code: 200
+      message: OK
+- request:
+    body: "{\"protocol\": \"json\", \"version\": 1}\x1E"
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '35'
+      User-Agent:
+      - python-requests/2.32.4
+    method: POST
+    uri: https://example.com/hub?id=exampletoken
+  response:
+    body:
+      string: ''
+    headers:
+      content-encoding:
+      - gzip
+      content-length:
+      - '119'
+      content-type:
+      - text/plain
+      date:
+      - Fri, 20 Jun 2025 14:10:41 GMT
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.4
+    method: GET
+    uri: https://example.com/hub?id=exampletoken&_=1750374000000
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      content-type:
+      - application/octet-stream
+      date:
+      - Fri, 20 Jun 2025 14:10:45 GMT
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.4
+    method: GET
+    uri: https://example.com/hub?id=exampletoken&_=1750374000000
+  response:
+    body:
+      string: "{}\x1E{\"type\":1,\"target\":\"TransportData\",\"arguments\":[{\"locations\":[\"306-27565|306|1525|51|inbound|54.217096|-4.68503|2025-06-20T14:10:33+00:00|-1|S\",\"256-13101|256|1525|53|inbound|54.217115|-4.6852|2025-06-20T14:10:32+00:00|-1|S\",\"256-13101|256|1525|53|inbound|54.217115|-4.6852|2025-06-20T14:10:32+00:00|-1|S\",
+        \"310-14753|310|1530|31|inbound|54.147645|-4.486201|2025-06-20T14:10:35+00:00|88|S\",\"184-15404|184|1530|60|inbound|54.084933|-4.755651|2025-06-20T14:10:11+00:00|18|S\",\"261-15438|261|1530|47B|inbound|54.147968|-4.48848|2025-06-20T14:10:24+00:00|-1|S\"]}]}\x1E"
+    headers:
+      content-type:
+      - application/octet-stream
+      date:
+      - Fri, 20 Jun 2025 14:10:45 GMT
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.db.models.functions import Upper
 from django.urls import reverse
 from django.utils.timezone import localdate
+from timezone_field import TimeZoneField
 
 from .fields import SecondsField
 from .formatting import format_timedelta, time_datetime
@@ -13,9 +14,17 @@ from .formatting import format_timedelta, time_datetime
 
 class TimetableDataSource(models.Model):
     name = models.CharField(max_length=255)
-    search = models.CharField(max_length=255, blank=True)
-    url = models.URLField(blank=True)
-    modified_at = models.DateTimeField(null=True, blank=True)
+    search = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="for BODS sources, usually one of the operator's NOCs. But remember that searching for 'ANEA' for example will return *all* Arriva datasets, not just the ANEA one",
+    )
+    url = models.URLField(
+        blank=True,
+        verbose_name="URL",
+        help_text="for non-BODS sources, i.e. Stagecoach, Passenger, or Ticketer",
+    )
+    modified_at = models.DateTimeField(null=True, blank=True, auto_now=True)
     operators = models.ManyToManyField("busstops.Operator", blank=True)
     settings = models.JSONField(null=True, blank=True)
     complete = models.BooleanField(default=True)
@@ -23,6 +32,20 @@ class TimetableDataSource(models.Model):
     region = models.ForeignKey(
         "busstops.Region", models.SET_NULL, null=True, blank=True
     )
+    notes = models.CharField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Version(models.Model):
+    source = models.ForeignKey(TimetableDataSource, models.CASCADE)
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+    datetime = models.DateTimeField(null=True, blank=True)
+    name = models.CharField(null=True, blank=True)
+    url = models.URLField(null=True, blank=True)
+    current = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
@@ -30,14 +53,19 @@ class TimetableDataSource(models.Model):
 
 class Route(models.Model):
     source = models.ForeignKey("busstops.DataSource", models.CASCADE)
+    version = models.ForeignKey(Version, models.CASCADE, null=True, blank=True)
     code = models.CharField(max_length=255, blank=True)  # qualified filename
     service_code = models.CharField(max_length=255, blank=True)
+    revision_number_context = models.CharField(max_length=48, blank=True)
+    line_id = models.CharField(max_length=255, blank=True)
     registration = models.ForeignKey(
         "vosa.Registration", models.SET_NULL, null=True, blank=True
     )
     line_brand = models.CharField(max_length=255, blank=True)
     line_name = models.CharField(max_length=255, blank=True)
     revision_number = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(null=True, blank=True)
+    modified_at = models.DateTimeField(null=True, blank=True)
     description = models.CharField(max_length=255, blank=True)
     outbound_description = models.CharField(max_length=255, blank=True)
     inbound_description = models.CharField(max_length=255, blank=True)
@@ -50,11 +78,8 @@ class Route(models.Model):
         "busstops.Service", models.CASCADE, null=True, blank=True
     )
     public_use = models.BooleanField(null=True)
-
-    def contains(self, date):
-        if not self.start_date or self.start_date <= date:
-            if not self.end_date or self.end_date >= date:
-                return True
+    file_hash = models.CharField(max_length=40, null=True, blank=True, db_index=True)
+    timezone = TimeZoneField(null=True, blank=True)
 
     class Meta:
         unique_together = ("source", "code")
@@ -91,6 +116,9 @@ class RouteLink(models.Model):
     def __repr__(self):
         return f"<RouteLink: {self.pk} {self.service_id} {self.from_stop_id} {self.to_stop_id}>"
 
+    def get_absolute_url(self):
+        return reverse("routelink_detail", args=(self.id,))
+
 
 class BankHoliday(models.Model):
     id = models.SmallAutoField(primary_key=True)
@@ -106,6 +134,13 @@ class BankHolidayDate(models.Model):
     scotland = models.BooleanField(
         null=True, help_text="Yes = Scotland only, No = not Scotland, Unknown = both"
     )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["bank_holiday", "date"], name="unique_bank_holiday_date"
+            )
+        ]
 
 
 class CalendarBankHoliday(models.Model):
@@ -134,13 +169,13 @@ day_keys = (
 
 
 class Calendar(models.Model):
-    mon = models.BooleanField()
-    tue = models.BooleanField()
-    wed = models.BooleanField()
-    thu = models.BooleanField()
-    fri = models.BooleanField()
-    sat = models.BooleanField()
-    sun = models.BooleanField()
+    mon = models.BooleanField(default=False)
+    tue = models.BooleanField(default=False)
+    wed = models.BooleanField(default=False)
+    thu = models.BooleanField(default=False)
+    fri = models.BooleanField(default=False)
+    sat = models.BooleanField(default=False)
+    sun = models.BooleanField(default=False)
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
     summary = models.CharField(max_length=255, blank=True)
@@ -149,7 +184,10 @@ class Calendar(models.Model):
         "busstops.DataSource", models.CASCADE, null=True, blank=True
     )
 
-    contains = Route.contains
+    def contains(self, date):
+        if not self.start_date or self.start_date <= date:
+            if not self.end_date or self.end_date >= date:
+                return True
 
     class Meta:
         indexes = [models.Index(fields=["start_date", "end_date"])]
@@ -288,7 +326,7 @@ class CalendarDate(models.Model):
     special = models.BooleanField(default=False, db_index=True)
     summary = models.CharField(max_length=255, blank=True)
 
-    contains = Route.contains
+    contains = Calendar.contains
 
     def __str__(self):
         string = str(self.start_date)
@@ -312,16 +350,16 @@ class Note(models.Model):
 
 
 class Trip(models.Model):
-    route = models.ForeignKey(Route, models.CASCADE)
+    route = models.ForeignKey(Route, models.CASCADE, null=True, blank=True)
     inbound = models.BooleanField(default=False)
-    journey_pattern = models.CharField(max_length=100, blank=True)
-    vehicle_journey_code = models.CharField(max_length=100, blank=True, db_index=True)
-    ticket_machine_code = models.CharField(max_length=100, blank=True, db_index=True)
-    block = models.CharField(max_length=100, blank=True, db_index=True)
+    journey_pattern = models.CharField(max_length=100, null=True, blank=True)
+    vehicle_journey_code = models.CharField(max_length=100, null=True, blank=True)
+    ticket_machine_code = models.CharField(max_length=100, null=True, blank=True)
+    block = models.CharField(max_length=100, null=True, blank=True)
     destination = models.ForeignKey(
         "busstops.StopPoint", models.DO_NOTHING, null=True, blank=True
     )
-    headsign = models.CharField(max_length=255, blank=True)
+    headsign = models.CharField(null=True, blank=True)
     calendar = models.ForeignKey(Calendar, models.DO_NOTHING, null=True, blank=True)
     sequence = models.PositiveSmallIntegerField(null=True, blank=True)
     notes = models.ManyToManyField(Note, blank=True)
@@ -337,13 +375,7 @@ class Trip(models.Model):
     next_trip = models.OneToOneField("Trip", models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return format_timedelta(self.start) or ""
-
-    def start_time(self):
-        return format_timedelta(self.start)
-
-    def end_time(self):
-        return format_timedelta(self.end)
+        return format_timedelta(self.start, plus_one=True) or ""
 
     def start_datetime(self, date):
         return time_datetime(self.start, date)
@@ -352,7 +384,24 @@ class Trip(models.Model):
         return time_datetime(self.end, date)
 
     class Meta:
-        indexes = [models.Index(fields=["route", "start", "end"])]
+        indexes = [
+            models.Index(fields=["route", "start", "end"]),
+            models.Index(
+                fields=["vehicle_journey_code"],
+                condition=Q(vehicle_journey_code__isnull=False),
+                name="bustimes_trip_vj_code",
+            ),
+            models.Index(
+                fields=["ticket_machine_code"],
+                condition=Q(ticket_machine_code__isnull=False),
+                name="bustimes_trip_tm_code",
+            ),
+            models.Index(
+                fields=["block"],
+                condition=Q(block__isnull=False),
+                name="bustimes_trip_block",
+            ),
+        ]
 
     def copy(self, start):
         difference = start - self.start
@@ -378,17 +427,26 @@ class Trip(models.Model):
         return reverse("trip_detail", args=(self.id,))
 
     def get_trips(self):
-        if self.ticket_machine_code and self.route.service_id:
+        if self.ticket_machine_code and self.route and self.route.service_id:
             # get other parts of this trip (if the service has been split into parts)
-            # see also get_split_trips
+            # see also: merge_split_trips
+
             code_filter = Q(ticket_machine_code=self.ticket_machine_code)
             if self.vehicle_journey_code:
                 code_filter |= Q(vehicle_journey_code=self.vehicle_journey_code)
+
+            calendar_filter = Q(calendar=self.calendar)
+            if self.calendar:
+                for day in ("mon", "tue", "wed", "thu", "fri", "sat", "sun"):
+                    if getattr(self.calendar, day):
+                        calendar_filter |= Q(**{f"calendar__{day}": True})
+
             trips = (
                 Trip.objects.filter(
                     Q(id=self.id)
                     | Q(
                         code_filter,
+                        calendar_filter,
                         Q(start__gte=self.end) | Q(end__lte=self.start),
                         ~Q(destination_id=self.destination_id),
                         block=self.block,

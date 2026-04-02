@@ -6,21 +6,21 @@ from uuid import uuid4
 import requests
 from asgiref.sync import sync_to_async
 from ciso8601 import parse_datetime
+from django.db.models import Q
 from django.contrib.gis.db.models import Extent
 from django.contrib.gis.geos import Point
-from django.db.models import Q
 from django.utils import timezone
 from websockets.asyncio.client import connect
 
 from busstops.models import DataSource, Operator, Service
 
 from ...models import Vehicle, VehicleJourney, VehicleLocation
-from ..import_live_vehicles import ImportLiveVehiclesCommand
+from ..import_live_vehicles import ImportLiveVehiclesCommand, logger
 
 
 class Command(ImportLiveVehiclesCommand):
-    def handle_item(self, item, vehicle, operator):
-        vehicle_code = item["status"]["vehicle_id"].split("-")[6]
+    def handle_item(self, item, vehicle):
+        journey_code, vehicle_code = self.split_vehicle_id(item)
 
         recorded_at_time = parse_datetime(item["status"]["recorded_at_time"])
 
@@ -32,14 +32,15 @@ class Command(ImportLiveVehiclesCommand):
             created = False
         else:
             fleet_number = int(vehicle_code) if vehicle_code.isdigit() else None
-            vehicle = Vehicle.objects.create(
-                source=self.source,
-                operator=operator,
+            vehicle, created = Vehicle.objects.get_or_create(
+                {
+                    "source": self.source,
+                    "fleet_code": str(fleet_number or ""),
+                    "fleet_number": fleet_number,
+                },
+                operator_id=item["operator"],
                 code=vehicle_code,
-                fleet_code=str(fleet_number or ""),
-                fleet_number=fleet_number,
             )
-            created = True
 
         # origin aimed departure time
         departure_time = item["stops"][0]["date"] + " " + item["stops"][0]["time"]
@@ -47,16 +48,12 @@ class Command(ImportLiveVehiclesCommand):
             datetime.strptime(departure_time, "%Y-%m-%d %H:%M")
         )
 
-        if not created:
-            if (
-                vehicle.latest_journey
-                and vehicle.latest_journey.datetime == departure_time
-            ):
-                journey = vehicle.latest_journey
-            else:
-                journey = VehicleJourney.objects.filter(
-                    vehicle=vehicle, datetime=departure_time
-                ).first()
+        if vehicle.latest_journey and vehicle.latest_journey.datetime == departure_time:
+            journey = vehicle.latest_journey
+        elif not created:
+            journey = VehicleJourney.objects.filter(
+                vehicle=vehicle, datetime=departure_time
+            ).first()
         else:
             journey = None
 
@@ -65,14 +62,14 @@ class Command(ImportLiveVehiclesCommand):
                 service = (
                     Service.objects.filter(
                         current=True,
-                        operator=operator,
+                        operator=item["operator"],
                         route__line_name__iexact=item["line_name"],
                     )
                     .distinct()
                     .get()
                 )
             except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
-                print(e, operator, item["line_name"])
+                print(e, item["operator"], item["line_name"])
                 service = None
             if service and not service.tracking:
                 service.tracking = True
@@ -85,6 +82,7 @@ class Command(ImportLiveVehiclesCommand):
                 destination = destination["stop_name"].split(", ", 1)[0]
             journey = VehicleJourney(
                 route_name=item["line_name"],
+                code=journey_code,
                 datetime=departure_time,
                 source=self.source,
                 destination=destination,
@@ -95,7 +93,16 @@ class Command(ImportLiveVehiclesCommand):
                 departure_time=departure_time,
                 destination_ref=item["stops"][-1]["atcocode"],
             )
+            if not journey.date:
+                journey.date = timezone.localdate(departure_time)
             journey.save()
+            if (
+                journey.trip
+                and journey.trip.garage_id
+                and journey.trip.garage_id != vehicle.garage_id
+            ):
+                vehicle.garage_id = journey.trip.garage_id
+                vehicle.save(update_fields=["garage"])
 
         if vehicle.latest_journey != journey:
             vehicle.latest_journey = journey
@@ -116,19 +123,46 @@ class Command(ImportLiveVehiclesCommand):
 
         self.to_save.append((location, vehicle))
 
-    @sync_to_async
-    def handle_data(self, data, operator):
-        items = data["params"]["resource"]["member"]
+    @staticmethod
+    def split_vehicle_id(item: dict):
+        prefix = f"{item['operator']}-{item['dir']}-"
+        suffix = f"-{item['line_name']}"
+        vehicle = item["status"]["vehicle_id"]
 
-        vehicle_codes = [item["status"]["vehicle_id"].split("-")[6] for item in items]
+        if vehicle.startswith(prefix) and vehicle.endswith(suffix):
+            vehicle = vehicle.removesuffix(suffix).removeprefix(prefix)
+            return vehicle[11:].split("-", 1)
+        else:
+            logger.warning(
+                "vehicle %s doesn't have prefix %s and/or suffix %s",
+                vehicle,
+                prefix,
+                suffix,
+                exc_info=True,
+            )
+            parts = vehicle.split("-")
+            assert len(parts) >= 8
+            item["line_name"] = parts[-1]
+            item["operator"] = parts[0]
+            item["dir"] = parts[1]
+            return parts[5], "-".join(parts[6:-1])
+
+    @sync_to_async
+    def handle_data(self, data):
+        if "params" in data:
+            items = data["params"]["resource"]["member"]
+        else:
+            items = data["member"]
+
+        vehicle_codes = [self.split_vehicle_id(item)[1] for item in items]
         print(vehicle_codes)
         vehicles = Vehicle.objects.filter(
-            Q(operator__parent="First") | Q(operator=operator), code__in=vehicle_codes
+            operator__group__name="First", code__in=vehicle_codes
         )
         vehicles = vehicles.select_related("latest_journey")
         vehicles = {vehicle.code: vehicle for vehicle in vehicles}
         for i, item in enumerate(items):
-            self.handle_item(item, vehicles.get(vehicle_codes[i]), operator)
+            self.handle_item(item, vehicles.get(vehicle_codes[i]))
         self.save()
 
     @staticmethod
@@ -136,15 +170,11 @@ class Command(ImportLiveVehiclesCommand):
         services = Service.objects.filter(operator=operator, current=True)
         return services.aggregate(Extent("geometry"))["geometry__extent"]
 
-    async def sock_it(self, operator, extent):
-        socket_info = requests.get(
-            self.source.url,
-            headers={
-                "x-app-key": "b05fbe23a091533ea3efbc28321f96a1cf3448c1",
-            },
-        ).json()
+    async def sock_it(self, extent):
+        socket_info = requests.get(self.source.url, headers=self.source.settings).json()
 
         min_lon, min_lat, max_lon, max_lat = extent
+
         message = json.dumps(
             {
                 "jsonrpc": "2.0",
@@ -178,11 +208,9 @@ class Command(ImportLiveVehiclesCommand):
 
                 data = json.loads(response)
                 try:
-                    await self.handle_data(data, operator)
+                    await self.handle_data(data)
                     count = len(data["params"]["resource"]["member"])
-                    if count >= 50:
-                        print(operator, count)
-                        ok = False
+                    print(count)
                 except (KeyError, ValueError) as e:
                     print(e)
 
@@ -191,17 +219,10 @@ class Command(ImportLiveVehiclesCommand):
         parser.add_argument("operator_name", type=str)
 
     def handle(self, operator_name, *args, **options):
-        self.source = DataSource.objects.update_or_create(
-            {
-                "url": "https://prod.mobileapi.firstbus.co.uk/api/v2/bus/service/socketInfo"
-            },
-            name="First",
-        )[0]
+        self.source = DataSource.objects.get(name="First")
 
         self.cache = {}
-        operator = Operator.objects.get(name=operator_name)
+        operator = Operator.objects.get(Q(name=operator_name) | Q(noc=operator_name))
 
         extent = self.get_extent(operator)
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.sock_it(operator, extent))
-        loop.close()
+        asyncio.run(self.sock_it(extent))

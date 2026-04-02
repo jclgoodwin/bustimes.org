@@ -1,31 +1,25 @@
 import logging
 from pathlib import Path
-
 import gtfs_kit
 import pandas as pd
-from shapely.errors import EmptyPartError, GEOSException
+from shapely.errors import EmptyPartError
 from zipfile import BadZipFile
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.management.base import BaseCommand
+from django.db import connection
 from django.db.models import Count, Exists, OuterRef, Q
 from django.db.models.functions import Now
+from django.utils.dateparse import parse_duration
 
 from busstops.models import AdminArea, DataSource, Operator, Region, Service, StopPoint
 
 from ...download_utils import download_if_modified
-from ...models import Route, StopTime, Trip
-from .import_gtfs_ember import get_calendars
+from ...utils import log_time_taken
+from ...models import Route, Trip
+from ...gtfs_utils import get_calendars, MODES, do_route_links
 
 logger = logging.getLogger(__name__)
-
-MODES = {
-    0: "tram",
-    2: "rail",
-    3: "bus",
-    4: "ferry",
-    200: "coach",
-}
 
 
 class Command(BaseCommand):
@@ -56,29 +50,25 @@ class Command(BaseCommand):
 
         return operator
 
-    def do_stops(self, feed: gtfs_kit.feed.Feed):
+    def do_stops(self, feed: gtfs_kit.feed.Feed) -> dict[str, StopPoint]:
         stops = {}
         admin_areas = {}
-        stops_not_created = {}
-        for i, line in feed.stops.iterrows():
+        for _, line in feed.stops.iterrows():
             stop_id = line.stop_id
-            if stop_id[0] in "78" and len(stop_id) <= 16:
-                stop = StopPoint(
-                    atco_code=stop_id,
-                    common_name=line.stop_name,
-                    latlong=GEOSGeometry(f"POINT({line.stop_lon} {line.stop_lat})"),
-                    locality_centre=False,
-                    active=True,
-                    source=self.source,
-                )
-                if ", stop" in stop.common_name and stop.common_name.count(", ") == 1:
-                    stop.common_name, stop.indicator = stop.common_name.split(", ")
-                stop.common_name = stop.common_name[:48]
-                stops[stop_id] = stop
-            else:
-                stops_not_created[stop_id] = line
+            stop = StopPoint(
+                atco_code=stop_id,
+                common_name=line.stop_name,
+                latlong=GEOSGeometry(f"POINT({line.stop_lon} {line.stop_lat})"),
+                locality_centre=False,
+                active=True,
+                source=self.source,
+            )
+            if ", stop" in stop.common_name and stop.common_name.count(", ") == 1:
+                stop.common_name, stop.indicator = stop.common_name.split(", ")
+            stop.common_name = stop.common_name[:48]
+            stops[stop_id] = stop
         existing_stops = StopPoint.objects.only(
-            "atco_code", "common_name", "latlong"
+            "atco_code", "common_name", "latlong", "source_id"
         ).in_bulk(stops)
 
         stops_to_create = [
@@ -88,13 +78,14 @@ class Command(BaseCommand):
             stop
             for stop in stops.values()
             if stop.atco_code in existing_stops
+            and existing_stops[stop.atco_code].source_id in (self.source.id, None)
             and (
                 existing_stops[stop.atco_code].latlong != stop.latlong
                 or existing_stops[stop.atco_code].common_name != stop.common_name
             )
         ]
         StopPoint.objects.bulk_update(
-            stops_to_update, ["common_name", "latlong", "indicator"]
+            stops_to_update, ["common_name", "latlong", "indicator", "source"]
         )
 
         for stop in stops_to_create:
@@ -107,7 +98,7 @@ class Command(BaseCommand):
                 stop.admin_area_id = admin_area_id
 
         StopPoint.objects.bulk_create(stops_to_create, batch_size=1000)
-        return StopPoint.objects.only("atco_code").in_bulk(stops), stops_not_created
+        return StopPoint.objects.only("atco_code", "latlong").in_bulk(stops)
 
     def handle_route(self, line):
         line_name = line.route_short_name if type(line.route_short_name) is str else ""
@@ -136,7 +127,10 @@ class Command(BaseCommand):
         service.service_code = line.route_id
         service.line_name = line_name
         service.description = description
-        service.mode = MODES.get(line.route_type, "")
+        if line.route_type in MODES:
+            service.mode = MODES[line.route_type]
+        else:
+            logger.warning("unknown route type %s", line)
         service.current = True
         service.source = self.source
         service.save()
@@ -165,14 +159,6 @@ class Command(BaseCommand):
     def handle_zipfile(self, path):
         feed = gtfs_kit.read_feed(path, dist_units="km")
 
-        # # exclude Dublin Express routes (they are in the NCSD dataset instead)
-        # excluded_agencies = feed.agency[
-        #     feed.agency.agency_name == "Dublin Express"
-        # ].agency_id
-        # feed = feed.restrict_to_routes(
-        #     feed.routes[~feed.routes.agency_id.isin(excluded_agencies)].route_id
-        # )
-
         self.operators = {}
         self.routes = {}
         self.route_operators = {}
@@ -185,43 +171,34 @@ class Command(BaseCommand):
             self.handle_route(route)
 
         try:
-            for route in gtfs_kit.routes.get_routes(feed, as_gdf=True).itertuples():
+            for route in feed.get_routes(as_gdf=True).itertuples():
                 self.routes[route.route_id].service.geometry = route.geometry.wkt
-                self.routes[route.route_id].service.save(update_fields=["geometry"])
-        except (ValueError, EmptyPartError, GEOSException):
+                if route.geometry:
+                    self.routes[route.route_id].service.save(update_fields=["geometry"])
+        except (AttributeError, EmptyPartError, ValueError):
             pass
 
-        stops, stops_not_created = self.do_stops(feed)
+        stops = self.do_stops(feed)
 
-        calendars = get_calendars(feed)
+        calendars = get_calendars(feed, source=self.source)
 
         trips = {}
-        headsigns = {}
 
+        # line as in line in a spreadsheet, not as in the Elizabeth Line
         for line in feed.trips.itertuples():
             route = self.routes[line.route_id]
             trips[line.trip_id] = Trip(
                 route=route,
                 calendar=calendars[line.service_id],
                 inbound=line.direction_id == 1,
+                headsign=line.trip_headsign,
                 ticket_machine_code=line.trip_id,
-                block=getattr(line, "block_id", ""),
+                block=""
+                if pd.isna(block_id := getattr(line, "block_id", ""))
+                else block_id,
                 vehicle_journey_code=getattr(line, "trip_short_name", ""),
                 operator=self.route_operators[line.route_id],
             )
-
-            if pd.notna(headsign := line.trip_headsign):
-                if headsign.endswith(" -"):
-                    headsign = None
-                elif headsign.startswith("- "):
-                    headsign = headsign[2:]
-                if headsign:
-                    if line.route_id not in headsigns:
-                        headsigns[line.route_id] = {
-                            0: set(),
-                            1: set(),
-                        }
-                    headsigns[line.route_id][line.direction_id].add(headsign)
 
         # use stop_times.txt to calculate trips' start times, end times and destinations:
 
@@ -236,9 +213,6 @@ class Command(BaseCommand):
 
                 trip = trips[line.trip_id]
                 trip.start = line.departure_time
-                # if line["stop_headsign"]:
-                #     if not trip["trip_headsign"]:
-                #         trip["trip_headsign"] = line["stop_headsign"]
 
             previous_line = line
 
@@ -258,92 +232,49 @@ class Command(BaseCommand):
             batch_size=1000,
         )
 
-        # headsigns - origins and destinations:
+        with (
+            connection.cursor() as cursor,
+            cursor.copy(
+                "COPY bustimes_stoptime (stop_id, arrival, departure, sequence, trip_id, timing_status, pick_up, set_down, stop_code) FROM STDIN"
+            ) as copy,
+        ):
+            for line in feed.stop_times.itertuples():
+                timing_status = "PTP" if getattr(line, "timepoint", 1) == 1 else "OTH"
 
-        for route_id in headsigns:
-            route = self.routes[route_id]
-            origins = headsigns[route_id][1]  # inbound destinations
-            destinations = headsigns[route_id][0]  # outbound destinations
-            origin = ""
-            destination = ""
-            if len(origins) <= 1 and len(destinations) <= 1:
-                if origins:
-                    origin = list(origins)[0]
-                if destinations:
-                    destination = list(destinations)[0]
+                pick_up = None
+                match line.pickup_type:
+                    case 0:  # Regularly scheduled pickup
+                        pick_up = True
+                    case 1:  # "No pickup available"
+                        pick_up = False
 
-                # if headsign contains ' - ' assume it's 'origin - destination', not just destination
-                if origin and " - " in origin:
-                    route.inbound_description = origin
-                    origin = ""
-                if destination and " - " in destination:
-                    route.outbound_description = destination
-                    destination = ""
+                set_down = None
+                match line.drop_off_type:
+                    case 0:  # Regularly scheduled drop off
+                        set_down = True
+                    case 1:  # "No drop off available"
+                        set_down = False
 
-                route.origin = origin
-                route.destination = destination
+                departure = int(parse_duration(line.departure_time).total_seconds())
+                arrival = None
+                if line.arrival_time != departure:
+                    arrival = int(parse_duration(line.arrival_time).total_seconds())
 
-                route.save(
-                    update_fields=[
-                        "origin",
-                        "destination",
-                        "inbound_description",
-                        "outbound_description",
-                    ]
+                copy.write_row(
+                    (
+                        line.stop_id,
+                        arrival,
+                        departure,
+                        line.stop_sequence,
+                        trips[line.trip_id].pk,
+                        timing_status,
+                        pick_up,
+                        set_down,
+                        "",
+                    )
                 )
 
-                if not route.service.description:
-                    route.service.description = (
-                        route.outbound_description or route.inbound_description
-                    )
-                    route.service.save(update_fields=["description"])
-
-        i = 0
-        stop_times = []
-
-        for line in feed.stop_times.itertuples():
-            stop_time = StopTime(
-                arrival=line.arrival_time,
-                departure=line.departure_time,
-                sequence=line.stop_sequence,
-                trip=trips[line.trip_id],
-                timing_status="PTP" if getattr(line, "timepoint", 1) == 1 else "OTH",
-            )
-            match line.pickup_type:
-                case 0:  # Regularly scheduled pickup
-                    stop_time.pick_up = True
-                case 1:  # "No pickup available"
-                    stop_time.pick_up = False
-                case _:
-                    assert False
-            match line.drop_off_type:
-                case 0:  # Regularly scheduled drop off
-                    stop_time.set_down = True
-                case 1:  # "No drop off available"
-                    stop_time.set_down = False
-                case _:
-                    assert False
-
-            if stop := stops.get(line.stop_id):
-                stop_time.stop = stop
-            elif stop := stops_not_created.ge(line.stop_id):
-                stop_time.stop_code = stop.stop_name
-            else:
-                stop_time.stop_code = line.stop_id
-
-            if stop_time.arrival == stop_time.departure:
-                stop_time.arrival = None
-
-            stop_times.append(stop_time)
-
-            if i == 999:
-                StopTime.objects.bulk_create(stop_times)
-                stop_times = []
-                i = 0
-            else:
-                i += 1
-
-        StopTime.objects.bulk_create(stop_times)
+        del trips
 
         services = Service.objects.filter(id__in=self.services.keys())
 
@@ -386,13 +317,10 @@ class Command(BaseCommand):
                 current=False
             )
         )
-        for route in old_routes:
-            route.delete()
+        old_routes.update(service=None)
 
-        StopPoint.objects.filter(active=False, service__current=True).update(
-            active=True
-        )
-        StopPoint.objects.filter(active=True, service__isnull=True).update(active=False)
+        feed_stops = {row.stop_id: row for row in feed.stops.itertuples()}
+        do_route_links(feed, self.source, self.routes, feed_stops)
 
     def handle(self, *args, **options):
         collections = DataSource.objects.filter(
@@ -412,7 +340,8 @@ class Command(BaseCommand):
                     source.datetime = last_modified
                 self.source = source
                 try:
-                    self.handle_zipfile(path)
+                    with log_time_taken(logger):
+                        self.handle_zipfile(path)
                 except (OSError, BadZipFile) as e:
                     logger.exception(e)
 

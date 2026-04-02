@@ -1,6 +1,6 @@
 import io
 import logging
-import xml.etree.cElementTree as ET
+import xml.etree.ElementTree as ET
 import zipfile
 from datetime import datetime, timezone
 from functools import cache
@@ -16,6 +16,7 @@ from sql_util.utils import Exists
 
 from busstops.models import Operator, Service
 from bustimes.utils import log_time_taken
+from vehicles.utils import filename_from_content_disposition
 
 from ... import models
 
@@ -575,9 +576,7 @@ class Command(BaseCommand):
                 content_type := response.headers["Content-Type"]
             ) == "text/xml" or content_type == "application/xml":
                 # maybe not fully RFC 6266 compliant
-                filename = response.headers["Content-Disposition"].split("filename", 1)[
-                    1
-                ][2:-1]
+                filename = filename_from_content_disposition(response)
                 self.handle_file(dataset, response.raw, filename)
             else:
                 assert content_type == "application/zip"
@@ -603,7 +602,7 @@ class Command(BaseCommand):
             headers["if-modified-since"] = http_date(dataset.datetime.timestamp())
 
         response = self.session.get(download_url, headers=headers, stream=True)
-        assert response.ok
+        response.raise_for_status()
 
         if response.status_code == 304:
             return dataset

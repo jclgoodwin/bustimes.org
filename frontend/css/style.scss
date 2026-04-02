@@ -23,16 +23,6 @@
     }
 }
 
-@media (min-width: 1200px) {
-    .narrow .ad-wrapper {
-        margin: 1em -236px 10px; // 1200
-    }
-
-    .wide .ad-wrapper {
-        margin: 1em -116px 10px;  // 1200px
-    }
-}
-
 .dark-mode {
     #closeBox circle {
         fill: #fff!important;

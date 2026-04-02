@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
@@ -13,23 +12,15 @@ UserModel = get_user_model()
 
 
 def register(request):
-    if settings.DISABLE_REGISTRATION:
-        return render(
-            request,
-            "403.html",
-            {
-                "exception": """Registration is currently closed.
-Don't worry, of course you can continue to enjoy all the main features of bustimes.org without logging in.""",
-            },
-            status=503,
-        )
-
     if request.method == "POST":
         form = forms.RegistrationForm(request.POST)
         if form.is_valid():
             form.save(request=request)
     else:
         form = forms.RegistrationForm()
+
+    if invite_code := request.GET.get("invite_code"):
+        form.fields["invite_code"].initial = invite_code
 
     return render(
         request,

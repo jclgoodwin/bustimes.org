@@ -5,7 +5,7 @@
 {% for situation in situations %}
     {% if situation.summary != 'Does not stop here' %}
 
-        {% if situation.summary %}
+        {% if situation.summary and situation.show_summary %}
             <details class="situation"{% if forloop.first and forloop.last and situation.text|length < 100 %} open{% endif %}>
             <summary>
                 {{ situation.summary }}
@@ -24,10 +24,10 @@
             {% endif %}{% endifchanged %}
         {% endfor %}
         {% for link in situation.link_set.all %}
-            {{ link.url|urlise }}
+            <p>{{ link.url|urlise }}</p>
         {% endfor %}
     {% endif %}
-    {% if situation.summary %}</details>{% else %}</div>{% endif %}
+    {% if situation.summary and situation.show_summary %}</details>{% else %}</div>{% endif %}
 {% endfor %}
 </div>
 {% endif %}

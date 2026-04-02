@@ -1,11 +1,13 @@
-import ciso8601
 import requests
+import ciso8601
+
 from django.contrib.gis.geos import GEOSGeometry
 from django.utils import timezone
+from django.db.models import Q
 
 from busstops.models import Service
 
-from ...models import VehicleJourney, VehicleLocation
+from ...models import VehicleJourney, VehicleLocation, Operator
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 from .import_bod_avl import get_line_name_query
 
@@ -28,12 +30,34 @@ class Command(ImportLiveVehiclesCommand):
         ImportLiveVehiclesCommand.add_arguments(parser)
 
     def handle(self, source_name, **options):
-        self.source_name = source_name
+        self.source_name = self.vehicle_code_scheme = source_name
         super().handle(**options)
+
+    @staticmethod
+    def get_vehicle_identity(item):
+        return f"{item['OperatorRef']}:{item['VehicleRef']}"
+
+    @staticmethod
+    def get_journey_identity(item):
+        return (
+            item["JourneyCode"],
+            item["PublishedLineName"],
+            item["DestinationRef"],
+        )
+
+    @staticmethod
+    def get_item_identity(item):
+        return item["RecordedAtTime"]
 
     @staticmethod
     def get_datetime(item):
         return parse_datetime(item["RecordedAtTime"])
+
+    def get_operators(self, item):
+        code = item["OperatorRef"]
+        return Operator.objects.filter(
+            Q(noc=code) | Q(operatorcode__code=code, operatorcode__source=self.source)
+        )
 
     def get_vehicle(self, item):
         code = item["VehicleRef"]
@@ -42,16 +66,12 @@ class Command(ImportLiveVehiclesCommand):
         else:
             fleet_number = None
 
-        if self.source.settings and "OperatorRef" in self.source.settings:
-            item["OperatorRef"] = self.source.settings["OperatorRef"]
-        else:
-            item["OperatorRef"] = [item["OperatorRef"]]
+        operators = self.get_operators(item)
 
-        operators = item["OperatorRef"]
         defaults = {
             "fleet_number": fleet_number,
             "source": self.source,
-            "operator_id": operators[0],
+            "operator": operators[0],
             "code": code,
         }
 
@@ -65,15 +85,14 @@ class Command(ImportLiveVehiclesCommand):
                 False,
             )
 
-    @classmethod
-    def get_service(cls, item):
+    def get_service(self, item):
         line_name = item["PublishedLineName"]
         if not line_name:
             return
         services = Service.objects.filter(
             get_line_name_query(line_name),
             current=True,
-            operator__in=item["OperatorRef"],
+            operator__in=self.get_operators(item),
         )
         try:
             try:
@@ -108,26 +127,30 @@ class Command(ImportLiveVehiclesCommand):
         ):
             return latest_journey
 
-        if datetime:
-            try:
-                return vehicle.vehiclejourney_set.select_related("service").get(
-                    datetime=datetime
-                )
-            except VehicleJourney.DoesNotExist:
-                pass
+        if datetime and (
+            journey := vehicle.vehiclejourney_set.filter(
+                date=timezone.localdate(datetime), datetime=datetime
+            ).first()
+        ):
+            return journey
 
         journey = VehicleJourney(
             datetime=datetime,
             code=code or "",
             route_name=item["PublishedLineName"] or "",
             service=self.get_service(item),
-            destination=item["DestinationStopName"] or "",
+            destination=item["DestinationStopLocality"]
+            or item["DestinationStopName"]
+            or "",
+            direction=item["DirectionRef"],
         )
 
         if journey.service_id and not journey.id and datetime:
             journey.trip = journey.get_trip(
                 departure_time=datetime, destination_ref=item["DestinationRef"]
             )
+            if journey.trip and not journey.destination:
+                journey.destination = journey.trip.headsign or ""
 
         return journey
 

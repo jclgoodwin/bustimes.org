@@ -1,3 +1,6 @@
+# This file contains overrides/corrections to NaPTAN StopPoints
+# See busstops/management/commands/naptan_new.py
+
 # relocate stops from The Street to Dereham Road - buses don't run through Briningham village
 # see https://www.flickr.com/photos/55355638@N05/9821099604/
 2900B482:
@@ -31,6 +34,12 @@
 4200F177502:
     common_name: Atherstone Surgery
 
+# doctor's surgery isn't there any more
+2900B656:
+    common_name: Church Walk
+2900B655:
+    common_name: Church Walk
+
 # clarify that the church isn't the main church in Wells-next-the-Sea
 2900W5712:
     landmark: Congregational church
@@ -56,9 +65,63 @@
 0500FWHIY901:
     locality_id: E0040542
 
-# Inverness Airport
-'6700713414':
-    latlong: POINT(-4.064315804540854 57.54041278738674)
-
+#Oadby Coppice Hall
 '260016604':
     latlong: POINT(-1.086786 52.609883)
+
+'25001195':
+    common_name: Tesco Express
+
+2400A000080A:
+    landmark: Tesco
+2400A000110A:
+    landmark: Tesco
+2400A060490R:
+    landmark: Tesco
+
+2500DCL5664:
+    landmark: Home Bargains
+2500LAA07247:
+    landmark: Home Bargains
+
+5540AWA12164:
+    landmark: Sports Direct
+"370023314":
+    landmark: ""
+
+# Elgin Bus Station (© OpenStreetMap contributors)
+"638053547":
+    indicator: Stance 7
+    latlong: POINT(-3.3165853 57.6493448)
+"638053546":
+    indicator: Stance 6
+    latlong: POINT(-3.3165165 57.6493574)
+"638053545":
+    indicator: Stance 5
+    latlong: POINT(-3.3164562 57.6493723)
+"638053544":
+    indicator: Stance 4
+    latlong: POINT(-3.3163819 57.6493876)
+"638053543":
+    indicator: Stance 3
+    latlong: POINT(-3.3163123 57.6494046)
+"638053542":
+    indicator: Stance 2
+    latlong: POINT(-3.3162395 57.6494268)
+"638053541":
+    indicator: Stance 1
+    latlong: POINT(-3.3161678 57.6494396)
+
+# Fort William Bus Station
+"670085645":
+    indicator: Stances 7/8
+    latlong: POINT(-5.1042864 56.8211092)
+"670085465C":
+    indicator: Stances 5/6
+    latlong: POINT(-5.1044830 56.8210686)
+"670085645B":
+    indicator: Stances 3/4
+    latlong: POINT(-5.1047395 56.8210198)
+"670085645A":
+    indicator: Stances 1/2
+    latlong: POINT(-5.1049530 56.8209844)

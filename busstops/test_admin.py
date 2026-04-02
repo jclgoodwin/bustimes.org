@@ -1,4 +1,5 @@
 from django.contrib.admin import site
+from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 from django.urls import reverse
 
@@ -20,8 +21,12 @@ class BusStopsAdminTests(TestCase):
             line_name="129A", description="Frankby - Moreton - Liscard"
         )
 
-        stop_a = StopPoint.objects.create(atco_code="2902", active=True)
-        stop_b = StopPoint.objects.create(atco_code="2903", active=True)
+        stop_a = StopPoint.objects.create(
+            atco_code="2902", active=True, common_name="Sandy Corner"
+        )
+        stop_b = StopPoint.objects.create(
+            atco_code="2903", active=True, common_name="Leafy Hollow"
+        )
         RouteLink.objects.create(
             from_stop=stop_a,
             to_stop=stop_b,
@@ -52,6 +57,9 @@ class BusStopsAdminTests(TestCase):
         cls.staff_user = User.objects.create(
             username="josh", is_staff=True, is_superuser=True, email="j@example.com"
         )
+
+    def setUp(self):
+        ContentType.objects.clear_cache()
 
     def make_url(self, site, model, page: str) -> str:
         return reverse(
@@ -112,7 +120,6 @@ class BusStopsAdminTests(TestCase):
         self.client.force_login(self.staff_user)
         response = self.client.get(url)
         self.assertContains(response, ">0<")  # services
-        self.assertContains(response, ">False<")  # vehicle journeys
         self.assertContains(response, ">2<")  # routes
 
         self.client.post(
@@ -123,9 +130,8 @@ class BusStopsAdminTests(TestCase):
             },
         )
         response = self.client.get(url)
-        self.assertNotContains(response, ">2<")  # routes
 
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(8):
             self.client.post(
                 url,
                 {
@@ -133,3 +139,26 @@ class BusStopsAdminTests(TestCase):
                     "_selected_action": [self.source.id],
                 },
             )
+
+    def test_routelink_admin(self):
+        url = "/admin/bustimes/routelink/"
+
+        self.client.force_login(self.staff_user)
+
+        response = self.client.get(url + "?dodgy=from_stop")
+        self.assertEqual(response.context_data["cl"].result_count, 0)
+
+        # move the stop away from the route link so it's "dodgy"
+        StopPoint.objects.all().update(latlong="POINT(1.9 51.9)")
+
+        response = self.client.get(url + "?dodgy=from_stop")
+        self.assertEqual(response.context_data["cl"].result_count, 2)
+
+        response = self.client.get(url + "?dodgy=to_stop")
+        self.assertEqual(response.context_data["cl"].result_count, 2)
+
+        url = RouteLink.objects.first().get_absolute_url()
+
+        res = self.client.get(url)
+        self.assertContains(res, "from Sandy Corner")
+        self.assertContains(res, "to Leafy Hollow")

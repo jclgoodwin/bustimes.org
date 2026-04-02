@@ -12,7 +12,7 @@ from busstops.models import (
     StopUsage,
 )
 
-from .siri_sx import bods_disruptions
+from .tasks import bods_disruptions
 from .models import Situation
 
 VCR_DIR = settings.BASE_DIR / "fixtures" / "vcr"
@@ -100,18 +100,18 @@ class SiriSXTest(TestCase):
 
     def test_siri_sx_request(self):
         with use_cassette(str(VCR_DIR / "siri_sx.yaml")) as cassette:
-            with self.assertNumQueries(123):
+            with self.assertNumQueries(115):
                 bods_disruptions()
 
             cassette.rewind()
 
-            with self.assertNumQueries(11):
+            with self.assertNumQueries(3):
                 bods_disruptions()
 
             cassette.rewind()
             Situation.objects.all().update(data="")
 
-            with self.assertNumQueries(151):
+            with self.assertNumQueries(143):
                 bods_disruptions()
 
         situation = Situation.objects.first()
@@ -164,9 +164,8 @@ class SiriSXTest(TestCase):
 
         self.assertContains(
             response,
-            '<a href="https://www.merseytravel.gov.uk/travel-updates/east-lancashire-road'
-            '-(haydock)/" rel="noopener">https://www.merseytravel.gov.uk/travel-updates/east-lancashire-road'
-            "-(haydock)/</a>",
+            '<a href="https://www.merseytravel.gov.uk/travel-updates/east-lancashire-road-(haydock)/" rel="nofollow">'
+            "merseytravel.gov.uk/travel-updates/east-lancashire-road-(haydock)</a>",
         )
 
         with self.assertNumQueries(7):

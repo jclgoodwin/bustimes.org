@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
-
 from django.contrib.gis.geos import GEOSGeometry
 from django.db.models import Exists, OuterRef, Q
+from django.utils.timezone import localdate
 
 from busstops.models import Operator, Service, StopPoint
 
@@ -57,77 +57,44 @@ def has_stop(stop):
     )
 
 
+occupancies = {"R": "busy", "A": "seats available", "G": "many seats available"}
+
+
 class Command(ImportLiveVehiclesCommand):
-    source_name = "Stagecoach"
-    previous_locations = {}
+    source_name = vehicle_code_scheme = "Stagecoach"
 
     def do_source(self):
-        self.operators = Operator.objects.filter(
-            Q(parent="Stagecoach") | Q(noc__in=["SCLK", "MEGA"])
-        ).in_bulk()
-
+        self.operators = Operator.objects.filter(group__name="Stagecoach").in_bulk()
         return super().do_source()
+
+    @staticmethod
+    def get_vehicle_identity(item):
+        return f"{item['oc']}:{item['so']}:{item['fn']}"
+
+    @staticmethod
+    def get_journey_identity(item):
+        return (
+            item.get("td"),  # journey code
+            item.get("ao") or item.get("eo"),  # aimed or expected origin departure time
+            item.get("fs"),  # destination
+            item.get("sn"),  # service number
+        )
+
+    @staticmethod
+    def get_item_identity(item):
+        return item["ut"]
 
     @staticmethod
     def get_datetime(item):
         return parse_timestamp(item["ut"])
 
-    def prefetch_vehicles(self, vehicle_codes):
-        vehicles = self.vehicles.filter(
-            operator__in=self.operators, code__in=vehicle_codes
-        )
-        self.vehicle_cache = {vehicle.code: vehicle for vehicle in vehicles}
-
     def get_items(self):
-        items = []
-        vehicle_codes = []
-
-        # build list of vehicles that have moved
-        for item in super().get_items()["services"]:
-            key = item["fn"]
-            value = (item["ut"],)
-            if self.previous_locations.get(key) != value:
-                items.append(item)
-                vehicle_codes.append(key)
-                self.previous_locations[key] = value
-
-        self.prefetch_vehicles(vehicle_codes)
-
-        return items
+        return super().get_items()["services"]
 
     def get_vehicle(self, item) -> tuple[Vehicle, bool]:
         vehicle_code = item["fn"]
 
         operator_id = item.get("oc")
-
-        service_operator = item.get("so")
-        if service_operator == "SMA" and operator_id == "SCLK":
-            operator_id = "SCMN"
-
-        if vehicle_code in self.vehicle_cache:
-            vehicle = self.vehicle_cache[vehicle_code]
-
-            if (
-                vehicle.operator_id == "SCLK"
-                and operator_id != "SCLK"
-                or operator_id == "SCLK"
-                and vehicle.operator_id != "SCLK"
-            ):
-                vehicle = (
-                    self.vehicles.filter(
-                        Q(code__iexact=vehicle_code)
-                        | Q(fleet_code__iexact=vehicle_code),
-                        operator__in=self.operators,
-                    )
-                    .exclude(id=vehicle.id)
-                    .first()
-                )
-
-                if vehicle:
-                    self.vehicle_cache[vehicle_code] = vehicle
-
-            if vehicle:
-                return vehicle, False
 
         if operator_id in self.operators:
             operator = self.operators[operator_id]
@@ -140,13 +107,10 @@ class Command(ImportLiveVehiclesCommand):
         if vehicle or item.get("hg") == "0":
             return vehicle, False
 
-        vehicle = Vehicle.objects.create(
-            operator=operator,
-            source=self.source,
+        return Vehicle.objects.filter(operator__in=self.operators).get_or_create(
+            {"operator": operator, "source": self.source, "fleet_code": vehicle_code},
             code=vehicle_code,
-            fleet_code=vehicle_code,
         )
-        return vehicle, True
 
     def get_journey(self, item, vehicle):
         if item.get("ao"):  # aimedOriginStopDepartureTime
@@ -157,13 +121,17 @@ class Command(ImportLiveVehiclesCommand):
         if departure_time:
             if (
                 vehicle.latest_journey
-                and abs(vehicle.latest_journey.datetime - departure_time).total_seconds() < 60
+                and abs(
+                    vehicle.latest_journey.datetime - departure_time
+                ).total_seconds()
+                < 60
             ):
                 return vehicle.latest_journey
-            try:
-                return vehicle.vehiclejourney_set.get(datetime=departure_time)
-            except VehicleJourney.DoesNotExist:
-                pass
+
+            if journey := vehicle.vehiclejourney_set.filter(
+                date=localdate(departure_time), datetime=departure_time
+            ).first():
+                return journey
         elif item.get("eo"):  # expectedOriginStopDepartureTime
             departure_time = parse_timestamp(item["eo"])
 
@@ -176,13 +144,6 @@ class Command(ImportLiveVehiclesCommand):
 
         if code := item.get("td", ""):  # trip id:
             journey.code = code
-        elif (
-            not departure_time
-            and latest_journey
-            and journey.route_name == latest_journey.route_name
-            and latest_journey.datetime.date() == self.source.datetime.date()
-        ):
-            journey = latest_journey
 
         if not journey.service_id and journey.route_name:
             services = Service.objects.filter(current=True, operator__in=self.operators)
@@ -204,15 +165,12 @@ class Command(ImportLiveVehiclesCommand):
                 print(journey.route_name, item.get("or"), vehicle.get_absolute_url())
 
         if departure_time and journey.service and not journey.id:
+            journey.direction = item["dn"].lower()
             journey.trip = journey.get_trip(
-                destination_ref=item.get("fr"), departure_time=departure_time
+                destination_ref=item.get("fr"),
+                origin_ref=item.get("or"),
+                departure_time=departure_time,
             )
-
-            # update vehicle garage
-            if trip := journey.trip:
-                if trip.garage_id != vehicle.garage_id:
-                    vehicle.garage_id = trip.garage_id
-                    vehicle.save(update_fields=["garage"])
 
         return journey
 
@@ -220,4 +178,5 @@ class Command(ImportLiveVehiclesCommand):
         return VehicleLocation(
             latlong=GEOSGeometry(f"POINT({item['lo']} {item['la']})"),
             heading=item.get("hg"),
+            # occupancy=occupancies.get(item.get("rg")),
         )

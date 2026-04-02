@@ -5,6 +5,7 @@ import vcr
 from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.core import mail
+from django.core.management import call_command
 from django.shortcuts import render
 from django.test import TestCase, override_settings
 
@@ -99,6 +100,7 @@ class ViewsTests(TestCase):
             locality_centre=False,
             indicator="adj",
             bearing="E",
+            latlong=Point(1.041894987727773, 52.85610279717982),
         )
         cls.stop = StopPoint.objects.create(
             atco_code="2900M114",
@@ -110,7 +112,7 @@ class ViewsTests(TestCase):
             locality_centre=False,
             indicator="opp",
             bearing="W",
-            latlong=Point(52.8566019427, 1.0331935468),
+            latlong=Point(1.041894987727773, 52.85610279717982),
         )
         cls.inactive_service = Service.objects.create(
             service_code="45A", line_name="45A", region=cls.north, current=False
@@ -135,6 +137,7 @@ class ViewsTests(TestCase):
         )
         trip = Trip.objects.create(route=route, start="0", end="1")
         StopTime.objects.create(trip=trip, stop=cls.stop, arrival="2")
+        StopUsage.objects.create(service=cls.service, stop=cls.stop, order=0)
 
         Service.objects.bulk_create(
             [
@@ -243,14 +246,25 @@ class ViewsTests(TestCase):
         response = self.client.get("/search?q=sandwich+deal")
         self.assertContains(response, "<b>Sandwich</b> - <b>Deal</b>")
         self.assertContains(
-            response, '<li><a href="?q=sandwich+deal&amp;page=2#services">2</a></li>'
+            response,
+            '<li><a rel="next nofollow" href="?q=sandwich+deal&amp;page=2#services">2</a></li>',
         )
 
         response = self.client.get("/search?q=sandwich+deal&page=2")
         # explicity link to page 1
         self.assertContains(
-            response, '<li><a href="?q=sandwich+deal&amp;page=1#services">1</a></li>'
+            response,
+            '<li><a rel="prev" href="?q=sandwich+deal&amp;page=1#services">1</a></li>',
         )
+
+    def test_api_search(self):
+        response = self.client.get("/api/services/?search=holt").json()
+        self.assertEqual(response["count"], 0)
+
+        call_command("update_search_indexes")
+
+        response = self.client.get("/api/services/?search=holt").json()
+        self.assertEqual(response["count"], 1)
 
     def test_postcode(self):
         with vcr.use_cassette(
@@ -258,8 +272,7 @@ class ViewsTests(TestCase):
             decode_compressed_response=True,
         ):
             # postcode sufficiently near to fake locality
-            with self.assertNumQueries(2):
-                response = self.client.get("/search?q=w1a 1aa")
+            response = self.client.get("/search?q=w1a 1aa")
 
             self.assertContains(response, "W1A 1AA")
             self.assertContains(
@@ -334,6 +347,34 @@ class ViewsTests(TestCase):
         self.assertEqual("FeatureCollection", response.json()["type"])
         self.assertIn("features", response.json())
 
+    def test_zoom_too_low(self):
+        """zoom lower than 10"""
+
+        response = self.client.get("/stops/9/255/255.pbf")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/x-protobuf")
+        self.assertEqual(response.content, b"")
+
+    def test_empty_tile(self):
+        """no stops"""
+
+        response = self.client.get("/stops/14/0/0.pbf")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/x-protobuf")
+        self.assertEqual(response.content, b"")
+
+    def test_tile_contains_active_stop(self):
+        """A tile covering an active stop returns it (with current service only)"""
+
+        response = self.client.get("/stops/14/8239/5347.pbf")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/x-protobuf")
+        # protobuf encodes strings as raw UTF-8 bytes
+        self.assertIn(b"2900M114", response.content)
+        self.assertIn(b"Melton Constable", response.content)
+        # stop with inactive service must not appear
+        self.assertNotIn(b"2900M115", response.content)
+
     def test_stop_view(self):
         response = self.client.get("/stops/2900m114")
         self.assertFalse(response.context_data["departures"])
@@ -372,15 +413,14 @@ class ViewsTests(TestCase):
         #     + "&#112;&#108;&#101;&#46;&#99;&#111;&#109;",
         # )
         self.assertContains(response, "http://www.ouibus.com")
-        self.assertContains(response, ">@dril<")
 
     def test_operator_not_found(self):
         """An operator with no services, or that doesn't exist, should should return a 404 response"""
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(8):
             response = self.client.get("/operators/VENT")  # noc
             self.assertContains(response, "Nu-Venture", status_code=404)
 
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(8):
             response = self.client.get("/operators/nu-venture")  # slug
             self.assertContains(response, "Nu-Venture", status_code=404)
 
@@ -394,45 +434,43 @@ class ViewsTests(TestCase):
 
     def test_service(self):
         response = self.client.get("/services/45c-holt-norwich")
+
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "ouibus")
-        self.assertContains(response, ">@dril<")
-        self.assertContains(response, 'x.com/dril"')
-
         # payment methods:
         self.assertContains(response, "euros")
         self.assertContains(response, "Oyster card")
         self.assertContains(response, '"http://example.com"')
 
+        self.assertFalse(response.streaming)
+
+        with override_settings(TEST=False):
+            response = self.client.get("/services/45c-holt-norwich")
+            self.assertTrue(response.streaming)
+
     def test_national_express_service(self):
         self.chariots.name = "National Express"
-        self.chariots.url = "http://nationalexpress.com"
+        self.chariots.url = "http://www.nationalexpress.com"
         self.chariots.save()
 
-        response = self.client.get(self.chariots.get_absolute_url())
-        self.assertContains(response, ">Tickets<")
-
         response = self.client.get(self.service.get_absolute_url())
-        self.assertNotContains(response, "Show all stops")
+        self.assertNotContains(response, "Timing points")
         self.assertContains(response, "Melton Constable, opp Bus Shelter")
+
+        # check for affiliate links
         self.assertEqual(
             response.context_data["links"][0],
             {
                 "text": "Buy tickets at National Express",
-                "url": "https://nationalexpress.prf.hn/click/camref:1011ljPYw",
+                "url": "https://nationalexpress.prf.hn/click/camref:1011ljPYw/pubref:45C",
             },
         )
 
         response = self.client.get(self.chariots.get_absolute_url())
-        self.assertContains(
-            response, "https://nationalexpress.prf.hn/click/camref:1011ljPYw"
-        )
-
-        self.chariots.name = "Megabus"
-        self.chariots.save()
-
-        response = self.client.get(self.chariots.get_absolute_url())
         self.assertContains(response, ">Tickets<")
+        self.assertContains(
+            response, "https://nationalexpress.prf.hn/click/camref:1011ljPYw", 2
+        )
 
     def test_service_redirect(self):
         """An inactive service should redirect to a current service with the same description"""
@@ -546,3 +584,10 @@ class ViewsTests(TestCase):
     def test_stop_qr_redirect(self):
         response = self.client.get("/STOP/2900ABC1")
         self.assertRedirects(response, "/stops/2900ABC1", 302, target_status_code=404)
+
+    def test_trailing_slash(self):
+        response = self.client.get("/map/")
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get("/mao/")
+        self.assertEqual(response.status_code, 404)

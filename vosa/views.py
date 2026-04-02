@@ -17,6 +17,12 @@ class UpperCaseSlugMixin:
         return super().get_object()
 
 
+def licence_or_registration(request, slug):
+    if "/" in slug:
+        return RegistrationView.as_view()(request, slug=slug)
+    return LicenceView.as_view()(request, slug=slug)
+
+
 class LicenceView(UpperCaseSlugMixin, DetailView):
     model = Licence
     slug_field = "licence_number"
@@ -93,7 +99,3 @@ class LicenceFeed(Feed):
     def item_pubdate(self, item):
         date = item.date_received
         return datetime(date.year, date.month, date.day)
-
-
-class AreaFeed(Feed):
-    pass

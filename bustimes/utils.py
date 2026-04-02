@@ -1,4 +1,4 @@
-import logging
+import hashlib
 from datetime import date, datetime, timedelta
 from difflib import Differ
 from itertools import pairwise
@@ -13,14 +13,31 @@ from django.db.models import (
     Value,
     When,
     OuterRef,
+    IntegerField,
 )
+from django.db.models.functions import Abs
 from django.utils import timezone
 from sql_util.utils import Exists
 
-from .models import Calendar, CalendarBankHoliday, CalendarDate, StopTime, Trip, Route
+from .models import (
+    Calendar,
+    CalendarBankHoliday,
+    CalendarDate,
+    StopTime,
+    Trip,
+    Route,
+    Version,
+)
 
 differ = Differ(charjunk=lambda _: True)
-logger = logging.getLogger(__name__)
+
+
+def get_sha1(path):
+    sha1 = hashlib.sha1(usedforsecurity=False)
+    with path.open("rb") as open_file:
+        while data := open_file.read(65536):
+            sha1.update(data)
+    return sha1.hexdigest()
 
 
 class log_time_taken:
@@ -34,101 +51,79 @@ class log_time_taken:
         self.logger.info(f"  ⏱️ {datetime.now() - self.start}")
 
 
-def get_routes(routes, when=None, from_date=None):
-    if when:
-        if type(routes) is list:
-            if filter_by_revision_number := any(
-                route.revision_number for route in routes
-            ):
-                routes = Route.objects.filter(
-                    id__in=[route.id for route in routes]
-                ).select_related("source")
-        else:
-            filter_by_revision_number = True
-        if filter_by_revision_number:
-            routes = routes.filter(
-                Q(start_date=None) | Q(start_date__lte=when),
-                ~Exists(
-                    Route.objects.filter(
-                        Q(start_date__gt=OuterRef("start_date"))
-                        | ~Q(end_date=OuterRef("end_date")),  # for bad data
-                        source=OuterRef("source"),
-                        service_code=OuterRef("service_code"),
-                        start_date__lte=when,
-                        revision_number__gt=OuterRef("revision_number"),
-                    )
-                ),
-            ).order_by("id")
+def get_routes(routes, when):
+    filter_by_revision_number = True
+    if type(routes) is list:
+        filter_by_revision_number = any(route.revision_number for route in routes)
+
+        routes = Route.objects.filter(
+            id__in=[route.id for route in routes]
+        ).select_related("source")
+
+    if filter_by_revision_number:
+        routes = routes.filter(
+            Q(start_date=None) | Q(start_date__lte=when),
+            ~Exists(
+                Route.objects.filter(
+                    source=OuterRef("source"),
+                    service_code=OuterRef("service_code"),
+                    revision_number_context=OuterRef("revision_number_context"),
+                    start_date__lte=when,
+                    revision_number__gt=OuterRef("revision_number"),
+                )
+            ),
+        ).order_by("id")
 
     # complicated way of working out which Passenger .zip applies
-    current_prefixes = {}
-    for route in routes:
-        if route.source.settings and route.source_id not in current_prefixes:
-            current_prefixes[route.source.id] = None
+    routes = routes.filter(
+        Q(version=None)
+        | Q(
+            ~Exists(
+                Version.objects.filter(
+                    source=OuterRef("version__source"),
+                    start_date__lte=when,
+                    end_date__gte=when,
+                    start_date__gt=OuterRef("version__start_date"),
+                )
+            ),
+            version__start_date__lte=when,
+            version__end_date__gte=when,
+        )
+    )
 
-            prefix_dates = [
-                (prefix, date.fromisoformat(dates[0]), date.fromisoformat(dates[1]))
-                for prefix, dates in route.source.settings.items()
-            ]
-            prefix_dates.sort(key=lambda item: item[1])  # sort by from_date
-            for prefix, start, end in prefix_dates:
-                if when and (start <= when < end):
-                    current_prefixes[route.source_id] = prefix
-    if current_prefixes:
-        routes = [
-            route
-            for route in routes
-            if route.source_id not in current_prefixes
-            or (
-                current_prefixes[route.source.id]
-                and route.code.startswith(current_prefixes[route.source_id])
-            )
-        ]
-        return routes
+    routes = routes.filter(
+        Q(start_date=None) | Q(start_date__lte=when),
+        Q(end_date=None) | Q(end_date__gte=when),
+    )
 
-    if when:
-        routes = [route for route in routes if route.contains(when)]
-
-    if from_date:
-        # just filter out previous versions
-        routes = [
-            route
-            for route in routes
-            if route.end_date is None or route.end_date >= from_date
-        ]
-
-    if len(routes) <= 1:
-        return routes
-
-    # TfL: parse Service Change Number from filename (like a revision number) and use the highest one
+    # TfL: try to pick the file with the highest Service Change Number, if there are multiple
     # https://techforum.tfl.gov.uk/t/duplicate-files-in-journey-planner-datastore-is-there-a-way-to-choose-the-right-one/2571
-    if when and any(route.source.name == "L" for route in routes):
-        routes = [
-            route
-            for route in routes
-            if route.source.name != "L"
-            or not any(
-                route.code[:-5] == r.code[:-5] and route.code < r.code for r in routes
+    # (actually using service_code order, which assumes that the SCNs have the same number of digits)
+    routes = routes.filter(
+        ~Q(code__contains="tfl_")
+        | ~Exists(
+            Route.objects.filter(
+                Q(end_date__gte=when) | Q(end_date__isnull=True),
+                service=OuterRef("service"),
+                source=OuterRef("source"),
+                service_code__gt=OuterRef("service_code"),
+                start_date__lte=when,
             )
-        ]
-
-    # remove duplicates
-    if len(set(route.source_id for route in routes)) > 1:
-        sources_by_sha1 = {
-            route.source.sha1: route.source_id for route in routes if route.source.sha1
-        }
-        # if multiple sources have the same sha1 hash, we're only interested in one
-        routes = [
-            route
-            for route in routes
-            if not route.source.sha1
-            or route.source_id == sources_by_sha1[route.source.sha1]
-        ]
-
+        )
+    ).filter(
+        ~Exists(
+            Route.objects.filter(
+                file_hash=OuterRef("file_hash"),
+                file_hash__isnull=False,
+                code=OuterRef("code"),
+                id__gt=OuterRef("id"),
+            )
+        )
+    )
     return routes
 
 
-def get_calendars(when: date | datetime, calendar_ids=None):
+def get_calendars(when: date | datetime, calendar_ids=None, scotland=None):
     between_dates = Q(start_date__lte=when) & (Q(end_date__gte=when) | Q(end_date=None))
 
     calendars = Calendar.objects.filter(between_dates)
@@ -146,10 +141,19 @@ def get_calendars(when: date | datetime, calendar_ids=None):
         calendar_calendar_dates.filter(special=False, operation=True)
     )
 
-    calendar_bank_holidays = CalendarBankHoliday.objects.filter(
-        bank_holiday__bankholidaydate__date=when,
-        calendar=OuterRef("id"),
-    )
+    if scotland is None:
+        calendar_bank_holidays = CalendarBankHoliday.objects.filter(
+            bank_holiday__bankholidaydate__date=when,
+            calendar=OuterRef("id"),
+        )
+    else:
+        calendar_bank_holidays = CalendarBankHoliday.objects.filter(
+            Q(bank_holiday__bankholidaydate__scotland=None)
+            | Q(bank_holiday__bankholidaydate__scotland=scotland),
+            bank_holiday__bankholidaydate__date=when,
+            calendar=OuterRef("id"),
+        )
+
     bank_holiday_inclusions = Exists(calendar_bank_holidays.filter(operation=True))
 
     return calendars.annotate(
@@ -167,10 +171,19 @@ def get_calendars(when: date | datetime, calendar_ids=None):
 
 
 def get_other_trips_in_block(trip, date):
+    if not trip.route_id:
+        return Trip.objects.none()
+
     trips = Trip.objects.filter(
         block=trip.block,
-        route__source=trip.route.source,
+        route__source=trip.route.source_id,
+        route__version=trip.route.version_id,
+        garage=trip.garage_id,
+        operator=trip.operator_id,
     )
+    if trip.route.service_id:
+        trips = trips.filter(route__service__isnull=False)
+
     routes = Route.objects.filter(trip__in=trips).select_related("source")
 
     calendars = get_calendars(date, [trip.calendar_id for trip in trips])
@@ -179,7 +192,7 @@ def get_other_trips_in_block(trip, date):
 
 
 def get_stop_times(date: date, time: timedelta | None, stop, routes, trip_ids=None):
-    times = StopTime.objects.filter(pick_up=True).annotate(date=Value(date))
+    times = StopTime.objects.filter(pick_up=True)
 
     try:
         times = times.filter(stop__stop_area=stop)
@@ -187,24 +200,38 @@ def get_stop_times(date: date, time: timedelta | None, stop, routes, trip_ids=No
         times = times.filter(stop=stop)
 
     if trip_ids:
-        trips = Trip.objects.filter(id__in=trip_ids, start__lt=time)
-        times = times.filter(departure__lt=time)
+        trips = Trip.objects.filter(id__in=trip_ids)
+        one_day = timedelta(1)
+        times = times.filter(
+            Q(departure__lt=time)
+            | Q(departure__gte=one_day, departure__lt=time + one_day)
+        )
+        times = times.annotate(
+            date=Case(
+                When(
+                    departure__gte=one_day,
+                    then=Value(date - one_day),
+                ),
+                default=date,
+            )
+        )
     else:
-        routes = get_routes(routes, date)
+        routes = list(get_routes(routes, date))
+
+        scotland = stop.pk[:1] == "6" and ":" not in stop.pk and stop.pk[:4].isdigit()
 
         if not routes:
             times = times.none()
 
         trips = Trip.objects.filter(
             route__in=routes,
-            calendar__in=get_calendars(date),
+            calendar__in=get_calendars(date, scotland=scotland),
         )
 
         if time is not None:
             trips = trips.filter(end__gte=time)
             times = times.filter(departure__gte=time)
 
-            # yesterday = parse_datetime(f"{date - timedelta(days=1)}T12:00:00") - timedelta(hours=12)
             midnight = parse_datetime(f"{date}T12:00:00") - timedelta(hours=12)
 
             times = times.annotate(
@@ -215,6 +242,8 @@ def get_stop_times(date: date, time: timedelta | None, stop, routes, trip_ids=No
             ).order_by("departure_time")
         else:
             times = times.filter(departure__isnull=False)
+
+        times = times.annotate(date=Value(date))
 
     times = times.filter(trip__in=trips)
 
@@ -237,6 +266,18 @@ def get_descriptions(routes):
     )
 
     if len(origins_and_destinations) > 1:
+        # if all have the same via
+        if all(
+            len(parts) == 3 and parts[1] == origins_and_destinations[0][1]
+            for parts in origins_and_destinations
+        ):
+            # remove vias
+            origins_and_destinations = [
+                (o, d) for (o, v, d) in origins_and_destinations
+            ]
+
+        # join "Holt - Sheringham" and "Sheringham - Cromer" for example
+        # (like dominoes)
         for i, parts in enumerate(origins_and_destinations):
             for j, other_parts in enumerate(origins_and_destinations[i:]):
                 if parts[0] == other_parts[-1]:
@@ -250,6 +291,7 @@ def get_descriptions(routes):
         origins_and_destinations = list(filter(None, origins_and_destinations))
         inbound_outbound_descriptions = ()
 
+        # "or"
         if (
             len(origins_and_destinations) == 2
             and len(origins_and_destinations[0]) == 2
@@ -284,6 +326,8 @@ def get_trip(
     arrival_time=None,
     journey_code="",
     block_ref=None,
+    approximate_datetime=False,
+    next_stop=None,
 ):
     if not journey.service:
         return
@@ -293,6 +337,7 @@ def get_trip(
     if not date:
         date = (departure_time or datetime).date()
 
+    # TODO: get routes for previous day, in case journey starts after midnight
     routes = get_routes(journey.service.route_set.select_related("source"), date)
     if routes:
         trips = Trip.objects.filter(route__in=routes)
@@ -304,6 +349,11 @@ def get_trip(
     else:
         destination = Q()
 
+    if origin_ref and " " not in origin_ref and origin_ref[:3].isdigit():
+        origin = Exists("stoptime", filter=Q(stop=origin_ref))
+    else:
+        origin = Q()
+
     if journey.direction == "outbound":
         direction = Q(inbound=False)
     elif journey.direction == "inbound":
@@ -313,13 +363,22 @@ def get_trip(
 
     if departure_time:
         start_time = timezone.localtime(departure_time)
-        start = Q(start=timedelta(hours=start_time.hour, minutes=start_time.minute))
-        if start_time.hour < 6:
-            start |= Q(
-                start=timedelta(
-                    days=1, hours=start_time.hour, minutes=start_time.minute
-                )
+        start_timedelta = timedelta(hours=start_time.hour, minutes=start_time.minute)
+        start = Q(start=start_timedelta)
+        if origin:
+            start |= Exists(
+                "stoptime", filter=Q(stop=origin_ref, departure=start_timedelta)
             )
+        if start_time.hour < 6:
+            start |= Q(start=start_timedelta + timedelta(days=1))
+            if origin:
+                start |= Exists(
+                    "stoptime",
+                    filter=Q(
+                        stop=origin_ref, departure=start_timedelta + timedelta(days=1)
+                    ),
+                )
+
     elif len(journey_code) == 4 and journey_code.isdigit() and int(journey_code) < 2400:
         hours = int(journey_code[:-2])
         minutes = int(journey_code[-2:])
@@ -354,13 +413,8 @@ def get_trip(
             return
 
     if journey.code:
-        code = Q(ticket_machine_code=journey.code) | Q(
-            vehicle_journey_code=journey.code
-        )
+        code = Q(ticket_machine_code=journey.code)
     else:
-        code = Q()
-
-    if operator_ref == "NT" and len(journey_code) > 30:
         code = Q()
 
     score = 0
@@ -376,8 +430,34 @@ def get_trip(
         score += Case(When(direction, then=1), default=0)
     if destination:
         score += Case(When(destination, then=1), default=0)
+    if origin:
+        score += Case(When(origin, then=1), default=0)
 
-    condition = code | start
+    if approximate_datetime and next_stop:
+        start_time = timezone.localtime(datetime)
+        start_time = timedelta(hours=start_time.hour, minutes=start_time.minute)
+        start_range = (
+            start_time - timedelta(minutes=10),
+            start_time + timedelta(minutes=5),
+        )
+        condition = Q(
+            Exists(
+                "stoptime",
+                filter=Q(
+                    stop__naptan_code=next_stop,
+                    departure__range=start_range,
+                ),
+            ),
+            start__range=start_range,
+        )
+        # score = F("start")
+        score = ExpressionWrapper(
+            -Abs(int(start_time.total_seconds()) - F("start")),
+            output_field=IntegerField(),
+        )
+    else:
+        condition = code | start
+
     if direction:
         condition &= destination | direction
 
@@ -385,21 +465,29 @@ def get_trip(
 
     if trips:
         if len(trips) > 1 and trips[0].score == trips[1].score:
+            if trips[0].start >= timedelta(days=1):
+                date -= timedelta(days=1)
             filtered_trips = trips.filter(calendar__in=get_calendars(date))
             if filtered_trips:
                 trips = filtered_trips
+
+        journey.date = date
 
         return trips[0]
 
 
 def contiguous_stoptimes_only(stoptimes, trip_id):
+    stoptimes_list = list(stoptimes)
     for a, b in pairwise(stoptimes):
         if a.trip_id != b.trip_id:
             if a.stop_id != b.stop_id:
                 # trips are not contiguous, return only the stops for trip_id
                 return [stop for stop in stoptimes if stop.trip_id == trip_id]
             else:
+                # merge a and b - they describe the same stop
                 a.departure_time = b.departure_time
+                a.pick_up = b.pick_up
+                stoptimes_list.remove(b)
 
     # trips were contiguous, return all stops
-    return stoptimes
+    return stoptimes_list

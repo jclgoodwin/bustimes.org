@@ -18,17 +18,18 @@ import VehicleMarker, {
   getClickedVehicleMarkerId,
 } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
-import { getBounds } from "./utils";
+import { getBounds, getFont } from "./utils";
 
 type VehicleJourneyLocation = {
   id: number;
   coordinates: [number, number];
   // delta: number | null;
   direction?: number | null;
-  datetime: string | number;
+  datetime: string;
 };
 
 export type StopTime = {
+  id: number;
   atco_code: string;
   name: string;
   aimed_arrival_time: string;
@@ -69,8 +70,7 @@ export const Locations = React.memo(function Locations({
   locations: VehicleJourneyLocation[];
 }) {
   const theme = React.useContext(ThemeContext);
-  const darkMode =
-    theme === "alidade_smooth_dark" || theme === "alidade_satellite";
+  const darkMode = theme.endsWith("_dark") || theme.endsWith("_satellite");
 
   const routeStyle: LayerProps = {
     type: "line",
@@ -81,16 +81,18 @@ export const Locations = React.memo(function Locations({
     },
   };
 
+  const font = getFont(theme);
+
   const locationsStyle: LayerProps = {
     id: "locations",
     type: "symbol",
     layout: {
       "text-field": ["get", "time"],
       "text-size": 12,
-      "text-font": ["Stadia Regular"],
+      "text-font": font,
 
       "icon-rotate": ["+", 45, ["get", "heading"]],
-      "icon-image": "arrow",
+      "icon-image": "history-arrow",
       "icon-allow-overlap": true,
       "icon-ignore-placement": true,
       "icon-anchor": "top-left",
@@ -139,7 +141,7 @@ export const Locations = React.memo(function Locations({
                 // delta: l.delta,
                 heading: l.direction,
                 // datetime: l.datetime,
-                time: new Date(l.datetime).toTimeString().slice(0, 8),
+                time: l.datetime.slice(11, 19),
               },
             };
           }),
@@ -161,18 +163,17 @@ export const JourneyStops = React.memo(function Stops({
   setClickedStop: (s: string | undefined) => void;
 }) {
   const theme = React.useContext(ThemeContext);
-  const darkMode =
-    theme === "alidade_smooth_dark" || theme === "alidade_satellite";
+  const darkMode = theme.endsWith("_dark") || theme.endsWith("_satellite");
 
   const features = React.useMemo(() => {
     return stops
       .filter((s) => s.coordinates)
       .map((s) => {
         return {
-          type: "Feature",
+          type: "Feature" as const,
           geometry: {
-            type: "Point",
-            coordinates: s.coordinates,
+            type: "Point" as const,
+            coordinates: s.coordinates as [number, number],
           },
           properties: {
             url: `/stops/${s.atco_code}`,
@@ -236,29 +237,23 @@ export const JourneyStops = React.memo(function Stops({
   );
 });
 
-function nextOrPreviousLink(
-  today: string,
-  nextOrPrevious: VehicleJourney["next"],
-): string {
-  const nextOrPreviousDate = new Date(nextOrPrevious.datetime);
-  const string = nextOrPreviousDate.toLocaleDateString();
-  const timeString = nextOrPreviousDate.toTimeString().slice(0, 5);
-
-  if (string === today) {
-    return timeString;
+function formatDatetime(datetime: string, contextDate?: string) {
+  if (contextDate && datetime.startsWith(contextDate)) {
+    return datetime.slice(11, 16); // just the time
   }
-
-  return `${string} ${timeString}`;
+  return datetime.slice(0, 16).replace("T", " ");
 }
 
 function Sidebar({
   journey,
   loading,
   onMouseEnter,
+  vehicle,
 }: {
   journey: VehicleJourney;
   loading: boolean;
   onMouseEnter: (t: TripTime) => void;
+  vehicle?: Vehicle;
 }) {
   let className = "trip-timetable map-sidebar";
   if (loading) {
@@ -269,13 +264,14 @@ function Sidebar({
     return tripFromJourney(journey);
   }, [journey]);
 
-  const today = new Date(journey.datetime).toLocaleDateString();
-
   let previousLink: React.ReactElement | string | undefined;
   let nextLink: React.ReactElement | string | undefined;
+  const date = journey.datetime.slice(0, 10);
+
   if (journey) {
     if (journey.previous) {
-      previousLink = nextOrPreviousLink(today, journey.previous);
+      previousLink = formatDatetime(journey.previous.datetime, date);
+
       previousLink = (
         <p className="previous">
           <a href={`#journeys/${journey.previous.id}`}>&larr; {previousLink}</a>
@@ -283,7 +279,7 @@ function Sidebar({
       );
     }
     if (journey.next) {
-      nextLink = nextOrPreviousLink(today, journey.next);
+      nextLink = formatDatetime(journey.next.datetime, date);
       nextLink = (
         <p className="next">
           <a href={`#journeys/${journey.next.id}`}>{nextLink} &rarr;</a>
@@ -292,7 +288,7 @@ function Sidebar({
     }
   }
 
-  let text = today;
+  let text = formatDatetime(journey.datetime);
   let reg = null;
   if (journey.vehicle) {
     reg = journey.vehicle;
@@ -320,7 +316,11 @@ function Sidebar({
         {text} {reg}
       </p>
       {trip ? (
-        <TripTimetable onMouseEnter={onMouseEnter} trip={trip} />
+        <TripTimetable
+          onMouseEnter={onMouseEnter}
+          trip={trip}
+          vehicle={vehicle}
+        />
       ) : (
         <p>{journey.code}</p>
       )}
@@ -402,7 +402,7 @@ export default function JourneyMap({
 }) {
   const [cursor, setCursor] = React.useState<string>();
 
-  const hoveredLocation = React.useRef<number>();
+  const hoveredLocation = React.useRef<number | null>(null);
 
   const onMouseEnter = React.useCallback((e: MapLayerMouseEvent) => {
     const vehicleId = getClickedVehicleMarkerId(e);
@@ -446,23 +446,25 @@ export default function JourneyMap({
     [],
   );
 
+  const [vehicle, setVehicle] = React.useState<Vehicle>();
+
   const handleVehicleMove = React.useCallback(
     (vehicle: Vehicle) => {
       if (
         !locations.length ||
-        locations[locations.length - 1].datetime !== vehicle.datetime
+        locations[locations.length - 1].datetime < vehicle.datetime
       ) {
         setLocations(
           locations.concat([
             {
               id: new Date(vehicle.datetime).getTime(),
               coordinates: vehicle.coordinates,
-              // delta: null,
               datetime: vehicle.datetime,
               direction: vehicle.heading,
             },
           ]),
         );
+        setVehicle(vehicle);
       }
     },
     [locations],
@@ -496,7 +498,7 @@ export default function JourneyMap({
     }
   }, []);
 
-  const mapRef = React.useRef<MapGL>();
+  const mapRef = React.useRef<MapGL | null>(null);
 
   const bounds = React.useMemo(() => {
     if (journey) {
@@ -585,6 +587,7 @@ export default function JourneyMap({
         loading={loading}
         journey={journey}
         onMouseEnter={handleRowHover}
+        vehicle={vehicle}
       />
     </React.Fragment>
   );

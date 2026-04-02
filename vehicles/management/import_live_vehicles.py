@@ -1,9 +1,11 @@
 import json
 import logging
+from collections import namedtuple
 from datetime import timedelta
 from time import sleep
 
 import requests
+import sentry_sdk
 from ciso8601 import parse_datetime
 from django.contrib.gis.geos import Point
 from django.core.cache import cache
@@ -19,7 +21,7 @@ from tenacity import before_sleep_log, retry, wait_exponential
 from busstops.models import DataSource
 from bustimes.models import Route, Trip
 
-from ..models import Vehicle, VehicleJourney
+from ..models import Vehicle, VehicleJourney, VehicleCode
 from ..utils import calculate_bearing, redis_client
 
 logger = logging.getLogger(__name__)
@@ -27,50 +29,39 @@ fifteen_minutes = timedelta(minutes=15)
 twelve_hours = timedelta(hours=12)
 
 
-def same_journey(latest_journey, journey, latest_datetime, when):
-    if not latest_journey:
-        return False
+Status = namedtuple(
+    "Status",
+    ("fetched_at", "timestamp", "age", "total_items", "changed_items", "time_taken"),
+)
 
-    if journey.id:
-        return latest_journey.id == journey.id
 
-    if latest_journey.datetime == journey.datetime:
+def same_journey(journey, last_journey, now):
+    if journey.datetime == last_journey.datetime:
         return True
-
-    if latest_journey.route_name and journey.route_name:
-        same_route = latest_journey.route_name == journey.route_name
-    else:
-        same_route = latest_journey.service_id == journey.service_id
-
-    if not same_route:
+    if journey.datetime and not last_journey.datetime.second:
+        # seems safe to assume that last journey had a different departure time
         return False
-
-    if (when - latest_journey.datetime) > twelve_hours:
-        return False
-
-    if latest_journey.code and journey.code:
-        return (latest_journey.code, latest_journey.destination) == (
-            journey.code,
-            journey.destination,
-        )
-
-    if latest_journey.direction and journey.direction:
-        if latest_journey.direction != journey.direction:
-            return False
-    elif latest_journey.destination and journey.destination:
-        return latest_journey.destination == journey.destination
-
-    # last time was less than 15 minutes ago
-    if latest_datetime and (when - latest_datetime) < fifteen_minutes:
-        return True
-
-    return False
+    return (
+        journey.service_id,
+        journey.route_name,
+        journey.code,
+        journey.direction,
+        # journey.trip_id,
+        now.date(),
+    ) == (
+        last_journey.service_id,
+        last_journey.route_name,
+        last_journey.code,
+        last_journey.direction,
+        # last_journey.trip_id or journey.trip_id,
+        last_journey.datetime.date(),
+    )
 
 
 class ImportLiveVehiclesCommand(BaseCommand):
     url = ""
     vehicles = Vehicle.objects.select_related("latest_journey__trip")
-    wait = 60
+    wait = 66
     history = True
     status = []
     status_key = None
@@ -83,7 +74,12 @@ class ImportLiveVehiclesCommand(BaseCommand):
         super().__init__(*args, **kwargs)
         self.session = requests.Session()
         self.to_save = []
+        self.journeys_to_create = {}
+        self.journeys_to_update = []
         self.vehicles_to_update = []
+        self.identifiers = {}
+        self.journeys_ids = {}
+        self.journeys_ids_ids = {}
 
     @staticmethod
     def get_datetime(self):
@@ -95,7 +91,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
     )
     def get_items(self):
         response = self.session.get(self.url, timeout=20)
-        assert response.ok
+        response.raise_for_status()
         return response.json()
 
     @staticmethod
@@ -120,19 +116,28 @@ class ImportLiveVehiclesCommand(BaseCommand):
             except queryset.model.MultipleObjectsReturned:
                 continue
 
-    def handle_item(self, item, now=None, vehicle=None, latest=None, keep_journey=None):
-        datetime = self.get_datetime(item)
-        if now and datetime and now < datetime:
-            difference = datetime - now
-            if difference > twelve_hours:
-                datetime = None  # datetime more than 12 hours in the future (probably The Green Bus)
-            if 3000 < difference.total_seconds() <= 600:
-                logger.warning("datetime %s is in the future", datetime)
+    def handle_item(
+        self,
+        item,
+        now=None,
+        vehicle: Vehicle | None = None,
+        latest: dict | None = None,
+        keep_journey=False,
+    ):
+        if datetime := self.get_datetime(item):
+            if datetime.year == 1970:
+                datetime = None
+            elif now and now < datetime:
+                difference = datetime - now
+                if difference > twelve_hours:
+                    datetime = None  # datetime more than 12 hours in the future (probably The Green Bus)
+                if 3000 < difference.total_seconds() <= 600:
+                    logger.warning("datetime %s is in the future", datetime)
 
         location = None
         if vehicle is None:
             try:
-                vehicle, vehicle_created = self.get_vehicle(item)
+                vehicle, _ = self.get_vehicle(item)
             except Vehicle.MultipleObjectsReturned as e:
                 logger.exception(e)
                 return
@@ -151,7 +156,13 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
             if datetime and latest_datetime >= datetime:
                 # timestamp isn't newer
-                return
+                # but allow if the latest journey from another source has no service info
+                if not (
+                    vehicle.latest_journey_id
+                    and vehicle.latest_journey.source_id != self.source.id
+                    and not vehicle.latest_journey.service_id
+                ):
+                    return
             else:
                 location = self.create_vehicle_location(item)
                 if not location or location.latlong.equals_exact(latest_latlong):
@@ -167,16 +178,20 @@ class ImportLiveVehiclesCommand(BaseCommand):
         #     return
 
         latest_journey = vehicle.latest_journey
-        if latest_journey:
-            # take a snapshot here, to see if they have changed later,
-            # cos get_journey() might return same object
-            original_service_id = latest_journey.service_id
-            original_destination = latest_journey.destination
-
         if keep_journey:
             journey = latest_journey
         else:
             journey = self.get_journey(item, vehicle)
+
+            if (
+                journey
+                and journey.trip
+                and journey.trip.garage_id
+                and journey.trip.garage_id != vehicle.garage_id
+            ):
+                vehicle.garage_id = journey.trip.garage_id
+                vehicle.save(update_fields=["garage"])
+
         if not journey:
             return
         journey.vehicle = vehicle
@@ -226,54 +241,41 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         if keep_journey:
             pass
-        elif same_journey(latest_journey, journey, latest_datetime, location.datetime):
-            changed = []
-            if latest_journey.source_id != self.source.id:
-                latest_journey.source = self.source
-                changed.append("source")
-            if journey.service_id != original_service_id:
-                latest_journey.service_id = journey.service_id
-                changed.append("service")
-            if journey.destination != original_destination:
-                latest_journey.destination = journey.destination
-                changed.append("destination")
-            if journey.datetime and journey.datetime != latest_journey.datetime:
-                latest_journey.datetime = journey.datetime
-                changed.append("datetime")
-            if changed:
-                latest_journey.save(update_fields=changed)
-                if changed != ["source"]:
-                    cache.delete(f"journey{latest_journey.id}")
-
-            journey = latest_journey
-
         else:
+            if latest_journey and same_journey(
+                journey, latest_journey, location.datetime
+            ):
+                journey.uuid = latest_journey.uuid
+                journey.id = latest_journey.id
+                self.journeys_to_update.append(journey)
+            elif journey.id:
+                self.journeys_to_update.append(journey)
+            else:
+                key = (vehicle.id, journey.datetime)
+                if key in self.journeys_to_create:
+                    # ! unusually, the same journey is twice in the feed
+                    journey = self.journeys_to_create[key]
+                else:
+                    self.journeys_to_create[key] = journey
+
             journey.source = self.source
             if not journey.datetime:
                 journey.datetime = location.datetime
-            try:
-                journey.save()
-            except IntegrityError as e:
-                try:
-                    journey = vehicle.vehiclejourney_set.using("default").get(
-                        datetime=journey.datetime
-                    )
-                except VehicleJourney.DoesNotExist:
-                    logger.exception(e)
+            if not journey.date:
+                journey.date = timezone.localdate(journey.datetime)
 
             if journey.service_id and VehicleJourney.service.is_cached(journey):
                 if not journey.service.tracking:
                     journey.service.tracking = True
                     journey.service.save(update_fields=["tracking"])
 
-        location.id = vehicle.id
-        location.journey = journey
-
-        if vehicle.latest_journey_id != journey.id:
             vehicle.latest_journey = journey
             if type(item) is dict:
                 vehicle.latest_journey_data = item
             self.vehicles_to_update.append(vehicle)
+
+        location.id = vehicle.id
+        location.journey = journey
 
         self.to_save.append((location, vehicle))
 
@@ -283,9 +285,27 @@ class ImportLiveVehiclesCommand(BaseCommand):
         if not self.to_save:
             return
 
-        # update vehicle records if necessary
+        update_fields = (
+            "code",
+            "service",
+            "trip",
+            "route_name",
+            "destination",
+            "direction",
+            "source",
+        )
 
+        VehicleJourney.objects.bulk_update(self.journeys_to_update, update_fields)
+        self.journeys_to_update = []
+
+        VehicleJourney.objects.bulk_create(self.journeys_to_create.values())
+        self.journeys_to_create = {}
+
+        # update vehicle records if necessary
         if self.vehicles_to_update:
+            for v in self.vehicles_to_update:
+                v.latest_journey = v.latest_journey
+
             try:
                 Vehicle.objects.bulk_update(
                     self.vehicles_to_update,
@@ -349,26 +369,19 @@ class ImportLiveVehiclesCommand(BaseCommand):
         for key in sadd:
             pipeline.sadd(key, *sadd[key])
 
-        try:
-            pipeline.execute()
-        except ConnectionError:
-            pass
-
         if self.history:
             # add locations to journey history
-
-            pipeline = redis_client.pipeline(transaction=False)
 
             for location, vehicle in self.to_save:
                 if location.latlong:
                     pipeline.rpush(*location.get_appendage())
 
-            self.to_save = []
+        try:
+            pipeline.execute()
+        except ConnectionError as e:
+            logger.exception(e)
 
-            try:
-                pipeline.execute()
-            except ConnectionError:
-                pass
+        self.to_save = []
 
     def do_source(self):
         if self.url:
@@ -380,47 +393,160 @@ class ImportLiveVehiclesCommand(BaseCommand):
             self.url = self.source.url
         return self
 
-    def update(self):
-        now = timezone.localtime()
-        self.source.datetime = now
+    def handle_items(self, items, identities):
+        with sentry_sdk.start_span(name="get vehicle codes"):
+            vehicle_codes = (
+                VehicleCode.objects.filter(
+                    code__in=identities, scheme=self.vehicle_code_scheme
+                )
+                .select_related("vehicle__latest_journey__trip")
+                .defer("vehicle__latest_journey_data", "vehicle__data")
+            )
 
-        wait = self.wait
+            vehicles_by_identity = {code.code: code.vehicle for code in vehicle_codes}
 
-        try:
-            if items := self.get_items():
-                i = 0
-                for item in items:
-                    try:
-                        # use `self.source.datetime` instead of `now`,
-                        # so `get_items` can increment the time
-                        # if it involves multiple spread out requests
-                        self.handle_item(item, self.source.datetime)
-                    except IntegrityError as e:
-                        logger.exception(e)
-                    i += 1
-                    if i == 50:
-                        self.save()
-                        i = 0
-                self.save()
+        vehicle_locations = redis_client.mget(
+            [f"vehicle{vc.vehicle_id}" for vc in vehicle_codes]
+        )
+        vehicle_locations = {
+            vehicle_code.vehicle_id: json.loads(item)
+            for vehicle_code, item in zip(vehicle_codes, vehicle_locations)
+            if item
+        }
+
+        i = 1
+        for item, vehicle_identity in zip(items, identities):
+            journey_identity = self.journeys_ids[vehicle_identity]
+
+            if vehicle_identity in vehicles_by_identity:
+                vehicle = vehicles_by_identity[vehicle_identity]
             else:
-                wait = 120  # no items - wait 2 minutes
-        except requests.exceptions.RequestException as e:
-            items = None
-            logger.exception(e)
-            wait = 120
+                vehicle, created = self.get_vehicle(item)
+                # print(vehicle_identity, vehicle, created)
+                if vehicle:
+                    VehicleCode.objects.create(
+                        code=vehicle_identity,
+                        scheme=self.vehicle_code_scheme,
+                        vehicle=vehicle,
+                    )
+
+            keep_journey = False
+            if vehicle_identity in self.journeys_ids_ids:
+                journey_identity_id = self.journeys_ids_ids[vehicle_identity]
+                if journey_identity_id == (journey_identity, vehicle.latest_journey_id):
+                    keep_journey = True  # can dumbly keep same latest_journey
+
+            if vehicle:
+                result = self.handle_item(
+                    item,
+                    self.source.datetime,
+                    vehicle=vehicle,
+                    latest=vehicle_locations.get(vehicle.id, False),
+                    keep_journey=keep_journey,
+                )
+
+                if result:
+                    location, vehicle = result
+
+                self.journeys_ids_ids[vehicle_identity] = (
+                    journey_identity,
+                    vehicle.latest_journey_id,
+                )
+
+            self.identifiers[vehicle_identity] = self.get_item_identity(item)
+
+            if i % 500 == 0:
+                self.save()
+            i += 1
+
+        self.save()
+
+    def get_changed_items(self, items=None):
+        changed_items = []
+        changed_journey_items = []
+        changed_item_identities = []
+        changed_journey_identities = []
+        # (changed items and changed journey items are separate
+        # so we can do the quick ones first)
+
+        total_items = 0
+
+        for i, item in enumerate(items or self.get_items() or ()):
+            vehicle_identity = self.get_vehicle_identity(item)
+
+            journey_identity = self.get_journey_identity(item)
+
+            total_items += 1
+
+            if self.identifiers.get(vehicle_identity) == self.get_item_identity(item):
+                if journey_identity == self.journeys_ids[vehicle_identity]:
+                    continue
+                print(self.journeys_ids[vehicle_identity], item)
+            if (
+                vehicle_identity not in self.journeys_ids
+                or journey_identity != self.journeys_ids[vehicle_identity]
+            ):
+                changed_journey_items.append(item)
+                changed_journey_identities.append(vehicle_identity)
+            else:
+                changed_items.append(item)
+                changed_item_identities.append(vehicle_identity)
+
+            self.journeys_ids[vehicle_identity] = journey_identity
+
+        return (
+            changed_items,
+            changed_journey_items,
+            changed_item_identities,
+            changed_journey_identities,
+            total_items,
+        )
+
+    def update(self) -> int:
+        with sentry_sdk.start_transaction(name=f"{self.source.name} update"):
+            now = timezone.localtime()
+            self.source.datetime = now
+
+            wait = self.wait
+
+            with sentry_sdk.start_span(name="get changed items"):
+                try:
+                    (
+                        changed_items,
+                        changed_journey_items,
+                        changed_item_identities,
+                        changed_journey_identities,
+                        total_items,
+                    ) = self.get_changed_items()
+                except requests.exceptions.RequestException as e:
+                    logger.exception(e)
+                    return 120
+
+            with sentry_sdk.start_span(name="handle quick items") as span:
+                span.set_data("count", len(changed_items))
+                self.handle_items(changed_items, changed_item_identities)
+            with sentry_sdk.start_span(name="handle changed journey items") as span:
+                span.set_data("count", len(changed_journey_items))
+                self.handle_items(changed_journey_items, changed_journey_identities)
+
+        if not total_items:
+            return 120
 
         time_taken = (timezone.now() - now).total_seconds()
 
         if self.source_name:
             self.status.append(
-                (
+                Status(
                     self.source.datetime,
+                    None,
+                    None,
+                    total_items,
+                    len(changed_items) + len(changed_journey_items),
                     time_taken,
-                    len(items) if type(items) is list else None,
                 )
             )
             self.status = self.status[-50:]
-            cache.set(self.status_key, self.status, None)
+            cache.set(self.status_key, self.status, 800)
 
         if time_taken < wait:
             return wait - time_taken
@@ -428,7 +554,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
     def handle(self, immediate=False, *args, **options):
         if self.source_name:
-            self.status_key = f'{self.source_name.replace(" ", "_")}_status'
+            self.status_key = f"{self.source_name.replace(' ', '_')}_status"
             self.status = cache.get(self.status_key, [])
 
         if not immediate:

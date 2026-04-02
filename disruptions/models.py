@@ -19,23 +19,30 @@ class Situation(models.Model):
             "name__in": (
                 "bustimes.org",
                 "TfL",
+                "TfL disruptions",
+                "TfL statuses",
+                "BODS disruptions",
+                "BODS cancellations",
                 "Bus Open Data",
+                "Translink",
             )
         },
         default=236,
     )
     situation_number = models.CharField(max_length=36, blank=True)
     reason = models.CharField(max_length=25, blank=True)
-    summary = models.CharField(max_length=255, blank=True)
+    summary = models.CharField(max_length=255, blank=True, help_text="(title)")
+    show_summary = models.BooleanField(default=True)
     participant_ref = models.CharField(max_length=36, blank=True)
     text = models.TextField(blank=True)
     data = models.TextField(blank=True)
-    created = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    modified_at = models.DateTimeField(default=timezone.now, null=True)
     publication_window = DateTimeRangeField(default=from_now)
     current = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.summary or self.text or super().__str__()
+        return self.summary or self.text or self.situation_number or super().__str__()
 
     def nice_reason(self):
         return camel_case_to_spaces(self.reason)
@@ -68,7 +75,7 @@ class Situation(models.Model):
             lower, upper = periods[0]
             if upper and lower and upper.date() == lower.date():
                 return [
-                    f"""{lower.strftime("%H:%M")}–{upper.strftime("%H:%M, %-d %B %Y")}"""
+                    f"""{lower.strftime("%H:%M")}\u2009\u2013\u2009{upper.strftime("%H:%M, %-d %B %Y")}"""
                 ]
             return [date_range(validity_periods[0].period)]
         elif len(validity_periods) > 1:
@@ -88,7 +95,7 @@ class Situation(models.Model):
                 )
             ):
                 return [
-                    f"""{first[0].strftime("%H:%M")}–{first[1].strftime("%H:%M")},
+                    f"""{first[0].strftime("%H:%M")}\u2009\u2013\u2009{first[1].strftime("%H:%M")},
 {date_range(lower=first[0], upper=last[1])}"""
                 ]
         return []
@@ -128,3 +135,22 @@ class Consequence(models.Model):
         if service:
             return service.get_absolute_url()
         return ""
+
+
+class AffectedJourney(models.Model):
+    situation = models.ForeignKey(Situation, models.CASCADE)
+    trip = models.ForeignKey("bustimes.Trip", models.CASCADE)
+    origin_departure_time = models.DateTimeField(null=True, blank=True)
+    condition = models.CharField()  # cancelled, altered, etc
+
+    def __str__(self):
+        return f"{self.origin_departure_time} {self.condition}"
+
+
+class Call(models.Model):
+    journey = models.ForeignKey(AffectedJourney, models.CASCADE)
+    stop_time = models.ForeignKey("bustimes.StopTime", models.CASCADE)
+    arrival_time = models.DateTimeField(null=True, blank=True)
+    departure_time = models.DateTimeField(null=True, blank=True)
+    condition = models.CharField()
+    order = models.PositiveSmallIntegerField()

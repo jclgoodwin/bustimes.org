@@ -1,6 +1,6 @@
-from django import template
+from django.template import Library
 
-register = template.Library()
+register = Library()
 
 
 @register.filter
@@ -24,7 +24,7 @@ def date_range(date_range=None, lower=None, upper=None):
                     from_format = "%A %-d %B"
             else:
                 from_format = to_format
-            return f"{lower.strftime(from_format)}–{to}"
+            return f"{lower.strftime(from_format)}\u2009\u2013\u2009{to}"
         return f"Until {to}"
     if lower:
         return f"From {lower.strftime(to_format)}"

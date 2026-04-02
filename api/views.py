@@ -5,6 +5,7 @@ from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Q
+from django.db.models.functions import Coalesce
 
 from vehicles.time_aware_polyline import encode_time_aware_polyline
 
@@ -23,26 +24,31 @@ class BadException(APIException):
     status_code = 400
 
 
-class LimitedPagination(pagination.LimitOffsetPagination):
-    default_limit = 20
-    max_limit = 20
+class LimitOffsetPagination(pagination.LimitOffsetPagination):
+    max_limit = 1000
 
 
 class CursorPagination(pagination.CursorPagination):
     ordering = "-pk"
-    page_size = 50
-    max_page_size = 1000
+    page_size = 100
+
+
+class CursorPaginationWithSmallerPageSize(CursorPagination):
+    page_size = 10
 
 
 class VehicleViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = (
         Vehicle.objects.select_related("vehicle_type", "livery", "operator", "garage")
-        .annotate(special_features=ArrayAgg("features__name", filter=~Q(features=None)))
+        .annotate(
+            special_features=ArrayAgg("features__name", filter=~Q(features=None)),
+        )
         .order_by("id")
     )
     serializer_class = serializers.VehicleSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = filters.VehicleFilter
+    pagination_class = LimitOffsetPagination
 
 
 class LiveryViewSet(viewsets.ReadOnlyModelViewSet):
@@ -81,7 +87,18 @@ class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class StopViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = StopPoint.objects.order_by("atco_code").select_related("locality")
+    queryset = (
+        StopPoint.objects.order_by("atco_code")
+        .select_related("locality")
+        .annotate(
+            line_names=ArrayAgg(
+                "stopusage__line_name",
+                filter=Q(stopusage__service__current=True),
+                distinct=True,
+                default=None,
+            )
+        )
+    )
     serializer_class = serializers.StopSerializer
     pagination_class = CursorPagination
     filter_backends = [DjangoFilterBackend]
@@ -89,9 +106,15 @@ class StopViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class TripViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Trip.objects.select_related(
-        "route__service", "operator"
-    ).prefetch_related("notes")
+    queryset = (
+        Trip.objects.select_related("route__service", "operator")
+        .prefetch_related("notes")
+        .annotate(
+            destination_name=Coalesce(
+                "headsign", "destination__locality__name", "destination__common_name"
+            )
+        )
+    )
     serializer_class = serializers.TripSerializer
     pagination_class = CursorPagination
     filter_backends = [DjangoFilterBackend]
@@ -109,7 +132,18 @@ class TripViewSet(viewsets.ReadOnlyModelViewSet):
                 "stop__locality__latlong",
             )
             .order_by("trip__start", "id")
+            # .annotate(
+            #     call_condition=Subquery(
+            #         Call.objects.filter(
+            #             stop_time=OuterRef("id"),
+            #             journey__trip=OuterRef("trip"),
+            #             journey__situation__current=True,
+            #         ).values("condition")[:1]
+            #     )
+            # )
         )
+        if obj.notes.all():
+            stops = stops.annotate(note_codes=ArrayAgg("notes__code"))
         if len(trips) > 1:
             stops = contiguous_stoptimes_only(stops, obj.id)
         return stops
@@ -123,18 +157,19 @@ class TripViewSet(viewsets.ReadOnlyModelViewSet):
 class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = VehicleJourney.objects.select_related("vehicle")
     serializer_class = serializers.VehicleJourneySerializer
-    pagination_class = CursorPagination
+    pagination_class = CursorPaginationWithSmallerPageSize
     filter_backends = [DjangoFilterBackend]
     filterset_class = filters.VehicleJourneyFilter
 
     def retrieve(self, request, *args, pk, **kwargs):
         instance = self.get_object()
-        if instance.trip:
-            instance.trip.stops = TripViewSet.get_stops(instance.trip)
-
         serializer = self.get_serializer(instance)
 
         extra_data = {}
+
+        if instance.trip:
+            instance.trip.stops = TripViewSet.get_stops(instance.trip)
+            extra_data["times"] = serializers.TripSerializer().get_times(instance.trip)
 
         if redis_client:
             locations = redis_client.lrange(instance.get_redis_key(), 0, -1)
