@@ -110,13 +110,13 @@
 | departures/test\_scheduled\_departures.py                       |       18 |        0 |    100% |           |
 | disruptions/\_\_init\_\_.py                                     |        0 |        0 |    100% |           |
 | disruptions/admin.py                                            |       33 |        1 |     97% |        69 |
-| disruptions/models.py                                           |       97 |       10 |     90% |48, 78, 98, 105-111, 126, 136, 164 |
+| disruptions/models.py                                           |       91 |        5 |     95% |52, 94, 114, 124, 152 |
 | disruptions/siri\_sx.py                                         |      124 |       14 |     89% |54, 74, 86-89, 100-101, 132, 142-146 |
 | disruptions/tasks.py                                            |        5 |        0 |    100% |           |
 | disruptions/test\_siri\_sx.py                                   |       48 |        0 |    100% |           |
 | disruptions/test\_tfl\_disruptions.py                           |       34 |        0 |    100% |           |
 | disruptions/test\_translinkni.py                                |       25 |        0 |    100% |           |
-| disruptions/tests.py                                            |       16 |        0 |    100% |           |
+| disruptions/tests.py                                            |       20 |        0 |    100% |           |
 | disruptions/tfl\_disruptions.py                                 |       91 |        2 |     98% |    49, 85 |
 | disruptions/translinkni.py                                      |       80 |        7 |     91% |45, 56-59, 68, 110 |
 | disruptions/urls.py                                             |        3 |        0 |    100% |           |
@@ -196,7 +196,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       59 |        0 |    100% |           |
-| **TOTAL**                                                       | **16948** | **1273** | **92%** |           |
+| **TOTAL**                                                       | **16946** | **1268** | **93%** |           |
 
 
 ## Setup coverage badge
