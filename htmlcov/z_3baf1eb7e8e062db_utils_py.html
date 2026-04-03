@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_3baf1eb7e8e062db_views_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.5">coverage.py v7.13.5</a>,
-            created at 2026-04-02 14:00 +0000
+            created at 2026-04-03 00:09 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -417,7 +417,7 @@
     <p class="run"><span class="n"><a id="t335" href="#t335">335</a></span><span class="t">    <span class="key">if</span> <span class="key">not</span> <span class="nam">datetime</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t336" href="#t336">336</a></span><span class="t">        <span class="nam">datetime</span> <span class="op">=</span> <span class="nam">journey</span><span class="op">.</span><span class="nam">datetime</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t337" href="#t337">337</a></span><span class="t">    <span class="key">if</span> <span class="key">not</span> <span class="nam">date</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t338" href="#t338">338</a></span><span class="t">        <span class="nam">date</span> <span class="op">=</span> <span class="op">(</span><span class="nam">departure_time</span> <span class="key">or</span> <span class="nam">datetime</span><span class="op">)</span><span class="op">.</span><span class="nam">date</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t338" href="#t338">338</a></span><span class="t">        <span class="nam">date</span> <span class="op">=</span> <span class="nam">timezone</span><span class="op">.</span><span class="nam">localdate</span><span class="op">(</span><span class="nam">departure_time</span> <span class="key">or</span> <span class="nam">datetime</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t339" href="#t339">339</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t340" href="#t340">340</a></span><span class="t">    <span class="com"># TODO: get routes for previous day, in case journey starts after midnight</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t341" href="#t341">341</a></span><span class="t">    <span class="nam">routes</span> <span class="op">=</span> <span class="nam">get_routes</span><span class="op">(</span><span class="nam">journey</span><span class="op">.</span><span class="nam">service</span><span class="op">.</span><span class="nam">route_set</span><span class="op">.</span><span class="nam">select_related</span><span class="op">(</span><span class="str">"source"</span><span class="op">)</span><span class="op">,</span> <span class="nam">date</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -582,7 +582,7 @@
             <a class="nav" href="z_3baf1eb7e8e062db_views_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.5">coverage.py v7.13.5</a>,
-            created at 2026-04-02 14:00 +0000
+            created at 2026-04-03 00:09 +0000
         </p>
     </div>
 </footer>
