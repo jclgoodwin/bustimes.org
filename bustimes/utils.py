@@ -335,7 +335,7 @@ def get_trip(
     if not datetime:
         datetime = journey.datetime
     if not date:
-        date = (departure_time or datetime).date()
+        date = timezone.localdate(departure_time or datetime)
 
     # TODO: get routes for previous day, in case journey starts after midnight
     routes = get_routes(journey.service.route_set.select_related("source"), date)
