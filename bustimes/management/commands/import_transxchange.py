@@ -97,8 +97,8 @@ def get_summary(summary: str):
     summary = summary.strip()
 
     # London wtf
-    if summary == "not School vacation in free public holidays regulation holidays":
-        return "not school holidays"
+    if summary == "School vacation in free public holidays regulation days":
+        return "school days"
 
     # Scotland
     if summary.startswith("QE0 : ") and summary.endswith(".cif"):

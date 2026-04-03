@@ -1520,9 +1520,9 @@ class ImportTransXChangeTest(TestCase):
     def test_summary(self):
         self.assertEqual(
             import_transxchange.get_summary(
-                "not School vacation in free public holidays regulation holidays"
+                "School vacation in free public holidays regulation days"
             ),
-            "not school holidays",
+            "school days",
         )
         self.assertEqual(
             import_transxchange.get_summary("University days days only"),
