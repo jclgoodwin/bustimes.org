@@ -125,3 +125,8 @@
 "670085645A":
     indicator: Stances 1/2
     latlong: POINT(-5.1049530 56.8209844)
+    
+# Stonebridge West End Close
+490012847E:
+    latlong: POINT(-0.265290, 51.542040)
+
