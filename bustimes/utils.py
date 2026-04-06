@@ -200,7 +200,7 @@ def get_stop_times(date: date, time: timedelta | None, stop, routes, trip_ids=No
         times = times.filter(stop=stop)
 
     if trip_ids:
-        trips = Trip.objects.filter(id__in=trip_ids)
+        times = times.filter(trip__in=trip_ids)
         one_day = timedelta(1)
         times = times.filter(
             Q(departure__lt=time)
@@ -223,14 +223,13 @@ def get_stop_times(date: date, time: timedelta | None, stop, routes, trip_ids=No
         if not routes:
             times = times.none()
 
-        trips = Trip.objects.filter(
-            route__in=routes,
-            calendar__in=get_calendars(date, scotland=scotland),
+        times = times.filter(
+            trip__route__in=routes,
+            trip__calendar__in=get_calendars(date, scotland=scotland),
         )
 
         if time is not None:
-            trips = trips.filter(end__gte=time)
-            times = times.filter(departure__gte=time)
+            times = times.filter(trip__end__gte=time, departure__gte=time)
 
             midnight = parse_datetime(f"{date}T12:00:00") - timedelta(hours=12)
 
@@ -244,8 +243,6 @@ def get_stop_times(date: date, time: timedelta | None, stop, routes, trip_ids=No
             times = times.filter(departure__isnull=False)
 
         times = times.annotate(date=Value(date))
-
-    times = times.filter(trip__in=trips)
 
     return times
 
