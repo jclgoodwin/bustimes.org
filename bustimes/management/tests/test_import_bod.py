@@ -295,8 +295,8 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
         self.assertEqual(str(response.context["when"]), "2020-05-01 01:00:00+01:00")
         self.assertEqual(len(response.context["departures"]), 3)
 
-        with self.assertNumQueries(10):
-            response = self.client.get("/stops/2900W0321?date=2020-05-02")
+        with self.assertNumQueries(7):
+            response = self.client.get("/stations/2900A/departures?date=2020-05-02")
         self.assertEqual(str(response.context["when"]), "2020-05-02 00:00:00")
 
         # mocked.assert_called()

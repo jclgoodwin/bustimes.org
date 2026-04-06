@@ -31,4 +31,11 @@
 
 </div>
 
+{% block foot %}
+    {% load static %}
+    {% if when %}
+        <script async src="{% static 'js/departures.js' %}"></script>
+    {% endif %}
+{% endblock foot %}
+
 {% endblock content %}

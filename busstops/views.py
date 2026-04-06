@@ -883,6 +883,17 @@ def stop_departures(request, atco_code):
     return render(request, "departures.html", context)
 
 
+def stop_area_departures(request, pk):
+    stop_area = get_object_or_404(StopArea, pk=pk)
+
+    services = Service.objects.filter(current=True, stops__stop_area=stop_area)
+    context = get_departures_context(stop_area, services, request.GET)
+
+    context["object"] = stop_area
+
+    return render(request, "departures.html", context)
+
+
 class OperatorDetailView(DetailView):
     "An operator and the services it operates"
 
