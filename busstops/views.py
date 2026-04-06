@@ -663,7 +663,7 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
         return context
 
 
-def get_departures_context(stop, services, form_data) -> dict:
+def get_departures_context(stop, services, form_data, stops=None) -> dict:
     context = {}
     when = None
     form = forms.DeparturesForm(form_data)
@@ -695,6 +695,24 @@ def get_departures_context(stop, services, form_data) -> dict:
             }
     else:
         context["when"] = context["now"] = timezone.localtime()
+
+    context["object"] = stop
+
+    # for stop area departures - indicate child stop/platform number
+    if stops:
+        for stop in stops:
+            if " " in stop.indicator:
+                context["indicator_prefix"] = stop.indicator.split(" ")[
+                    0
+                ].title()  # Stand, Stance, Stop
+                break
+        if "breadcrumb" in context and stop.locality:
+            context["breadcrumb"] += [stop.locality.parent, stop.locality]
+
+        stops_dict = {stop.pk: stop for stop in stops}
+
+        for item in context["departures"]:
+            item["stop_time"].stop = stops_dict[item["stop_time"].stop_id]
 
     return context
 
@@ -845,28 +863,15 @@ class StopAreaDetailView(DetailView):
         services = Service.objects.filter(
             current=True, stops__stop_area=self.object
         ).annotate(line_names=stop_line_names, operators=operator_names)
-        context.update(get_departures_context(self.object, services, self.request.GET))
+        context.update(
+            get_departures_context(self.object, services, self.request.GET, stops)
+        )
 
         context["breadcrumb"] = [
             self.object.admin_area.region,
             self.object.admin_area,
             self.object.parent,
         ]
-
-        if stops:
-            for stop in stops:
-                if " " in stop.indicator:
-                    context["indicator_prefix"] = stop.indicator.split(" ")[
-                        0
-                    ].title()  # Stand, Stance, Stop
-                    break
-            if stop.locality:
-                context["breadcrumb"] += [stop.locality.parent, stop.locality]
-
-            stops_dict = {stop.pk: stop for stop in stops}
-
-            for item in context["departures"]:
-                item["stop_time"].stop = stops_dict[item["stop_time"].stop_id]
 
         return context
 
@@ -878,8 +883,6 @@ def stop_departures(request, atco_code):
 
     context = get_departures_context(stop, services, request.GET)
 
-    context["object"] = stop
-
     return render(request, "departures.html", context)
 
 
@@ -887,9 +890,10 @@ def stop_area_departures(request, pk):
     stop_area = get_object_or_404(StopArea, pk=pk)
 
     services = Service.objects.filter(current=True, stops__stop_area=stop_area)
-    context = get_departures_context(stop_area, services, request.GET)
 
-    context["object"] = stop_area
+    stops = stop_area.stoppoint_set.filter(service__current=True)
+
+    context = get_departures_context(stop_area, services, request.GET, stops)
 
     return render(request, "departures.html", context)
 
