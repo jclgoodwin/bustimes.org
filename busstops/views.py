@@ -693,6 +693,8 @@ def get_departures_context(stop, services, form_data) -> dict:
                 "date": last_time.date(),
                 "time": last_time.time().strftime("%H:%M"),
             }
+    else:
+        context["when"] = context["now"] = timezone.localtime()
 
     return context
 

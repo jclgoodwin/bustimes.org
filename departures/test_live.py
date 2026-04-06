@@ -147,7 +147,6 @@ class LiveDeparturesTest(TestCase):
         self.assertContains(
             response,
             """
-                <h2>Next departures</h2>
                 <table><tbody>
                         <tr>
                             <td></td>
@@ -261,7 +260,6 @@ class LiveDeparturesTest(TestCase):
         self.assertContains(
             response,
             """
-                <h2>Next departures</h2>
                 <h3>Wednesday 4 May</h3>
                 <table><tbody>
                     <tr>
