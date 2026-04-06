@@ -10,7 +10,7 @@ import xmltodict
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.gis.geos import GEOSException, Point
+from django.contrib.gis.geos import GEOSException
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied, BadRequest
 from django.core.paginator import Paginator
@@ -28,6 +28,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_safe
 from django.utils.decorators import method_decorator
 from django.views.generic.detail import DetailView
+import numpy as np
 from haversine import Unit, haversine, haversine_vector
 from redis.exceptions import ConnectionError
 from sql_util.utils import Exists, SubqueryMax, SubqueryMin
@@ -1045,13 +1046,14 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
 
         stationary = False
         previous = None
-        previous_latlong = None
+        previous_coords = None
         for location in locations:
-            latlong = Point(location["coordinates"])
+            coords = location["coordinates"]
 
-            if previous_latlong:
-                distance = latlong.distance(previous_latlong)
-                if distance < 0.0005:
+            if previous_coords:
+                dx = coords[0] - previous_coords[0]
+                dy = coords[1] - previous_coords[1]
+                if dx * dx + dy * dy < 2.5e-7:  # 0.0005 degrees squared
                     stationary = True
                 elif stationary:
                     # mark end of stationary period
@@ -1061,7 +1063,7 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
             if not stationary:
                 data["locations"].append(location)
 
-                previous_latlong = latlong
+                previous_coords = coords
 
             previous = location
 
@@ -1148,6 +1150,11 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
             vehicle_coords = [
                 location["coordinates"][::-1] for location in data["locations"]
             ]
+            # pre-build stop headings array for azimuth filtering; NaN = unknown
+            stop_headings = np.array(
+                [s["heading"] if s["heading"] is not None else np.nan for s in stops],
+                dtype=float,
+            )
             try:
                 haversine_vector_results = haversine_vector(
                     stop_coords,
@@ -1161,11 +1168,23 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
                 for distances, location in zip(
                     haversine_vector_results, data["locations"]
                 ):
-                    distance, nearest_stop = min(
-                        zip(distances, stops), key=lambda x: x[0]
-                    )
-                    if distance < 100:
-                        nearest_stop["actual_departure_time"] = location["datetime"]
+                    vehicle_heading = location.get("direction")
+                    if vehicle_heading is not None:
+                        # mask stops whose heading differs by ≥ 90° from vehicle
+                        # heading_diff in [0, 180]; NaN headings are always kept
+                        heading_diff = np.abs(
+                            ((stop_headings - vehicle_heading) + 180) % 360 - 180
+                        )
+                        aligned = np.isnan(heading_diff) | (heading_diff < 90)
+                        if aligned.any():
+                            idx = int(np.argmin(np.where(aligned, distances, np.inf)))
+                        else:
+                            idx = int(np.argmin(distances))
+                    else:
+                        idx = int(np.argmin(distances))
+
+                    if distances[idx] < 100:
+                        stops[idx]["actual_departure_time"] = location["datetime"]
 
             # work out which direction we're going in
             inbound = datetime.timedelta()
