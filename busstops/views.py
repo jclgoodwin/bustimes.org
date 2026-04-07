@@ -700,11 +700,11 @@ def get_departures_context(stop, services, form_data, stops=None) -> dict:
 
     # for stop area departures - indicate child stop/platform number
     if stops:
+        context["stoparea"] = stop
         for stop in stops:
             if " " in stop.indicator:
-                context["indicator_prefix"] = stop.indicator.split(" ")[
-                    0
-                ].title()  # Stand, Stance, Stop
+                prefix = stop.indicator.split(" ")[0].title()
+                context["indicator_prefix"] = prefix  # Stand, Stance, Stop
                 break
         if "breadcrumb" in context and stop.locality:
             context["breadcrumb"] += [stop.locality.parent, stop.locality]
