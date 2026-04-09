@@ -156,8 +156,6 @@ class Command(BaseCommand):
 
         if atco_code in self.overrides:
             for key, value in self.overrides[atco_code].items():
-                if key == "latlong":
-                    value = GEOSGeometry(value)
                 setattr(stop, key, value)
 
         if existing := self.existing_stops.get(atco_code.upper()):
@@ -288,6 +286,13 @@ class Command(BaseCommand):
         overrides_path = settings.BASE_DIR / "fixtures" / "stops.yaml"
         with overrides_path.open() as open_file:
             self.overrides = yaml.load(open_file, yaml.BaseLoader)
+
+        # do this now to detect invalid WKTs (stray commas etc)
+        for atco_code in self.overrides:
+            if "latlong" in self.overrides[atco_code]:
+                self.overrides[atco_code]["latlong"] = GEOSGeometry(
+                    self.overrides[atco_code]["latlong"]
+                )
 
         self.stops_to_create = []
         self.stops_to_update = []
