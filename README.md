@@ -37,7 +37,7 @@
 | busstops/management/commands/jersey\_routes.py                  |       14 |        0 |    100% |           |
 | busstops/management/commands/jersey\_stops.py                   |       12 |        0 |    100% |           |
 | busstops/management/commands/lothian\_colours.py                |       17 |        1 |     94% |        19 |
-| busstops/management/commands/naptan\_new.py                     |      159 |        3 |     98% |41, 43, 272 |
+| busstops/management/commands/naptan\_new.py                     |      160 |        3 |     98% |41, 43, 270 |
 | busstops/management/commands/nptg\_new.py                       |       96 |        9 |     91% |142, 155, 160, 165-166, 172-173, 175-176 |
 | busstops/management/commands/osm\_iom\_stops.py                 |       34 |       34 |      0% |      1-63 |
 | busstops/management/commands/update\_search\_indexes.py         |       11 |        0 |    100% |           |
@@ -196,7 +196,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       59 |        0 |    100% |           |
-| **TOTAL**                                                       | **16974** | **1273** | **93%** |           |
+| **TOTAL**                                                       | **16975** | **1273** | **93%** |           |
 
 
 ## Setup coverage badge
