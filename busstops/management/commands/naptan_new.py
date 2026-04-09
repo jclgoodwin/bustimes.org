@@ -162,7 +162,7 @@ class Command(BaseCommand):
 
         if existing := self.existing_stops.get(atco_code.upper()):
             stop.atco_code = existing.atco_code  # in case case is different
-            for key in self.bulk_update_fields[1:]:
+            for key in self.bulk_update_fields[1:-1]:
                 if getattr(stop, key) != getattr(existing, key):
                     if key == "latlong":
                         if stop.latlong:

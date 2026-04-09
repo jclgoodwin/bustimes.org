@@ -76,6 +76,14 @@ class NaptanTest(TestCase):
                 with self.assertNumQueries(2):
                     call_command("naptan_new")
 
+                cassette.rewind()
+
+                source.datetime = None
+                source.save()
+
+                with self.assertNumQueries(11):
+                    call_command("naptan_new")
+
                 source = DataSource.objects.get(name="NaPTAN")
                 self.assertEqual(str(source.datetime), "2022-01-19 12:56:29+00:00")
 
