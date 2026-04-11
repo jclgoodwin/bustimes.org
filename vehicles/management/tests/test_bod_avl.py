@@ -137,7 +137,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 "default": {
                     "BACKEND": "django.core.cache.backends.redis.RedisCache",
                     "LOCATION": "redis://",
-                    "OPTIONS": {"connection_class": fakeredis.FakeConnection},
+                    "OPTIONS": {"connection_class": fakeredis.FakeRedisConnection},
                 }
             }
         ):
@@ -187,7 +187,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             "default": {
                 "BACKEND": "django.core.cache.backends.redis.RedisCache",
                 "LOCATION": "redis://",
-                "OPTIONS": {"connection_class": fakeredis.FakeConnection},
+                "OPTIONS": {"connection_class": fakeredis.FakeRedisConnection},
             }
         }
     )
