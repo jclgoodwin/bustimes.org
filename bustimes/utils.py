@@ -3,7 +3,6 @@ from datetime import date, datetime, timedelta
 from difflib import Differ
 from itertools import pairwise
 
-from ciso8601 import parse_datetime
 from django.db.models import (
     Case,
     DateTimeField,
@@ -231,7 +230,7 @@ def get_stop_times(date: date, time: timedelta | None, stop, routes, trip_ids=No
         if time is not None:
             times = times.filter(trip__end__gte=time, departure__gte=time)
 
-            midnight = parse_datetime(f"{date}T12:00:00") - timedelta(hours=12)
+            midnight = datetime.fromisoformat(f"{date}T12:00:00") - timedelta(hours=12)
 
             times = times.annotate(
                 departure_time=ExpressionWrapper(

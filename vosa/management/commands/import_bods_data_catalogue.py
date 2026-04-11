@@ -10,7 +10,7 @@ from bustimes.download_utils import download_if_modified
 
 from busstops.models import DataSource
 from ...models import Licence, Registration, Variation
-from ciso8601 import parse_datetime
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -138,7 +138,7 @@ class Command(BaseCommand):
                     to_value = row[b]
                     if "date" in a:
                         if to_value:
-                            to_value = parse_datetime(to_value).date()
+                            to_value = datetime.fromisoformat(to_value).date()
                         else:
                             to_value = None  # use None instead of the empty string ""
                     if getattr(variation, a) != to_value:

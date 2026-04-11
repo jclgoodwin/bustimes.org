@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 import requests
 import yaml
 import logging
-from ciso8601 import parse_datetime
+from datetime import datetime
 from django.conf import settings
 from django.core.management import BaseCommand
 from django.db import transaction
@@ -98,7 +98,7 @@ class Command(BaseCommand):
         response = requests.get(url)
         element = ET.fromstring(response.text)
 
-        generation_date = parse_datetime(element.attrib["generationDate"])
+        generation_date = datetime.fromisoformat(element.attrib["generationDate"])
         if generation_date == noc_source.datetime:
             return
 

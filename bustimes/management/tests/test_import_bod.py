@@ -6,7 +6,6 @@ from unittest.mock import patch, ANY
 
 import fakeredis
 import time_machine
-from ciso8601 import parse_datetime
 from django.contrib.gis.geos import Point
 from django.core.management import call_command
 from django.test import TestCase, override_settings
@@ -303,7 +302,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
 
         # test get_trip
         journey = VehicleJourney(
-            datetime=parse_datetime("2020-11-02T15:07:06+00:00"),
+            datetime=datetime.datetime.fromisoformat("2020-11-02T15:07:06+00:00"),
             service=Service.objects.get(),
             code="1",
             source=route.source,
@@ -350,7 +349,9 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
             # journey locations but no stop locations
             location = VehicleLocation(Point(0.23, 52.729))
             location.journey = journey
-            location.datetime = parse_datetime("2019-05-29T13:03:34+01:00")
+            location.datetime = datetime.datetime.fromisoformat(
+                "2019-05-29T13:03:34+01:00"
+            )
 
             fake_redis.rpush(*location.get_appendage())
 
@@ -493,7 +494,10 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
 
             with patch(
                 "bustimes.management.commands.import_bod_timetables.download_if_modified",
-                return_value=(True, parse_datetime("2020-06-10T12:00:00+01:00")),
+                return_value=(
+                    True,
+                    datetime.datetime.fromisoformat("2020-06-10T12:00:00+01:00"),
+                ),
             ) as download_if_modified:
                 with self.assertNumQueries(118):
                     call_command("import_bod_timetables", "stagecoach")

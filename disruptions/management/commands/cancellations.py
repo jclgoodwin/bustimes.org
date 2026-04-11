@@ -2,8 +2,7 @@ import difflib
 import xml.etree.ElementTree as ET
 import requests
 
-from ciso8601 import parse_datetime
-from datetime import timedelta, timezone
+from datetime import datetime, timedelta, timezone
 from django.core.management.base import BaseCommand
 from django.db.transaction import atomic
 from django.utils.timezone import localtime
@@ -26,7 +25,7 @@ def get_trip(avj):
     )
     departure_time = avj.findtext("OriginAimedDepartureTime")
 
-    departure_time = parse_datetime(departure_time)
+    departure_time = datetime.fromisoformat(departure_time)
     departure_time = localtime(departure_time)
 
     trips = Trip.objects.filter(
@@ -81,7 +80,7 @@ def handle_situation(element, source, current_situations):
     situation.data = xml
     situation.participant_ref = element.findtext("ParticipantRef")
     situation.reason = element.findtext("MiscellaneousReason")
-    situation.created_at = parse_datetime(element.findtext("CreationTime"))
+    situation.created_at = datetime.fromisoformat(element.findtext("CreationTime"))
     # if created_at is naive, assume it's in UTC
     if not situation.created_at.tzinfo:
         situation.created_at = situation.created_at.replace(tzinfo=timezone.utc)

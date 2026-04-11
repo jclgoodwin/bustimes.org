@@ -7,7 +7,6 @@ requires-python = ">=3.13"
 dependencies = [
     "beautifulsoup4>=4.12.1,<5",
     "boto3>=1.18.42,<2",
-    "ciso8601>=2.2.0,<3",
     "dj-database-url>=3.0.0,<4",
     "Django>=5.2",
     "django-autoslug>=1.9.8,<2",

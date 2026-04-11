@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 import fakeredis
 import time_machine
-from ciso8601 import parse_datetime
+from datetime import datetime
 from django.contrib.gis.geos import Point
 from django.contrib.auth.models import Permission
 from django.test import TestCase, override_settings
@@ -303,7 +303,7 @@ class VehiclesTests(TestCase):
         location = VehicleLocation(latlong=Point(0, 51))
         location.id = 1
         location.journey = self.journey
-        location.datetime = parse_datetime(self.datetime)
+        location.datetime = datetime.fromisoformat(self.datetime)
 
         self.assertEqual(str(location), "19 Oct 2020 23:47:00")
 

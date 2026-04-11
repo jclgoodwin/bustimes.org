@@ -1,9 +1,8 @@
 import functools
 import json
-from datetime import timedelta
+from datetime import datetime, timedelta
 import zipfile
 
-from ciso8601 import parse_datetime
 from django.core.cache import cache
 from django.db import IntegrityError
 from django.db.models import Count, Q
@@ -42,7 +41,9 @@ def handle_siri_post(uuid, data: dict):
     subscription = SiriSubscription.objects.get(uuid=uuid)
 
     if "HeartbeatNotification" in data:
-        timestamp = parse_datetime(data["HeartbeatNotification"]["RequestTimestamp"])
+        timestamp = datetime.fromisoformat(
+            data["HeartbeatNotification"]["RequestTimestamp"]
+        )
         total_items = None
         changed_items = changed_journey_items = ()
     else:
@@ -52,7 +53,7 @@ def handle_siri_post(uuid, data: dict):
 
         items = data["VehicleMonitoringDelivery"]["VehicleActivity"]
 
-        timestamp = parse_datetime(data["ResponseTimestamp"])
+        timestamp = datetime.fromisoformat(data["ResponseTimestamp"])
         command.source.datetime = timestamp
 
         (
@@ -106,7 +107,10 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
         vehicle = vehicle.removeprefix(f"{operator_ref}-")
 
     vehicle = (
-        vehicle.removeprefix("WCM-").removeprefix("SHU-").removeprefix("MCG_Fleet-").removeprefix("112-")
+        vehicle.removeprefix("WCM-")
+        .removeprefix("SHU-")
+        .removeprefix("MCG_Fleet-")
+        .removeprefix("112-")
     )
 
     if not vehicle or vehicle == "-":
@@ -164,7 +168,7 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
             scheme=source_name, code=vehicle_code_code, vehicle=vehicle
         )
 
-    time = parse_datetime(time)
+    time = datetime.fromisoformat(time)
 
     if last_journey := vehicle.latest_journey:
         last_time = last_journey.datetime

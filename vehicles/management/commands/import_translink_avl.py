@@ -1,5 +1,4 @@
 from datetime import timedelta, datetime
-from ciso8601 import parse_datetime
 
 from django.contrib.gis.geos import GEOSGeometry
 from django.db.models import Q
@@ -27,7 +26,7 @@ class Command(ImportLiveVehiclesCommand):
 
     @staticmethod
     def get_datetime(item):
-        return parse_datetime(item["Timestamp"])
+        return datetime.fromisoformat(item["Timestamp"])
 
     @staticmethod
     def get_vehicle_identity(item):

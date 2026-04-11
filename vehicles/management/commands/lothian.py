@@ -1,4 +1,4 @@
-from ciso8601 import parse_datetime
+from datetime import datetime
 from zoneinfo import ZoneInfo
 from django.db.models import Q
 from django.contrib.gis.geos import GEOSGeometry
@@ -42,7 +42,9 @@ class Command(ImportLiveVehiclesCommand):
         timestamp = item["lastUpdated"]
         if not timestamp:
             return
-        return parse_datetime(timestamp).replace(tzinfo=ZoneInfo("Europe/London"))
+        return datetime.fromisoformat(timestamp).replace(
+            tzinfo=ZoneInfo("Europe/London")
+        )
 
     def get_items(self):
         return super().get_items()["vehicles"]

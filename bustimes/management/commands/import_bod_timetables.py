@@ -7,8 +7,9 @@ from pathlib import Path
 from time import sleep
 from urllib.parse import parse_qs
 
+from datetime import datetime
+
 import requests
-from ciso8601 import parse_datetime
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import DataError
@@ -187,7 +188,7 @@ def bus_open_data(api_key, specific_operator):
             if not results:
                 logger.warning(f"no results: {response.url}")
             for dataset in results:
-                dataset["modified"] = parse_datetime(dataset["modified"])
+                dataset["modified"] = datetime.fromisoformat(dataset["modified"])
                 dataset["params"] = params
                 datasets.append(dataset)
             url = json["next"]

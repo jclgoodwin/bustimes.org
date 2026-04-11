@@ -6,7 +6,6 @@ from datetime import datetime, timezone
 from functools import cache
 
 import requests
-from ciso8601 import parse_datetime
 from django.core.management.base import BaseCommand
 from django.db import DataError, IntegrityError
 from django.db.backends.postgresql.psycopg_any import DateTimeTZRange
@@ -540,7 +539,7 @@ class Command(BaseCommand):
         name = item["name"]
         description = item["description"]
         dataset_url = download_url.removesuffix("download/")
-        modified = parse_datetime(item["modified"])
+        modified = datetime.fromisoformat(item["modified"])
         try:
             dataset = models.DataSet.objects.get(url=dataset_url)
         except models.DataSet.DoesNotExist:

@@ -1,9 +1,7 @@
 # "Real Time Passenger Information"-ish stuff - calculating delays etc
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 from itertools import pairwise
-
-from ciso8601 import parse_datetime
 from django.contrib.gis.geos import LineString, Point
 from django.contrib.gis.db.models.functions import Distance, LineLocatePoint
 from django.utils import timezone
@@ -137,7 +135,7 @@ def add_progress_and_delay(item, stop_time=None):
         return
 
     item["progress"] = progress.to_json()
-    when = parse_datetime(item["datetime"])
+    when = datetime.fromisoformat(item["datetime"])
     when = timezone.localtime(when)
     when = timedelta(hours=when.hour, minutes=when.minute, seconds=when.second)
 

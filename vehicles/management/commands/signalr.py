@@ -3,7 +3,7 @@ import time
 import json
 
 import requests
-from ciso8601 import parse_datetime
+from datetime import datetime
 from django.contrib.gis.geos import GEOSGeometry
 from django.utils import timezone
 
@@ -30,7 +30,7 @@ class Command(ImportLiveVehiclesCommand):
             mode,
         ) = parts
 
-        recorded_at_time = parse_datetime(timestamp)
+        recorded_at_time = datetime.fromisoformat(timestamp)
 
         if vehicle:
             created = False

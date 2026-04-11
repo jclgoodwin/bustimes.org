@@ -1,12 +1,11 @@
 import json
 import logging
 from collections import namedtuple
-from datetime import timedelta
+from datetime import timedelta, datetime
 from time import sleep
 
 import requests
 import sentry_sdk
-from ciso8601 import parse_datetime
 from django.contrib.gis.geos import Point
 from django.core.cache import cache
 from django.core.management.base import BaseCommand
@@ -124,15 +123,15 @@ class ImportLiveVehiclesCommand(BaseCommand):
         latest: dict | None = None,
         keep_journey=False,
     ):
-        if datetime := self.get_datetime(item):
-            if datetime.year == 1970:
-                datetime = None
-            elif now and now < datetime:
-                difference = datetime - now
+        if dt := self.get_datetime(item):
+            if dt.year == 1970:
+                dt = None
+            elif now and now < dt:
+                difference = dt - now
                 if difference > twelve_hours:
-                    datetime = None  # datetime more than 12 hours in the future (probably The Green Bus)
+                    dt = None  # dt more than 12 hours in the future (probably The Green Bus)
                 if 3000 < difference.total_seconds() <= 600:
-                    logger.warning("datetime %s is in the future", datetime)
+                    logger.warning("datetime %s is in the future", dt)
 
         location = None
         if vehicle is None:
@@ -151,10 +150,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
             if latest:
                 latest = json.loads(latest)
         if latest:
-            latest_datetime = parse_datetime(latest["datetime"])
+            latest_datetime = datetime.fromisoformat(latest["datetime"])
             latest_latlong = Point(*latest["coordinates"])
 
-            if datetime and latest_datetime >= datetime:
+            if dt and latest_datetime >= dt:
                 # timestamp isn't newer
                 # but allow if the latest journey from another source has no service info
                 if not (
@@ -166,11 +165,11 @@ class ImportLiveVehiclesCommand(BaseCommand):
             else:
                 location = self.create_vehicle_location(item)
                 if not location or location.latlong.equals_exact(latest_latlong):
-                    if datetime:
+                    if dt:
                         # location hasn't changed
                         # - so assume the data is old
                         # – if the vehicle was really stationary the location would "drift" a bit
-                        datetime = latest_datetime
+                        dt = latest_datetime
                     else:
                         return
         # elif now and datetime and (now - datetime).total_seconds() > 600:
@@ -202,7 +201,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             and latest_journey.source_id != self.source.id
             and self.source.name != "Bus Open Data"
         ):
-            if ((datetime or now) - latest_datetime).total_seconds() < 300:
+            if ((dt or now) - latest_datetime).total_seconds() < 300:
                 # less than 5 minutes old
                 if latest_journey.service_id or not journey.service_id:
                     return  # defer to other source
@@ -229,7 +228,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
         if location.heading == -1:
             location.heading = None
 
-        location.datetime = datetime
+        location.datetime = dt
         if not location.datetime:
             location.datetime = now
 

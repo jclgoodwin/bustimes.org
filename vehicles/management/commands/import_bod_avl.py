@@ -1,11 +1,10 @@
 import functools
 import io
 import zipfile
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import sentry_sdk
 from lxml import etree
-from ciso8601 import parse_datetime
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.cache import cache
@@ -118,7 +117,7 @@ class Command(ImportLiveVehiclesCommand):
 
     @staticmethod
     def get_datetime(item):
-        return parse_datetime(item["RecordedAtTime"])
+        return datetime.fromisoformat(item["RecordedAtTime"])
 
     @functools.cache
     def get_operator(self, operator_ref):
@@ -405,13 +404,15 @@ class Command(ImportLiveVehiclesCommand):
         if origin_aimed_departure_time := monitored_vehicle_journey.get(
             "OriginAimedDepartureTime"
         ):
-            origin_aimed_departure_time = parse_datetime(origin_aimed_departure_time)
+            origin_aimed_departure_time = datetime.fromisoformat(
+                origin_aimed_departure_time
+            )
 
         journey = None
 
         journeys = vehicle.vehiclejourney_set
 
-        datetime = self.get_datetime(item)
+        dt = self.get_datetime(item)
 
         operator_ref = monitored_vehicle_journey["OperatorRef"]
 
@@ -419,13 +420,13 @@ class Command(ImportLiveVehiclesCommand):
         if operator_ref == "NCTR" and origin_aimed_departure_time is None:
             try:
                 origin_aimed_departure_time = timezone.make_aware(
-                    parse_datetime(journey_ref[-30:-11])
+                    datetime.fromisoformat(journey_ref[-30:-11])
                 )
             except ValueError:
                 pass
 
         if origin_aimed_departure_time:
-            difference = origin_aimed_departure_time - datetime
+            difference = origin_aimed_departure_time - dt
             if difference > timedelta(
                 hours=20
             ):  # more than 20 hours in the future? subtract a day
@@ -439,23 +440,23 @@ class Command(ImportLiveVehiclesCommand):
                 else:
                     journey = journeys.filter(
                         datetime=origin_aimed_departure_time,
-                        date=timezone.localdate(datetime),
+                        date=timezone.localdate(dt),
                     ).first()
             elif journey_ref:
-                datetime = self.get_datetime(item)
+                dt = self.get_datetime(item)
                 THREE_HOURS = timedelta(hours=3)
                 if (
                     route_name == latest_journey.route_name
                     and journey_ref == latest_journey.code
                 ):
-                    if datetime - latest_journey.datetime < THREE_HOURS:
+                    if dt - latest_journey.datetime < THREE_HOURS:
                         journey = latest_journey
                 else:
                     journey = journeys.filter(
                         route_name=route_name,
                         code=journey_ref,
-                        date=timezone.localdate(datetime),
-                        datetime__gt=datetime - THREE_HOURS,
+                        date=timezone.localdate(dt),
+                        datetime__gt=dt - THREE_HOURS,
                     ).last()
 
         if not journey:
@@ -516,10 +517,10 @@ class Command(ImportLiveVehiclesCommand):
                     "DestinationAimedArrivalTime"
                 )
                 if arrival_time:
-                    arrival_time = parse_datetime(arrival_time)
+                    arrival_time = datetime.fromisoformat(arrival_time)
 
                 if trip := journey.get_trip(
-                    datetime=datetime,
+                    datetime=dt,
                     operator_ref=operator_ref,
                     origin_ref=monitored_vehicle_journey.get("OriginRef"),
                     destination_ref=destination_ref,
@@ -614,7 +615,7 @@ class Command(ImportLiveVehiclesCommand):
         service_delivery = root.find(f"{{{ns}}}ServiceDelivery")
         previous_time = self.source.datetime
 
-        self.source.datetime = parse_datetime(
+        self.source.datetime = datetime.fromisoformat(
             service_delivery.findtext(f"{{{ns}}}ResponseTimestamp")
         )
 

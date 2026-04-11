@@ -1,4 +1,4 @@
-from ciso8601 import parse_datetime
+from datetime import datetime
 from django.contrib.gis.geos import GEOSGeometry
 from django.utils.timezone import localdate
 from ...models import VehicleLocation, VehicleJourney
@@ -14,7 +14,7 @@ class Command(ImportLiveVehiclesCommand):
 
     @staticmethod
     def get_datetime(item):
-        return parse_datetime(item["reported"])
+        return datetime.fromisoformat(item["reported"])
 
     @staticmethod
     def get_vehicle_identity(item):
@@ -39,18 +39,16 @@ class Command(ImportLiveVehiclesCommand):
         return self.vehicles.get_or_create(defaults, code=code, operator_id="SGUE")
 
     def get_journey(self, item, vehicle):
-        datetime = parse_datetime(item["scheduledTripStartTime"])
+        dt = datetime.fromisoformat(item["scheduledTripStartTime"])
 
         latest_journey = vehicle.latest_journey
-        if latest_journey and latest_journey.datetime == datetime:
+        if latest_journey and latest_journey.datetime == dt:
             journey = latest_journey
         else:
-            date = localdate(datetime)
-            journey = vehicle.vehiclejourney_set.filter(
-                date=date, datetime=datetime
-            ).first()
+            date = localdate(dt)
+            journey = vehicle.vehiclejourney_set.filter(date=date, datetime=dt).first()
             if not journey:
-                journey = VehicleJourney(date=date, datetime=datetime)
+                journey = VehicleJourney(date=date, datetime=dt)
 
         journey.route_name = item["routeName"]
         journey.destination = item.get("destination", "")

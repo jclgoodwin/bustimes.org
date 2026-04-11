@@ -1,6 +1,6 @@
 import logging
 import xml.etree.ElementTree as ET
-from ciso8601 import parse_datetime
+from datetime import datetime
 from django.db.backends.postgresql.psycopg_any import DateTimeTZRange
 from django.db.models import Q
 
@@ -49,9 +49,9 @@ def handle_item(item: ET.Element, source: DataSource, current_situations: dict):
         created = True
 
     situation.data = xml
-    situation.created_at = parse_datetime(item.find("CreationTime").text)
+    situation.created_at = datetime.fromisoformat(item.find("CreationTime").text)
     if modified_at := item.findtext("VersionedAtTime"):
-        situation.modified_at = parse_datetime(modified_at)
+        situation.modified_at = datetime.fromisoformat(modified_at)
     situation.publication_window = get_period(item.find("PublicationWindow"))
 
     assert item.findtext("Progress") == "open"

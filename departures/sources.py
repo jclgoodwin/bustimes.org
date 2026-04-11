@@ -2,7 +2,6 @@ import datetime
 import logging
 from zoneinfo import ZoneInfo
 
-import ciso8601
 import requests
 import xmltodict
 from django.conf import settings
@@ -297,7 +296,7 @@ class TimetableDepartures(Departures):
 
 
 def parse_datetime(string):
-    return ciso8601.parse_datetime(string).astimezone(TIMEZONE)
+    return datetime.datetime.fromisoformat(string).astimezone(TIMEZONE)
 
 
 class SiriSmDepartures(RemoteDepartures):

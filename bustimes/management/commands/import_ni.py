@@ -1,9 +1,8 @@
 import pprint
-from datetime import timezone
+from datetime import datetime, timezone
 from pathlib import Path
 
 import requests
-from ciso8601 import parse_datetime
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
@@ -34,11 +33,10 @@ class Command(BaseCommand):
             source = DataSource.objects.get(url__endswith=_id)
 
             for resource in data["result"]["resources"]:
-                datetime = resource["last_modified"] or resource["created"]
-                datetime = parse_datetime(datetime)
-                datetime = datetime.replace(tzinfo=timezone.utc)
+                dt = resource["last_modified"] or resource["created"]
+                dt = datetime.fromisoformat(dt).replace(tzinfo=timezone.utc)
 
-                if source.datetime is None or datetime > source.datetime:
+                if source.datetime is None or dt > source.datetime:
                     # new data, lorks a lordy!
 
                     pprint.pprint(resource)
@@ -49,6 +47,6 @@ class Command(BaseCommand):
 
                     command = ImportAtcoCif()
                     command.source = source
-                    command.source.datetime = datetime
+                    command.source.datetime = dt
 
                     command.handle_archive(path)

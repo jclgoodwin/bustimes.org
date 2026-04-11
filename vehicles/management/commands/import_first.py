@@ -5,7 +5,6 @@ from uuid import uuid4
 
 import requests
 from asgiref.sync import sync_to_async
-from ciso8601 import parse_datetime
 from django.db.models import Q
 from django.contrib.gis.db.models import Extent
 from django.contrib.gis.geos import Point
@@ -22,7 +21,7 @@ class Command(ImportLiveVehiclesCommand):
     def handle_item(self, item, vehicle):
         journey_code, vehicle_code = self.split_vehicle_id(item)
 
-        recorded_at_time = parse_datetime(item["status"]["recorded_at_time"])
+        recorded_at_time = datetime.fromisoformat(item["status"]["recorded_at_time"])
 
         if vehicle_code in self.cache and self.cache[vehicle_code] == recorded_at_time:
             return

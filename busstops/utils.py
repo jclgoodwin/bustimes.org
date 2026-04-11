@@ -1,5 +1,5 @@
 from django.contrib.gis.geos import Polygon
-from ciso8601 import parse_datetime
+from datetime import datetime
 from django.utils.timezone import make_aware
 
 
@@ -16,7 +16,7 @@ def get_datetime(string):
     """
 
     if string:
-        datetime = parse_datetime(string)
-        if not datetime.tzinfo:
-            return make_aware(datetime)
-        return datetime
+        dt = datetime.fromisoformat(string)
+        if not dt.tzinfo:
+            return make_aware(dt)
+        return dt

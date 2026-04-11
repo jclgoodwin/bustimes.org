@@ -7,7 +7,6 @@ from itertools import pairwise
 
 import requests
 import folium
-from ciso8601 import parse_datetime
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
@@ -429,7 +428,7 @@ def stop_times_json(request, atco_code):
 
     if "when" in request.GET:
         try:
-            when = parse_datetime(request.GET["when"])
+            when = datetime.fromisoformat(request.GET["when"])
         except ValueError:
             return HttpResponseBadRequest(
                 "'when' isn't in the right format (should be an ISO 8601 datetime)"
@@ -810,7 +809,9 @@ def tfl_vehicle(request, reg: str):
     times = []
     prev_stop = None
     for i, item in enumerate(data):
-        expected_arrival = timezone.localtime(parse_datetime(item["expectedArrival"]))
+        expected_arrival = timezone.localtime(
+            datetime.fromisoformat(item["expectedArrival"])
+        )
         expected_arrival = round(expected_arrival.timestamp() / 60) * 60
         expected_arrival = datetime.fromtimestamp(expected_arrival)
         time = {
