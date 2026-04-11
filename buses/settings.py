@@ -294,7 +294,11 @@ if not TEST:  # pragma: nocover
 
         sentry_sdk.init(
             dsn=os.environ.get("SENTRY_DSN"),
-            integrations=[DjangoIntegration(), RedisIntegration(), HueyIntegration()],
+            integrations=[
+                DjangoIntegration(signals_spans=False),
+                RedisIntegration(),
+                HueyIntegration(),
+            ],
             ignore_errors=[KeyboardInterrupt, RuntimeError],
             release=os.environ.get("COMMIT_HASH")
             or os.environ.get("KAMAL_CONTAINER_NAME"),
