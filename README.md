@@ -15,13 +15,13 @@
 | api/api.py                                                      |       11 |        0 |    100% |           |
 | api/filters.py                                                  |       67 |        0 |    100% |           |
 | api/serializers.py                                              |      120 |        5 |     96% |225-228, 230 |
-| api/tests.py                                                    |        9 |        0 |    100% |           |
+| api/tests.py                                                    |        6 |        0 |    100% |           |
 | api/views.py                                                    |       97 |        1 |     99% |       146 |
 | buses/\_\_init\_\_.py                                           |        0 |        0 |    100% |           |
 | buses/asgi.py                                                   |        4 |        0 |    100% |           |
 | buses/context\_processors.py                                    |        5 |        0 |    100% |           |
 | buses/jinja2.py                                                 |       36 |        1 |     97% |        40 |
-| buses/settings.py                                               |      122 |       33 |     73% |99-109, 129, 143-151, 220, 239-247, 264-282, 338 |
+| buses/settings.py                                               |      122 |       33 |     73% |99-109, 129, 144-152, 221, 240-248, 265-283, 343 |
 | buses/tests.py                                                  |       12 |        0 |    100% |           |
 | buses/urls.py                                                   |        5 |        0 |    100% |           |
 | buses/utils.py                                                  |       23 |        4 |     83% |     35-38 |
@@ -196,7 +196,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       59 |        0 |    100% |           |
-| **TOTAL**                                                       | **16975** | **1273** | **93%** |           |
+| **TOTAL**                                                       | **16972** | **1273** | **92%** |           |
 
 
 ## Setup coverage badge
