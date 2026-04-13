@@ -1117,7 +1117,7 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
     elif journey.service_id:
         stop_usages = StopUsage.objects.filter(
             service_id=journey.service_id
-        ).select_related("stop")
+        ).select_related("stop__locality")
         data["stops"] = [
             {
                 "id": su.id,
