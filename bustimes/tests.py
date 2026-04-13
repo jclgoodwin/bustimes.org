@@ -309,18 +309,21 @@ class BusTimesTest(TestCase):
 
         routes = [
             Route(
+                service=service,
                 code="6",
                 source=sources[0],
                 revision_number=171,
                 start_date=date(2023, 2, 26),
             ),
             Route(
+                service=service,
                 code="7",
                 source=sources[0],
                 revision_number=165,
                 start_date=date(2023, 2, 19),
             ),
             Route(
+                service=service,
                 code="8",
                 source=sources[0],
                 revision_number=172,
@@ -333,6 +336,20 @@ class BusTimesTest(TestCase):
             get_routes(routes, when=date(2023, 2, 22)), routes[1:2]
         )
         self.assertQuerySetEqual(get_routes(routes, when=date(2023, 3, 22)), routes[2:])
+
+        # a soft-deleted route (no service) with a higher revision number
+        # should not suppress the current route
+        Route.objects.create(
+            service=None,
+            code="9",
+            source=sources[0],
+            revision_number=173,
+            start_date=date(2023, 3, 5),
+        )
+        self.assertQuerySetEqual(
+            get_routes(routes, when=date(2023, 3, 22)),
+            routes[2:],
+        )
 
     def test_get_routes_tfl(self):
         source = DataSource.objects.create(id=1, name="L")

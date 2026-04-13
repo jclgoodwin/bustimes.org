@@ -64,6 +64,7 @@ def get_routes(routes, when):
             Q(start_date=None) | Q(start_date__lte=when),
             ~Exists(
                 Route.objects.filter(
+                    service__isnull=False,
                     source=OuterRef("source"),
                     service_code=OuterRef("service_code"),
                     revision_number_context=OuterRef("revision_number_context"),
