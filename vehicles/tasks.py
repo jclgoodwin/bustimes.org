@@ -106,12 +106,8 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
     if operator_ref:
         vehicle = vehicle.removeprefix(f"{operator_ref}-")
 
-    vehicle = (
-        vehicle.removeprefix("WCM-")
-        .removeprefix("SHU-")
-        .removeprefix("MCG_Fleet-")
-        .removeprefix("112-")
-    )
+    for prefix in ("WCM", "SHU", "MCG_Fleet", "112", "SCLK"):
+        vehicle = vehicle.removeprefix(f"{prefix}-")
 
     if not vehicle or vehicle == "-":
         return
