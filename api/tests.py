@@ -8,4 +8,15 @@ class ApiTest(TestCase):
                 "/api/vehicles/",
             )
 
-        self.assertEqual(response["Content-Type"], "application/json")
+        # extra queries from livery, operator and type filter widgets
+        with self.assertNumQueries(1):
+            response = self.client.get(
+                "/api/vehicles/", headers={"accept": "text/html"}
+            )
+
+        self.assertContains(
+            response, "<title>Vehicle List – API – bustimes.org</title>"
+        )
+        self.assertContains(
+            response, "<a class='navbar-brand' href='/'>bustimes.org</a>"
+        )

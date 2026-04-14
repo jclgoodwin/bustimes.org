@@ -22,6 +22,9 @@ class VehicleFilter(FilterSet):
     fleet_code = CharFilter(lookup_expr="iexact")
     reg = CharFilter(lookup_expr="iexact")
     code = CharFilter("vehiclecode__code", label="Code")
+    operator = ModelChoiceFilter(queryset=Operator.objects, widget=TextInput)
+    vehicle_type = ModelChoiceFilter(queryset=VehicleType.objects, widget=TextInput)
+    livery = ModelChoiceFilter(queryset=Livery.objects, widget=TextInput)
 
     ordering = OrderingFilter(fields=(("id", "id"),))
 
@@ -30,7 +33,7 @@ class VehicleFilter(FilterSet):
 
     class Meta:
         model = Vehicle
-        fields = ["id", "slug", "operator", "vehicle_type", "livery", "withdrawn"]
+        fields = ["id", "slug", "withdrawn"]
 
 
 class VehicleJourneyFilter(FilterSet):
