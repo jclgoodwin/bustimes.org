@@ -44,7 +44,6 @@ from redis.exceptions import ConnectionError
 from sql_util.utils import Exists, SubqueryMax, SubqueryMin
 from ukpostcodeutils import validation
 
-from buses.utils import cdn_cache_control
 from bustimes.models import StopTime
 from departures import live
 from disruptions.models import Consequence, Situation
@@ -1448,7 +1447,6 @@ def service_last_modified(request, service_id):
 
 
 @last_modified(service_last_modified)
-@cdn_cache_control(max_age=3600)
 def service_map_data(request, service_id):
     service = request.service
     stops = service.stops.filter(
@@ -1573,7 +1571,6 @@ class ServiceSitemap(Sitemap):
         return obj.modified_at
 
 
-@cdn_cache_control(max_age=300)
 def search(request):
     form = forms.SearchForm(request.GET)
 

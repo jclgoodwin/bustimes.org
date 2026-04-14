@@ -6,7 +6,6 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 from django.utils.safestring import mark_safe
 
-from buses.utils import cdn_cache_control
 from busstops.models import DataSource, Operator, OperatorCode
 
 
@@ -37,7 +36,6 @@ def get_response(source, code):
     return response.json()
 
 
-@cdn_cache_control(max_age=3600)
 def operator_tickets(request, slug):
     operator = get_object_or_404(Operator, slug=slug)
     source = get_source()
@@ -59,7 +57,6 @@ def operator_tickets(request, slug):
     return render(request, "operator_tickets.html", context)
 
 
-@cdn_cache_control(max_age=3600)
 def operator_ticket(request, slug, id):
     operator = get_object_or_404(Operator, slug=slug)
     source = get_source()

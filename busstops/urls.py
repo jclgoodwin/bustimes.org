@@ -4,7 +4,6 @@ from django.urls import include, path, re_path
 from django.views.decorators.cache import cache_control
 from django.views.generic.base import RedirectView, TemplateView
 
-from buses.utils import cdn_cache_control
 from bustimes.urls import urlpatterns as bustimes_views
 from disruptions.urls import urlpatterns as disruptions_urls
 from fares import mytrip
@@ -26,16 +25,14 @@ urlpatterns = [
     path("contact", views.contact, name="contact"),
     path(
         "cookies",
-        cdn_cache_control(1800)(TemplateView.as_view(template_name="cookies.html")),
+        TemplateView.as_view(template_name="cookies.html"),
     ),
     path(
         "privacy",
-        cdn_cache_control(1800)(TemplateView.as_view(template_name="cookies.html")),
+        TemplateView.as_view(template_name="cookies.html"),
     ),
     path("503", TemplateView.as_view(template_name="503.html")),
-    path(
-        "data", cdn_cache_control(1800)(TemplateView.as_view(template_name="data.html"))
-    ),
+    path("data", TemplateView.as_view(template_name="data.html")),
     path("status", views.status),
     path("timetable-source-stats.json", views.timetable_source_stats),
     path("stats.json", views.stats),
@@ -52,31 +49,31 @@ urlpatterns = [
     path("stops/<int:z>/<int:x>/<int:y>.pbf", views.stops_mvt),
     path(
         "regions/<pk>",
-        cdn_cache_control(1800)(views.RegionDetailView.as_view()),
+        views.RegionDetailView.as_view(),
         name="region_detail",
     ),
     re_path(
         r"^(admin-)?areas/(?P<pk>\d+)",
-        cdn_cache_control(1800)(views.AdminAreaDetailView.as_view()),
+        views.AdminAreaDetailView.as_view(),
         name="adminarea_detail",
     ),
     path(
         "districts/<int:pk>",
-        cdn_cache_control(1800)(views.DistrictDetailView.as_view()),
+        views.DistrictDetailView.as_view(),
         name="district_detail",
     ),
     re_path(
         r"^localities/(?P<pk>[ENen][Ss]?[0-9]+)",
-        cdn_cache_control(1800)(views.LocalityDetailView.as_view()),
+        views.LocalityDetailView.as_view(),
     ),
     path(
         "localities/<slug>",
-        cdn_cache_control(1800)(views.LocalityDetailView.as_view()),
+        views.LocalityDetailView.as_view(),
         name="locality_detail",
     ),
     path(
         "stops/<pk>",
-        cdn_cache_control(30)(views.StopPointDetailView.as_view()),
+        views.StopPointDetailView.as_view(),
         name="stoppoint_detail",
     ),
     path("stations/<pk>", views.StopAreaDetailView.as_view(), name="stoparea_detail"),

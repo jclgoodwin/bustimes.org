@@ -34,7 +34,6 @@ from redis.exceptions import ConnectionError
 from sql_util.utils import Exists, SubqueryMax, SubqueryMin
 
 from accounts.models import User
-from buses.utils import cdn_cache_control
 from busstops.models import (
     SERVICE_ORDER_REGEX,
     Operator,
@@ -300,7 +299,6 @@ def operator_vehicles(request, slug=None, group_slug=None):
     return render(request, "operator_vehicles.html", context)
 
 
-@cdn_cache_control(max_age=300)
 @require_safe
 def operator_map(request, slug):
     operator = get_object_or_404(Operator.objects.select_related("region"), slug=slug)
