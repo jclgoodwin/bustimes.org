@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "fares",
     "vehicles",
     "vosa",
+    "tfl",
     "email_obfuscator",
     "api",
     "photos",
