@@ -5,7 +5,6 @@ from django.utils.dateparse import parse_duration
 from google.protobuf import json_format
 
 from busstops.models import DataSource
-from bustimes.models import Trip
 
 from ...models import Operator, Service, Vehicle, VehicleJourney
 from .import_gtfsr_ie import Command as GTFSRCommand
@@ -56,31 +55,24 @@ class Command(GTFSRCommand):
 
         journey.route_name = item.vehicle.trip.route_id
 
-        if journey.code:
-            try:
-                trip = Trip.objects.get(
-                    operator=self.operator, vehicle_journey_code=journey.code
+        if journey.code and (trip := self.trips.get(journey.code)):
+            journey.trip = trip
+
+            if start_date:
+                journey.datetime = (
+                    start_date.replace(tzinfo=self.tzinfo)
+                    - timedelta(hours=12)
+                    + trip.start
                 )
-            except Trip.DoesNotExist:
-                pass
-            else:
-                journey.trip = trip
+                if journey.datetime - now > timedelta(hours=12):
+                    # `start_date` is today but the trip's operational day is yesterday
+                    journey.datetime -= timedelta(days=1)
+                    journey.date -= timedelta(days=1)
 
-                if start_date:
-                    journey.datetime = (
-                        start_date.replace(tzinfo=self.tzinfo)
-                        - timedelta(hours=12)
-                        + trip.start
-                    )
-                    if journey.datetime - now > timedelta(hours=12):
-                        # `start_date` is today but the trip's operational day is yesterday
-                        journey.datetime -= timedelta(days=1)
-                        journey.date -= timedelta(days=1)
+            journey.service = trip.route.service
 
-                journey.service = trip.route.service
-
-                journey.route_name = journey.service.line_name
-                journey.destination = trip.headsign or ""
+            journey.route_name = journey.service.line_name
+            journey.destination = trip.headsign or ""
 
         if not journey.trip and item.vehicle.trip.route_id:
             try:

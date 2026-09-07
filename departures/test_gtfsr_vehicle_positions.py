@@ -47,7 +47,6 @@ class GTFSRTTest(TestCase):
             operator=cls.operator,
         )
         cls.trip_2 = Trip.objects.create(
-            route=route,
             ticket_machine_code="4099_18890",
             start="10:25:00",
             end="11:25:00",

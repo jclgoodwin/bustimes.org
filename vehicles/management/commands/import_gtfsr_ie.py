@@ -30,6 +30,8 @@ occupancies = {
 class Command(ImportLiveVehiclesCommand):
     source_name = "Realtime Transport Operators"
     vehicle_code_scheme = "NTA"
+    trip_id_field = "ticket_machine_code"
+    trip_select_related = ("route__service",)
 
     def do_source(self):
         self.tzinfo = ZoneInfo("Europe/Dublin")
@@ -85,6 +87,32 @@ class Command(ImportLiveVehiclesCommand):
         if feed := self.get_feed():
             return feed.entity
 
+    def get_changed_items(self):
+        (
+            changed_items,
+            changed_journey_items,
+            changed_item_identities,
+            changed_journey_identities,
+            total_items,
+        ) = super().get_changed_items()
+
+        # prefetch trips
+        trips = {item.vehicle.trip.trip_id for item in changed_journey_items}
+        trips = Trip.objects.filter(
+            **{f"{self.trip_id_field}__in": trips},
+            route__source=self.source,
+            route__service__current=True,
+        ).select_related(*self.trip_select_related)
+        self.trips = {getattr(trip, self.trip_id_field): trip for trip in trips}
+
+        return (
+            changed_items,
+            changed_journey_items,
+            changed_item_identities,
+            changed_journey_identities,
+            total_items,
+        )
+
     def get_vehicle(self, item):
         vehicle_code = item.vehicle.vehicle.id
         return Vehicle.objects.get_or_create(code=vehicle_code, source=self.source)
@@ -111,48 +139,53 @@ class Command(ImportLiveVehiclesCommand):
 
         journey.datetime = start_date_time
 
-        service = None
-        services = Service.objects.filter(
-            current=True,
-            route__source=self.source,
-            route__code=item.vehicle.trip.route_id,
-        ).distinct()
-        if not services:
-            if "_" in item.vehicle.trip.route_id:
-                suffix = item.vehicle.trip.route_id.split("_", 1)[1]
-            else:
-                suffix = item.vehicle.trip.route_id
+        if journey.code in self.trips:
+            trip = self.trips[journey.code]
+            service = trip.route.service
+            # simple. not sure we need the other shite any more
+        else:
+            service = None
             services = Service.objects.filter(
                 current=True,
                 route__source=self.source,
-                route__code__endswith=f"_{suffix}",
+                route__code=item.vehicle.trip.route_id,
             ).distinct()
+            if not services:
+                if "_" in item.vehicle.trip.route_id:
+                    suffix = item.vehicle.trip.route_id.split("_", 1)[1]
+                else:
+                    suffix = item.vehicle.trip.route_id
+                services = Service.objects.filter(
+                    current=True,
+                    route__source=self.source,
+                    route__code__endswith=f"_{suffix}",
+                ).distinct()
 
-        if services:
-            service = services[0]
+            if services:
+                service = services[0]
 
-        trips = Trip.objects.filter(ticket_machine_code=journey.code)
-        if service:
-            trips = trips.filter(route__service=service)
+            trips = Trip.objects.filter(ticket_machine_code=journey.code)
+            if service:
+                trips = trips.filter(route__service=service)
 
-        trip = None
+            trip = None
 
-        if service and not trips:
-            trips = Trip.objects.filter(
-                route__service=service,
-                route__source=self.source,
-                start=start_time,
-                inbound=item.vehicle.trip.direction_id == 1,
-            )
+            if service and not trips:
+                trips = Trip.objects.filter(
+                    route__service=service,
+                    route__source=self.source,
+                    start=start_time,
+                    inbound=item.vehicle.trip.direction_id == 1,
+                )
 
-        if trips:
-            if len(trips) > 1:
-                calendar_ids = [trip.calendar_id for trip in trips]
-                calendars = get_calendars(start_date, calendar_ids)
-                trips = trips.filter(calendar__in=calendars)
-                trip = trips.first()
-            else:
-                trip = trips[0]
+            if trips:
+                if len(trips) > 1:
+                    calendar_ids = [trip.calendar_id for trip in trips]
+                    calendars = get_calendars(start_date, calendar_ids)
+                    trips = trips.filter(calendar__in=calendars)
+                    trip = trips.first()
+                else:
+                    trip = trips[0]
 
         if service:
             journey.service = service

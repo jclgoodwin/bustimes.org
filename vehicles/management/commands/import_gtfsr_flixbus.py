@@ -14,7 +14,6 @@ from django.utils.dateparse import parse_duration
 from google.protobuf import json_format
 
 from busstops.models import DataSource
-from bustimes.models import Trip
 
 from ...models import Livery, VehicleJourney
 from ...utils import VEHICLE_POSITIONS_CHANNEL, calculate_bearing
@@ -26,6 +25,8 @@ logger = logging.getLogger(__name__)
 
 class Command(GTFSRCommand):
     source_name = "FlixBus"
+    trip_id_field = "vehicle_journey_code"
+    trip_select_related = ("route__service", "destination__locality")
 
     def do_source(self):
         self.tzinfo = ZoneInfo("Europe/London")
@@ -126,15 +127,13 @@ class Command(GTFSRCommand):
             tzinfo=self.tzinfo
         )
 
-        try:
-            trip = Trip.objects.get(operator="FLIX", vehicle_journey_code=trip_id)
-        except Trip.DoesNotExist:
-            journey.datetime = noon - timedelta(hours=12) + parse_duration(start_time)
-        else:
+        if trip := self.trips.get(trip_id):
             journey.trip = trip
             journey.datetime = noon - timedelta(hours=12) + trip.start
             journey.service = trip.route.service
             journey.destination = str(trip.destination.locality or trip.destination)
+        else:
+            journey.datetime = noon - timedelta(hours=12) + parse_duration(start_time)
 
         if journey.datetime - self.source.datetime > timedelta(hours=12):
             # `start_date` is today but the trip's operational day is yesterday

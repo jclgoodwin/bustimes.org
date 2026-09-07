@@ -6,7 +6,6 @@ from django.db.models import Q
 from google.protobuf import json_format
 
 from busstops.models import DataSource
-from bustimes.models import Trip
 
 from ...models import Vehicle, VehicleJourney
 from .import_gtfsr_ie import Command as GTFSRCommand
@@ -58,11 +57,7 @@ class Command(GTFSRCommand):
         )
         journey.date = start_date.date()
 
-        try:
-            trip = Trip.objects.get(operator="EMBR", vehicle_journey_code=journey.code)
-        except Trip.DoesNotExist:
-            pass
-        else:
+        if trip := self.trips.get(journey.code):
             journey.trip = trip
 
             journey.datetime = (
