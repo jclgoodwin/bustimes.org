@@ -430,6 +430,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
         return self
 
     def handle_items(self, items, identities):
+        if not items:
+            return
+
         with sentry_sdk.start_span(name="get vehicle codes"):
             vehicle_codes = (
                 VehicleCode.objects.filter(

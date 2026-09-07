@@ -14,6 +14,8 @@ def get_tracking(stop, services):
         return
 
     vehicle_ids = list(redis_client.sunion(set_names))
+    if not vehicle_ids:
+        return
 
     vehicle_locations = redis_client.mget(
         [f"vehicle{int(vehicle_id)}" for vehicle_id in vehicle_ids]

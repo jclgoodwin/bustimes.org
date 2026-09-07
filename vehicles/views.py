@@ -406,6 +406,9 @@ def get_vehicle_locations(
     except ValueError:
         raise BadRequest
 
+    if not vehicle_ids:
+        return []
+
     vehicle_ids.sort()  # for etag stableness
 
     vehicle_locations = redis_client.mget(
