@@ -454,6 +454,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
         }
 
         i = 1
+        handled = {}
         for item, vehicle_identity in zip(items, identities):
             journey_identity = self.get_journey_identity(item)
             concurrent = vehicle_identity in self.duplicate_vehicles
@@ -490,18 +491,26 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 if result:
                     _location, vehicle = result
 
-                self.journeys_ids_ids[vehicle_identity] = (
-                    journey_identity,
-                    vehicle.latest_journey_id,
-                )
+                handled[vehicle_identity] = (journey_identity, vehicle)
 
             self.identifiers[vehicle_identity] = self.get_item_identity(item)
 
             if i % 500 == 0:
                 self.save()
+                self.record_journeys_ids_ids(handled)
+                handled = {}
             i += 1
 
         self.save()
+        self.record_journeys_ids_ids(handled)
+
+    def record_journeys_ids_ids(self, handled):
+        # a newly created journey only has an id after save()
+        for vehicle_identity, (journey_identity, vehicle) in handled.items():
+            self.journeys_ids_ids[vehicle_identity] = (
+                journey_identity,
+                vehicle.latest_journey_id,
+            )
 
     def get_changed_items(self, items=None):
         changed_items = []
