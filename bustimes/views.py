@@ -2,7 +2,6 @@ import xml.etree.ElementTree as ET
 import zipfile
 from collections import defaultdict
 from datetime import datetime, timedelta
-from pathlib import Path
 
 import folium
 import requests
@@ -10,6 +9,7 @@ from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.cache import cache
+from django.core.files.storage import storages
 from django.db.models import (
     Count,
     F,
@@ -50,7 +50,6 @@ from vehicles.forms import DateForm, TripUpdatesFeedForm
 from vehicles.models import Vehicle, VehicleJourney
 from vehicles.rtpi import add_progress_and_delay
 
-from .download_utils import download
 from .forms import UploadGTFSForm
 from .gtfs_utils import handle_gtfs_upload
 from .models import Route, RouteLink, StopTime, Trip
@@ -132,18 +131,6 @@ def route_link_view(request, pk):
     return HttpResponse(m.get_root().render())
 
 
-def maybe_download_file(local_path, s3_key):
-    if not local_path.exists():
-        import boto3
-
-        if not local_path.parent.exists():
-            local_path.parent.mkdir(parents=True)
-        client = boto3.client("s3", endpoint_url="https://ams3.digitaloceanspaces.com")
-        client.download_file(
-            Bucket="bustimes-data", Key=s3_key, Filename=str(local_path)
-        )
-
-
 class SourceListView(ListView):
     model = DataSource
     queryset = (
@@ -177,100 +164,53 @@ class SourceDetailView(DetailView):
         return context
 
 
+def open_source_file(source, code):
+    """Return the file that `source` was imported from, and the path within it
+    (if it's an archive) that `code` refers to
+    """
+
+    try:
+        return storages["archive"].open(source.get_archive_path()), code
+    except FileNotFoundError:
+        raise Http404(f"{source} hasn't been archived")
+
+
 @require_GET
 @login_required
 def route_xml(request, source, code=""):
     """A way of viewing the TransXChange document behind a route,
     for debugging purposes
-
-    Ideally should work by downloading the file from bustimes.org's archive on
-    S3 (or an S3-compatible object storage service), rather than repeatedly
-    downloading from the original source.
     """
 
     source = get_object_or_404(DataSource, id=source)
 
-    if not source.datetime:
-        raise Http404
-
-    if source.is_tnds():
-        filename = Path(source.url).name
-        path = settings.DATA_DIR / "TNDS" / filename
-        maybe_download_file(path, source.get_s3_path())
-        with zipfile.ZipFile(path) as archive:
-            if code:
-                if code.endswith(".zip"):
-                    archive = zipfile.ZipFile(archive.open(code))
-                    code = ""
-
-                elif ".zip/" in code:
-                    sub_archive, code = code.split("/", 1)
-                    archive = zipfile.ZipFile(archive.open(sub_archive))
-
-            if code:
-                try:
-                    return FileResponse(archive.open(code), content_type="text/plain")
-                except KeyError as e:
-                    raise Http404(e)
-            return HttpResponse(
-                "\n".join(archive.namelist()), content_type="text/plain"
-            )
-
-    content_type = "application/xml"
-
-    if "stagecoach" in source.url:
-        path = settings.DATA_DIR / source.url.split("/")[-1]
-        if not path.exists():
-            if not path.parent.exists():
-                path.parent.mkdir()
-            download(path, source.url)
-    elif code != source.name:
-        url = source.url
-        if source.url.startswith("https://opendata.ticketer.com/uk/"):
-            path = source.url.split("/")[4]
-            path = settings.DATA_DIR / "ticketer" / f"{path}.zip"
-        elif source.url.startswith(
-            "https://data.bus-data.dft.gov.uk/timetable/dataset/"
-        ):
-            path = settings.DATA_DIR / "bod" / str(source.id)
-        elif "data.discoverpassenger" in source.url and "/" in code:
-            path, code = code.split("/", 1)
-            url = f"https://s3-eu-west-1.amazonaws.com/passenger-sources/{path.split('_')[0]}/txc/{path}"
-            path = settings.DATA_DIR / path
-        elif source.url.startswith("https://www.opendatani.gov.uk/"):
-            path = settings.DATA_DIR / f"{source.id}.zip"
-            url = None
-            content_type = "text/plain"
-        else:
-            raise Http404
-        if not path.exists():
-            if not path.parent.exists():
-                path.parent.mkdir(parents=True)
-            download(path, url)
-    elif "/" in code:
-        path = code.split("/")[0]  # archive name
-        code = code[len(path) + 1 :]
-        path = settings.DATA_DIR / path
-    else:
-        path = None
-
-    if path:
-        if code:
-            with zipfile.ZipFile(path) as archive:
-                return FileResponse(archive.open(code), content_type=content_type)
-    else:
-        path = settings.DATA_DIR / code
+    open_file, code = open_source_file(source, code)
 
     try:
-        with zipfile.ZipFile(path) as archive:
+        archive = zipfile.ZipFile(open_file)
+    except zipfile.BadZipFile:
+        # not an archive, just a plain XML file
+        open_file.seek(0)
+        # FileResponse automatically closes the file
+        return FileResponse(open_file, content_type="application/xml")
+
+    if code.endswith(".zip"):
+        archive = zipfile.ZipFile(archive.open(code))
+        code = ""
+    elif ".zip/" in code:
+        name, code = code.split("/", 1)
+        archive = zipfile.ZipFile(archive.open(name))
+
+    if not code:
+        with archive:
             return HttpResponse(
                 "\n".join(archive.namelist()), content_type="text/plain"
             )
-    except zipfile.BadZipFile:
-        pass
 
-    # FileResponse automatically closes the file
-    return FileResponse(open(path, "rb"), content_type=content_type)
+    try:
+        return FileResponse(archive.open(code), content_type="application/xml")
+    except KeyError as e:
+        raise Http404(e)
 
 
 def stop_time_json(stop_time, date) -> dict:

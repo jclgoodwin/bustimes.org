@@ -199,6 +199,25 @@ STORAGES = {
             "custom_domain": "bus-photos.lon1.digitaloceanspaces.com",
         },
     },
+    "archive": {
+        "BACKEND": "django.core.files.storage.InMemoryStorage",
+    }
+    if TEST
+    else {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "OPTIONS": {
+            "location": BASE_DIR / "archive",
+        },
+    }
+    if DEBUG
+    else {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "region_name": "ams3",
+            "endpoint_url": "https://ams3.digitaloceanspaces.com",
+            "bucket_name": "bustimes-data",
+        },
+    },
     "staticfiles": {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"
         if TEST

@@ -7,6 +7,7 @@ from unittest.mock import ANY, patch
 import fakeredis
 import time_machine
 from django.contrib.gis.geos import Point
+from django.core.files.storage import storages
 from django.core.management import call_command
 from django.test import TestCase, override_settings
 from vcr import use_cassette
@@ -108,7 +109,6 @@ class ImportBusOpenDataTest(TestCase):
         with (
             TemporaryDirectory() as directory,
             override_settings(DATA_DIR=Path(directory)),
-            patch("busstops.models.DataSource.upload_to_s3_etc") as upload_to_s3_etc,
         ):
             api_key = "0123456789abc19abc190123456789abc19abc19"
 
@@ -129,9 +129,7 @@ class ImportBusOpenDataTest(TestCase):
             self.assertEqual(200, response.status_code)
             self.client.logout()
 
-        upload_to_s3_etc.assert_called_once_with(
-            Path(directory) / f"bod/{route.source_id}"
-        )
+        self.assertTrue(storages["archive"].exists(route.source.get_archive_path()))
 
         self.assertEqual(route.source.name, "Lynx_Clenchwarton_54_20200330")
         self.assertEqual(
@@ -388,12 +386,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
             TemporaryDirectory() as directory,
             override_settings(DATA_DIR=Path(directory)),
         ):
-            with (
-                use_cassette(str(FIXTURES_DIR / "bod_ticketer.yaml")),
-                patch(
-                    "busstops.models.DataSource.upload_to_s3_etc"
-                ) as upload_to_s3_etc,
-            ):
+            with use_cassette(str(FIXTURES_DIR / "bod_ticketer.yaml")):
                 with self.assertLogs(
                     "bustimes.management.commands.import_transxchange", "WARNING"
                 ) as cm:
@@ -407,9 +400,8 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
                         "import_bod_timetables", "ticketer", "POOP"
                     )  # no matching operator
 
-            upload_to_s3_etc.assert_called_once()
-
             source = DataSource.objects.get(name="Completely Coach Travel")
+            self.assertTrue(storages["archive"].exists(source.get_archive_path()))
             service = source.service_set.first()
             route = service.route_set.first()
 

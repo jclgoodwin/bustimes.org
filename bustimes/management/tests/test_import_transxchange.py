@@ -8,6 +8,7 @@ from unittest.mock import patch
 
 import time_machine
 from django.contrib.gis.geos import Point
+from django.core.files.storage import storages
 from django.core.management import call_command
 from django.test import TestCase, override_settings
 from django.utils import timezone
@@ -745,25 +746,22 @@ class ImportTransXChangeTest(TestCase):
 
             service.source.datetime = "2025-01-01 00:00:00Z"
             service.source.save()
+            service.source.refresh_from_db()
 
-            zipfile_path = Path(data_dir) / "TNDS" / "EA.zip"
+            # instead of downloading from the real archive, make our own zipfile
+            zipfile_path = Path(data_dir) / "EA.zip"
+            with zipfile.ZipFile(zipfile_path, "a") as open_zipfile:
+                self.write_file_to_zipfile(open_zipfile, route.code)
+            service.source.save_to_archive(zipfile_path)
 
-            # instead of downloading from S3, make our own zipfile
-            def side_effect(Bucket, Key, Filename):
-                with zipfile.ZipFile(zipfile_path, "a") as open_zipfile:
-                    self.write_file_to_zipfile(open_zipfile, route.code)
+            response = self.client.get(route.get_absolute_url())
+            self.assertEqual(response.headers["content-type"], "text/plain")
 
-            with patch("boto3.client") as boto3_client:
-                boto3_client.return_value.download_file.side_effect = side_effect
+            response = self.client.get(f"/sources/{route.source_id}/routes/")
+            self.assertContains(response, route.code)
 
-                response = self.client.get(route.get_absolute_url())
-                self.assertEqual(response.headers["content-type"], "text/plain")
-
-                response = self.client.get(f"/sources/{route.source_id}/routes/")
-                self.assertContains(response, route.code)
-
-                response = self.client.get(f"/sources/{route.source_id}/routes/404")
-                self.assertEqual(response.status_code, 404)
+            response = self.client.get(f"/sources/{route.source_id}/routes/404")
+            self.assertEqual(response.status_code, 404)
 
     def test_multiple_operators(self):
         """
@@ -1197,7 +1195,7 @@ class ImportTransXChangeTest(TestCase):
     @time_machine.travel("22 January 2017")
     def test_megabus(self):
         # simulate a National Coach Service Database zip file
-        with TemporaryDirectory() as directory, patch("boto3.client") as mock_client:
+        with TemporaryDirectory() as directory:
             zipfile_path = Path(directory) / "NCSD.zip"
             with zipfile.ZipFile(zipfile_path, "a") as open_zipfile:
                 self.write_file_to_zipfile(
@@ -1240,7 +1238,9 @@ class ImportTransXChangeTest(TestCase):
                 m12_trip_ids, Trip.objects.filter(route__line_name="M12").last().id
             )
 
-            mock_client.assert_called()
+            # the source file was uploaded to the archive
+            source = DataSource.objects.get(name="GB")
+            self.assertTrue(storages["archive"].exists(source.get_archive_path()))
 
         # M11A
 

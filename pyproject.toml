@@ -6,7 +6,6 @@ authors = [{ name = "Josh Goodwin", email = "j@joshuagoodw.in" }]
 requires-python = ">=3.13"
 dependencies = [
     "beautifulsoup4>=4.12.1,<5",
-    "boto3>=1.18.42,<2",
     "dj-database-url>=3.0.0,<4",
     "Django>=6.1",
     "django-autoslug>=1.9.8,<2",
@@ -46,7 +45,7 @@ dependencies = [
     "polyline>=2.0.4",
     "django-timezone-field>=7.2.1",
     "django-imagekit>=6.1.0",
-    "django-storages>=1.14.6",
+    "django-storages[s3]>=1.14.6",
     "transxchange-parser",
     "channels[daphne]>=4.3.2",
     "channels-redis>=4.3.0",

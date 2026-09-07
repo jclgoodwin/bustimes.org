@@ -596,7 +596,7 @@ class Command(BaseCommand):
         """If the zip contains nested zips, rebuild it as a single flat zip.
 
         Errors if two inner XMLs would share a basename. Returns the path
-        to use for the rest of the import (and the S3 upload).
+        to use for the rest of the import (and the archive).
         """
         try:
             archive = zipfile.ZipFile(archive_path)
@@ -691,7 +691,7 @@ class Command(BaseCommand):
 
         self.source.save(update_fields=["datetime"])
 
-        self.source.upload_to_s3_etc(archive_path)
+        self.source.save_to_archive(archive_path)
 
     def finish_services(self):
         """update/create StopUsages, search_vector and geometry fields"""

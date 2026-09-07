@@ -18,7 +18,8 @@ class Command(BaseCommand):
         parser.add_argument("username", type=str)
         parser.add_argument("password", type=str)
 
-    def list_files(self):
+    def list_files(self) -> dict:
+        # excluding London - we use original TfL data instead
         files = [
             (name, details)
             for name, details in self.ftp.mlsd()
@@ -27,7 +28,7 @@ class Command(BaseCommand):
         files.sort(key=lambda item: int(item[1]["size"]))  # smallest files first
         return {name: details for name, details in files}
 
-    def do_files(self, files):
+    def do_files(self, files: dict):
         for name, details in files.items():
             self.do_file(name, details)
 
@@ -38,6 +39,8 @@ class Command(BaseCommand):
 
         path = settings.TNDS_DIR / name
 
+        # yes we use file size as a hash function
+        # to decide whether to download the file
         if not path.exists() or path.stat().st_size != int(details["size"]):
             with open(path, "wb") as open_file:
                 self.ftp.retrbinary(f"RETR {name}", open_file.write)

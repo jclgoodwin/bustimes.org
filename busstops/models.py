@@ -7,7 +7,6 @@ from urllib.parse import urlencode, urlparse
 from zoneinfo import ZoneInfo
 
 import yaml
-from botocore.exceptions import NoCredentialsError
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models import Extent
 from django.contrib.gis.geos import Polygon
@@ -15,6 +14,7 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.core.cache import cache
+from django.core.files.storage import storages
 from django.db.models import Q, Value
 from django.db.models.aggregates import StringAgg
 from django.db.models.functions import Coalesce, Concat, Upper
@@ -332,17 +332,17 @@ class DataSource(models.Model):
     def older_than(self, when):
         return bool(not self.datetime or not when or self.datetime < when)
 
-    def get_s3_path(self):
-        return f"source/{self.id}/{self.datetime.isoformat()}"
+    def get_archive_path(self):
+        # always UTC, so the path matches however self.datetime was set
+        return f"source/{self.id}/{self.datetime.astimezone(datetime.UTC).isoformat()}"
 
-    def upload_to_s3_etc(self, path):
-        import boto3
-
-        client = boto3.client("s3", endpoint_url="https://ams3.digitaloceanspaces.com")
-        try:
-            client.upload_file(path, "bustimes-data", self.get_s3_path())
-        except NoCredentialsError:
-            pass
+    def save_to_archive(self, path):
+        with open(path, "rb") as open_file:
+            try:
+                storages["archive"].save(self.get_archive_path(), open_file)
+            except Exception:
+                # archiving is not essential - don't fail the whole import
+                logging.getLogger(__name__).exception("error archiving %s", path)
 
 
 class StopPoint(models.Model):
