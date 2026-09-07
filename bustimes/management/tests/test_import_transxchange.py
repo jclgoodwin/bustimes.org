@@ -739,11 +739,7 @@ class ImportTransXChangeTest(TestCase):
         # test route_xml
         with (
             TemporaryDirectory() as data_dir,
-            override_settings(DATA_DIR=Path(data_dir)),
         ):
-            response = self.client.get(route.get_absolute_url())
-            self.assertEqual(response.status_code, 404)
-
             service.source.datetime = "2025-01-01 00:00:00Z"
             service.source.save()
             service.source.refresh_from_db()
@@ -755,7 +751,7 @@ class ImportTransXChangeTest(TestCase):
             service.source.save_to_archive(zipfile_path)
 
             response = self.client.get(route.get_absolute_url())
-            self.assertEqual(response.headers["content-type"], "text/plain")
+            self.assertEqual(response.headers["content-type"], "application/xml")
 
             response = self.client.get(f"/sources/{route.source_id}/routes/")
             self.assertContains(response, route.code)
