@@ -1,6 +1,7 @@
 from io import BytesIO
 from unittest.mock import patch
 
+from django.contrib.auth.models import Permission
 from django.core.files.base import ContentFile
 from django.core.files.storage import InMemoryStorage
 from django.test import TestCase, override_settings
@@ -8,6 +9,7 @@ from PIL import ExifTags, Image
 
 EXIF_TAG_IDS = {name: tag_id for tag_id, name in ExifTags.TAGS.items()}
 
+from accounts.models import User
 from busstops.models import Operator, Region
 from vehicles.models import Vehicle
 
@@ -17,6 +19,8 @@ from .models import Photo
 from .processors import SmartCrop
 from .tasks import detect_photo_subject, detect_photo_subject_blocking
 from .utils import read_image
+
+FLICKR_URL = "https://www.flickr.com/photos/norma123/53584219163/"
 
 
 def make_jpeg(width, height, bus=None, exif=None):
@@ -56,9 +60,23 @@ def make_exif(gps=None, date_taken=None, **tags):
     return exif
 
 
+class FakeResponse:
+    """Just enough of a requests Response for add_flickr_photo"""
+
+    def __init__(self, data=None, content=None):
+        self.data = data
+        self.content = content
+
+    def raise_for_status(self):
+        pass
+
+    def json(self):
+        return self.data
+
+
 def blueness(image):
     """What proportion of the pixels are more blue than red"""
-    pixels = list(image.convert("RGB").getdata())
+    pixels = list(image.convert("RGB").get_flattened_data())
     return sum(b > r for r, g, b in pixels) / len(pixels)
 
 
@@ -181,6 +199,8 @@ class PhotoTest(TestCase):
         cls.vehicle = Vehicle.objects.create(
             code="2", fleet_number=2, operator=operator
         )
+        cls.user = User.objects.create(username="josh", email="j@example.com")
+        cls.user.user_permissions.add(Permission.objects.get(codename="add_photo"))
 
         photo = Photo(credit="Josh", caption="a bus")
         photo.image.save("bus.jpg", ContentFile(make_jpeg(1600, 900)))
@@ -290,3 +310,96 @@ class PhotoTest(TestCase):
             self.assertLogs("photos.tasks", "ERROR"),
         ):
             detect_photo_subject_blocking(photo.id)
+
+    def test_photo_form_needs_permission(self):
+        """anyone can look at a vehicle, but not everyone can add a photo"""
+        response = self.client.get(self.vehicle.get_absolute_url())
+        self.assertNotContains(response, "Flickr photo URL")
+
+        response = self.client.post(
+            self.vehicle.get_absolute_url(), {"url": "https://jclg.uk"}
+        )
+        self.assertContains(response, "you don’t have permission", status_code=403)
+        self.assertFalse(Photo.objects.filter(user=self.user).exists())
+
+    def test_not_a_flickr_url(self):
+        self.client.force_login(self.user)
+
+        response = self.client.get(self.vehicle.get_absolute_url())
+        self.assertContains(response, "Flickr photo URL")
+
+        response = self.client.post(
+            self.vehicle.get_absolute_url(), {"url": "https://jclg.uk"}
+        )
+        self.assertContains(response, "look like a Flickr photo URL")
+        self.assertFalse(Photo.objects.filter(user=self.user).exists())
+
+    def test_wrong_license(self):
+        self.client.force_login(self.user)
+
+        info = {
+            "photo": {
+                "license": "0",  # all rights reserved
+                "owner": {
+                    "path_alias": "norma123",
+                    "realname": "",
+                    "username": "norma123",
+                },
+                "title": {"_content": "Lynx 2"},
+                "urls": {"url": [{"_content": FLICKR_URL}]},
+                "dates": {"taken": "2019-06-15 14:30:00"},
+            }
+        }
+
+        with patch(
+            "photos.utils.requests.Session.get", return_value=FakeResponse(info)
+        ):
+            response = self.client.post(
+                self.vehicle.get_absolute_url(), {"url": FLICKR_URL}
+            )
+
+        self.assertContains(response, "permissively licensed")
+        self.assertFalse(Photo.objects.filter(user=self.user).exists())
+
+    def test_flickr(self):
+        self.client.force_login(self.user)
+
+        info = {
+            "photo": {
+                "license": "4",
+                "owner": {
+                    "path_alias": "norma123",
+                    "realname": "Norma",
+                    "username": "norma123",
+                },
+                "title": {"_content": "Lynx 2"},
+                "urls": {"url": [{"_content": FLICKR_URL}]},
+                "dates": {"taken": "2019-06-15 14:30:00"},
+                "location": {"latitude": "52.75", "longitude": "0.4"},
+            }
+        }
+        sizes = {"sizes": {"size": [{"source": "https://live.example/123_o.jpg"}]}}
+
+        with patch(
+            "photos.utils.requests.Session.get",
+            side_effect=[
+                FakeResponse(info),
+                FakeResponse(sizes),
+                FakeResponse(content=make_jpeg(1600, 900)),
+            ],
+        ):
+            response = self.client.post(
+                self.vehicle.get_absolute_url(), {"url": FLICKR_URL}
+            )
+
+        self.assertRedirects(response, self.vehicle.get_absolute_url())
+
+        photo = Photo.objects.get(user=self.user)
+        self.assertEqual(photo.caption, "Lynx 2")
+        self.assertEqual(photo.credit, "Norma")
+        self.assertEqual(photo.license, "4")
+        self.assertEqual(photo.url, FLICKR_URL)
+        self.assertEqual((photo.width, photo.height), (1600, 900))
+        self.assertAlmostEqual(photo.location.y, 52.75)
+        self.assertEqual(str(photo.taken_at), "2019-06-15 14:30:00+00:00")
+        self.assertEqual(list(photo.vehicles.all()), [self.vehicle])

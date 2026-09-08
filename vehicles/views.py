@@ -882,13 +882,15 @@ class VehicleDetailView(DetailView):
     @method_decorator(permission_required("photos.add_photo", raise_exception=True))
     def post(self, *args, **kwargs):
         form = PhotoForm(self.request.POST, self.request.FILES)
-        vehicle = self.get_object()
         if form.is_valid():
+            self.object = self.get_object()
             if image := form.cleaned_data["image"]:
-                add_uploaded_photo(image, vehicle, self.request)
+                add_uploaded_photo(image, self.object, self.request)
             else:
                 try:
-                    add_flickr_photo(form.cleaned_data["url"], vehicle, self.request)
+                    add_flickr_photo(
+                        form.cleaned_data["url"], self.object, self.request
+                    )
                 except IndexError:
                     form.add_error("url", "That doesn't look like a Flickr photo URL")
                 except WrongLicense:
@@ -899,6 +901,7 @@ class VehicleDetailView(DetailView):
 
         if form.errors:
             self.form = form
+            return self.get(*args, **kwargs)
 
         return redirect(self.object)
 
