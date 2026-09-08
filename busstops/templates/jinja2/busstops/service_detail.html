@@ -85,7 +85,7 @@
 {% if registrations %}
     <ul class="horizontal">
         {% for registration in registrations %}
-            <li><a href="{{ registration.get_absolute_url() }}">{{ registration.registration_number }}</a>
+            <li><a href="{{ registration.get_absolute_url() }}">{{ registration.registration_number }}</a></li>
         {% endfor %}
     </ul>
 {% endif %}
