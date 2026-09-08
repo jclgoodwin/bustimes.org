@@ -219,3 +219,7 @@ KCTB:
 HEDO:
   name: Central Connect (KonectBuses)
   url: https://www.central-connect.co.uk/
+GHCT:
+  url: https://www.gatesheadcentraltaxis.com/
+FOWT:
+  url: https://fowlerstravel.co.uk/
