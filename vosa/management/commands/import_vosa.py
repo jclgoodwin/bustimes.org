@@ -301,11 +301,3 @@ class Command(BaseCommand):
             ],
             batch_size=1000,
         )
-
-        # for reg in regs.values():
-        #     if reg not in regs_to_create and reg not in regs_to_update:
-        #         print(reg.registration_number, reg.delete())
-
-        for lic in lics.values():
-            if lic not in lics_to_create and lic not in lics_to_update:
-                logger.info("%s %s", lic.licence_number, lic.delete())

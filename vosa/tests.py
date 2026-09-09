@@ -44,7 +44,7 @@ class VosaTest(TestCase):
             "vosa.management.commands.import_vosa.download_utils.download_if_modified",
             return_value=(True, None),
         ):
-            with self.assertNumQueries(16):
+            with self.assertNumQueries(15):
                 call_command("import_vosa", "F")
 
             with self.assertNumQueries(8):
@@ -120,4 +120,4 @@ Simonds Countrylink""",
         response = self.client.get("/admin/vosa/licence/")
         self.assertContains(response, ">AINS<")
 
-        self.assertEqual(Licence.objects.count(), 3)
+        self.assertEqual(Licence.objects.count(), 4)
