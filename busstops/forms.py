@@ -67,17 +67,19 @@ class TimetableForm(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
-        # if 'detailed' is not explicitly in the request, default it to True, this ensures it stays on during initial load and date changes
+        # if 'detailed' was not explicitly in the request, default it to True
+        # bound forms where the user didn't check the box (key missing from self.data).
         if self.data is None or "detailed" not in self.data:
             cleaned_data["detailed"] = True
         return cleaned_data
 
     def get_timetable(self, service):
         if self.is_valid():
-            date = self.cleaned_data["date"]
-            calendar_id = self.cleaned_data["calendar"]
+            date = self.cleaned_data.get("date")
+            calendar_id = self.cleaned_data.get("calendar")
             line_names = self.cleaned_data.get("service")
-            detailed = self.cleaned_data["detailed"]
+            # Use .get() with a fallback to prevent any potential KeyError
+            detailed = self.cleaned_data.get("detailed", True)
         else:
             date = None
             calendar_id = None
@@ -91,7 +93,6 @@ class TimetableForm(forms.Form):
             line_names=line_names,
             detailed=detailed,
         )
-
 
 class DeparturesForm(forms.Form):
     date = forms.DateField()
