@@ -244,6 +244,16 @@ class VehiclesTests(TestCase):
         self.assertContains(response, "20 Oct")
         self.assertNotContains(response, "/operators/lynx/map")
 
+    def test_next_previous_same_fleet_number(self):
+        # vehicles with the same fleet number shouldn't be skipped over
+        a = Vehicle.objects.create(code="50a", fleet_number=50, operator=self.lynx)
+        b = Vehicle.objects.create(code="50b", fleet_number=50, operator=self.lynx)
+
+        self.assertEqual(self.vehicle_2.get_next(), a)
+        self.assertEqual(a.get_next(), b)
+        self.assertEqual(b.get_previous(), a)
+        self.assertEqual(a.get_previous(), self.vehicle_2)
+
     def test_vehicle_views(self):
         with self.assertNumQueries(7):
             response = self.client.get(self.vehicle_1.get_absolute_url() + "?date=poop")

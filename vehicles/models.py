@@ -361,25 +361,29 @@ class Vehicle(models.Model):
         return self.code.replace("_", " ")
 
     def get_next(self, order=""):
-        lookup = "lt" if order == "-" else "gt"
         if self.operator:
-            filter = {}
             if self.fleet_number:
-                filter[f"fleet_number__{lookup}"] = self.fleet_number
-                order_by = f"{order}fleet_number"
+                field = "fleet_number"
             elif self.fleet_code:
-                filter[f"fleet_code__{lookup}"] = self.fleet_code
-                order_by = f"{order}fleet_code"
+                field = "fleet_code"
             else:
-                filter[f"code__{lookup}"] = self.code
-                order_by = f"{order}code"
+                field = "code"
+            value = getattr(self, field)
+
+            lookup = "lt" if order == "-" else "gt"
+
+            condition = Q(**{f"{field}__{lookup}": value})
+
+            if field != "code":
+                # cope with possible duplicate fleet numbers
+                condition |= Q(**{field: value, f"id__{lookup}": self.id})
 
             return (
                 self.operator.vehicle_set.filter(
-                    **filter,
+                    condition,
                     withdrawn=False,
                 )
-                .order_by(order_by)
+                .order_by(f"{order}{field}", f"{order}id")
                 .first()
             )
 
