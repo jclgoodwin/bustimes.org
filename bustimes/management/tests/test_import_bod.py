@@ -554,7 +554,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
         self.assertTrue(response.json()["times"][8]["track"])
 
         with self.assertNumQueries(21):
-            response = self.client.get("/services/904-huntingdon-peterborough")
+            response = self.client.get("/services/904-huntingdon-peterborough?detailed=0")
         self.assertContains(response, "Possibly similar services")
         self.assertContains(
             response, '<a href="/services/904-huntingdon-peterborough-2">'
@@ -562,7 +562,7 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
         self.assertContains(response, '<a href="/operators/huntingdon">Huntingdon</a>')
 
         with time_machine.travel("2021-01-11"):
-            response = self.client.get("/services/904-huntingdon-peterborough")
+            response = self.client.get("/services/904-huntingdon-peterborough?detailed=0")
         self.assertContains(
             response,
             'Try a previous date like <a href="?date=2021-01-10">Sunday 10 January 2021</a>?',

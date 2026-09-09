@@ -57,7 +57,7 @@ class NevadaTest(TestCase):
         response = self.client.get("/operators/rtcsnv")
         self.assertContains(response, """<a href="/services/deuce-the-deucestrip">""")
 
-        response = self.client.get("/services/deuce-the-deucestrip")
+        response = self.client.get("/services/deuce-the-deucestrip?detailed=0")
         self.assertContains(response, "/stops/rtcsnv-6038")
 
         response = self.client.get("/stops/rtcsnv-6038")

@@ -781,7 +781,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(service.slug, "abao421")
 
         with time_machine.travel("1 January 2022"):
-            response = self.client.get("/services/abao421")
+            response = self.client.get("/services/abao421?detailed=0")
             self.assertContains(response, "Saturdays until Saturday 14 August 2021")
 
         # after operating period

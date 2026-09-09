@@ -80,5 +80,5 @@ class MyTripTest(TestCase):
         self.assertContains(response, ">National operator code<")
         self.assertContains(response, ">NIBS<")
 
-        response = self.client.get("/services/service")
+        response = self.client.get("/services/service?detailed=0")
         self.assertContains(response, ">the MyTrip app<")

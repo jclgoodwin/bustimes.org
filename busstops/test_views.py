@@ -433,7 +433,7 @@ class ViewsTests(TestCase):
             self.assertEqual(response.status_code, 404)
 
     def test_service(self):
-        response = self.client.get("/services/45c-holt-norwich")
+        response = self.client.get("/services/45c-holt-norwich?detailed=0")
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "ouibus")
@@ -445,7 +445,7 @@ class ViewsTests(TestCase):
         self.assertFalse(response.streaming)
 
         with override_settings(TEST=False):
-            response = self.client.get("/services/45c-holt-norwich")
+            response = self.client.get("/services/45c-holt-norwich?detailed=0")
             self.assertTrue(response.streaming)
 
     def test_national_express_service(self):
@@ -475,26 +475,26 @@ class ViewsTests(TestCase):
     def test_service_redirect(self):
         """An inactive service should redirect to a current service with the same description"""
         with self.assertNumQueries(5):
-            response = self.client.get("/services/45B")
+            response = self.client.get("/services/45B?detailed=0")
         self.assertRedirects(response, "/services/45c-holt-norwich", status_code=301)
 
-        response = self.client.get("/services/1-45-A-y08-9")
+        response = self.client.get("/services/1-45-A-y08-9?detailed=0")
         self.assertEqual(response.status_code, 404)
 
     def test_not_found_redirect(self):
         """Redirect from url missing 'ea_' prefix"""
-        response = self.client.get("/services/21-45-A-y08-9")
+        response = self.client.get("/services/21-45-A-y08-9?detailed=0")
         self.assertRedirects(response, "/services/45c-holt-norwich")
 
     def test_service_not_found(self):
         """An inactive service with no replacement should redirect to its operator"""
         with self.assertNumQueries(6):
-            response = self.client.get("/services/45A")
+            response = self.client.get("/services/45A?detailed=0")
         self.assertRedirects(response, "/operators/ainsleys-chariots", status_code=302)
 
     def test_service_xml(self):
         """I can view the TransXChange XML for a service"""
-        response = self.client.get("/services/foo/ea_21-45-A-y08.xml")
+        response = self.client.get("/services/foo/ea_21-45-A-y08.xml?detailed=0")
         self.assertEqual(response.status_code, 404)
 
     def test_service_map_data(self):

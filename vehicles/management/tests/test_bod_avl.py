@@ -446,7 +446,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             self.assertContains(response, "<p>Great Yarmouth</p>")  # garage
 
             with self.assertNumQueries(4):
-                response = self.client.get("/services/u/vehicles?date=2020-10-16")
+                response = self.client.get("/services/u/vehicles?date=2020-10-16&detailed=0")
             self.assertContains(response, "<p>Great Yarmouth</p>")  # garage
 
             response = self.client.get("/operators/whip/debug")

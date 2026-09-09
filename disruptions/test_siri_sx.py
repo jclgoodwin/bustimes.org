@@ -151,7 +151,7 @@ class SiriSXTest(TestCase):
         )
 
         with self.assertNumQueries(13):
-            response = self.client.get("/services/156")
+            response = self.client.get("/services/156?detailed=0")
 
         self.assertContains(
             response,
