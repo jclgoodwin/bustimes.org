@@ -1,8 +1,6 @@
 from django import forms
 from turnstile.fields import TurnstileField
 
-from .models import ServiceOverride
-
 
 class ContactForm(forms.Form):
     name = forms.CharField(label="Name")
@@ -67,6 +65,13 @@ class TimetableForm(forms.Form):
         else:
             del self.fields["service"]
 
+    def clean(self):
+        cleaned_data = super().clean()
+        # if 'detailed' is not explicitly in the request, default it to True, this ensures it stays on during initial load and date changes
+        if self.data is None or "detailed" not in self.data:
+            cleaned_data["detailed"] = True
+        return cleaned_data
+
     def get_timetable(self, service):
         if self.is_valid():
             date = self.cleaned_data["date"]
@@ -77,7 +82,7 @@ class TimetableForm(forms.Form):
             date = None
             calendar_id = None
             line_names = None
-            detailed = False
+            detailed = True
 
         return service.get_timetable(
             day=date,
@@ -91,9 +96,3 @@ class TimetableForm(forms.Form):
 class DeparturesForm(forms.Form):
     date = forms.DateField()
     time = forms.TimeField(required=False)
-
-
-class ServiceOverrideForm(forms.ModelForm):
-    class Meta:
-        model = ServiceOverride
-        fields = ("field", "value")
