@@ -662,7 +662,7 @@ def tfl_vehicle(request, reg: str):
             "stop": {
                 "name": item["stationName"],
             },
-            "expected_arrival_time": str(expected_arrival.time())[:5],
+            "expected_arrival_time": expected_arrival,
         }
         atco_code = item["naptanId"]
 
