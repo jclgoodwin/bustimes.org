@@ -45,11 +45,8 @@ const imagesByName: { [imageName: string]: string } = {
 const mapStyles: { [key: string]: string } = {
   alidade_smooth: "Smooth",
   alidade_smooth_dark: "Smooth dark",
-  // alidade_satellite: "Satellite",
   osm_bright: "Bright",
-  // outdoors: "Outdoors",
-  // aws: "Traffic",
-  // aws_satellite: "Satellite",
+  aws_satellite: "Satellite",
   os_light: "Ordnance Survey light",
   os_dark: "Ordnance Survey night",
 };
@@ -225,18 +222,13 @@ export default function BusTimesMap(
     mapStyleURL = "https://tiles.bustimes.org.uk/styles/night/style.json";
   } else if (mapStyle === "osm_bright") {
     mapStyleURL = osmBright;
-    // } else if (mapStyle === "aws" || mapStyle === "aws_satellite") {
-    //   const region = "eu-west-1";
-    //   let style = "Standard";
-    //   let traffic = "&traffic=All";
-    //   if (mapStyle === "aws_satellite") {
-    //     style = "Hybrid";
-    //     traffic = "";
-    //   }
-    //   // const colorScheme = "Light";
-    //   const apiKey =
-    //     "v1.public.eyJqdGkiOiIzN2Q2N2JhYi05NTYyLTRlOGItYjQ4Zi1iMDE4OTk3ZTExODUifX12J0dnJVXJbfadbzrJW3oeYvqHGJxm0iSO2aUyyDSZVER5A7gOTdKF5-iQxaqDcRIkJTZ4rIxdGqXVLG-MkDWi8n8jWEkIBploD6QX0lEp-dtl4cd0lhfcXfBgar8kgJCaBPcjaglztZs_SXOVWIgQmlY5hSzVxBnoezvFxW2dk7BBzlRREHscAjP9Oyx_c3wUJReYAc4rA8JxXWYVyLbe9a-FgapbrgQkSTKbjPChPfesLZjTZek1FChtCNs4EDOg8RX_sCFSDPIXtG-cR8IBsCSmMTgA8pubXyJuhIRgy2VOfSuwBGK983sX8i4uujcpsv7IUZR_b7oj9MRV9Vk.ZGQzZDY2OGQtMWQxMy00ZTEwLWIyZGUtOGVjYzUzMjU3OGE4";
-    //   mapStyleURL = `https://maps.geo.${region}.amazonaws.com/v2/styles/${style}/descriptor?key=${apiKey}&color-scheme=Light${traffic}`;
+  } else if (mapStyle === "aws" || mapStyle === "aws_satellite") {
+    const region = "eu-west-2";
+    const style = "Satellite";
+    const colorScheme = "Light";
+    const apiKey =
+      "v1.public.eyJqdGkiOiI2MjQzYzk5OS01MGEyLTRkMWMtODhiOS01MDJkZGM0YzhhMjgifYG7rwIXmwqKDMGq4w0KvLsj3jfpzAzas89W6R8tZkaQi2PguPStCuPqEqbnIEAUhqIWBe6IhpYKkA_VfIvMtVpSIZgX1ha-nxPBiC61thXiBHIdjhoUiUshZshcnP5-yw0Hui2GWYlejOaJn4EXQTwSslSrmCqZWa_zMtoRV0EUxYwpQ26nbadeEpXva7Ka3e6rDt0lcvBG7r_wAxtKji5L8XlmHU7lSqwQkM9sJQCYUJyHfuURYHiC_5C3_2xJ5_wASu0-EQjH8SDO1IxvqPe2M9gK8Nud8ji3iUOuPv2uyXuteB5cuKO7jKCfLN_jvBDgUJAZ7sbFGr59MUIOS7A.Mzc3ODIwNDMtZWI3YS00NWY5LThjNTktM2UwMmJlOGFhZmY3";
+    mapStyleURL = `https://maps.geo.${region}.amazonaws.com/v2/styles/${style}/descriptor?key=${apiKey}&color-scheme=${colorScheme}`;
   }
 
   return (
