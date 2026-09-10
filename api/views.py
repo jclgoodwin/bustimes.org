@@ -10,7 +10,6 @@ from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from haversine import Unit, haversine_vector
 from redis.exceptions import ResponseError
-
 from rest_framework import pagination, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException
@@ -32,7 +31,6 @@ from vehicles.time_aware_polyline import (
     decode_time_aware_polyline,
     encode_time_aware_polyline,
 )
-from vehicles.time_aware_polyline import encode_time_aware_polyline
 from vehicles.utils import redis_client
 from vehicles.views import get_vehicle_locations
 
@@ -354,7 +352,6 @@ class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
             trip.stops.append(
                 StopTime(
                     stop=stop,
-                    stop_code=atco_code or "",
                     arrival=arrival,
                     departure=time,
                     sequence=sip.sequence_no,
