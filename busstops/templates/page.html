@@ -65,7 +65,7 @@ gtag('config', 'G-X2Z0KM7Z5C');
 (function () {
     var a = localStorage && localStorage["map-style"];
     var m = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-    if ((!a || a === "alidade_satellite") && m || a && a.indexOf("_dark") !== -1) {
+    if (m && (!a || a.endsWith("_satellite")) || a && a.endsWith("_dark")) {
         document.body.classList.add("dark-mode")
     }
 })();
