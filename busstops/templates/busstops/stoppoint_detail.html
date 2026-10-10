@@ -37,7 +37,11 @@
 
 {% if services %}
     {% include 'departures.html' with departures=departures %}
+{% endif %}
 
+{% if stack_asides %}<div class="aside">{% endif %}
+
+{% if services %}
     <div class="aside">
         <h2>{% include 'modes.html' with modes=modes noun='services' %}</h2>
         {% include 'service_list.html' with services=services class="has-smalls" %}
@@ -55,6 +59,8 @@
         {% include 'stops.html' with stops=nearby %}
     </section>
 {% endif %}
+
+{% if stack_asides %}</div>{% endif %}
 
 </div>
 

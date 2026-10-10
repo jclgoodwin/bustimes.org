@@ -866,10 +866,13 @@ class StopPointDetailView(DetailView):
             nearby = None
 
         if nearby is not None:
-            context["nearby"] = (
+            context["nearby"] = list(
                 nearby.exclude(pk=self.object.pk)
                 .annotate(line_names=stop_line_names)
                 .defer("latlong")
+            )
+            context["stack_asides"] = len(context["departures"]) > (
+                len(context["services"]) + len(context["nearby"])
             )
 
             if (

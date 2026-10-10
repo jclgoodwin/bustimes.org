@@ -32,6 +32,10 @@ header .search label {
     min-width: 300px;
     flex-grow: 1;
     margin-top: 0;
+
+    .aside + .aside {
+        margin-top: 1.5em;
+    }
 }
 
 .fleet {
