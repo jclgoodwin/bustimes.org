@@ -20,7 +20,8 @@ from vehicles.management.tests.test_bod_avl import (
 from vehicles.models import Livery, VehicleJourney
 from vehicles.tasks import log_vehicle_journey
 
-from ...models import Route, Trip
+from ...gtfs_utils import is_straight
+from ...models import Route, RouteLink, Trip
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
@@ -89,8 +90,28 @@ class FlixbusTest(TestCase):
         ):
             call_command("import_gtfs_flixbus")
 
+    def test_is_straight(self):
+        self.assertTrue(is_straight([(0, 0), (1, 1)]))
+        # straight line between distant stops, with a vertex near one end
+        self.assertTrue(is_straight([(-1.15, 52.95), (-1.149, 52.951), (-0.18, 51.55)]))
+        self.assertFalse(is_straight([(0, 0), (0.001, 0.002), (0.01, 0.01)]))
+        # a ferry crossing in the middle of a route link
+        self.assertFalse(
+            is_straight(
+                [(1.0, 50.0), (1.2, 50.0), (1.5, 50.0), (1.5, 50.2), (1.7, 50.2)]
+            )
+        )
+
     @time_machine.travel("2023-01-01")
     def test_import_gtfs_flixbus(self):
+        # left over from an old import
+        RouteLink.objects.create(
+            service=self.service,
+            from_stop_id="3390C11",
+            to_stop_id="6200247603",
+            geometry="LINESTRING(-1.15 52.95, -3.36 55.95)",
+        )
+
         with patch(
             "bustimes.management.commands.import_gtfs_flixbus.download_if_modified",
             return_value=(
@@ -103,6 +124,7 @@ class FlixbusTest(TestCase):
         response = self.client.get("/operators/flixbus")
 
         self.assertEqual(2, Service.objects.count())
+        self.assertEqual(8, RouteLink.objects.count())
 
         self.assertContains(response, "London - Northampton - Nottingham")
         self.assertContains(response, "London - Cambridge")

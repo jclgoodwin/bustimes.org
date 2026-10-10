@@ -4,6 +4,7 @@ from enum import IntEnum
 from itertools import pairwise
 
 import gtfs_kit
+import numpy as np
 import pandas as pd
 import shapely.ops as so
 from django.contrib.gis.geos import GEOSGeometry
@@ -229,6 +230,14 @@ def copy_stop_times(
             )
 
 
+def is_straight(coords) -> bool:
+    # just two points, or one long (> ~5km) segment that's most of the length
+    if len(coords) <= 2:
+        return True
+    lengths = np.hypot(*np.diff(coords, axis=0).T)
+    return lengths.max() > max(0.05, 0.9 * lengths.sum())
+
+
 def do_route_links(
     feed: gtfs_kit.feed.Feed,
     source,
@@ -247,7 +256,8 @@ def do_route_links(
     }
     route_links = {}
 
-    stop_times_by_trip = dict(tuple(feed.stop_times.groupby("trip_id", sort=False)))
+    stop_times = feed.stop_times[feed.stop_times.trip_id.isin(trips.trip_id)]
+    stop_times_by_trip = dict(tuple(stop_times.groupby("trip_id", sort=False)))
 
     for trip in trips.itertuples():
         if trip.geometry is None:
@@ -276,7 +286,7 @@ def do_route_links(
 
             stop_a = stops[a.stop_id]
             point_a = so.Point(stop_a.stop_lon, stop_a.stop_lat)
-            if not start_dist:
+            if start_dist is None:
                 start_dist = trip.geometry.project(point_a)
             stop_b = stops[b.stop_id]
             point_b = so.Point(stop_b.stop_lon, stop_b.stop_lat)
@@ -293,7 +303,7 @@ def do_route_links(
                 continue
 
             geom = so.substring(trip.geometry, start_dist, end_dist)
-            if type(geom) is so.LineString and len(geom.coords) > 2:
+            if type(geom) is so.LineString and not is_straight(geom.coords):
                 if key in existing_route_links:
                     rl = existing_route_links[key]
                 else:
@@ -307,6 +317,13 @@ def do_route_links(
 
             start_dist = end_dist
 
+    RouteLink.objects.filter(
+        id__in=[
+            rl.id
+            for key, rl in existing_route_links.items()
+            if key not in route_links and is_straight(rl.geometry.coords)
+        ]
+    ).delete()
     RouteLink.objects.bulk_update(
         [rl for rl in route_links.values() if rl.id], fields=["geometry"]
     )
