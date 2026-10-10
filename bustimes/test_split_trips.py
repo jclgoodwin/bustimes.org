@@ -21,7 +21,7 @@ class SplitTripsTest(TestCase):
         calendar_1 = Calendar.objects.create(start_date="2026-09-01", mon=True)
         calendar_2 = Calendar.objects.create(start_date="2026-09-07", mon=True)
 
-        cls.service = Service.objects.create(line_name="555")
+        cls.service = Service.objects.create(line_name="555", trip_chaining="split")
         route_1 = Route.objects.create(
             line_name="555",
             code="555a",

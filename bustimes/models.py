@@ -562,21 +562,25 @@ class Note(models.Model):
 SPLIT_TRIP_MAX_GAP = timedelta(minutes=15)
 
 
-def is_split_trip_continuation(a, b, a_stops, b_stops) -> bool:
+def is_split_trip_continuation(a, b, a_stops, b_stops, loose=False) -> bool:
     """is trip b the next part of a journey that's been split across two trips?
-    a_stops and b_stops are (first stop, last stop) pairs
+    a_stops and b_stops are (first stop, last stop) pairs.
+    loose: also if the route, line name or journey number changes
     """
     a_first, a_last = a_stops
     b_first, b_last = b_stops
     return (
-        a.route_id != b.route_id
-        and a.route.source_id == b.route.source_id
-        and a.route.line_name == b.route.line_name
-        and (
-            a.route.service_code != b.route.service_code
-            or bool(a.ticket_machine_code)
-            and a.ticket_machine_code == b.ticket_machine_code
+        (
+            loose
+            or a.route_id != b.route_id
+            and a.route.line_name == b.route.line_name
+            and (
+                a.route.service_code != b.route.service_code
+                or bool(a.ticket_machine_code)
+                and a.ticket_machine_code == b.ticket_machine_code
+            )
         )
+        and a.route.source_id == b.route.source_id
         and a.operator_id == b.operator_id
         and a.inbound == b.inbound
         and a_first != a_last
@@ -586,7 +590,7 @@ def is_split_trip_continuation(a, b, a_stops, b_stops) -> bool:
     )
 
 
-def chain_split_trips(trips, get_stops) -> list[list]:
+def chain_split_trips(trips, get_stops, loose=False) -> list[list]:
     """group trips (sorted by start time) into chains of parts of the same journey -
     each trip joins the first (earliest starting) chain it continues
     """
@@ -596,9 +600,12 @@ def chain_split_trips(trips, get_stops) -> list[list]:
         if id(trip) in joined:
             continue
         chain = [trip]
-        for other in trips[i + 1 :]:
+        for j in range(i + 1, len(trips)):
+            other = trips[j]
+            if other.start - chain[-1].end > SPLIT_TRIP_MAX_GAP:
+                break
             if id(other) not in joined and is_split_trip_continuation(
-                chain[-1], other, get_stops(chain[-1]), get_stops(other)
+                chain[-1], other, get_stops(chain[-1]), get_stops(other), loose
             ):
                 chain.append(other)
                 joined.add(id(other))
@@ -606,9 +613,39 @@ def chain_split_trips(trips, get_stops) -> list[list]:
     return chains
 
 
+def get_end_stops(trip):
+    return trip.first_stop, trip.last_stop
+
+
+def get_trip_chaining(trips) -> str:
+    """returns "split" if some trips (from TripQuerySet.for_chaining) are parts of
+    the same journey but have different calendars, so can't be merged on import
+    """
+    if len({trip.route_id for trip in trips}) > 1 and any(
+        len({trip.calendar_id for trip in chain}) > 1
+        for chain in chain_split_trips(trips, get_end_stops)
+    ):
+        return "split"
+    return ""
+
+
 class TripQuerySet(models.QuerySet):
     def active_on(self, date):
         return self.filter(calendar__in=Calendar.objects.active_on(date))
+
+    def for_chaining(self):
+        # (Timetable only considers stops where passengers can get on or off)
+        stops = StopTime.objects.filter(
+            Q(pick_up=True) | Q(set_down=True), trip=OuterRef("id")
+        ).values("stop")
+        return (
+            self.select_related("route")
+            .annotate(
+                first_stop=Subquery(stops.order_by("id")[:1]),
+                last_stop=Subquery(stops.order_by("-id")[:1]),
+            )
+            .order_by("start")
+        )
 
 
 class Trip(models.Model):
@@ -715,18 +752,24 @@ class Trip(models.Model):
     def get_parts(self, date=None) -> list:
         """Get other parts of this trip (if the service has been split into parts)
 
-        uses the same rules as Timetable (see chain_split_trips)
+        uses the same rules as Timetable (see chain_split_trips),
+        if the service's trip_chaining is set
         """
 
-        if not (self.route and self.route.service_id):
+        if not (
+            self.route
+            and self.route.service_id
+            and (trip_chaining := self.route.service.trip_chaining)
+        ):
             return [self]
+        loose = trip_chaining == "any"
 
         # don't match a superseded version of the timetable
         route_filter = Q(
-            route__service=self.route.service_id,
-            route__source=self.route.source_id,
-            route__line_name=self.route.line_name,
+            route__service=self.route.service_id, route__source=self.route.source_id
         )
+        if not loose:
+            route_filter &= Q(route__line_name=self.route.line_name)
         if self.route.version_id:
             route_filter &= Q(route__version=self.route.version_id)
         # no date: the versions current today (or when this trip's version starts)
@@ -762,30 +805,16 @@ class Trip(models.Model):
                     days |= Q(**{f"calendar__{day}": True})
             calendar_filter |= overlap & days
 
-        # (Timetable only considers stops where passengers can get on or off)
-        stops = StopTime.objects.filter(
-            Q(pick_up=True) | Q(set_down=True), trip=OuterRef("id")
-        ).values("stop")
-        trips = (
-            Trip.objects.filter(
-                Q(id=self.id)
-                | Q(
-                    calendar_filter,
-                    route_filter,
-                    inbound=self.inbound,
-                    operator_id=self.operator_id,
-                )
+        trips = Trip.objects.filter(
+            Q(id=self.id)
+            | Q(
+                calendar_filter,
+                route_filter,
+                inbound=self.inbound,
+                operator_id=self.operator_id,
             )
-            .select_related("route")
-            .annotate(
-                first_stop=Subquery(stops.order_by("id")[:1]),
-                last_stop=Subquery(stops.order_by("-id")[:1]),
-            )
-            .order_by("start")
-        )
-        for chain in chain_split_trips(
-            list(trips), lambda trip: (trip.first_stop, trip.last_stop)
-        ):
+        ).for_chaining()
+        for chain in chain_split_trips(list(trips), get_end_stops, loose):
             if any(trip.id == self.id for trip in chain):
                 return chain
         return [self]

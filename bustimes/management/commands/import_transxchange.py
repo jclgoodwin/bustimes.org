@@ -20,7 +20,7 @@ from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry, Point
 from django.core.management.base import BaseCommand
 from django.db import IntegrityError
-from django.db.models import Count, Exists, OuterRef, Q, Subquery
+from django.db.models import Count, Exists, OuterRef, Q
 from django.db.models.functions import Now, Upper
 from django.utils.timezone import localdate
 from haversine import Unit, haversine
@@ -60,6 +60,8 @@ from ...models import (
     Trip,
     VehicleType,
     chain_split_trips,
+    get_end_stops,
+    get_trip_chaining,
 )
 
 logger = logging.getLogger(__name__)
@@ -739,29 +741,23 @@ class Command(BaseCommand):
         Trips with different calendars are dealt with "on the fly" later
         (see get_parts and chain_split_trips).
         """
-        stops = StopTime.objects.filter(
-            Q(pick_up=True) | Q(set_down=True), trip=OuterRef("id")
-        ).values("stop")
-        trips = (
-            Trip.objects.filter(route__service=service_id, route__source=self.source)
-            .select_related("route")
-            .annotate(
-                first_stop=Subquery(stops.order_by("id")[:1]),
-                last_stop=Subquery(stops.order_by("-id")[:1]),
-            )
-            .order_by("start")
+        trips = list(
+            Trip.objects.filter(
+                route__service=service_id, route__source=self.source
+            ).for_chaining()
         )
+        trip_chaining = get_trip_chaining(trips)
 
         by_calendar = defaultdict(list)
         for trip in trips:
             by_calendar[trip.calendar_id].append(trip)
 
         for calendar_trips in by_calendar.values():
-            for trip_a, *parts in chain_split_trips(
-                calendar_trips, lambda trip: (trip.first_stop, trip.last_stop)
-            ):
+            for trip_a, *parts in chain_split_trips(calendar_trips, get_end_stops):
                 if parts:
                     self.merge_trips(trip_a, parts)
+
+        return trip_chaining
 
     def merge_trips(self, trip_a, parts):
         stop_times_a = list(trip_a.stoptime_set.order_by("id"))
@@ -852,7 +848,10 @@ class Command(BaseCommand):
         services = services.annotate(operator_count=Count("operator"))
 
         for service in services:
-            self.merge_split_trips(service.id)
+            trip_chaining = self.merge_split_trips(service.id)
+            if service.trip_chaining not in ("any", trip_chaining):
+                service.trip_chaining = trip_chaining
+                service.save(update_fields=["trip_chaining"])
 
             service.do_stop_usages()
 

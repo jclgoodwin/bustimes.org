@@ -838,6 +838,16 @@ class Service(models.Model):
 
     colour = models.ForeignKey(ServiceColour, models.SET_NULL, null=True, blank=True)
 
+    trip_chaining = models.CharField(
+        max_length=5,
+        blank=True,
+        choices=(
+            ("", "No"),
+            ("split", "Split registrations"),
+            ("any", "Any trips that join up"),
+        ),
+    )
+
     objects = ServiceQuerySet.as_manager()
     update_search_vector = SearchMixin.update_search_vector
 

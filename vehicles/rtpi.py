@@ -158,7 +158,11 @@ UNKNOWN = object()
 
 
 def _fetch_stop_times(trip_id, date, modified_at=None):
-    trip = Trip.objects.select_related("calendar", "route").get(pk=trip_id)
+    trip = (
+        Trip.objects.select_related("calendar", "route__service")
+        .defer("route__service__geometry", "route__service__search_vector")
+        .get(pk=trip_id)
+    )
     trips = trip.get_parts(date)
 
     stop_times = (

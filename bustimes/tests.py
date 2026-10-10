@@ -3,9 +3,10 @@ from datetime import date, datetime, timedelta, timezone
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from busstops.models import DataSource, Service
+from busstops.models import DataSource, Service, StopPoint
 from vehicles.models import Livery, Vehicle, VehicleCode
 
+from .management.commands import import_transxchange
 from .models import (
     Calendar,
     CalendarDate,
@@ -203,6 +204,73 @@ class BusTimesTest(TestCase):
         self.assertEqual(
             json["aimed_departure_time"].isoformat(), "2026-09-18T13:30:00+01:00"
         )
+
+    def test_get_parts(self):
+        source = DataSource.objects.create(name="FECS")
+        service = Service.objects.create(line_name="1")
+        route_1 = Route.objects.create(
+            source=source, service=service, line_name="1", code="1", service_code="A"
+        )
+        route_2 = Route.objects.create(
+            source=source, service=service, line_name="1", code="2", service_code="B"
+        )
+        weekdays = Calendar.objects.create(
+            mon=True, tue=True, wed=True, thu=True, fri=True, start_date="2026-01-01"
+        )
+        mondays = Calendar.objects.create(mon=True, start_date="2026-01-01")
+        stops = StopPoint.objects.bulk_create(
+            [StopPoint(atco_code=code, active=True) for code in "abc"]
+        )
+        trip_1 = Trip.objects.create(
+            route=route_1,
+            calendar=weekdays,
+            start=timedelta(hours=9),
+            end=timedelta(hours=9, minutes=30),
+        )
+        trip_2 = Trip.objects.create(
+            route=route_2,
+            calendar=mondays,
+            start=timedelta(hours=9, minutes=35),
+            end=timedelta(hours=10),
+        )
+        StopTime.objects.bulk_create(
+            [
+                StopTime(trip=trip_1, stop=stops[0], departure=trip_1.start),
+                StopTime(trip=trip_1, stop=stops[1], arrival=trip_1.end),
+                StopTime(trip=trip_2, stop=stops[1], departure=trip_2.start),
+                StopTime(trip=trip_2, stop=stops[2], arrival=trip_2.end),
+            ]
+        )
+        monday = date(2026, 10, 12)
+
+        def get_parts():
+            trip = Trip.objects.select_related("calendar", "route__service").get(
+                id=trip_1.id
+            )
+            with self.assertNumQueries(3 if trip.route.service.trip_chaining else 0):
+                return trip.get_parts(monday)
+
+        self.assertEqual(get_parts(), [trip_1])
+
+        # detected on import (but not merged, because different calendars)
+        command = import_transxchange.Command()
+        command.source = source
+        self.assertEqual(command.merge_split_trips(service.id), "split")
+        Service.objects.filter(id=service.id).update(trip_chaining="split")
+        self.assertEqual(get_parts(), [trip_1, trip_2])
+
+        # route number and journey number change, same registration
+        Route.objects.filter(id=route_2.id).update(line_name="2", service_code="A")
+        self.assertEqual(command.merge_split_trips(service.id), "")
+        self.assertEqual(get_parts(), [trip_1])
+        Service.objects.filter(id=service.id).update(trip_chaining="any")
+        self.assertEqual(get_parts(), [trip_1, trip_2])
+
+        # same calendar - merged into one trip
+        Route.objects.filter(id=route_2.id).update(line_name="1", service_code="B")
+        Trip.objects.filter(id=trip_2.id).update(calendar=weekdays)
+        self.assertEqual(command.merge_split_trips(service.id), "")
+        self.assertEqual(Trip.objects.get().stoptime_set.count(), 3)
 
     def test_get_routes(self):
         sources = DataSource.objects.bulk_create(

@@ -1570,6 +1570,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(response, "Peterborough Bus Station")
 
         trip = Trip.objects.first()
+        self.assertEqual(trip.route.service.trip_chaining, "split")
         response = self.client.get(f"/trips/{trip.id}")
         self.assertContains(response, "Kings Lynn,Bus Station")
         self.assertContains(response, "Peterborough Bus Station")

@@ -335,6 +335,7 @@ class ServiceAdmin(M2MThroughMixin, GISModelAdmin):
         "timetable_wrong",
         "public_use",
         "tracking",
+        "trip_chaining",
         "mode",
         "region",
         ("source", admin.RelatedOnlyFieldListFilter),
