@@ -139,9 +139,11 @@ class Command(BaseCommand):
         # a stop can be in multiple stop areas
         # we assume (dubiously) that it has no more than 1 active one
         for stop_area_ref in element.findall("StopAreas/StopAreaRef"):
-            if stop_area_ref.attrib.get("Modification") != "delete":
+            if (
+                stop_area_ref.attrib.get("Modification") != "delete"
+                and stop_area_ref.text not in self.inactive_stop_areas
+            ):
                 stop.stop_area_id = stop_area_ref.text or None
-                # break
 
         stop.locality_id = element.findtext("Place/NptgLocalityRef") or None
         if stop.locality_id and stop.locality_id not in self.localities:
@@ -303,6 +305,9 @@ class Command(BaseCommand):
         self.localities = {
             locality["pk"] for locality in Locality.objects.values("pk").order_by()
         }
+        self.inactive_stop_areas = set(
+            StopArea.objects.filter(active=False).values_list("pk", flat=True)
+        )
         atco_code_prefix = None
 
         self.stop_areas = {}

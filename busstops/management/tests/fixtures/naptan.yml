@@ -50,6 +50,41 @@ interactions:
         </StopValidity>
       </StopAvailability>
     </StopPoint>
+    <StopPoint Status="active">
+      <AtcoCode>2900N12666</AtcoCode>
+      <Descriptor>
+        <CommonName>Cotman Road</CommonName>
+      </Descriptor>
+      <Place>
+        <Location>
+          <GridType>UKOS</GridType>
+          <Easting>624558</Easting>
+          <Northing>308174</Northing>
+        </Location>
+      </Place>
+      <StopAreas>
+        <StopAreaRef Status="active">290G2603</StopAreaRef>
+        <StopAreaRef Status="active">290G259</StopAreaRef>
+      </StopAreas>
+      <AdministrativeAreaRef>091</AdministrativeAreaRef>
+    </StopPoint>
+    <StopPoint Status="active">
+      <AtcoCode>2900N12396</AtcoCode>
+      <Descriptor>
+        <CommonName>Northfields</CommonName>
+      </Descriptor>
+      <Place>
+        <Location>
+          <GridType>UKOS</GridType>
+          <Easting>624558</Easting>
+          <Northing>308174</Northing>
+        </Location>
+      </Place>
+      <StopAreas>
+        <StopAreaRef Status="active">290G177</StopAreaRef>
+      </StopAreas>
+      <AdministrativeAreaRef>091</AdministrativeAreaRef>
+    </StopPoint>
     <StopPoint CreationDateTime="2003-02-22T14:04:04" ModificationDateTime="2019-07-03T09:44:45" Modification="revise" RevisionNumber="4" Status="active">
       <AtcoCode>2900C1323</AtcoCode>
       <NaptanCode>NFOAJGDT</NaptanCode>
@@ -306,6 +341,39 @@ interactions:
     </StopPoint>
   </StopPoints>
   <StopAreas>
+    <StopArea Status="active">
+      <StopAreaCode>290G2603</StopAreaCode>
+      <Name>Cotman Road</Name>
+      <AdministrativeAreaRef>091</AdministrativeAreaRef>
+      <StopAreaType>GPBS</StopAreaType>
+      <Location>
+        <GridType>UKOS</GridType>
+        <Easting>624558</Easting>
+        <Northing>308174</Northing>
+      </Location>
+    </StopArea>
+    <StopArea Status="inactive">
+      <StopAreaCode>290G259</StopAreaCode>
+      <Name>Norwich- Clarence Ro</Name>
+      <AdministrativeAreaRef>091</AdministrativeAreaRef>
+      <StopAreaType>GCLS</StopAreaType>
+      <Location>
+        <GridType>UKOS</GridType>
+        <Easting>624558</Easting>
+        <Northing>308174</Northing>
+      </Location>
+    </StopArea>
+    <StopArea Status="inactive">
+      <StopAreaCode>290G177</StopAreaCode>
+      <Name>Northfields</Name>
+      <AdministrativeAreaRef>091</AdministrativeAreaRef>
+      <StopAreaType>GCLS</StopAreaType>
+      <Location>
+        <GridType>UKOS</GridType>
+        <Easting>624558</Easting>
+        <Northing>308174</Northing>
+      </Location>
+    </StopArea>
     <StopArea CreationDateTime="2014-05-30T00:00:00.000" ModificationDateTime="2021-08-24T15:04:51.000" Modification="new" RevisionNumber="145" Status="active">
       <StopAreaCode>701GA00001</StopAreaCode>
       <Name xml:lang="en">Magilligan Ferry Port</Name>

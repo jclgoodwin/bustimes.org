@@ -852,16 +852,22 @@ class StopPointDetailView(DetailView):
             .filter(service__current=True)
         )
 
-        if self.object.stop_area_id is not None:
-            nearby = nearby.filter(stop_area=self.object.stop_area_id)
-        elif self.object.locality or self.object.admin_area:
-            nearby = nearby.filter(common_name=self.object.common_name)
+        same_name = None
+        if self.object.locality or self.object.admin_area:
+            same_name = Q(common_name=self.object.common_name)
             if self.object.locality:
-                nearby = nearby.filter(locality=self.object.locality)
+                same_name &= Q(locality=self.object.locality)
             else:
-                nearby = nearby.filter(admin_area=self.object.admin_area)
+                same_name &= Q(admin_area=self.object.admin_area)
                 if self.object.town:
-                    nearby = nearby.filter(town=self.object.town)
+                    same_name &= Q(town=self.object.town)
+
+        # NaPTAN stop areas are often incomplete (e.g. a new stop opposite not added to the pair)
+        if self.object.stop_area_id is not None:
+            same_area = Q(stop_area=self.object.stop_area_id)
+            nearby = nearby.filter(same_area | same_name if same_name else same_area)
+        elif same_name:
+            nearby = nearby.filter(same_name)
         else:
             nearby = None
 
