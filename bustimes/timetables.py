@@ -19,17 +19,17 @@ from .utils import get_descriptions
 differ = Differ(charjunk=lambda _: True)
 
 
-def compare_trips(rows, trip_ids, a, b):
+def compare_trips(rows, positions, trip_indices, a, b):
     a_time = None
     b_time = None
 
-    a_top = rows.index(a.top)
-    a_bottom = rows.index(a.bottom)
-    b_top = rows.index(b.top)
-    b_bottom = rows.index(b.bottom)
+    a_top = positions[a.top]
+    a_bottom = positions[a.bottom]
+    b_top = positions[b.top]
+    b_bottom = positions[b.bottom]
 
-    a_index = trip_ids.index(id(a))
-    b_index = trip_ids.index(id(b))
+    a_index = trip_indices[id(a)]
+    b_index = trip_indices[id(b)]
 
     for row in rows[max(a_top, b_top) : min(a_bottom, b_bottom) + 1]:
         if row.times[a_index] and row.times[b_index]:
@@ -741,40 +741,73 @@ class Grouping:
 
     def sort_columns(self):
         rows = self.rows
+        trips = self.trips
+        # for each trip, a bitmask of the rows it has times in, and the times
+        masks = []
+        columns = []
+        for i in range(len(trips)):
+            mask = 0
+            times = []
+            for y, row in enumerate(rows):
+                if cell := row.times[i]:
+                    mask |= 1 << y
+                    times.append(cell.departure_or_arrival())
+                else:
+                    times.append(None)
+            masks.append(mask)
+            columns.append(times)
 
+        # topological sort - edges from each trip to the trips
+        # after it, compared at the first row they have in common.
+        # Each pair is compared from both sides, a then b and b then a, so most
+        # edges are added twice - that affects the order of unrelated trips
         sorter = graphlib.TopologicalSorter()
-        for a_index, a in enumerate(self.trips):
-            a_top = rows.index(a.top)
-            a_bottom = rows.index(a.bottom)
+        add = sorter.add
+        # edges from comparing b with a, added when we get to b
+        pending = [[] for _ in trips]
 
-            for b_index, b in enumerate(self.trips):
-                if a_index == b_index:
-                    continue
+        for a_index, a in enumerate(trips):
+            for edge in pending[a_index]:
+                add(*edge)
 
-                b_top = rows.index(b.top)
-                b_bottom = rows.index(b.bottom)
+            a_mask = masks[a_index]
+            a_times = columns[a_index]
 
-                for row in rows[max(a_top, b_top) : min(a_bottom, b_bottom) + 1]:
-                    if row.times[a_index] and row.times[b_index]:
-                        a_time = row.times[a_index].departure_or_arrival()
-                        b_time = row.times[b_index].departure_or_arrival()
-                        if a_time > b_time:  # a after b
-                            sorter.add(id(a), id(b))
-                        elif a_time < b_time or b.top is a.bottom:  # a before b
-                            sorter.add(id(b), id(a))
-                        break
+            for b_index in range(a_index + 1, len(trips)):
+                if common := a_mask & masks[b_index]:
+                    y = (common & -common).bit_length() - 1  # first common row
+                    a_time = a_times[y]
+                    b_time = columns[b_index][y]
+                    if a_time > b_time:  # a after b
+                        add(a_index, b_index)
+                        pending[b_index].append((a_index, b_index))
+                    elif a_time < b_time:  # a before b
+                        add(b_index, a_index)
+                        pending[b_index].append((b_index, a_index))
+                    else:
+                        b = trips[b_index]
+                        if b.top is a.bottom:
+                            add(b_index, a_index)
+                        if a.top is b.bottom:
+                            pending[b_index].append((a_index, b_index))
 
-        # use python id(), not trip.id: a trip in yesterday_q can also match
-        # today_q (same DB row, two instances), and trip.id collides
-        trip_ids = [id(trip) for trip in self.trips]
         try:
-            indices = [trip_ids.index(trip_id) for trip_id in sorter.static_order()]
-            assert len(trip_ids) == len(indices)
-            self.trips = [self.trips[i] for i in indices]
-        except (graphlib.CycleError, AssertionError):
-            self.trips.sort(key=cmp_to_key(partial(compare_trips, self.rows, trip_ids)))
-            new_trip_ids = [id(trip) for trip in self.trips]
-            indices = [trip_ids.index(trip_id) for trip_id in new_trip_ids]
+            indices = list(sorter.static_order())
+        except graphlib.CycleError:
+            indices = []
+
+        if len(indices) == len(trips):
+            self.trips = [trips[i] for i in indices]
+        else:
+            # cycle, or a trip with no rows in common with any other
+            positions = {row: i for i, row in enumerate(rows)}
+            # use python id(), not trip.id: a trip in yesterday_q can also match
+            # today_q (same DB row, two instances), and trip.id collides
+            trip_indices = {id(trip): i for i, trip in enumerate(trips)}
+            self.trips.sort(
+                key=cmp_to_key(partial(compare_trips, rows, positions, trip_indices))
+            )
+            indices = [trip_indices[id(trip)] for trip in self.trips]
 
         for row in rows:
             # reassemble in order
