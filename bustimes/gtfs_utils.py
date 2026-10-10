@@ -238,6 +238,19 @@ def is_straight(coords) -> bool:
     return lengths.max() > max(0.05, 0.9 * lengths.sum())
 
 
+def get_end_dist(geometry, start_dist: float, point) -> float | None:
+    end_dist = geometry.project(point)
+    if end_dist >= start_dist:
+        return end_dist
+    # nearest bit is behind - the route must use the same road more than once (loop
+    # or out-and-back), so look further along
+    ahead = so.substring(geometry, start_dist, geometry.length)
+    if type(ahead) is so.LineString:
+        end_dist = start_dist + ahead.project(point)
+        if point.distance(geometry.interpolate(end_dist)) < 0.0005:  # ~50m
+            return end_dist
+
+
 def do_route_links(
     feed: gtfs_kit.feed.Feed,
     source,
@@ -290,14 +303,14 @@ def do_route_links(
                 start_dist = trip.geometry.project(point_a)
             stop_b = stops[b.stop_id]
             point_b = so.Point(stop_b.stop_lon, stop_b.stop_lat)
-            end_dist = trip.geometry.project(point_b)
+            end_dist = get_end_dist(trip.geometry, start_dist, point_b)
 
             # skip if either stop is too far from the route geometry (~1km at UK latitudes)
             projected_a = trip.geometry.interpolate(start_dist)
-            projected_b = trip.geometry.interpolate(end_dist)
             if (
-                point_a.distance(projected_a) > 0.01
-                or point_b.distance(projected_b) > 0.01
+                end_dist is None
+                or point_a.distance(projected_a) > 0.01
+                or point_b.distance(trip.geometry.interpolate(end_dist)) > 0.01
             ):
                 start_dist = None
                 continue

@@ -4,6 +4,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import fakeredis
+import shapely
 import time_machine
 import vcr
 from django.core.management import call_command
@@ -20,7 +21,7 @@ from vehicles.management.tests.test_bod_avl import (
 from vehicles.models import Livery, VehicleJourney
 from vehicles.tasks import log_vehicle_journey
 
-from ...gtfs_utils import is_straight
+from ...gtfs_utils import get_end_dist, is_straight
 from ...models import Route, RouteLink, Trip
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
@@ -101,6 +102,15 @@ class FlixbusTest(TestCase):
                 [(1.0, 50.0), (1.2, 50.0), (1.5, 50.0), (1.5, 50.2), (1.7, 50.2)]
             )
         )
+
+    def test_get_end_dist(self):
+        # out and back along the same road
+        line = shapely.LineString([(0, 0), (0.01, 0), (0.01, 0.0002), (0, 0.0002)])
+        point = shapely.Point(0.002, 0.00005)
+        self.assertAlmostEqual(get_end_dist(line, 0, point), 0.002)
+        self.assertAlmostEqual(get_end_dist(line, 0.005, point), 0.0182)
+        # not further along
+        self.assertIsNone(get_end_dist(line, 0.005, shapely.Point(0.002, -0.001)))
 
     @time_machine.travel("2023-01-01")
     def test_import_gtfs_flixbus(self):
