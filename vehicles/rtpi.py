@@ -209,6 +209,10 @@ def get_stop_times(trip_id, date, modified_at=None):
     version = (modified_at, date)
 
     if stop_times:
+        stop_field = StopTime._meta.get_field("stop")
+        for stop_time in stop_times:
+            # save a bit of memory
+            stop_field.delete_cached_value(stop_time)
         _stop_times_cache[trip_id] = (version, trip, stop_times, pairs)
         _stop_times_cache.move_to_end(trip_id)
         if len(_stop_times_cache) > STOP_TIMES_CACHE_MAXSIZE:
