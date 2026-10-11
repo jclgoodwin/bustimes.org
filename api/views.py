@@ -324,10 +324,19 @@ class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
             )
         }
 
-        trip = Trip(start=journey.start_time)
+        # start_time can be after 24:00, relative to the previous day -
+        # make it relative to instance.date
+        start_time = journey.start_time
+        if instance.datetime:
+            start_date = timezone.localdate(instance.datetime) - timedelta(
+                days=start_time.days
+            )
+            start_time += start_date - instance.date
+
+        trip = Trip(start=start_time)
 
         trip.stops = []
-        time = journey.start_time
+        time = start_time
         previous_idx = None
         for sip in stops_in_pattern:
             if previous_idx is not None:
@@ -335,6 +344,8 @@ class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
             arrival = time
             time += wait_times.get(sip.idx, timedelta())
             tfl_stop = sip.stop
+            # not a NaPTAN stop - a stand, garage, etc
+            passenger = bool(tfl_stop and tfl_stop.naptan_code)
             stop = tfl_stop and tfl_stop.stop_point
             if not stop:
                 stop = StopPoint(
@@ -348,6 +359,8 @@ class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
                     departure=time,
                     sequence=sip.sequence_no,
                     timing_point=bool(sip.timing_point_code),
+                    pick_up=passenger,
+                    set_down=passenger,
                 )
             )
             previous_idx = sip.idx

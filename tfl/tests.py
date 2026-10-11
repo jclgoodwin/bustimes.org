@@ -91,9 +91,35 @@ class JourneyTest(TestCase):
         self.assertEqual(trip.start, timedelta(hours=17, minutes=22))
         self.assertEqual(trip.stops[0].stop.common_name, "Chingford Station")
         self.assertTrue(trip.stops[0].stop.active)  # the real StopPoint
+        self.assertTrue(trip.stops[0].pick_up)
+
+        models.Stop.objects.update(naptan_code="")
+        trip = VehicleJourneyViewSet.trip_from_tfl(journey)
+        self.assertFalse(trip.stops[0].pick_up)
+        self.assertFalse(trip.stops[0].set_down)
+        models.Stop.objects.update(naptan_code="490001063C")
 
         journey.route_name = "98"
         self.assertIsNone(VehicleJourneyViewSet.trip_from_tfl(journey))
+
+    def test_trip_from_tfl_after_midnight(self):
+        models.Journey.objects.filter(base_version__version=20260926).update(
+            start_time=timedelta(hours=26, minutes=34)
+        )
+        journey = VehicleJourney(
+            code="255600",
+            route_name="97",
+            date=date(2026, 10, 11),
+            datetime=datetime(2026, 10, 11, 1, 34, tzinfo=UTC),  # 02:34 BST
+        )
+        trip = VehicleJourneyViewSet.trip_from_tfl(journey)
+        self.assertEqual(trip.start, timedelta(hours=2, minutes=34))
+        self.assertEqual(trip.stops[0].departure, timedelta(hours=2, minutes=34))
+
+        # journey date already the previous day - leave the time alone
+        journey.date = date(2026, 10, 10)
+        trip = VehicleJourneyViewSet.trip_from_tfl(journey)
+        self.assertEqual(trip.start, timedelta(hours=26, minutes=34))
 
     def test_match_tfl_trip_blocks(self):
         Region.objects.create(id="L", name="London")

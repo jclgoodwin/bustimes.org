@@ -50,6 +50,24 @@ export type Trip = {
   notes?: Note[];
 };
 
+// distance (number of stops) between bus and this stop
+function getDiff(stop: TripTime, vehicle?: Vehicle | null) {
+  if (vehicle?.progress) {
+    if (stop.id && vehicle.progress.id) {
+      return stop.id - vehicle.progress.id;
+    }
+    if (stop.stop.atco_code) {
+      if (vehicle.progress.prev_stop === stop.stop.atco_code) {
+        return 0;
+      }
+      if (vehicle.progress.next_stop === stop.stop.atco_code) {
+        return 1;
+      }
+    }
+  }
+  return null;
+}
+
 function Row({
   stop,
   onMouseEnter,
@@ -58,6 +76,8 @@ function Row({
   expectedColumn,
   // actualColumn,
   highlightedStop,
+  diff,
+  covered,
   first = false,
   last = false,
 }: {
@@ -68,6 +88,8 @@ function Row({
   expectedColumn: boolean;
   // actualColumn: boolean;
   highlightedStop?: string;
+  diff: number | null;
+  covered: boolean; // actual column taken by the previous row's vehicle cell
   first: boolean;
   last: boolean;
 }) {
@@ -135,26 +157,12 @@ function Row({
     }
   }
 
-  // distance (number of stops) between bus and this stop
-  let diff = null;
-  if (vehicle?.progress) {
-    if (stop.id && vehicle.progress.id) {
-      diff = stop.id - vehicle.progress.id;
-    } else if (stop.stop.atco_code) {
-      if (vehicle.progress.prev_stop === stop.stop.atco_code) {
-        diff = 0;
-      } else if (vehicle.progress.next_stop === stop.stop.atco_code) {
-        diff = 1;
-      }
-    }
-  }
-
   if (vehicle?.progress && diff === 0) {
     actual = <strong>{vehicle.datetime.slice(11, 16)}</strong>;
     if (vehicle.progress.progress > 0.1) {
       actualRowSpan = (actualRowSpan || 1) + 1;
     }
-  } else if (diff !== 1) {
+  } else if (diff !== 1 && !covered) {
     // vehicle history
     if (
       rowSpan === 2 &&
@@ -276,6 +284,12 @@ const TripTimetable = React.memo(function TripTimetable({
     }
   }
   const indexOfLastRow = times.length - 1;
+  const diffs = times.map((stop) => getDiff(stop, vehicle));
+  const vehicleIndex = diffs.indexOf(0);
+  const coveredIndex =
+    vehicleIndex !== -1 && vehicle?.progress && vehicle.progress.progress > 0.1
+      ? vehicleIndex + 1
+      : -1;
 
   return (
     <React.Fragment>
@@ -308,6 +322,8 @@ const TripTimetable = React.memo(function TripTimetable({
               onMouseEnter={onMouseEnter}
               vehicle={vehicle}
               highlightedStop={highlightedStop}
+              diff={diffs[i]}
+              covered={i === coveredIndex}
               first={i === 0 && !earlierStops}
               last={i === indexOfLastRow}
             />
