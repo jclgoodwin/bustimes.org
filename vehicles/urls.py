@@ -1,6 +1,8 @@
 from django.urls import path
 from django.views.generic.base import TemplateView
 
+from busstops.utils import cdn_cache_by_country
+
 from . import views
 
 urlpatterns = [
@@ -49,7 +51,11 @@ urlpatterns = [
     path("journeys/<int:pk>", views.VehicleJourneyDetailView.as_view()),
     path("liveries.<int:version>.css", views.liveries_css),
     path("rules", TemplateView.as_view(template_name="rules.html")),
-    path("map", TemplateView.as_view(template_name="map.html"), name="map"),
+    path(
+        "map",
+        cdn_cache_by_country(TemplateView.as_view(template_name="map.html")),
+        name="map",
+    ),
     path("maps", views.get_redirect_view("map", permanent=True)),
     path("firehose", TemplateView.as_view(template_name="firehose_map.html")),
     path("siri/<uuid:uuid>", views.siri_post, name="siri_post"),

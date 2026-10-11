@@ -175,6 +175,16 @@ class ViewsTests(TestCase):
         response = self.client.get("/")
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, "Home")
+        self.assertEqual(response["Cache-Control"], "public, s-maxage=600")
+        self.assertNotIn("Cookie", response["Vary"])
+        self.assertIn("CF-IPCountry", response["Vary"])
+
+        # logged-in users get the anonymised page too
+        user = User.objects.create(username="bob")
+        self.client.force_login(user)
+        response = self.client.get("/")
+        self.assertEqual(response["Cache-Control"], "public, s-maxage=600")
+        self.assertNotContains(response, f"user {user.id}")
 
     def test_robots_txt(self):
         response = self.client.get("/robots.txt")
