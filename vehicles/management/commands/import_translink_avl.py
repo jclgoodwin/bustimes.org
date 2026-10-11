@@ -119,4 +119,6 @@ class Command(ImportLiveVehiclesCommand):
         return VehicleLocation(
             latlong=GEOSGeometry(f"POINT({item['X']} {item['Y']})"),
             delay=delay,
+            prev_stop=item.get("CurrentStop"),
+            next_stop=item.get("NextStop"),
         )

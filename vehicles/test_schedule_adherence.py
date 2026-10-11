@@ -299,6 +299,25 @@ class ScheduleAdherenceTest(TestCase):
         self.assertAlmostEqual(progress.progress, 0.5, 1)
         self.assertLess(progress.distance, 1)
 
+    def test_get_progress_stops_hint(self):
+        item = {
+            "coordinates": [-0.320573, 51.75536],
+            "trip_id": self.journey.trip_id,
+            "heading": None,
+            "datetime": "2023-08-31T09:50:07Z",
+            "date": "2023-08-31",
+        }
+        progress = rtpi.get_progress(item | {"stops": [None, "210021509600"]})
+        self.assertEqual(progress.prev_stop_time.stop_id, "210021505160")
+        progress = rtpi.get_progress(item | {"stops": ["x", "210021506765"]})
+        self.assertEqual(progress.prev_stop_time.stop_id, "210021502200")
+        progress = rtpi.get_progress(item | {"stops": ["210021502200", "y"]})
+        self.assertEqual(progress.prev_stop_time.stop_id, "210021502200")
+
+        # unknown stops - ignored
+        progress = rtpi.get_progress(item | {"stops": ["x", "y"]})
+        self.assertIsNotNone(progress)
+
     def test_get_progress_no_stop_times(self):
         self.assertIsNone(
             rtpi.get_progress(

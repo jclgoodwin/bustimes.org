@@ -13,6 +13,7 @@ from .import_gtfsr_ie import Command as GTFSRCommand
 class Command(GTFSRCommand):
     source_name = "RTCSNV"
     vehicle_code_scheme = "RTCSNV"
+    stop_id_prefix = "rtcsnv-"
 
     def do_source(self):
         self.tzinfo = ZoneInfo("America/Los_Angeles")

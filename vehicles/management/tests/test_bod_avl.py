@@ -900,6 +900,62 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             ],
         )
 
+    def test_stops(self):
+        def get_stops(**journey):
+            location = import_bod_avl.Command.create_vehicle_location(
+                {
+                    "MonitoredVehicleJourney": {
+                        "VehicleLocation": {"Longitude": "-3.88", "Latitude": "51.62"},
+                    }
+                    | journey
+                }
+            )
+            return location.prev_stop, location.next_stop
+
+        onward_calls = {"OnwardCall": [{"StopPointRef": "5810AWC50679"}]}
+        self.assertEqual(
+            get_stops(
+                MonitoredCall={"StopPointRef": "5820WDB48439", "VehicleAtStop": "true"},
+                OnwardCalls=onward_calls,
+            ),
+            ("5820WDB48439", "5810AWC50679"),
+        )
+        # between stops
+        self.assertEqual(
+            get_stops(
+                MonitoredCall={
+                    "StopPointRef": "5820WDB48439",
+                    "VehicleAtStop": "false",
+                    "ActualDepartureTime": "2026-10-10T05:28:32+01:00",
+                },
+                OnwardCalls=onward_calls,
+            ),
+            ("5820WDB48439", "5810AWC50679"),
+        )
+        # not got to the stop yet
+        self.assertEqual(
+            get_stops(
+                MonitoredCall={
+                    "StopPointRef": "5820WDB48439",
+                    "VehicleAtStop": "false",
+                },
+                OnwardCalls=onward_calls,
+            ),
+            (None, None),
+        )
+        self.assertEqual(
+            get_stops(
+                MonitoredCall={"StopPointRef": "5820WDB48439", "VehicleAtStop": "true"},
+                OnwardCalls={"OnwardCall": []},
+            ),
+            ("5820WDB48439", None),
+        )
+        self.assertEqual(
+            get_stops(MonitoredCall={"VisitNumber": "2"}),  # Scotland
+            (None, None),
+        )
+        self.assertEqual(get_stops(), (None, None))
+
     @time_machine.travel("2021-05-08T13:00+00:00")
     @patch_redis_client()
     def test_invalid_location(self):

@@ -351,10 +351,10 @@ class FlixbusTest(TestCase):
         command = import_gtfsr_ember.Command()
         command.do_source()
 
+        redis_client = fakeredis.FakeStrictRedis()
         with (
             patch(
-                "vehicles.management.import_live_vehicles.redis_client",
-                fakeredis.FakeStrictRedis(),
+                "vehicles.management.import_live_vehicles.redis_client", redis_client
             ),
             vcr.use_cassette(str(FIXTURES_DIR / "ember_gtfsr.yml")),
         ):
@@ -374,3 +374,8 @@ class FlixbusTest(TestCase):
         self.assertEqual(str(journey.datetime), "2024-01-18 15:35:00+00:00")
         self.assertEqual(str(journey.date), "2024-01-18")
         self.assertEqual(journey.code, "5WGNCip")
+
+        # stops from the trip update
+        journey = service.vehiclejourney_set.get(code="74inYiv")
+        item = json.loads(redis_client.get(f"vehicle{journey.vehicle_id}"))
+        self.assertEqual(item["stops"], ["6400L00019", "640017235"])

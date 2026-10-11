@@ -3,8 +3,9 @@ from zoneinfo import ZoneInfo
 
 from django.contrib.gis.geos import GEOSGeometry
 from django.db.models import Q
+from django.db.models.functions import Upper
 
-from busstops.models import Service
+from busstops.models import Service, StopPoint
 
 from ...models import Vehicle, VehicleJourney, VehicleLocation
 from ..import_live_vehicles import ImportLiveVehiclesCommand
@@ -47,8 +48,26 @@ class Command(ImportLiveVehiclesCommand):
             tzinfo=ZoneInfo("Europe/London")
         )
 
+    stop_codes = {}
+
     def get_items(self):
-        return super().get_items()["vehicles"]
+        items = super().get_items()["vehicles"]
+
+        # NaPTAN codes -> ATCO codes
+        if (
+            codes := {
+                item["nextStopCode"] for item in items if item.get("nextStopCode")
+            }
+            - self.stop_codes.keys()
+        ):
+            self.stop_codes |= dict.fromkeys(codes)
+            self.stop_codes |= dict(
+                StopPoint.objects.alias(code=Upper("naptan_code"))
+                .filter(code__in=codes, active=True)
+                .values_list("naptan_code", "atco_code")
+            )
+
+        return items
 
     def get_vehicle(self, item):
         vehicle_code = item["vehicleID"]
@@ -99,4 +118,5 @@ class Command(ImportLiveVehiclesCommand):
         return VehicleLocation(
             latlong=GEOSGeometry(f"POINT({coords['longitude']} {coords['latitude']})"),
             heading=item["bearing"] or None,
+            next_stop=self.stop_codes.get(item.get("nextStopCode")),
         )

@@ -56,8 +56,11 @@ class EdinburghImportTest(TestCase):
             with mock.patch(
                 "vehicles.management.import_live_vehicles.redis_client", redis_client
             ):
-                with self.assertNumQueries(183):
+                with self.assertNumQueries(184):
                     command.update()
+
+                # NaPTAN code -> ATCO code
+                self.assertEqual(command.stop_codes["36237267"], "6200204990")
 
                 # the feed has no timestamp of its own,
                 # so the newest vehicle location timestamp is used

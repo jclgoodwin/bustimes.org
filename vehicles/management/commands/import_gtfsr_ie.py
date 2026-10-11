@@ -31,6 +31,7 @@ class Command(ImportLiveVehiclesCommand):
     vehicle_code_scheme = "NTA"
     trip_id_field = "ticket_machine_code"
     trip_select_related = ("route__service",)
+    stop_id_prefix = ""  # to match how the GTFS stops were imported
 
     def do_source(self):
         self.tzinfo = ZoneInfo("Europe/Dublin")
@@ -210,7 +211,7 @@ class Command(ImportLiveVehiclesCommand):
         return journey
 
     def create_vehicle_location(self, item):
-        return VehicleLocation(
+        location = VehicleLocation(
             heading=item.vehicle.position.bearing or None,
             latlong=GEOSGeometry(
                 f"POINT({item.vehicle.position.longitude} {item.vehicle.position.latitude})"
@@ -219,3 +220,13 @@ class Command(ImportLiveVehiclesCommand):
             if item.vehicle.HasField("occupancy_status")
             else None,
         )
+        if item.vehicle.stop_id:
+            stop_id = f"{self.stop_id_prefix}{item.vehicle.stop_id}"
+            if (
+                item.vehicle.current_status
+                == gtfs_realtime_pb2.VehiclePosition.STOPPED_AT
+            ):
+                location.prev_stop = stop_id
+            else:
+                location.next_stop = stop_id
+        return location

@@ -776,7 +776,16 @@ class VehicleLocation:
     but this code is still here for historical reasons
     """
 
-    def __init__(self, latlong, heading=None, delay=None, occupancy=None, block=None):
+    def __init__(
+        self,
+        latlong,
+        heading=None,
+        delay=None,
+        occupancy=None,
+        block=None,
+        prev_stop=None,
+        next_stop=None,
+    ):
         self.latlong = latlong
         self.heading = heading
         self.delay = delay
@@ -787,6 +796,9 @@ class VehicleLocation:
         self.wheelchair_capacity = None
         self.occupancy_thresholds = None
         self.block = block
+        # the stops the data source says the vehicle is between (either can be None)
+        self.prev_stop = prev_stop
+        self.next_stop = next_stop
         self.datetime = None
 
     def __str__(self):
@@ -855,6 +867,9 @@ class VehicleLocation:
 
         if self.delay is not None:
             json["delay"] = self.delay.total_seconds()
+
+        if self.prev_stop or self.next_stop:
+            json["stops"] = [self.prev_stop, self.next_stop]
 
         if journey.trip_id:
             json["trip_id"] = journey.trip_id

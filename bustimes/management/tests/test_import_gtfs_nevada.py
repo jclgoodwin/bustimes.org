@@ -1,4 +1,5 @@
 import datetime
+import json
 from pathlib import Path
 from unittest.mock import Mock, patch
 
@@ -123,11 +124,11 @@ class NevadaTest(TestCase):
         command = import_gtfsr_nevada.Command()
         command.do_source()
 
+        redis_client = fakeredis.FakeStrictRedis()
         with (
             patch.object(command.session, "get", return_value=response),
             patch(
-                "vehicles.management.import_live_vehicles.redis_client",
-                fakeredis.FakeStrictRedis(),
+                "vehicles.management.import_live_vehicles.redis_client", redis_client
             ),
         ):
             command.update()
@@ -143,6 +144,8 @@ class NevadaTest(TestCase):
 
         vehicle = Vehicle.objects.get(code="26627")
         self.assertEqual(vehicle.fleet_code, "26627")
+        item = json.loads(redis_client.get(f"vehicle{vehicle.id}"))
+        self.assertEqual(item["stops"], ["rtcsnv-2770", None])
 
         journey = VehicleJourney.objects.get(code="358022630")
         # start_time "26:25:00" and date 2026-08-03

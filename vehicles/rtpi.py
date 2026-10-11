@@ -311,6 +311,18 @@ def get_progress(
         if not nearby_pairs:
             return
 
+        # the data source says which stops the vehicle is between -
+        # prefer pairs matching both, then the next stop, then the previous stop
+        if stops := item.get("stops"):
+            prev_stop, next_stop = stops
+
+            def score(pair):
+                a, b = pairs.pairs[pair[0]]
+                return (a.stop_id == prev_stop) + 2 * (b.stop_id == next_stop)
+
+            if best := max(map(score, nearby_pairs)):
+                nearby_pairs = [pair for pair in nearby_pairs if score(pair) == best]
+
     with sentry_sdk.start_span(name="closest pairs"):
         closest = nearby_pairs[0]
         next_closest = nearby_pairs[1] if len(nearby_pairs) > 1 else None

@@ -782,6 +782,19 @@ class Command(ImportLiveVehiclesCommand):
             occupancy=occupancies.get(monitored_vehicle_journey.get("Occupancy")),
             block=monitored_vehicle_journey.get("BlockRef"),
         )
+        # (TfW) the stop the vehicle is at or has just left, and the next stop
+        # (not if it hasn't got there yet - probably not in service)
+        call = monitored_vehicle_journey.get("MonitoredCall")
+        if call and (
+            call.get("VehicleAtStop") == "true" or "ActualDepartureTime" in call
+        ):
+            location.prev_stop = call.get("StopPointRef")
+            if onward_calls := monitored_vehicle_journey.get("OnwardCalls"):
+                onward_call = onward_calls.get("OnwardCall")
+                if type(onward_call) is list:
+                    onward_call = onward_call[0] if onward_call else None
+                if onward_call:
+                    location.next_stop = onward_call.get("StopPointRef")
         extensions = item.get("Extensions")
         if extensions:
             extensions = extensions.get("VehicleJourney") or extensions.get(
