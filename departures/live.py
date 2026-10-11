@@ -2,11 +2,11 @@
 
 import datetime
 
-from django.db.models import Prefetch, Q, prefetch_related_objects
+from django.db.models import Q
 from django.utils import timezone
 
 from busstops.models import Service, SIRISource, StopPoint
-from bustimes.models import Route, StopTime
+from bustimes.models import Route
 from bustimes.utils import get_stop_times
 from vehicles import rtpi
 from vehicles.models import VehicleJourney
@@ -124,33 +124,17 @@ def get_departures(stop, services, when) -> dict:
     if not when and live_departures is None and not gtfsr_available:
         vehicle_locations = avl.get_tracking(stop, services)
         if vehicle_locations:
-            by_trip = {
-                item["trip_id"]: item for item in vehicle_locations if "trip_id" in item
-            }
+            by_trip = rtpi.by_trip_id(vehicle_locations)
             by_block = {
-                item["block"]: item for item in vehicle_locations if item.get("block")
+                (item["date"], item.get("operator_id"), item["block"]): item
+                for item in vehicle_locations
+                if item.get("block")
             }
 
             if by_trip:
                 departures = TimetableDepartures(
                     stop, services, now, routes, by_trip
                 ).get_departures()
-
-                if by_trip:
-                    # prefetch stoptimes, for calculating delay
-                    prefetch_related_objects(
-                        [
-                            departure["stop_time"].trip
-                            for departure in departures
-                            if departure["stop_time"].trip_id in by_trip
-                        ],
-                        Prefetch(
-                            "stoptime_set",
-                            StopTime.objects.select_related("stop").only(
-                                "trip_id", "arrival", "departure", "stop__latlong"
-                            ),
-                        ),
-                    )
 
                 for departure in departures:
                     if departure["time"] - now > datetime.timedelta(hours=12):
@@ -159,28 +143,20 @@ def get_departures(stop, services, when) -> dict:
                     if departure["time"] < now:
                         departure["overdue"] = True
 
-                    trip_id = departure["stop_time"].trip_id
+                    stop_time = departure["stop_time"]
+                    date = str(departure["date"])
 
-                    if trip_id in by_trip:
-                        item = by_trip[trip_id]
-
-                        if "delay" not in item or (
-                            "progress" not in item and "overdue" in departure
-                        ):
-                            rtpi.add_progress_and_delay(
-                                item, departure["stop_time"], tzinfo=now.tzinfo
-                            )
-
+                    if (item := by_trip.get(stop_time.trip_id)) and item[
+                        "date"
+                    ] == date:
                         if "delay" not in item:
                             continue
 
                         if (
                             "overdue" not in departure
                             or "progress" in item
-                            and (
-                                item["progress"]["id"] < departure["stop_time"].id
-                                or item["progress"]["id"] == departure["stop_time"].id
-                                and item["progress"]["progress"] == 0
+                            and rtpi.is_before_stop(
+                                item, stop_time.id, stop_time.trip_id
                             )
                         ):
                             delay = item["delay"]
@@ -196,11 +172,10 @@ def get_departures(stop, services, when) -> dict:
                                 seconds=delay
                             )
 
-                    else:
-                        block = departure["stop_time"].trip.block
-                        if block in by_block:
-                            item = by_block[departure["stop_time"].trip.block]
-                            departure["journey_id"] = item["journey_id"]
+                    elif item := by_block.get(
+                        (date, stop_time.trip.operator_id, stop_time.trip.block)
+                    ):
+                        departure["journey_id"] = item["journey_id"]
 
                 if journey_ids := [
                     departure["journey_id"]

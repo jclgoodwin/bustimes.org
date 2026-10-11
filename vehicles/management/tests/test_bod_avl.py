@@ -22,7 +22,7 @@ from busstops.models import (
     Service,
     StopPoint,
 )
-from bustimes.models import Calendar, Garage, Route, StopTime, Trip
+from bustimes.models import Calendar, Garage, Route, Trip
 
 from ...models import Livery, Vehicle, VehicleJourney
 from ...utils import get_statuses
@@ -407,6 +407,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                     "id": journey.vehicle_id,
                     "journey_id": journey.id,
                     "block": "503",
+                    "operator_id": "HAMS",
                     "coordinates": [0.285348, 51.2135],
                     "vehicle": {
                         "url": "/vehicles/hams-dw18-ham",
@@ -438,35 +439,6 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 response = self.client.get("/vehicles.json")
             json = response.json()
             self.assertEqual(len(json), 3)
-
-            # trip progress
-
-            StopPoint.objects.create(
-                atco_code="a", latlong="POINT (0.14 52.17)", active=True
-            )
-            StopPoint.objects.create(
-                atco_code="b", latlong="POINT (0.15 52.20)", active=True
-            )
-
-            a = StopTime.objects.create(
-                trip=self.trip, stop_id="a", departure="25:00:00"
-            )
-            StopTime.objects.create(trip=self.trip, stop_id="b", arrival="25:01:00")
-
-            response = self.client.get(f"/vehicles.json?trip={self.trip.id}")
-            json = response.json()
-            self.assertEqual(len(json), 3)
-            self.assertEqual(
-                json[0]["progress"],
-                {
-                    "id": a.id,
-                    "sequence": 0,
-                    "prev_stop": a.stop_id,
-                    "next_stop": "b",
-                    "progress": 0.093,
-                },
-            )
-            self.assertEqual(json[0]["delay"], 30834)
 
             with self.assertNumQueries(0):
                 response = self.client.get("/vehicles.json?service=ff")

@@ -329,13 +329,13 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
     @staticmethod
     def same_as_latest(redis_json, latest):
-        # ignoring the progress and delay that save() might have added
-        if "delay" not in redis_json:
-            latest = {
-                key: value
-                for key, value in latest.items()
-                if key not in ("progress", "delay")
-            }
+        # ignoring the things that save() might have added
+        latest = {
+            key: value
+            for key, value in latest.items()
+            if key not in ("progress", "trip_ids", "operator_id")
+            and (key != "delay" or "delay" in redis_json)
+        }
         return redis_json == latest
 
     def save(self):
@@ -411,14 +411,17 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 location.journey.trip = None
 
             redis_json = location.get_redis_json(tz=self.tzinfo)
-            if (
-                self.eager_progress
-                and "trip_id" in redis_json
-                and "delay" not in redis_json
+            if "block" in redis_json and (
+                operator_id := (
+                    location.journey.trip and location.journey.trip.operator_id
+                )
+                or vehicle.operator_id
             ):
-                # a source that doesn't already tell us the delay itself -
-                # work it out from the trip's stop times, so pages that want
-                # it don't have to do this on every request
+                # for matching other trips in the block (see departures.live)
+                redis_json["operator_id"] = operator_id
+            if self.eager_progress and "trip_id" in redis_json:
+                # work out progress (and delay, if the source doesn't tell us)
+                # from the trip's stop times, so pages don't have to on every request
                 if (
                     VehicleJourney.service.is_cached(location.journey)
                     and location.journey.service

@@ -40,14 +40,14 @@ from busstops.models import (
     StopPoint,
 )
 from departures import avl, gtfsr, live
+from vehicles import rtpi
 from vehicles.forms import DateForm, TripUpdatesFeedForm
 from vehicles.models import Vehicle, VehicleJourney
-from vehicles.rtpi import add_progress_and_delay
 
 from .formatting import format_timedelta
 from .forms import UploadGTFSForm
 from .gtfs_utils import handle_gtfs_upload
-from .models import BankHolidayDate, Route, RouteLink, StopTime, Trip
+from .models import BankHolidayDate, Route, RouteLink, Trip
 
 
 class ServiceDebugView(DetailView):
@@ -234,7 +234,6 @@ def stop_time_json(stop_time, date) -> dict:
         )
 
     return {
-        "stop_time": stop_time,
         "id": stop_time.id,
         "trip_id": stop_time.trip_id,
         "service": {
@@ -256,6 +255,7 @@ def stop_time_json(stop_time, date) -> dict:
 def stop_times_json(request, atco_code):
     stop = get_object_or_404(StopPoint, atco_code__iexact=atco_code)
     times = []
+    dates = []
 
     if "when" in request.GET:
         try:
@@ -278,9 +278,7 @@ def stop_times_json(request, atco_code):
     if now:
         vehicle_locations = avl.get_tracking(stop, services)
         if vehicle_locations:
-            by_trip = {
-                item["trip_id"]: item for item in vehicle_locations if "trip_id" in item
-            }
+            by_trip = rtpi.by_trip_id(vehicle_locations)
 
     try:
         limit = int(request.GET["limit"])
@@ -309,6 +307,7 @@ def stop_times_json(request, atco_code):
         "trip__destination__locality", "trip__route__service", "trip__operator"
     )[:limit]:
         times.append(stop_time_json(stop_time, yesterday_date))
+        dates.append(yesterday_date)
 
     today = when.date()
 
@@ -319,40 +318,23 @@ def stop_times_json(request, atco_code):
         for stop_time in stop_times.select_related(
             "trip__destination__locality", "trip__route__service", "trip__operator"
         )[:limit]:
-            times.append(stop_time_json(stop_time, today))
+            # (might have started yesterday)
+            times.append(stop_time_json(stop_time, stop_time.date))
+            dates.append(stop_time.date)
 
     stop_times = departures.get_times(today, time_since_midnight)
     for stop_time in stop_times.select_related(
         "trip__destination__locality", "trip__route__service", "trip__operator"
     )[:limit]:
         times.append(stop_time_json(stop_time, today))
+        dates.append(today)
 
     if by_trip:
-        prefetch_related_objects(
-            [time["stop_time"].trip for time in times if time["trip_id"] in by_trip],
-            Prefetch(
-                "stoptime_set",
-                StopTime.objects.select_related("stop").filter(
-                    stop__latlong__isnull=False
-                ),
-            ),
-        )
-
-        for time in times:
-            if time["trip_id"] in by_trip:
-                item = by_trip[time["trip_id"]]
-
+        for time, date in zip(times, dates):
+            item = by_trip.get(time["trip_id"])
+            if item and item["date"] == str(date):
                 if (time["aimed_arrival_time"] or time["aimed_departure_time"]) < when:
                     time["overdue"] = True
-
-                if "delay" not in item or (
-                    "overdue" in time and "progress" not in item
-                ):
-                    add_progress_and_delay(
-                        item,
-                        time["stop_time"],
-                        tzinfo=time["stop_time"].trip.route.timezone,
-                    )
 
                 if "delay" not in item:
                     continue
@@ -362,11 +344,7 @@ def stop_times_json(request, atco_code):
                 if (
                     "overdue" not in time
                     or progress
-                    and (
-                        progress["id"] < time["id"]
-                        or progress["id"] == time["id"]
-                        and progress["progress"] == 0
-                    )
+                    and rtpi.is_before_stop(item, time["id"], time["trip_id"])
                 ):
                     delay = timedelta(seconds=item["delay"])
                     time["delay"] = delay
@@ -384,8 +362,6 @@ def stop_times_json(request, atco_code):
                         time["expected_arrival_time"] = time["expected_departure_time"]
 
     times = [time for time in times if "delay" in time or ("overdue" not in time)]
-    for time in times:
-        del time["stop_time"]
 
     return JsonResponse({"times": times})
 

@@ -381,7 +381,6 @@ def get_vehicle_locations(
     vehicle_ids=None,
     service_ids=None,
     operator_ids=None,
-    trip_id=None,
     journey_id=None,
     stop_times=None,
     tzinfo=None,
@@ -390,8 +389,8 @@ def get_vehicle_locations(
 
     Provide exactly one of vehicle_ids, service_ids, or operator_ids.
 
-    `stop_times` (optional) is a pre-fetched list of StopTime objects for `trip_id`,
-    reused when computing progress/delay for the matching live vehicle.
+    `stop_times` (optional) is a pre-fetched list of StopTime objects for the
+    `journey_id` journey, for computing progress/delay if it wasn't done in advance.
     """
     set_names = None
     if service_ids:
@@ -489,18 +488,13 @@ def get_vehicle_locations(
                         )
                     item.update(journey)
 
-            matching_trip = (
-                trip_id is not None
-                and item.get("trip_id") == trip_id
-                or journey_id is not None
-                and item.get("journey_id") == journey_id
-            )
-            if "progress" not in item and (len(vehicle_ids) == 1 or matching_trip):
-                add_progress_and_delay(
-                    item,
-                    stop_times=stop_times if matching_trip else None,
-                    tzinfo=tzinfo if matching_trip else None,
-                )
+            if (
+                stop_times
+                and "progress" not in item
+                and item["journey_id"] == journey_id
+            ):
+                # (trip only found at request time, e.g. TfL)
+                add_progress_and_delay(item, stop_times=stop_times, tzinfo=tzinfo)
 
         if (
             service_ids
@@ -574,18 +568,11 @@ def vehicles_json(request) -> JsonResponse:
         # ids of all vehicles
         vehicle_ids = redis_client.zrange("vehicle_location_locations", 0, -1)
 
-    if trip_id := request.GET.get("trip"):
-        try:
-            trip_id = int(trip_id)
-        except ValueError:
-            return cachable_400()
-
     try:
         locations = get_vehicle_locations(
             vehicle_ids=vehicle_ids,
             service_ids=service_ids,
             operator_ids=operator_ids,
-            trip_id=trip_id,
         )
     except BadRequest:
         return cachable_400()

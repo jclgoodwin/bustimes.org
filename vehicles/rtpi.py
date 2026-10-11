@@ -169,7 +169,7 @@ def _fetch_stop_times(trip_id, date, modified_at=None):
         StopTime.objects.filter(trip__in=trips)
         .filter(stop__latlong__isnull=False)
         .select_related("stop")
-        .only("arrival", "departure", "stop__latlong")
+        .only("trip_id", "arrival", "departure", "pick_up", "stop__latlong")
         .order_by("trip__start", "id")
     )
 
@@ -339,9 +339,10 @@ def get_progress(
         progress.delay = get_delay(progress, date, when, tzinfo)
 
         # if closest and next_closest involve the same stop
-        # (e.g. it's a circular route),
+        # and are about as close as each other
+        # (e.g. it's a circular route, or out and back along the same road),
         # choose the one with the smaller delay
-        if next_closest:
+        if next_closest and next_closest[3] - closest[3] < 50:
             alt_prev, alt_next = pairs.pairs[next_closest[0]]
             if (
                 prev_stop_time.stop_id == alt_next.stop_id
@@ -376,5 +377,44 @@ def add_progress_and_delay(
         return
 
     item["progress"] = progress.to_json()
-    if progress.delay is not None:
+    # (keep any delay the source itself told us)
+    if progress.delay is not None and "delay" not in item:
         item["delay"] = progress.delay
+
+    # a journey split into parts (see Trip.get_parts)
+    trip_ids = list(dict.fromkeys(st.trip_id for st in progress.stop_times))
+    if len(trip_ids) > 1:
+        item["trip_ids"] = trip_ids
+        item["progress"]["trip_id"] = progress.prev_stop_time.trip_id
+
+
+def by_trip_id(items) -> dict:
+    """{trip_id: item} - including the other parts of split trips,
+    but preferring a vehicle that's actually on the trip"""
+    by_trip = {}
+    for item in items:
+        for trip_id in item.get("trip_ids", ()):
+            by_trip.setdefault(trip_id, item)
+    for item in items:
+        if "trip_id" in item:
+            by_trip[item["trip_id"]] = item
+    return by_trip
+
+
+def is_before_stop(item, stop_time_id, trip_id) -> bool:
+    """is the vehicle yet to leave this stop?"""
+    progress = item["progress"]
+    trip_ids = item.get("trip_ids")
+    if (
+        trip_ids
+        and trip_id != progress.get("trip_id")
+        and trip_id in trip_ids
+        and progress.get("trip_id") in trip_ids
+    ):
+        # different parts of a split trip - stop time ids aren't comparable
+        return trip_ids.index(progress["trip_id"]) < trip_ids.index(trip_id)
+    return (
+        progress["id"] < stop_time_id
+        or progress["id"] == stop_time_id
+        and progress["progress"] == 0
+    )

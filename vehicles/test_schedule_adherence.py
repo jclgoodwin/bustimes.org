@@ -317,21 +317,23 @@ class ScheduleAdherenceTest(TestCase):
     def test_stop_times(self):
         redis_client = fakeredis.FakeStrictRedis()
 
+        def set_vehicle(item):
+            # as import_live_vehicles would
+            rtpi.add_progress_and_delay(item)
+            redis_client.set("vehicle1", json.dumps(item))
+
         with patch("departures.avl.redis_client", redis_client):
             redis_client.sadd(f"service{self.service.id}vehicles", 1)
-            redis_client.set(
-                "vehicle1",
-                json.dumps(
-                    {
-                        "id": 1,
-                        "journey_id": 1,
-                        "coordinates": [-0.332185, 51.750952],
-                        "heading": 0,
-                        "trip_id": self.journey.trip_id,
-                        "datetime": "2023-08-31T09:50:07Z",
-                        "date": "2023-08-31",
-                    }
-                ),
+            set_vehicle(
+                {
+                    "id": 1,
+                    "journey_id": 1,
+                    "coordinates": [-0.332185, 51.750952],
+                    "heading": 0,
+                    "trip_id": self.journey.trip_id,
+                    "datetime": "2024-02-16T10:50:07Z",
+                    "date": "2024-02-16",
+                }
             )
             response_json = self.client.get("/stops/210021509680/times.json").json()
             self.assertEqual(response_json["times"][0]["delay"], "P0DT00H16M07S")
@@ -340,31 +342,28 @@ class ScheduleAdherenceTest(TestCase):
                 "2024-02-16T10:59:07+00:00",
             )
 
-            with self.assertNumQueries(14):
+            with self.assertNumQueries(13):
                 response = self.client.get("/stops/210021509680/departures")
                 self.assertContains(response, "10:43")  # scheduled time
                 self.assertContains(response, "10:59")  # expected time
 
             # past the scheduled time - should still show late departure
-            with time_machine.travel("2024-02-16T10:50:00Z"), self.assertNumQueries(11):
+            with time_machine.travel("2024-02-16T10:50:00Z"), self.assertNumQueries(10):
                 response = self.client.get("/stops/210021509680/departures")
                 self.assertContains(response, "10:43")  # scheduled time
                 self.assertContains(response, "10:59")  # expected time
 
             # on route, before scheduled start
-            redis_client.set(
-                "vehicle1",
-                json.dumps(
-                    {
-                        "id": 1,
-                        "journey_id": 1,
-                        "coordinates": [-0.332185, 51.750952],
-                        "heading": 0,
-                        "trip_id": self.journey.trip_id,
-                        "datetime": "2023-08-31T09:00:07Z",
-                        "date": "2023-08-31",
-                    }
-                ),
+            set_vehicle(
+                {
+                    "id": 1,
+                    "journey_id": 1,
+                    "coordinates": [-0.332185, 51.750952],
+                    "heading": 0,
+                    "trip_id": self.journey.trip_id,
+                    "datetime": "2024-02-16T10:00:07Z",
+                    "date": "2024-02-16",
+                }
             )
             response_json = self.client.get("/stops/210021509680/times.json").json()
             self.assertEqual(response_json["times"][0]["delay"], "-P0DT00H33M53S")
@@ -374,20 +373,17 @@ class ScheduleAdherenceTest(TestCase):
             )
 
             # delay already calculated (eg TfW)
-            redis_client.set(
-                "vehicle1",
-                json.dumps(
-                    {
-                        "id": 1,
-                        "journey_id": 1,
-                        "coordinates": [1, 50],
-                        "heading": 0,
-                        "trip_id": self.journey.trip_id,
-                        "datetime": "2023-08-31T09:50:07Z",
-                        "date": "2023-08-31",
-                        "delay": 60,
-                    }
-                ),
+            set_vehicle(
+                {
+                    "id": 1,
+                    "journey_id": 1,
+                    "coordinates": [1, 50],
+                    "heading": 0,
+                    "trip_id": self.journey.trip_id,
+                    "datetime": "2024-02-16T10:50:07Z",
+                    "date": "2024-02-16",
+                    "delay": 60,
+                }
             )
             response_json = self.client.get("/stops/210021509680/times.json").json()
             self.assertEqual(response_json["times"][0]["delay"], "P0DT00H01M00S")
@@ -397,19 +393,16 @@ class ScheduleAdherenceTest(TestCase):
             )
 
             # a long way off-route - no prediction
-            redis_client.set(
-                "vehicle1",
-                json.dumps(
-                    {
-                        "id": 1,
-                        "journey_id": 1,
-                        "coordinates": [1, 50],
-                        "heading": 0,
-                        "trip_id": self.journey.trip_id,
-                        "datetime": "2023-08-31T09:50:07Z",
-                        "date": "2023-08-31",
-                    }
-                ),
+            set_vehicle(
+                {
+                    "id": 1,
+                    "journey_id": 1,
+                    "coordinates": [1, 50],
+                    "heading": 0,
+                    "trip_id": self.journey.trip_id,
+                    "datetime": "2024-02-16T10:50:07Z",
+                    "date": "2024-02-16",
+                }
             )
             response_json = self.client.get("/stops/210021509680/times.json").json()
             self.assertNotIn("delay", response_json["times"][0])
@@ -500,3 +493,148 @@ class ScheduleAdherenceTest(TestCase):
         self.assertTrue(command.same_as_latest(fresh, redis_json))
         fresh["heading"] = 90
         self.assertFalse(command.same_as_latest(fresh, redis_json))
+
+
+class SplitTripDeparturesTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        source = DataSource.objects.create(name="Stagecoach Cumbria")
+        for atco_code, latitude in (
+            ("a", 51.0),
+            ("b", 51.02),
+            ("c", 51.04),
+            ("d", 51.06),
+        ):
+            StopPoint.objects.create(
+                atco_code=atco_code, latlong=f"POINT(0 {latitude})", active=True
+            )
+
+        # same days, different date ranges (separately registered parts)
+        calendar_1 = Calendar.objects.create(start_date="2026-09-01", mon=True)
+        calendar_2 = Calendar.objects.create(start_date="2026-09-07", mon=True)
+
+        service = Service.objects.create(
+            line_name="555", trip_chaining="split", tracking=True
+        )
+        StopUsage.objects.create(service=service, stop_id="c", order=0)
+        route_1 = Route.objects.create(
+            line_name="555",
+            code="555a",
+            service_code="PB:555",
+            service=service,
+            source=source,
+        )
+        route_2 = Route.objects.create(
+            line_name="555",
+            code="555b",
+            service_code="PB:556",
+            service=service,
+            source=source,
+        )
+        cls.trip_1 = Trip.objects.create(
+            route=route_1, start="09:00:00", end="09:10:00", calendar=calendar_1
+        )
+        cls.trip_2 = Trip.objects.create(
+            route=route_2, start="09:10:00", end="09:30:00", calendar=calendar_2
+        )
+        cls.trip_3 = Trip.objects.create(
+            route=route_2,
+            start="09:40:00",
+            end="09:50:00",
+            calendar=calendar_2,
+            block="7",
+        )
+        StopTime.objects.bulk_create(
+            [
+                StopTime(trip=cls.trip_1, stop_id="a", departure="09:00:00"),
+                StopTime(trip=cls.trip_1, stop_id="b", arrival="09:10:00"),
+                StopTime(trip=cls.trip_2, stop_id="b", departure="09:10:00"),
+                StopTime(trip=cls.trip_2, stop_id="c", departure="09:20:00"),
+                StopTime(trip=cls.trip_2, stop_id="d", arrival="09:30:00"),
+                StopTime(trip=cls.trip_3, stop_id="c", departure="09:40:00"),
+                StopTime(trip=cls.trip_3, stop_id="d", arrival="09:50:00"),
+            ]
+        )
+        vehicle = Vehicle.objects.create(code="1")
+        cls.journey = VehicleJourney.objects.create(
+            vehicle=vehicle,
+            trip=cls.trip_1,
+            datetime="2026-09-07T08:00:00Z",
+            date="2026-09-07",
+            source=source,
+        )
+
+    def get_item(self, **kwargs):
+        item = {
+            "id": 1,
+            "journey_id": self.journey.id,
+            "coordinates": [0, 51.01],  # halfway between a and b
+            "heading": 0,
+            "trip_id": self.trip_1.id,
+            "datetime": "2026-09-07T08:10:00Z",  # 09:10, scheduled 09:05
+            "date": "2026-09-07",
+        } | kwargs
+        rtpi.add_progress_and_delay(item)
+        return item
+
+    def test_split_trip(self):
+        item = self.get_item()
+        self.assertEqual(item["delay"], 300)
+        self.assertEqual(item["trip_ids"], [self.trip_1.id, self.trip_2.id])
+        self.assertEqual(item["progress"]["trip_id"], self.trip_1.id)
+
+        redis_client = fakeredis.FakeStrictRedis()
+        redis_client.sadd(f"service{self.trip_1.route.service_id}vehicles", 1)
+        redis_client.set("vehicle1", json.dumps(item))
+
+        with patch("departures.avl.redis_client", redis_client):
+            with time_machine.travel("2026-09-07T08:06:00Z"):
+                times = self.client.get("/stops/c/times.json").json()["times"]
+                self.assertEqual(times[0]["trip_id"], self.trip_2.id)
+                self.assertEqual(times[0]["delay"], "P0DT00H05M00S")
+
+            # overdue, but the vehicle is still on the first part
+            with time_machine.travel("2026-09-07T08:22:00Z"):
+                times = self.client.get("/stops/c/times.json").json()["times"]
+                self.assertEqual(times[0]["trip_id"], self.trip_2.id)
+                self.assertEqual(
+                    times[0]["expected_departure_time"], "2026-09-07T09:25:00+01:00"
+                )
+
+                response = self.client.get("/stops/c/departures")
+                self.assertEqual(response.context["departures"][0]["live"].minute, 25)
+
+            # wrong date
+            redis_client.set("vehicle1", json.dumps(item | {"date": "2026-08-31"}))
+            with time_machine.travel("2026-09-07T08:06:00Z"):
+                times = self.client.get("/stops/c/times.json").json()["times"]
+                self.assertNotIn("delay", times[0])
+
+    def test_adjacent_pair(self):
+        # 3/4 of the way from a to b, but also near enough to b-c
+        item = self.get_item(coordinates=[0, 51.015], datetime="2026-09-07T08:10:00Z")
+        self.assertEqual(item["progress"]["prev_stop"], "a")
+        self.assertEqual(item["delay"], 150)
+
+    def test_block(self):
+        redis_client = fakeredis.FakeStrictRedis()
+        redis_client.sadd(f"service{self.trip_1.route.service_id}vehicles", 1)
+
+        def get_vehicle(**kwargs):
+            item = self.get_item(block="7") | kwargs
+            redis_client.set("vehicle1", json.dumps(item))
+            response = self.client.get("/stops/c/departures")
+            departure = next(
+                departure
+                for departure in response.context["departures"]
+                if departure["stop_time"].trip_id == self.trip_3.id
+            )
+            return departure.get("vehicle")
+
+        with (
+            patch("departures.avl.redis_client", redis_client),
+            time_machine.travel("2026-09-07T08:06:00Z"),
+        ):
+            self.assertEqual(get_vehicle(), self.journey.vehicle)
+            self.assertIsNone(get_vehicle(date="2026-08-31"))
+            self.assertIsNone(get_vehicle(operator_id="OTHR"))

@@ -15,6 +15,7 @@ from google.protobuf import json_format
 from busstops.models import DataSource
 from bustimes.models import Trip
 
+from ... import rtpi
 from ...models import Livery, VehicleJourney
 from ...utils import VEHICLE_POSITIONS_CHANNEL, calculate_bearing
 from .. import import_live_vehicles
@@ -269,6 +270,13 @@ class Command(GTFSRCommand):
             }
         if journey.service_id and "service" in redis_json:
             redis_json["service"]["url"] = journey.service.get_absolute_url()
+        if "trip_id" in redis_json:
+            try:
+                rtpi.add_progress_and_delay(
+                    redis_json, tzinfo=self.tzinfo, modified_at=rtpi.UNKNOWN
+                )
+            except Exception:
+                logger.exception("error calculating progress and delay")
 
         pipeline = redis_client.pipeline(transaction=False)
         pipeline.geoadd(

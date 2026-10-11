@@ -261,7 +261,7 @@ class FlixbusTest(TestCase):
             ),
             vcr.use_cassette(str(FIXTURES_DIR / "flixbus_gtfsr.yml")),
         ):
-            with self.assertNumQueries(17):
+            with self.assertNumQueries(27):
                 command.update()
             with self.assertNumQueries(1):
                 command.update()
