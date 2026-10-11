@@ -44,6 +44,7 @@ from redis.exceptions import ConnectionError
 from sql_util.utils import Exists, SubqueryMax, SubqueryMin
 from ukpostcodeutils import validation
 
+from buses.context_processors import ad
 from bustimes.models import StopTime, Trip
 from departures import live
 from disruptions.models import Consequence, Situation
@@ -1466,7 +1467,7 @@ class ServiceDetailView(DetailView):
         if not (settings.TEST or "debug_toolbar" in self.request.GET):
             template = get_template("busstops/service_detail.html")
             generator = template.template.generate(
-                **context, ad=True, request=self.request
+                **context, **ad(self.request), request=self.request
             )
             return StreamingHttpResponse(
                 generator,
