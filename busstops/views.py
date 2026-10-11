@@ -68,7 +68,7 @@ from .models import (
     StopArea,
     StopPoint,
 )
-from .utils import cdn_cache_by_country, get_bounding_box
+from .utils import get_bounding_box
 
 logger = logging.getLogger(__name__)
 
@@ -150,7 +150,6 @@ def flibco_affiliate_link(
     return flixbus_affiliate_link(awinmid=53945, ued=ued, **kwargs)
 
 
-@cdn_cache_by_country
 def index(request):
     def stats():
         return {

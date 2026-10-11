@@ -1,26 +1,9 @@
 from datetime import datetime
-from functools import cache, wraps
+from functools import cache
 
-from django.contrib.auth.models import AnonymousUser
 from django.contrib.gis.gdal import CoordTransform, SpatialReference
 from django.contrib.gis.geos import Polygon
-from django.utils.cache import patch_cache_control, patch_vary_headers
 from django.utils.timezone import make_aware
-
-
-def cdn_cache_by_country(view):
-    """let Cloudflare cache an anonymised version of a page, per country"""
-
-    @wraps(view)
-    def wrapper(request, *args, **kwargs):
-        # don't touch the session, so SessionMiddleware won't add "Vary: Cookie"
-        request.user = AnonymousUser()
-        response = view(request, *args, **kwargs)
-        patch_cache_control(response, public=True, s_maxage=600)
-        patch_vary_headers(response, ("CF-IPCountry",))
-        return response
-
-    return wrapper
 
 
 def get_bounding_box(request):

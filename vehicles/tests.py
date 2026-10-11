@@ -1015,8 +1015,6 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         # 🇮🇪
         response = self.client.get("/map", headers={"CF-IPCountry": "IE"})
         self.assertContains(response, "latitude: 53.45,")
-        self.assertEqual(response["Cache-Control"], "public, s-maxage=600")
-        self.assertNotIn("Cookie", response["Vary"])
 
     def test_vehicles(self):
         with self.assertNumQueries(3):
