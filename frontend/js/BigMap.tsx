@@ -601,7 +601,6 @@ export default function BigMap(
     noc?: string;
     trip?: Trip;
     tripId?: string;
-    vehicleId?: number;
     journeyId?: string;
   } & (
     | {
@@ -745,16 +744,14 @@ export default function BigMap(
           url = `?operator=${props.noc}`;
           break;
         case MapMode.Trip:
-          if (props.vehicleId) {
-            url = `?id=${props.vehicleId}`;
-          } else if (trip?.service?.id) {
-            url = `?service=${trip.service.id}&trip=${trip.id}`;
+          if (trip?.service?.id) {
+            url = `?service=${trip.service.id}`;
           }
           break;
         case MapMode.Journey:
           if (journey?.live) {
-            if (journey.service?.id && journey.trip_id) {
-              url = `?service=${journey.service.id}&trip=${journey.trip_id}`;
+            if (journey.service?.id) {
+              url = `?service=${journey.service.id}`;
             } else if (journey.vehicle?.id) {
               url = `?id=${journey.vehicle.id}`;
             } else {
@@ -837,7 +834,7 @@ export default function BigMap(
           // setLoadingBuses(false);
         });
     },
-    [props.mode, props.noc, trip, journey, props.vehicleId],
+    [props.mode, props.noc, trip, journey],
   );
 
   React.useEffect(() => {
@@ -890,24 +887,14 @@ export default function BigMap(
           },
         );
       }
-    } else if (!props.vehicleId) {
+    } else {
       setJourney(undefined);
       setTrip(undefined);
       // slippy mode
       document.title = "Map \u2013 bustimes.org";
       loadVehicles();
-    } else {
-      loadVehicles();
     }
-  }, [
-    props.tripId,
-    trip,
-    props.noc,
-    props.vehicleId,
-    props.journeyId,
-    journey,
-    loadVehicles,
-  ]);
+  }, [props.tripId, trip, props.noc, props.journeyId, journey, loadVehicles]);
 
   const handleMoveEnd = React.useCallback(
     (evt: ViewStateChangeEvent) => {
@@ -957,9 +944,8 @@ export default function BigMap(
     };
   }, [loadVehicles]);
 
-  const [clickedVehicleMarkerId, setClickedVehicleMarker] = React.useState<
-    number | undefined
-  >(props.vehicleId);
+  const [clickedVehicleMarkerId, setClickedVehicleMarker] =
+    React.useState<number>();
 
   const handleMapClick = React.useCallback(
     (e: MapLayerMouseEvent) => {

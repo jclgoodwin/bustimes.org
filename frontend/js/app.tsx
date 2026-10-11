@@ -7,7 +7,6 @@ declare global {
   interface Window {
     SERVICE_ID?: number;
     OPERATOR_ID?: string;
-    VEHICLE_ID: number;
     globalThis: Window;
   }
 }
