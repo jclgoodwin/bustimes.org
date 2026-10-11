@@ -6,6 +6,7 @@ from itertools import pairwise
 import gtfs_kit
 import numpy as np
 import pandas as pd
+import shapely
 import shapely.ops as so
 from django.contrib.gis.geos import GEOSGeometry
 from django.db import connection, transaction
@@ -251,6 +252,36 @@ def get_end_dist(geometry, start_dist: float, point) -> float | None:
             return end_dist
 
 
+def get_passes(geometry, point, after: float) -> list[float]:
+    """distances along geometry (after `after`) of each time it passes near point"""
+    coords = shapely.get_coordinates(geometry)
+    lengths = np.concatenate(([0], np.cumsum(np.hypot(*np.diff(coords, axis=0).T))))
+    i0 = max(np.searchsorted(lengths, after, side="right") - 1, 0)
+    segments = shapely.linestrings(np.stack((coords[i0:-1], coords[i0 + 1 :]), axis=1))
+    distances = shapely.distance(segments, point)
+    if not len(distances):
+        return []
+    near = distances <= distances.min() + 0.0005  # ~50m
+    # a run of nearby segments is one pass
+    starts = np.flatnonzero(near & ~np.concatenate(([False], near[:-1])))
+    ends = np.flatnonzero(near & ~np.concatenate((near[1:], [False])))
+    passes = []
+    for start, end in zip(starts, ends):
+        i = start + distances[start : end + 1].argmin()
+        distance = lengths[i0 + i] + segments[i].project(point)
+        if distance >= after:
+            passes.append(distance)
+    return passes
+
+
+def is_implausible(point_a, point_b, distance: float, seconds: int | None) -> bool:
+    """much further than the crow flies, and too fast for the timetable"""
+    if seconds is None or distance < 3 * max(point_a.distance(point_b), 0.001):
+        return False
+    km_per_degree = 111.2 * np.cos(np.radians(point_a.y))
+    return seconds <= 0 or distance * km_per_degree / seconds * 3600 > 60  # km/h
+
+
 def do_route_links(
     feed: gtfs_kit.feed.Feed,
     source,
@@ -283,6 +314,7 @@ def do_route_links(
             continue
 
         start_dist = None
+        prev_dist = 0
 
         for a, b in pairwise(trip_stop_times.itertuples()):
             from_stop_id = (
@@ -299,11 +331,43 @@ def do_route_links(
 
             stop_a = stops[a.stop_id]
             point_a = so.Point(stop_a.stop_lon, stop_a.stop_lat)
-            if start_dist is None:
+            fresh = start_dist is None
+            if fresh:
                 start_dist = trip.geometry.project(point_a)
             stop_b = stops[b.stop_id]
             point_b = so.Point(stop_b.stop_lon, stop_b.stop_lat)
             end_dist = get_end_dist(trip.geometry, start_dist, point_b)
+
+            seconds = None
+            if type(a.departure_time) is str and type(b.arrival_time) is str:
+                departure = parse_duration(a.departure_time.strip())
+                arrival = parse_duration(b.arrival_time.strip())
+                if departure is not None and arrival is not None:
+                    seconds = (arrival - departure).total_seconds()
+            if end_dist is not None and is_implausible(
+                point_a, point_b, end_dist - start_dist, seconds
+            ):
+                # the route passes a stop more than once, and we've picked the wrong time
+                starts = (
+                    get_passes(trip.geometry, point_a, prev_dist)
+                    if fresh
+                    else [start_dist]
+                )
+                end_dist = None
+                for start in starts:
+                    end_dist = next(
+                        (
+                            end
+                            for end in get_passes(trip.geometry, point_b, start)
+                            if not is_implausible(
+                                point_a, point_b, end - start, seconds
+                            )
+                        ),
+                        None,
+                    )
+                    if end_dist is not None:
+                        start_dist = start
+                        break
 
             # skip if either stop is too far from the route geometry (~1km at UK latitudes)
             projected_a = trip.geometry.interpolate(start_dist)
@@ -328,7 +392,7 @@ def do_route_links(
                 rl.geometry = geom.wkt
                 route_links[key] = rl
 
-            start_dist = end_dist
+            start_dist = prev_dist = end_dist
 
     RouteLink.objects.filter(
         id__in=[

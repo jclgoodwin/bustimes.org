@@ -21,7 +21,7 @@ from vehicles.management.tests.test_bod_avl import (
 from vehicles.models import Livery, VehicleJourney
 from vehicles.tasks import log_vehicle_journey
 
-from ...gtfs_utils import get_end_dist, is_straight
+from ...gtfs_utils import get_end_dist, get_passes, is_implausible, is_straight
 from ...models import Route, RouteLink, Trip
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
@@ -111,6 +111,20 @@ class FlixbusTest(TestCase):
         self.assertAlmostEqual(get_end_dist(line, 0.005, point), 0.0182)
         # not further along
         self.assertIsNone(get_end_dist(line, 0.005, shapely.Point(0.002, -0.001)))
+
+        # passes the point on the way out and on the way back
+        passes = get_passes(line, point, 0)
+        self.assertEqual(len(passes), 2)
+        self.assertAlmostEqual(passes[0], 0.002)
+        self.assertAlmostEqual(passes[1], 0.0182)
+        self.assertEqual(len(get_passes(line, point, 0.005)), 1)
+
+        # 0.0182 degrees (~1.2km here) in 30 seconds
+        point_b = shapely.Point(0.003, 0)
+        self.assertTrue(is_implausible(point, point_b, 0.0182, 30))
+        self.assertFalse(is_implausible(point, point_b, 0.0182, 300))
+        self.assertFalse(is_implausible(point, point_b, 0.001, 30))
+        self.assertFalse(is_implausible(point, point_b, 0.0182, None))
 
     @time_machine.travel("2023-01-01")
     def test_import_gtfs_flixbus(self):
