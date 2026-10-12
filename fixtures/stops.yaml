@@ -157,3 +157,7 @@
     latlong: POINT (-1.3100450 51.0624164)
 1900HA110059: # Stand G
     latlong: POINT (-1.3100057 51.0624974)
+
+# Sprowston
+2900S32517:
+    common_name: "Park & Ride"  # for consistency with 2900S32518
