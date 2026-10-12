@@ -785,6 +785,7 @@ class VehicleLocation:
         block=None,
         prev_stop=None,
         next_stop=None,
+        in_service=True,
     ):
         self.latlong = latlong
         self.heading = heading
@@ -799,6 +800,9 @@ class VehicleLocation:
         # the stops the data source says the vehicle is between (either can be None)
         self.prev_stop = prev_stop
         self.next_stop = next_stop
+        # False if the vehicle has finished its journey (eg heading back to the depot)
+        # - so don't work out its progress or delay
+        self.in_service = in_service
         self.datetime = None
 
     def __str__(self):
@@ -871,7 +875,7 @@ class VehicleLocation:
         if self.prev_stop or self.next_stop:
             json["stops"] = [self.prev_stop, self.next_stop]
 
-        if journey.trip_id:
+        if journey.trip_id and self.in_service:
             json["trip_id"] = journey.trip_id
         if journey.service_id:
             json["service_id"] = journey.service_id

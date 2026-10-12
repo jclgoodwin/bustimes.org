@@ -46,7 +46,11 @@ logger = logging.getLogger(__name__)
 # "pr" "previousStopOnRoute": "1100DEC10843",
 # "cs" "currentStopOnRoute": "",
 # "ns" "nextStopOnRoute": "",
-# "jc" "isJourneyCompletedHeuristic": "False",
+# "os" outOfService": "False",
+# "do" metresFromRoute": "0",
+# "sg" snapLongitude": "-2.454792",
+# "sa" snapLatitude": "57.584357",
+# "to" secondsOffRoute": "",
 # "rg" "rag": "A"
 
 
@@ -189,4 +193,9 @@ class Command(ImportLiveVehiclesCommand):
             heading=item.get("hg"),
             # occupancy=occupancies.get(item.get("rg")),
         )
+        if item.get("os") == "True":
+            location.in_service = False
+        else:
+            location.prev_stop = item.get("cs") or item.get("pr") or None
+            location.next_stop = item.get("ns") or None
         return location

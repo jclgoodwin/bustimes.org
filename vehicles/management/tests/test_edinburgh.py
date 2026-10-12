@@ -2,6 +2,7 @@ from pathlib import Path
 from unittest import mock
 
 import fakeredis
+import time_machine
 import vcr
 from django.core.management import call_command
 from django.test import TestCase
@@ -40,6 +41,7 @@ class EdinburghImportTest(TestCase):
         cls.trip = Trip.objects.create(route=route, start="26:45:00", end="27:00:00")
         StopTime.objects.create(trip=cls.trip, stop=stop, departure="26:50:00")
 
+    @time_machine.travel("2025-12-18T02:48:00Z")
     def test_lothian_avl(self):
         redis_client = fakeredis.FakeStrictRedis(version=7)
 
@@ -56,7 +58,7 @@ class EdinburghImportTest(TestCase):
             with mock.patch(
                 "vehicles.management.import_live_vehicles.redis_client", redis_client
             ):
-                with self.assertNumQueries(184):
+                with self.assertNumQueries(186):
                     command.update()
 
                 # NaPTAN code -> ATCO code
