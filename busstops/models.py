@@ -448,7 +448,7 @@ class StopPoint(models.Model):
 
     def get_heading(self):
         """Return the stop's bearing converted to degrees, for use with Google Street View."""
-        if self.heading:
+        if self.heading is not None:
             return self.heading
         headings = {
             "N": 0,

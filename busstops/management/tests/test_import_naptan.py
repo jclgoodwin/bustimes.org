@@ -139,6 +139,9 @@ class NaptanTest(TestCase):
         self.assertAlmostEqual(stop.latlong.y, 54.48934185786758)
         self.assertEqual(str(stop), "Great Ayton Rail Station (entrance)")
 
+        stop = StopPoint.objects.get(atco_code="07605394")
+        self.assertEqual(stop.heading, 270)
+
         # overriden stop
         stop = StopPoint.objects.get(atco_code="2900B482")
         self.assertEqual(str(stop), "green (adj) \u2199")

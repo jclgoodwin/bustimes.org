@@ -77,26 +77,32 @@ nothings = {
 }
 
 
-def get_stop(element, atco_code):
+def get_stop(element: ET.Element, atco_code: str):
     point = get_point(element.find("Place/Location")) or get_point(
         element.find("Location")
     )
 
-    bearing = element.findtext(
-        "StopClassification/OnStreet/Bus/MarkedPoint/Bearing/CompassPoint"
-    )
+    bearing = element.find("StopClassification/OnStreet/Bus/MarkedPoint/Bearing")
     if bearing is None:
-        bearing = element.findtext(
-            "StopClassification/OnStreet/Bus/UnmarkedPoint/Bearing/CompassPoint"
+        bearing = element.find("StopClassification/OnStreet/Bus/UnmarkedPoint/Bearing")
+    if bearing is None:
+        bearing = element.find(
+            "StopClassification/OnStreet/Bus/HailAndRideSection/Bearing"
         )
-    if bearing is None:
+    if bearing is not None:
+        if degrees := bearing.findtext("Degrees") or None:
+            degrees = int(degrees)
+        bearing = bearing.findtext("CompassPoint") or ""
+    else:
         bearing = ""
+        degrees = None
 
     stop = StopPoint(
         atco_code=atco_code,
         naptan_code=element.findtext("NaptanCode") or element.findtext("PlateCode"),
         latlong=point,
         bearing=bearing,
+        heading=degrees,
         active=element.attrib.get("Status", "active") == "active",
     )
 
@@ -112,7 +118,7 @@ def get_stop(element, atco_code):
     return stop
 
 
-def get_stop_area(element):
+def get_stop_area(element: ET.Element):
     stop_area_code = element.findtext("StopAreaCode")
 
     point = get_point(element.find("Location"))
@@ -128,8 +134,8 @@ def get_stop_area(element):
 
 
 class Command(BaseCommand):
-    def handle_stop(self, element):
-        atco_code = element.findtext("AtcoCode")
+    def handle_stop(self, element: ET.Element):
+        atco_code: str = element.findtext("AtcoCode")
 
         stop = get_stop(element, atco_code)
 
@@ -194,6 +200,7 @@ class Command(BaseCommand):
         "naptan_code",
         "latlong",
         "bearing",
+        "heading",
         "common_name",
         "landmark",
         "street",
@@ -262,7 +269,7 @@ class Command(BaseCommand):
     def add_arguments(parser):
         parser.add_argument("source_name", nargs="?", default="NaPTAN")
 
-    def handle(self, *args, source_name, **options):
+    def handle(self, *args, source_name: str, **options):
         source = DataSource.objects.get(name=source_name)
         self.source = source
 
@@ -287,7 +294,7 @@ class Command(BaseCommand):
         # set up overrides/corrections
         overrides_path = settings.BASE_DIR / "fixtures" / "stops.yaml"
         with overrides_path.open() as open_file:
-            self.overrides = yaml.load(open_file, yaml.BaseLoader)
+            self.overrides: dict = yaml.load(open_file, yaml.BaseLoader)
 
         # do this now to detect invalid WKTs (stray commas etc)
         for atco_code in self.overrides:
@@ -320,7 +327,7 @@ class Command(BaseCommand):
                 element.text = element.text.strip()
 
             if element.tag == "StopPoint":
-                atco_code = element.findtext("AtcoCode")
+                atco_code: str = element.findtext("AtcoCode")
                 if atco_code[:3] != atco_code_prefix:
                     # logger.info(f"{atco_code_prefix=}")
 
