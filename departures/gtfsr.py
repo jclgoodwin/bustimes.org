@@ -35,7 +35,7 @@ def _get_feed():
         return feed
 
 
-def get_trip_updates(feed_name) -> dict:
+def get_trip_updates(feed_name) -> dict | None:
     if feed_name == "ntaie" and (feed := _get_feed()):
         feed = json_format.MessageToDict(feed)
         if "entity" in feed:

@@ -55,7 +55,8 @@ from busstops.models import (
     Service,
 )
 from busstops.utils import get_bounding_box
-from bustimes.models import Garage, Route
+from bustimes.models import Garage, Route, Trip
+from departures.gtfsr import get_trip_updates
 from photos.forms import PhotoForm
 from photos.utils import WrongLicense, add_flickr_photo, add_uploaded_photo
 
@@ -704,6 +705,9 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
         if redis_client and redis_client.get(f"vehicle{vehicle.id}"):
             context["tracking"] = f"/journeys/{vehicle.latest_journey_id}"
 
+        predictions = None
+        last_trip = None
+
         # predict next workings
         if vehicle.latest_journey_id == journeys[-1].pk:
             trips = [journey.trip for journey in journeys if journey.trip]
@@ -712,24 +716,42 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
                 if last_trip.block and all(
                     trip.block == last_trip.block for trip in trips[-3:-1]
                 ):
-                    context["predictions"] = (
-                        last_trip.get_trips_in_block(date)
-                        .filter(
-                            start__gte=last_trip.end,
-                        )
-                        .annotate(
-                            destination_name=Coalesce(
-                                "headsign",
-                                "destination__locality__name",
-                                "destination__common_name",
-                            ),
-                            line_name=F("route__line_name"),
-                        )
+                    predictions = last_trip.get_trips_in_block(date).filter(
+                        start__gte=last_trip.end
                     )
-                    for a, b in pairwise(context["predictions"]):
-                        if a.end > b.start:
-                            del context["predictions"]
-                            break
+
+        if (
+            not predictions
+            and vehicle.operator_id == "EMBR"
+            and (trip_updates := get_trip_updates("ember"))
+        ):
+            trip_ids = [
+                trip_id
+                for trip_id, trip_update in trip_updates.items()
+                if trip_update["vehicle"]["id"] == vehicle.code
+                and (last_trip is None or last_trip.vehicle_journey_code != trip_id)
+            ]
+            if trip_ids:
+                trips = Trip.objects.filter(
+                    operator=vehicle.operator_id,
+                    vehicle_journey_code__in=trip_ids,
+                    route__service__current=True,
+                ).order_by("start")
+                predictions = trips
+
+        if predictions is not None:
+            context["predictions"] = predictions.annotate(
+                destination_name=Coalesce(
+                    "headsign",
+                    "destination__locality__name",
+                    "destination__common_name",
+                ),
+                line_name=F("route__line_name"),
+            )
+            for a, b in pairwise(context["predictions"]):
+                if a.end > b.start:
+                    del context["predictions"]
+                    break
 
     return context
 

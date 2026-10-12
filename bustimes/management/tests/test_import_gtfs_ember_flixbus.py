@@ -356,24 +356,34 @@ class FlixbusTest(TestCase):
             patch(
                 "vehicles.management.import_live_vehicles.redis_client", redis_client
             ),
+            override_settings(
+                CACHES={
+                    "default": {
+                        "BACKEND": "django.core.cache.backends.locmem.LocMemCache"
+                    }
+                }
+            ),
             vcr.use_cassette(str(FIXTURES_DIR / "ember_gtfsr.yml")),
         ):
             with self.assertNumQueries(81):
                 command.update()
-            with self.assertNumQueries(29):
+            with self.assertNumQueries(31):
                 command.update()
+
+            journey = service.vehiclejourney_set.first()
+            self.assertEqual(str(journey.trip), "15:35")
+            self.assertEqual(str(journey.datetime), "2024-01-18 15:35:00+00:00")
+            self.assertEqual(str(journey.date), "2024-01-18")
+            self.assertEqual(journey.code, "5WGNCip")
+
+            response = self.client.get(f"/vehicles/{journey.vehicle.slug}")
+            self.assertContains(response, '<tr class="prediction">', count=1)
 
         response = self.client.get(service.get_absolute_url())
         self.assertContains(
             response,
             "Pre-book journey at least 10 minutes before the scheduled departure time",
         )
-
-        journey = service.vehiclejourney_set.first()
-        self.assertEqual(str(journey.trip), "15:35")
-        self.assertEqual(str(journey.datetime), "2024-01-18 15:35:00+00:00")
-        self.assertEqual(str(journey.date), "2024-01-18")
-        self.assertEqual(journey.code, "5WGNCip")
 
         # stops from the trip update
         journey = service.vehiclejourney_set.get(code="74inYiv")
