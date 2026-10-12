@@ -98,7 +98,7 @@ def handle_siri_post(uuid, data: dict):
             now - timestamp,
             total_items,
             len(changed_items) + len(changed_journey_items),
-            timezone.now() - now,
+            (timezone.now() - now).total_seconds(),
         )
     )
     stats = stats[-50:]

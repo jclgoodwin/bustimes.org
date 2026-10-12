@@ -146,8 +146,11 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 logger.warning(
                     "%s: %s: %s is %s from now", timezone.now(), vehicle, dt, dt - now
                 )
-            elif not self.max_datetime or dt > self.max_datetime:
-                self.max_datetime = dt
+            else:
+                if not self.max_datetime or dt > self.max_datetime:
+                    self.max_datetime = dt
+                if now and now - dt > timedelta(minutes=15):
+                    return  # older than 15 minutes
 
         location = None
         if vehicle is None:
@@ -393,6 +396,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
             geoadd += [location.latlong.x, location.latlong.y, vehicle.id]
 
+            # yes it seems wasteful doing this repeatedly
+            # (rather than just for new journeys),
+            # but it's cheap, and we can't be sure the last time wasn't more than 15 minutes ago
             if location.journey.service_id:
                 key = f"service{location.journey.service_id}vehicles"
                 sadd[key].append(vehicle.id)
