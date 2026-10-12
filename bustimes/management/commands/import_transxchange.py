@@ -1755,7 +1755,9 @@ class Command(BaseCommand):
             # with a name like "TfGM TXC 260225 OpenData" that changes every release
             # even if the file didn't change
 
-            if file_hash:
+            # if trips were merged with another route's (see merge_trips),
+            # the database no longer matches the file
+            if file_hash and not service.trip_chaining:
                 existing_route = self.source.route_set.filter(
                     code=route_code, file_hash=file_hash
                 ).first()

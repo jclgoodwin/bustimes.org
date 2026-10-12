@@ -619,13 +619,17 @@ def get_end_stops(trip):
 
 def get_trip_chaining(trips) -> str:
     """returns "split" if some trips (from TripQuerySet.for_chaining) are parts of
-    the same journey but have different calendars, so can't be merged on import
+    the same journey but have different calendars, so can't be merged on import,
+    or "merge" if they all have the same calendars, so will be merged
     """
-    if len({trip.route_id for trip in trips}) > 1 and any(
-        len({trip.calendar_id for trip in chain}) > 1
-        for chain in chain_split_trips(trips, get_end_stops)
-    ):
-        return "split"
+    if len({trip.route_id for trip in trips}) > 1:
+        chains = [
+            chain for chain in chain_split_trips(trips, get_end_stops) if len(chain) > 1
+        ]
+        if any(len({trip.calendar_id for trip in chain}) > 1 for chain in chains):
+            return "split"
+        if chains:
+            return "merge"
     return ""
 
 
@@ -759,7 +763,7 @@ class Trip(models.Model):
         if not (
             self.route
             and self.route.service_id
-            and (trip_chaining := self.route.service.trip_chaining)
+            and (trip_chaining := self.route.service.trip_chaining) in ("split", "any")
         ):
             return [self]
         loose = trip_chaining == "any"

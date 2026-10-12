@@ -269,7 +269,7 @@ class BusTimesTest(TestCase):
         # same calendar - merged into one trip
         Route.objects.filter(id=route_2.id).update(line_name="1", service_code="B")
         Trip.objects.filter(id=trip_2.id).update(calendar=weekdays)
-        self.assertEqual(command.merge_split_trips(service.id), "")
+        self.assertEqual(command.merge_split_trips(service.id), "merge")
         self.assertEqual(Trip.objects.get().stoptime_set.count(), 3)
 
     def test_get_routes(self):

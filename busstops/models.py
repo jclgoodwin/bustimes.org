@@ -844,6 +844,7 @@ class Service(models.Model):
         choices=(
             ("", "No"),
             ("split", "Split registrations"),
+            ("merge", "Split registrations, merged on import"),
             ("any", "Any trips that join up"),
         ),
     )
