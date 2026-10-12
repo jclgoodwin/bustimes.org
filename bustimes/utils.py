@@ -275,6 +275,8 @@ def get_trip(
         hours = int(journey_code[:-2])
         minutes = int(journey_code[-2:])
         start = Q(start=timedelta(hours=hours, minutes=minutes))
+        if hours < 6:
+            start |= Q(start=timedelta(days=1, hours=hours, minutes=minutes))
     else:
         start = Q()
 

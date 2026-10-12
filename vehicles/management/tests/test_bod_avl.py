@@ -791,7 +791,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 "PublishedLineName": "U",
                 "FramedVehicleJourneyRef": {
                     "DataFrameRef": "2020-10-17",
-                    "DatedVehicleJourneyRef": "0310",
+                    "DatedVehicleJourneyRef": "31",
                 },
             }
             if origin_aimed_departure_time:
@@ -822,6 +822,77 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         journey = VehicleJourney.objects.get()
         self.assertEqual(journey.trip_id, trip.id)
         self.assertEqual(str(journey.date), "2020-10-16")
+
+    @time_machine.travel("2026-10-11T23:08:00+00:00")
+    def test_journey_code_after_midnight(self):
+        """given two trips with the same DatedVehicleJourneyRef,
+        journey with TicketMachine JourneyCode 0005 should use the 24:05 one"""
+        service = Service.objects.create(line_name="14")
+        service.operator.add("FECS")
+        route = Route.objects.create(service=service, source=self.source, code="14")
+        sunday = Calendar.objects.create(sun=True, start_date="2026-01-01")
+        monday = Calendar.objects.create(mon=True, start_date="2026-01-01")
+        Trip.objects.create(
+            route=route,
+            start="13:40:00",
+            end="14:40:00",
+            ticket_machine_code="63",
+            calendar=monday,
+        )
+        trip = Trip.objects.create(
+            route=route,
+            start="24:05:00",
+            end="25:05:00",
+            ticket_machine_code="63",
+            calendar=sunday,
+        )
+
+        command = import_bod_avl.Command()
+        command.source = self.source
+        item = {
+            "Extensions": {
+                "VehicleJourney": {
+                    "Operational": {
+                        "TicketMachine": {
+                            "JourneyCode": "0005",
+                            "TicketMachineServiceCode": "14",
+                        }
+                    },
+                    "VehicleUniqueId": "63645",
+                }
+            },
+            "RecordedAtTime": "2026-10-11T23:08:00+00:00",
+            "MonitoredVehicleJourney": {
+                "LineRef": "14",
+                "BlockRef": "1504",
+                "OriginRef": "2900T1316",
+                "VehicleRef": "FECS-63645",
+                "OperatorRef": "FECS",
+                "DirectionRef": "outbound",
+                "DestinationRef": "2900A181",
+                "DestinationName": "Attleborough_Queens_Square",
+                "VehicleLocation": {"Latitude": "52.513313", "Longitude": "1.012213"},
+                "PublishedLineName": "14",
+                "FramedVehicleJourneyRef": {
+                    "DataFrameRef": "2026-10-11",
+                    "DatedVehicleJourneyRef": "63",
+                },
+            },
+        }
+
+        with (
+            patch_redis_client(),
+            mock.patch(
+                "vehicles.management.import_live_vehicles.get_channel_layer",
+                return_value=None,
+            ),
+        ):
+            command.handle_item(item)
+            command.save()
+
+        journey = VehicleJourney.objects.get()
+        self.assertEqual(journey.trip_id, trip.id)
+        self.assertEqual(str(journey.date), "2026-10-11")
 
     @time_machine.travel("2021-03-05T14:20:40+00:00")
     def test_handle_extensions(self):
