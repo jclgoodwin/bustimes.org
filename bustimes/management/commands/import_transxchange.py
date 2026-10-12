@@ -6,6 +6,7 @@ Usage:
 
 import contextlib
 import datetime
+import gc
 import hashlib
 import logging
 import os
@@ -467,6 +468,8 @@ class Command(BaseCommand):
         return overrides
 
     def handle(self, *args, **options):
+        gc.set_threshold(50_000, 20, 100)
+
         self.set_up()
         self.show_progress = options["progress"]
 
