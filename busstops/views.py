@@ -335,6 +335,29 @@ def contact(request):
     return render(request, "contact.html", {"form": form, "submitted": submitted})
 
 
+def data_sources(request):
+    sources = DataSource.objects.filter(
+        name__in=[
+            "National Operator Codes",
+            "NPTG",
+            "NaPTAN",
+            "Irish NaPTAN",
+            "TfGM",
+            "L",
+            "ULB",
+            "MET",
+        ]
+    )
+
+    context = {"sources": {source.name.replace(" ", "_"): source for source in sources}}
+
+    return render(
+        request,
+        "data.html",
+        context,
+    )
+
+
 def status(request):
     context = {
         "sources": DataSource.objects.filter(
