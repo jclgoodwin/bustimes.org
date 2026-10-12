@@ -184,8 +184,9 @@ class Command(ImportLiveVehiclesCommand):
         return journey
 
     def create_vehicle_location(self, item):
-        return VehicleLocation(
-            latlong=GEOSGeometry(f"POINT({item['lo'] or 0} {item['la'] or 0})"),
+        location = VehicleLocation(
+            latlong=GEOSGeometry(f"POINT({item.get('lo') or 0} {item.get('la') or 0})"),
             heading=item.get("hg"),
             # occupancy=occupancies.get(item.get("rg")),
         )
+        return location

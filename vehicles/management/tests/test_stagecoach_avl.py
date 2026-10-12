@@ -89,6 +89,17 @@ class StagecoachTest(TestCase):
             location, vehicle = command.handle_item(item)
             self.assertIsNone(location.latlong)
 
+            # "la" and "lo" missing altogether
+            location, _ = command.handle_item(
+                {
+                    key: value
+                    for key, value in item.items()
+                    if key not in ("la", "lo", "hg")
+                }
+                | {"fn": "50277"}
+            )
+            self.assertIsNone(location.latlong)
+
             # a vehicle with GPS, for comparison
             command.handle_item(
                 item | {"fn": "50276", "la": "51.4928233539", "lo": "-0.1475818977"}
