@@ -249,6 +249,7 @@ class Command(BaseCommand):
                     "start",
                     "end",
                     "destination",
+                    "ticket_machine_code",
                     "vehicle_journey_code",
                     "headsign",
                 ],
