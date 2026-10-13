@@ -583,7 +583,9 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 response = self.client.get(journey.get_absolute_url())
             self.assertContains(response, "146")
             self.assertContains(response, ">Southwold<")
-            self.assertContains(response, f'<a href="/journeys/{journey.id}">Map</a>')
+            self.assertContains(
+                response, f'<a href="/journeys/{journey.id}#context=vehicle">Map</a>'
+            )
 
             with (
                 mock.patch("vehicles.views.redis_client.geosearch", return_value=[]),
