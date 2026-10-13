@@ -31,6 +31,7 @@ from ...models import (
     BankHolidayDate,
     Calendar,
     CalendarDate,
+    DataQualityObservation,
     Garage,
     Note,
     Route,
@@ -503,6 +504,25 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(feet[4].span, 10)
 
         self.assertEqual(131, service.stopusage_set.count())
+
+    @time_machine.travel("2017-12-10")
+    def test_invalid_timing_status(self):
+        xml = (FIXTURES_DIR / "em_11-1-J-y08-1.xml").read_text()
+        for status in ("OTH", "PPT", "PTP", "TIP"):
+            xml = xml.replace(f">{status}<", f">{status.lower()}<")
+        with TemporaryDirectory() as directory:
+            (Path(directory) / "em_11-1-J-y08-1.xml").write_text(xml)
+            with patch(f"{__name__}.FIXTURES_DIR", Path(directory)):
+                self.handle_files("EA.zip", ["em_11-1-J-y08-1.xml"])
+
+        observation = DataQualityObservation.objects.get()
+        self.assertEqual(observation.file_name, "em_11-1-J-y08-1.xml")
+        self.assertEqual(observation.category, "invalid TimingStatus")
+        self.assertEqual(observation.comment, "'oth', 'ppt', 'ptp', 'tip'")
+
+        service = Service.objects.get()
+        self.assertTrue(service.stopusage_set.exists())
+        self.assertFalse(service.stopusage_set.filter(timing_point=False).exists())
 
     @time_machine.travel("2017-12-10")
     def test_timetable_derby_alvaston_circular(self):

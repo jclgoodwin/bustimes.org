@@ -1088,7 +1088,7 @@ class Service(models.Model):
                 st["trip__inbound"],
                 st["sequence"] or 0,
                 st["stop_id"],
-                st["timing_point"],
+                st["timing_point"] is not False,
             )
             for st in stop_times
         ]

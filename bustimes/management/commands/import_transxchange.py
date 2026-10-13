@@ -50,6 +50,7 @@ from ...models import (
     Calendar,
     CalendarBankHoliday,
     CalendarDate,
+    DataQualityObservation,
     DodgyRouteLink,
     Garage,
     ImportTask,
@@ -338,7 +339,7 @@ def do_route_links(journeys, transxchange, stops, service, task):
         StopPoint.objects.bulk_update(stops_to_update, ["latlong"])
 
 
-def get_stop_time(trip, cell, stops: dict):
+def get_stop_time(trip, cell, stops: dict, invalid_timing_statuses: set):
     stop_time = StopTime(
         trip=trip,
         sequence=cell.stopusage.sequencenumber,
@@ -348,8 +349,10 @@ def get_stop_time(trip, cell, stops: dict):
             stop_time.timing_point = False
         case "timeInfoPoint" | "PTP" | "principleTimingPoint" | "principalTimingPoint":
             stop_time.timing_point = True
+        case None:
+            pass
         case _:
-            logger.warning("timing status %s", cell.stopusage.timingstatus)
+            invalid_timing_statuses.add(cell.stopusage.timingstatus)
 
     if (
         stop_time.sequence is not None and stop_time.sequence > 32767
@@ -1134,7 +1137,9 @@ class Command(BaseCommand):
             blank = False
             previous_stop_time = None
             for sequence, cell in enumerate(journey.get_times()):
-                stop_time = get_stop_time(trip, cell, stops)
+                stop_time = get_stop_time(
+                    trip, cell, stops, self.invalid_timing_statuses
+                )
 
                 if (
                     previous_stop_time is not None
@@ -1221,7 +1226,9 @@ class Command(BaseCommand):
                         journey.departure_time = trip.start
                         previous_stop_time = None
                         for cell in journey.get_times():
-                            stop_time = get_stop_time(trip, cell, stops)
+                            stop_time = get_stop_time(
+                                trip, cell, stops, self.invalid_timing_statuses
+                            )
                             if (
                                 previous_stop_time is not None
                                 and previous_stop_time.stop_id == stop_time.stop_id
@@ -1899,6 +1906,7 @@ class Command(BaseCommand):
             return
 
         self.vehicle_types = {}
+        self.invalid_timing_statuses = set()
 
         stops = self.do_stops(transxchange.stops)
 
@@ -1906,3 +1914,13 @@ class Command(BaseCommand):
 
         for txc_service in transxchange.services.values():
             self.handle_service(filename, transxchange, txc_service, stops, file_hash)
+
+        if self.invalid_timing_statuses:
+            comment = ", ".join(sorted(map(repr, self.invalid_timing_statuses)))
+            logger.warning(f"{filename} invalid TimingStatus {comment}")
+            DataQualityObservation.objects.create(
+                task=self.task,
+                file_name=filename,
+                category="invalid TimingStatus",
+                comment=comment,
+            )
