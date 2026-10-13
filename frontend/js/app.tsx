@@ -1,3 +1,4 @@
+import "./polyfills";
 import "./maps.css";
 import "maplibre-gl/dist/maplibre-gl.css";
 
