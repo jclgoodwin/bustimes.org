@@ -64,8 +64,9 @@
   z-index: 1;
 }
 
-.maplibregl-popup.location-popup {
+.location-popup .maplibregl-popup-content {
   pointer-events: none;
+  padding: 4px 6px;
 }
 
 body .maplibregl-popup-content {
@@ -91,6 +92,20 @@ a.link-with-smalls:hover .description {
 .link-with-smalls .smalls {
   color: var(--text-color);
   font-size: 0.85em;
+}
+
+.stop-popup-times {
+  margin-top: 3px;
+}
+
+.stop-popup-times th {
+  padding: 0;
+  padding-right: 6px;
+}
+
+.stop-popup-times td {
+  border: 0;
+  padding: 0;
 }
 
 /* !!!!!!!  */

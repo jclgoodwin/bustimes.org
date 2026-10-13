@@ -1397,11 +1397,6 @@ input:not(:checked) + label {
     font-variant-numeric: tabular-nums;
 }
 
-.stop-popup-times td {
-    border: 0;
-    padding: 0;
-}
-
 .message {
     border: 1px solid var(--border-color);
     padding: 1em;

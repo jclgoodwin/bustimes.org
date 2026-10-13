@@ -5,7 +5,11 @@ export function getClickedVehicleMarkerId(
   e: MapLayerMouseEvent,
 ): number | undefined {
   // handle click on VehicleMarker element
-  const target = e.originalEvent.target;
+  // react-map-gl also fires mouseenter on mouseout from the canvas, where the marker is the relatedTarget
+  const target =
+    e.originalEvent.type === "mouseout"
+      ? e.originalEvent.relatedTarget
+      : e.originalEvent.target;
   if (target instanceof HTMLElement || target instanceof SVGElement) {
     let vehicleId = target.dataset.vehicleId;
     if (!vehicleId && target.parentElement) {
