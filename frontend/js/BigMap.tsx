@@ -708,11 +708,16 @@ export default function BigMap(
     return { padding: 50 };
   }, [props.mode]);
 
+  const fittedBoundsFor = useRef<string>(undefined);
+
   useEffect(() => {
     if (bounds && mapRef.current) {
+      const key = trip ? `trip-${trip.id}` : `journey-${journey?.id}`;
+      if (fittedBoundsFor.current === key) return;
+      fittedBoundsFor.current = key;
       mapRef.current.fitBounds(bounds, { padding: 50 });
     }
-  }, [bounds]);
+  }, [bounds, trip, journey?.id]);
 
   // slippy map stuff
   const boundsRef = React.useRef<LngLatBounds | null>(null);
@@ -720,6 +725,7 @@ export default function BigMap(
   const vehiclesTimeout = React.useRef<number | null>(null);
   const vehiclesAbortController = React.useRef<AbortController | null>(null);
   const vehiclesLength = React.useRef<number>(0);
+  const vehiclesLoadedAt = React.useRef<number>(0);
 
   const [loadingBuses, setLoadingBuses] = React.useState(true);
 
@@ -821,6 +827,7 @@ export default function BigMap(
           (response) => {
             recordSkew(response);
             if (response.ok || response.status === 404) {
+              vehiclesLoadedAt.current = Date.now();
               response.json().then(handleItems);
 
               setLoadingBuses(false);
@@ -842,6 +849,27 @@ export default function BigMap(
     },
     [props.mode, props.noc, trip, journey],
   );
+
+  const loadJourney = React.useCallback(() => {
+    fetchJson(
+      `api/vehiclejourneys/${props.journeyId}/details.json${journeyContext ? `?context=${journeyContext}` : ""}`,
+    ).then((journey: VehicleJourney) => {
+      vehiclesLoadedAt.current = Date.now();
+      setJourney(journey);
+      const item = journey.vehicle?.id
+        ? (journey.live?.find((v) => v.id === journey.vehicle?.id) ?? null)
+        : // journey-based tracking with no vehicle (e.g. FlixBus)
+          (journey.live?.find((v) => v.journey_id === journey.id) ?? null);
+      // sort of duplicating `handleItems`
+      vehiclesHighWaterMark.current = null;
+      setVehicles(journey.live);
+      vehiclesLength.current = journey.live?.length || 0;
+      if (item) {
+        setClickedVehicleMarker(item?.id);
+      }
+      setTripVehicle(item);
+    });
+  }, [props.journeyId, journeyContext]);
 
   React.useEffect(() => {
     if (vehiclesTimeout.current) {
@@ -873,23 +901,7 @@ export default function BigMap(
         }
       } else {
         setTrip(undefined);
-        fetchJson(
-          `api/vehiclejourneys/${props.journeyId}/details.json${journeyContext ? `?context=${journeyContext}` : ""}`,
-        ).then((journey: VehicleJourney) => {
-          setJourney(journey);
-          const item = journey.vehicle?.id
-            ? (journey.live?.find((v) => v.id === journey.vehicle?.id) ?? null)
-            : // journey-based tracking with no vehicle (e.g. FlixBus)
-              (journey.live?.find((v) => v.journey_id === journey.id) ?? null);
-          // sort of duplicating `handleItems`
-          vehiclesHighWaterMark.current = null;
-          setVehicles(journey.live);
-          vehiclesLength.current = journey.live?.length || 0;
-          if (item) {
-            setClickedVehicleMarker(item?.id);
-          }
-          setTripVehicle(item);
-        });
+        loadJourney();
       }
     } else {
       setJourney(undefined);
@@ -903,9 +915,9 @@ export default function BigMap(
     trip,
     props.noc,
     props.journeyId,
-    journeyContext,
     journey,
     loadVehicles,
+    loadJourney,
   ]);
 
   const handleMoveEnd = React.useCallback(
@@ -944,7 +956,18 @@ export default function BigMap(
   // (re)load vehicles on tab visibility change
   React.useEffect(() => {
     const handleVisibilityChange = () => {
-      if (!document.hidden) {
+      if (document.hidden) {
+        return;
+      }
+      if (
+        props.mode === MapMode.Journey &&
+        journey?.live &&
+        journey.time_aware_polyline &&
+        Date.now() - vehiclesLoadedAt.current > 60000
+      ) {
+        // the trail would have a gap in it, so get a fresh polyline
+        loadJourney();
+      } else {
         loadVehicles();
       }
     };
@@ -954,7 +977,7 @@ export default function BigMap(
     return () => {
       window.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [loadVehicles]);
+  }, [loadVehicles, loadJourney, props.mode, journey]);
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
     React.useState<number>();
