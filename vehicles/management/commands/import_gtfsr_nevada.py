@@ -31,9 +31,7 @@ class Command(GTFSRCommand):
 
     def get_journey(self, item, vehicle):
         now = self.get_datetime(item).astimezone(self.tzinfo)
-        journey = VehicleJourney(
-            code=item.vehicle.trip.trip_id, datetime=now, date=now.date()
-        )
+        journey = VehicleJourney(code=item.vehicle.trip.trip_id, date=now.date())
 
         start_date = None
         if item.vehicle.trip.start_date:

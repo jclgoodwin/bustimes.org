@@ -49,6 +49,13 @@ Status = namedtuple(
 def same_journey(journey, last_journey, now):
     if journey.datetime == last_journey.datetime:
         return True
+    if (
+        journey.trip_id
+        and journey.trip_id == last_journey.trip_id
+        and timezone.localdate(now) == timezone.localdate(last_journey.datetime)
+    ):
+        # OriginAimedDepartureTime corrected
+        return True
     if journey.datetime and not last_journey.datetime.second:
         # seems safe to assume that last journey had a different departure time
         return False
@@ -259,6 +266,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
             ):
                 journey.uuid = latest_journey.uuid
                 journey.id = latest_journey.id
+                if not journey.datetime:
+                    journey.datetime = latest_journey.datetime
                 self.journeys_to_update.append(journey)
             elif journey.id:
                 self.journeys_to_update.append(journey)
@@ -349,6 +358,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             "code",
             "service",
             "trip",
+            "datetime",
             "date",
             "route_name",
             "destination",

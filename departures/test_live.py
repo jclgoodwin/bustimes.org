@@ -219,6 +219,37 @@ class LiveDeparturesTest(TestCase):
             response, '<pre style="line-height: 125%;"><span></span>[\n'
         )
 
+    @time_machine.travel("2019-02-09T10:00:00Z")
+    def test_timetable_departures_vehicle_journey(self):
+        """if a trip has multiple journeys (e.g. another vehicle took over),
+        link to the latest"""
+        vehicle_1 = Vehicle.objects.create(code="1")
+        vehicle_2 = Vehicle.objects.create(code="2")
+        VehicleJourney.objects.create(
+            vehicle=vehicle_1,
+            trip=self.trip,
+            datetime="2019-02-09T10:54:00Z",
+            date="2019-02-09",
+            source=self.source,
+        )
+        journey = VehicleJourney.objects.create(
+            vehicle=vehicle_2,
+            trip=self.trip,
+            datetime="2019-02-09T10:54:00Z",
+            date="2019-02-09",
+            source=self.source,
+        )
+
+        departures = sources.TimetableDepartures(
+            self.worcester_stop,
+            [self.trip.route.service],
+            datetime.fromisoformat("2019-02-09T10:00:00Z"),
+            Route.objects.filter(id=self.trip.route_id),
+        ).get_departures()
+
+        self.assertEqual(departures[0]["vehicle"], vehicle_2)
+        self.assertEqual(departures[0]["link"], f"/journeys/{journey.id}")
+
     def test_blend(self):
         service = Service(line_name="X98")
         a = [

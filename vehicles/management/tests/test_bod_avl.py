@@ -896,6 +896,75 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertEqual(journey.trip_id, trip.id)
         self.assertEqual(str(journey.date), "2026-10-11")
 
+    @time_machine.travel("2026-10-13T13:30:00+00:00")
+    def test_origin_aimed_departure_time_corrected(self):
+        """OriginAimedDepartureTime changes but the same trip is matched -
+        should update the existing journey, not create a second one"""
+        service = Service.objects.create(line_name="36A")
+        service.operator.add("FECS")
+        route = Route.objects.create(service=service, source=self.source, code="36A")
+        trip = Trip.objects.create(
+            route=route, start="14:25:00", end="16:18:00", ticket_machine_code="143"
+        )
+
+        command = import_bod_avl.Command()
+        command.source = self.source
+
+        def item(recorded_at, origin_aimed_departure_time, longitude):
+            return {
+                "Extensions": {
+                    "VehicleJourney": {
+                        "Operational": {
+                            "TicketMachine": {
+                                "JourneyCode": "1425",
+                                "TicketMachineServiceCode": "36A",
+                            }
+                        },
+                        "VehicleUniqueId": "69544",
+                    }
+                },
+                "RecordedAtTime": recorded_at,
+                "MonitoredVehicleJourney": {
+                    "LineRef": "36A",
+                    "BlockRef": "3602",
+                    "OriginRef": "2900R241",
+                    "VehicleRef": "FECS-69544",
+                    "OperatorRef": "FECS",
+                    "DirectionRef": "inbound",
+                    "DestinationRef": "2900H468",
+                    "VehicleLocation": {
+                        "Latitude": "52.488948",
+                        "Longitude": longitude,
+                    },
+                    "PublishedLineName": "36A",
+                    "FramedVehicleJourneyRef": {
+                        "DataFrameRef": "2026-10-13",
+                        "DatedVehicleJourneyRef": "143",
+                    },
+                    "OriginAimedDepartureTime": origin_aimed_departure_time,
+                },
+            }
+
+        with (
+            patch_redis_client(),
+            mock.patch(
+                "vehicles.management.import_live_vehicles.get_channel_layer",
+                return_value=None,
+            ),
+        ):
+            command.handle_item(
+                item("2026-10-13T13:20:00+00:00", "2026-10-13T13:17:00+00:00", "1.23")
+            )
+            command.save()
+            command.handle_item(
+                item("2026-10-13T13:30:00+00:00", "2026-10-13T13:25:00+00:00", "1.24")
+            )
+            command.save()
+
+        journey = VehicleJourney.objects.get()
+        self.assertEqual(journey.trip_id, trip.id)
+        self.assertEqual(str(journey.datetime), "2026-10-13 13:25:00+00:00")
+
     @time_machine.travel("2021-03-05T14:20:40+00:00")
     def test_handle_extensions(self):
         command = import_bod_avl.Command()
