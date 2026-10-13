@@ -410,6 +410,7 @@ function TripSidebar(props: {
 function JourneySidebar(props: {
   journey?: VehicleJourney;
   journeyId: string;
+  journeyContext?: string | null;
   highlightedStop?: string;
   vehicle?: VehicleLocation | null;
   onMouseEnter: (stop: TripTime) => void;
@@ -427,6 +428,7 @@ function JourneySidebar(props: {
   }
 
   const showNavigation = journey.previous || journey.next;
+  const hash = props.journeyContext ? `#context=${props.journeyContext}` : "";
 
   const _operator = journey.operator || journey.trip?.operator;
   let operator: ReactElement | undefined;
@@ -500,14 +502,14 @@ function JourneySidebar(props: {
         <div className="navigation">
           {journey.previous ? (
             <p className="previous">
-              <Link href={`/journeys/${journey.previous.id}`}>
+              <Link href={`/journeys/${journey.previous.id}${hash}`}>
                 &larr; {journey.previous.datetime.slice(11, 16)}
               </Link>
             </p>
           ) : null}
           {journey.next ? (
             <p className="next">
-              <Link href={`/journeys/${journey.next.id}`}>
+              <Link href={`/journeys/${journey.next.id}${hash}`}>
                 {journey.next.datetime.slice(11, 16)} &rarr;
               </Link>
             </p>
@@ -630,6 +632,10 @@ export default function BigMap(
       }
     }
   });
+
+  const [journeyContext] = React.useState(() =>
+    new URLSearchParams(window.location.hash.slice(1)).get("context"),
+  );
 
   const [clickedStopFeature, setClickedStopFeature] = React.useState<
     Stop | undefined
@@ -867,25 +873,23 @@ export default function BigMap(
         }
       } else {
         setTrip(undefined);
-        fetchJson(`api/vehiclejourneys/${props.journeyId}/details.json`).then(
-          (journey: VehicleJourney) => {
-            setJourney(journey);
-            const item = journey.vehicle?.id
-              ? (journey.live?.find((v) => v.id === journey.vehicle?.id) ??
-                null)
-              : // journey-based tracking with no vehicle (e.g. FlixBus)
-                (journey.live?.find((v) => v.journey_id === journey.id) ??
-                null);
-            // sort of duplicating `handleItems`
-            vehiclesHighWaterMark.current = null;
-            setVehicles(journey.live);
-            vehiclesLength.current = journey.live?.length || 0;
-            if (item) {
-              setClickedVehicleMarker(item?.id);
-            }
-            setTripVehicle(item);
-          },
-        );
+        fetchJson(
+          `api/vehiclejourneys/${props.journeyId}/details.json${journeyContext ? `?context=${journeyContext}` : ""}`,
+        ).then((journey: VehicleJourney) => {
+          setJourney(journey);
+          const item = journey.vehicle?.id
+            ? (journey.live?.find((v) => v.id === journey.vehicle?.id) ?? null)
+            : // journey-based tracking with no vehicle (e.g. FlixBus)
+              (journey.live?.find((v) => v.journey_id === journey.id) ?? null);
+          // sort of duplicating `handleItems`
+          vehiclesHighWaterMark.current = null;
+          setVehicles(journey.live);
+          vehiclesLength.current = journey.live?.length || 0;
+          if (item) {
+            setClickedVehicleMarker(item?.id);
+          }
+          setTripVehicle(item);
+        });
       }
     } else {
       setJourney(undefined);
@@ -894,7 +898,15 @@ export default function BigMap(
       document.title = "Map \u2013 bustimes.org";
       loadVehicles();
     }
-  }, [props.tripId, trip, props.noc, props.journeyId, journey, loadVehicles]);
+  }, [
+    props.tripId,
+    trip,
+    props.noc,
+    props.journeyId,
+    journeyContext,
+    journey,
+    loadVehicles,
+  ]);
 
   const handleMoveEnd = React.useCallback(
     (evt: ViewStateChangeEvent) => {
@@ -1215,6 +1227,7 @@ export default function BigMap(
         <JourneySidebar
           journey={journey}
           journeyId={props.journeyId}
+          journeyContext={journeyContext}
           vehicle={tripVehicle}
           highlightedStop={clickedStopUrl}
           onMouseEnter={handleRowHover}

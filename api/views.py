@@ -607,11 +607,29 @@ class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
                 "name": instance.vehicle.operator.name,
             }
 
-        if instance.vehicle_id:
+        # same journeys as the service or vehicle's journeys list (vehicles/views.py)
+        next_previous_filter = None
+        if request.GET.get("context") == "service":
+            if instance.service_id:
+                next_previous_filter = {
+                    "date": instance.date,
+                    "service_id": instance.service_id,
+                }
+            elif instance.vehicle_id:
+                # ad-hoc service
+                next_previous_filter = {
+                    "date": instance.date,
+                    "service_id": None,
+                    "route_name": instance.route_name,
+                    "vehicle__operator_id": instance.vehicle.operator_id,
+                }
+        elif instance.vehicle_id:
             next_previous_filter = {
                 "date": instance.date,
                 "vehicle_id": instance.vehicle_id,
             }
+
+        if next_previous_filter:
             try:
                 next_journey = instance.get_next_by_datetime(**next_previous_filter)
             except VehicleJourney.DoesNotExist:
