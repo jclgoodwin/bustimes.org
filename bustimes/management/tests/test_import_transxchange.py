@@ -1570,13 +1570,13 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(response, "Peterborough Bus Station")
 
         trip = Trip.objects.first()
-        self.assertEqual(trip.route.service.trip_chaining, "split")
+        self.assertEqual(trip.route.service.trip_chaining, "merge")
         response = self.client.get(f"/trips/{trip.id}")
         self.assertContains(response, "Kings Lynn,Bus Station")
         self.assertContains(response, "Peterborough Bus Station")
 
         # test modern trip API too:
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(4):
             response = self.client.get(f"/api/trips/{trip.id}.json")
         self.assertEqual(response.json()["block"], "6001")
 

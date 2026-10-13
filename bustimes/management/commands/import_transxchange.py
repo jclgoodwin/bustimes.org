@@ -744,22 +744,25 @@ class Command(BaseCommand):
         Trips with different calendars are dealt with "on the fly" later
         (see get_parts and chain_split_trips).
         """
-        trips = list(
-            Trip.objects.filter(
-                route__service=service_id, route__source=self.source
-            ).for_chaining()
-        )
-        trip_chaining = get_trip_chaining(trips)
+        trips = Trip.objects.filter(
+            route__service=service_id, route__source=self.source
+        ).for_chaining()
 
         by_calendar = defaultdict(list)
         for trip in trips:
             by_calendar[trip.calendar_id].append(trip)
 
+        merged = False
         for calendar_trips in by_calendar.values():
             for trip_a, *parts in chain_split_trips(calendar_trips, get_end_stops):
                 if parts:
                     self.merge_trips(trip_a, parts)
+                    merged = True
 
+        # detect after merging - before, trips might chain with another version's
+        trip_chaining = get_trip_chaining(list(trips.all()))
+        if trip_chaining != "split" and merged:
+            return "merge"
         return trip_chaining
 
     def merge_trips(self, trip_a, parts):
@@ -852,7 +855,9 @@ class Command(BaseCommand):
 
         for service in services:
             trip_chaining = self.merge_split_trips(service.id)
-            if service.trip_chaining not in ("any", trip_chaining):
+            if service.trip_chaining not in ("any", trip_chaining) and not (
+                service.trip_chaining == "merge" and not trip_chaining
+            ):
                 service.trip_chaining = trip_chaining
                 service.save(update_fields=["trip_chaining"])
 
