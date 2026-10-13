@@ -535,10 +535,12 @@ class ViewsTests(TestCase):
         )
 
     def test_sitemap_index(self):
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(8):
             response = self.client.get("/sitemap.xml")
         self.assertContains(response, "https://testserver/sitemap-operators.xml")
         self.assertContains(response, "https://testserver/sitemap-services.xml")
+        self.assertContains(response, "https://testserver/sitemap-stops.xml")
+        self.assertContains(response, "https://testserver/sitemap-vehicles.xml")
 
     def test_sitemap_operators(self):
         with self.assertNumQueries(2):

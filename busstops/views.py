@@ -1691,6 +1691,43 @@ class ServiceSitemap(Sitemap):
         return obj.modified_at
 
 
+class VehicleSitemap(Sitemap):
+    protocol = "https"
+
+    def items(self):
+        return (
+            Vehicle.objects.filter(withdrawn=False, latest_journey__isnull=False)
+            .only("slug")
+            .order_by("-id")[:1000]
+        )
+
+    def get_latest_lastmod(self):
+        return (
+            VehicleJourney.objects.filter(vehicle__in=self.items()[:1])
+            .order_by("datetime")
+            .values_list("datetime", flat=True)
+            .first()
+        )
+
+
+class StopSitemap(Sitemap):
+    protocol = "https"
+
+    def items(self):
+        return (
+            StopPoint.objects.filter(
+                Exists("service", filter=Q(service__current=True)),
+                active=True,
+                created_at__isnull=False,
+            )
+            .only("atco_code")
+            .order_by("-created_at")[:1000]
+        )
+
+    def get_latest_lastmod(self):
+        return self.items().values_list("created_at", flat=True).first()
+
+
 def search(request):
     form = forms.SearchForm(request.GET)
 

@@ -17,6 +17,8 @@ from . import views
 sitemaps = {
     "operators": views.OperatorSitemap,
     "services": views.ServiceSitemap,
+    "stops": views.StopSitemap,
+    "vehicles": views.VehicleSitemap,
 }
 
 urlpatterns = [
