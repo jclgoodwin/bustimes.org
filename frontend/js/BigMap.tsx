@@ -15,7 +15,6 @@ import {
   Popup,
   Source,
   type ViewStateChangeEvent,
-  useMap,
 } from "react-map-gl/maplibre";
 import { Link } from "wouter";
 
@@ -58,6 +57,13 @@ const updateLocalStorage = debounce((zoom: number, latLng) => {
   }
 }, 2000);
 
+const hash = new Hash();
+
+function updateHash(map: MapGL) {
+  hash._map = map;
+  hash._updateHashUnthrottled();
+}
+
 if (window.INITIAL_VIEW_STATE && !window.location.hash) {
   try {
     if (localStorage.vehicleMap) {
@@ -99,24 +105,6 @@ export enum MapMode {
   Operator = 1,
   Trip = 2,
   Journey = 3,
-}
-
-function SlippyMapHash() {
-  const mapRef = useMap();
-
-  React.useEffect(() => {
-    if (mapRef.current) {
-      const map = mapRef.current.getMap();
-      const hash = map._hash || new Hash();
-      map._hash = hash;
-      hash.addTo(map);
-      return () => {
-        hash.remove();
-      };
-    }
-  }, [mapRef]);
-
-  return null;
 }
 
 function Stops({
@@ -926,6 +914,7 @@ export default function BigMap(
       const _zoom = evt.viewState.zoom;
       setZoom(_zoom);
       boundsRef.current = _bounds;
+      updateHash(evt.target);
 
       if (!evt.originalEvent) {
         return;
@@ -1040,6 +1029,8 @@ export default function BigMap(
       if (props.mode === MapMode.Slippy) {
         if (!boundsRef.current) {
           // first load
+          hash._map = map;
+          hash._onHashChange();
           const _zoom = map.getZoom();
           boundsRef.current = map.getBounds();
           setZoom(_zoom);
@@ -1053,6 +1044,12 @@ export default function BigMap(
     },
     [props.mode, loadVehicles],
   );
+
+  useEffect(() => {
+    if (props.mode === MapMode.Slippy && mapRef.current) {
+      updateHash(mapRef.current);
+    }
+  }, [props.mode]);
 
   const [cursor, setCursor] = React.useState<string>();
 
@@ -1147,7 +1144,6 @@ export default function BigMap(
             initialViewState.current || { bounds, fitBoundsOptions }
           }
           onMoveEnd={props.mode === MapMode.Slippy ? handleMoveEnd : undefined}
-          hash={props.mode === MapMode.Slippy}
           onClick={handleMapClick}
           onMouseEnter={onMouseEnter}
           onMouseMove={
@@ -1166,8 +1162,6 @@ export default function BigMap(
           {props.mode === MapMode.Trip && trip ? (
             <Route times={trip.times} />
           ) : null}
-
-          {/* props.mode === MapMode.Slippy ? <SlippyMapHash /> : null */}
 
           {props.mode === MapMode.Journey && journey?.trip?.times ? (
             <Route times={journey.trip.times} />
