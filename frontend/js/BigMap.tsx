@@ -253,12 +253,12 @@ const Vehicles = memo(function Vehicles({
         ? vehicles.map((vehicle) => {
             return {
               type: "Feature" as const,
-              id: vehicle.id,
               geometry: {
                 type: "Point" as const,
                 coordinates: vehicle.coordinates,
               },
               properties: {
+                id: vehicle.id, // (not feature.id, which can't be negative)
                 url: vehicle.vehicle?.url,
                 colour:
                   vehicle.vehicle?.colour ||
@@ -997,8 +997,8 @@ export default function BigMap(
       // handle click on maplibre rendered feature
       if (e.features?.length) {
         for (const feature of e.features) {
-          if (feature.layer.id === "vehicles" && feature.id) {
-            setClickedVehicleMarker(feature.id as number);
+          if (feature.layer.id === "vehicles" && feature.properties.id) {
+            setClickedVehicleMarker(feature.properties.id);
             return;
           }
           if (feature.layer.id.startsWith("stops")) {
