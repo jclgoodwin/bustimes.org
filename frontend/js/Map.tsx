@@ -32,6 +32,15 @@ import { ErrorFallback } from "./LoadingSorry";
 
 setWorkerUrl(maplibreWorkerUrl);
 
+// navigating away kills the worker, which maplibre reports as "Worker failed to load"
+let pageHidden = false;
+window.addEventListener("pagehide", () => {
+  pageHidden = true;
+});
+window.addEventListener("pageshow", () => {
+  pageHidden = false;
+});
+
 const imagesByName: { [imageName: string]: string } = {
   "stop-marker": stopMarker,
   "stop-marker-circle": stopMarkerCircle,
@@ -262,7 +271,11 @@ export default function BusTimesMap(
           mapStyle={mapStyleURL}
           RTLTextPlugin={""}
           attributionControl={false}
-          onError={(e) => captureException(e.error)}
+          onError={(e) => {
+            if (!pageHidden) {
+              captureException(e.error);
+            }
+          }}
           onContextMenu={onContextMenu}
         >
           <AttributionControl compact={false} position="top-right" />
