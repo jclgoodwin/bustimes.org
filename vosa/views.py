@@ -99,6 +99,4 @@ class LicenceFeed(Feed):
 
     def item_pubdate(self, item):
         date = item.date_received
-        return timezone.make_aware(
-            datetime(date.year, date.month, date.day)  # noqa: DTZ001
-        )
+        return timezone.make_aware(datetime(date.year, date.month, date.day))

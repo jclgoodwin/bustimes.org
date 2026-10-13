@@ -10,7 +10,7 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
 def parse_date(date):
-    return datetime.strptime(date, "%d.%m.%Y").date()  # noqa: DTZ007
+    return datetime.strptime(date, "%d.%m.%Y").date()
 
 
 class Command(ImportLiveVehiclesCommand):

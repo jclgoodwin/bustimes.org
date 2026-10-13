@@ -60,7 +60,7 @@ class Command(ImportLiveVehiclesCommand):
         # origin aimed departure time
         departure_time = item["stops"][0]["date"] + " " + item["stops"][0]["time"]
         departure_time = timezone.make_aware(
-            datetime.strptime(departure_time, "%Y-%m-%d %H:%M")  # noqa: DTZ007
+            datetime.strptime(departure_time, "%Y-%m-%d %H:%M")
         )
 
         try:

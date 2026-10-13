@@ -51,7 +51,7 @@ class Command(GTFSRCommand):
     def get_journey(self, item, vehicle):
         journey = VehicleJourney(code=item.vehicle.trip.trip_id)
 
-        start_date = datetime.strptime(  # noqa: DTZ007 - only .date() is used
+        start_date = datetime.strptime(
             f"{item.vehicle.trip.start_date} 12:00:00",
             "%Y%m%d %H:%M:%S",
         )

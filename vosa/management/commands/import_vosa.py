@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 def parse_date(date_string: str):
     if date_string:
-        return datetime.strptime(date_string, "%d/%m/%y").date()  # noqa: DTZ007
+        return datetime.strptime(date_string, "%d/%m/%y").date()
 
 
 def download_if_modified(path: str):

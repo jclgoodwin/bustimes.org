@@ -37,7 +37,7 @@ class Command(GTFSRCommand):
 
         start_date = None
         if item.vehicle.trip.start_date:
-            start_date = datetime.strptime(  # noqa: DTZ007 - tzinfo applied below
+            start_date = datetime.strptime(
                 f"{item.vehicle.trip.start_date} 12:00:00",
                 "%Y%m%d %H:%M:%S",
             )

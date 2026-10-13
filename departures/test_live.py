@@ -1,4 +1,3 @@
-# ruff: noqa: DTZ001 - naive datetimes here are only ever compared to each other
 """Tests for live departures"""
 
 from datetime import datetime

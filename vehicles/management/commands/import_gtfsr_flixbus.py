@@ -169,7 +169,7 @@ class Command(GTFSRCommand):
                 import_live_vehicles.redis_client.delete(f"vehicle{-journey.id}")
 
     def get_journey(self, trip_code, start_date, start_time):
-        date = datetime.strptime(start_date, "%Y%m%d").date()  # noqa: DTZ007
+        date = datetime.strptime(start_date, "%Y%m%d").date()
 
         if journey := (
             VehicleJourney.objects.filter(
