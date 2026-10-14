@@ -1,8 +1,12 @@
+from datetime import timedelta
+
 from django.contrib.gis.db import models
+from django.db.models import F, OuterRef, Subquery
 from django.utils import timezone
 
 from busstops.models import StopPoint
 from bustimes.fields import SecondsField
+from bustimes.formatting import format_timedelta
 
 
 class BaseVersion(models.Model):
@@ -169,6 +173,15 @@ class BlockCalendarDay(models.Model):
     calendar_day = models.DateField()
     runs = models.BooleanField()
 
+    block = models.ForeignObject(
+        Block,
+        models.DO_NOTHING,
+        from_fields=["base_version", "block_idx"],
+        to_fields=["base_version", "idx"],
+        null=True,
+        related_name="calendar_days",
+    )
+
     class Meta:
         indexes = [models.Index(fields=["base_version", "block_idx"])]
 
@@ -278,13 +291,62 @@ class Journey(models.Model):
             models.Index(fields=["base_version", "pattern_idx"]),
         ]
 
-    def matches(self, line_name, departure):
-        """Journey idxs are reused between base versions, so check this is
-        the same journey the AVL means (requires select_related("pattern__line"))
+    def __str__(self):
+        return format_timedelta(self.start_time, plus_one=True)
+
+    @classmethod
+    def from_vehicle_journey(cls, vehicle_journey):
+        """Journey idxs are reused between base versions, so check the line and
+        start time, and use the newest base version in which the block runs that day
         """
-        line = self.pattern and self.pattern.line
-        if not line or line.service_line_no.lower() != line_name.lower():
-            return False
+        if not vehicle_journey.code.isdigit():
+            return
+        if vehicle_journey.datetime:
+            date = timezone.localdate(vehicle_journey.datetime)
+        else:
+            date = vehicle_journey.date
+        for journey in (
+            cls.objects.filter(
+                idx=vehicle_journey.code,
+                pattern__line__service_line_no__iexact=vehicle_journey.route_name,
+                block__calendar_days__runs=True,
+                block__calendar_days__calendar_day__range=(
+                    date - timedelta(days=1),
+                    date,
+                ),
+            )
+            .annotate(calendar_day=F("block__calendar_days__calendar_day"))
+            .order_by("-base_version")
+        ):
+            if journey.calendar_day == date - timedelta(
+                days=journey.start_time.days
+            ) and journey.matches(vehicle_journey.datetime):
+                return journey
+
+    def get_next_journeys(self):
+        """Later journeys in the same block"""
+        return (
+            Journey.objects.filter(
+                base_version=self.base_version_id,
+                block_idx=self.block_idx,
+                start_time__gt=self.start_time,
+            )
+            .annotate(
+                line_name=F("pattern__line__service_line_no"),
+                destination_name=Subquery(
+                    StopInPattern.objects.filter(
+                        base_version=OuterRef("base_version"),
+                        pattern_idx=OuterRef("pattern_idx"),
+                    )
+                    .exclude(stop__naptan_code="")
+                    .order_by("-sequence_no")
+                    .values("stop__name")[:1]
+                ),
+            )
+            .order_by("start_time")
+        )
+
+    def matches(self, departure):
         if departure:
             departure = timezone.localtime(departure)
             seconds = departure.hour * 3600 + departure.minute * 60

@@ -289,14 +289,8 @@ class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
 
     @staticmethod
     def trip_from_tfl(instance):
-        for journey in (
-            Journey.objects.filter(idx=instance.code)
-            .select_related("pattern__line")
-            .order_by("-base_version")
-        ):
-            if journey.matches(instance.route_name, instance.datetime):
-                break
-        else:
+        journey = Journey.from_vehicle_journey(instance)
+        if not journey:
             return
 
         base_version_id = journey.base_version_id
@@ -526,13 +520,7 @@ class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
             instance.vehicle_id and instance.id == instance.vehicle.latest_journey_id
         )
 
-        mvj = None
-        is_tfl = False
-        try:
-            mvj = instance.vehicle.latest_journey_data["MonitoredVehicleJourney"]
-            is_tfl = mvj["OperatorRef"] == "TFLO"
-        except (AttributeError, TypeError, KeyError, ValueError):
-            pass
+        is_tfl = instance.vehicle and instance.vehicle.is_tfl()
 
         if is_tfl and not instance.trip and instance.code.isdigit():
             instance.trip = self.trip_from_tfl(instance)
@@ -551,6 +539,7 @@ class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
                     maybe_get_and_apply_trip_update(instance.trip, instance.trip.stops)
 
             if is_tfl and current_trip:
+                mvj = instance.vehicle.latest_journey_data["MonitoredVehicleJourney"]
                 self.tfl_arrivals(instance, mvj["VehicleRef"])
 
             if locations:

@@ -473,6 +473,13 @@ class Vehicle(models.Model):
             json["colour"] = colour
         return json
 
+    def is_tfl(self) -> bool:
+        try:
+            mvj = self.latest_journey_data["MonitoredVehicleJourney"]
+            return mvj["OperatorRef"] == "TFLO"
+        except (AttributeError, TypeError, KeyError, ValueError):
+            return False
+
 
 class VehicleHasFeature(models.Model):
     vehicle = models.ForeignKey(

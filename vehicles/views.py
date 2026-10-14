@@ -59,6 +59,7 @@ from bustimes.models import Garage, Route, Trip
 from departures.gtfsr import get_trip_updates
 from photos.forms import PhotoForm
 from photos.utils import WrongLicense, add_flickr_photo, add_uploaded_photo
+from tfl.models import Journey as TflJourney
 
 from . import filters, forms
 from .management.commands import import_bod_avl
@@ -739,7 +740,15 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
                 ).order_by("start")
                 predictions = trips
 
-        if predictions is not None:
+        if (
+            not predictions
+            and vehicle.is_tfl()
+            and vehicle.latest_journey_id == journeys[-1].pk
+            and (journey := TflJourney.from_vehicle_journey(journeys[-1]))
+        ):
+            context["predictions"] = journey.get_next_journeys()
+
+        elif predictions is not None:
             context["predictions"] = predictions.annotate(
                 destination_name=Coalesce(
                     "headsign",

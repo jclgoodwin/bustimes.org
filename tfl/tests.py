@@ -6,7 +6,7 @@ from django.test import TestCase
 from api.views import VehicleJourneyViewSet
 from busstops.models import DataSource, Region, Service, StopPoint
 from bustimes.models import Route, Trip
-from vehicles.models import VehicleJourney
+from vehicles.models import Vehicle, VehicleJourney
 
 from . import models
 
@@ -43,6 +43,13 @@ class JourneyTest(TestCase):
                 block_no=block_no,
                 running_no=401,
             )
+            for day in range(7, 11):
+                models.BlockCalendarDay.objects.create(
+                    base_version=base_version,
+                    block_idx=11358,
+                    calendar_day=date(2026, 10, day),
+                    runs=True,
+                )
             models.Stop.objects.create(
                 base_version=base_version,
                 idx=14780,
@@ -75,9 +82,10 @@ class JourneyTest(TestCase):
         self.assertEqual(new.pattern.line.service_line_no, "W15")
 
         departure = datetime(2026, 10, 8, 16, 22, tzinfo=UTC)  # 17:22 BST
-        self.assertTrue(old.matches("97", departure))
-        self.assertFalse(old.matches("97", departure + timedelta(minutes=1)))
-        self.assertFalse(new.matches("97", departure))
+        self.assertTrue(old.matches(departure))
+        self.assertFalse(old.matches(departure + timedelta(minutes=1)))
+        self.assertFalse(new.matches(departure))
+        self.assertTrue(new.matches(None))
 
     def test_trip_from_tfl(self):
         journey = VehicleJourney(
@@ -137,3 +145,51 @@ class JourneyTest(TestCase):
         # matched against 20260926 - in 20261009 that journey is a W15
         trip.refresh_from_db()
         self.assertEqual(trip.block, "105401")
+
+    def test_predictions(self):
+        old = models.BaseVersion.objects.get(version=20260926)
+        models.Journey.objects.create(
+            base_version=old,
+            idx=255601,
+            pattern_idx=1316,
+            block_idx=11358,
+            trip_no_lbsl=186,
+            type=1,
+            start_time=timedelta(hours=18, minutes=30),
+        )
+        # a stand - not where passengers are told the bus is going
+        models.Stop.objects.create(
+            base_version=old, idx=14781, naptan_code="", name="Chingford Stand"
+        )
+        models.StopInPattern.objects.create(
+            base_version=old, idx=11531, pattern_idx=1316, stop_idx=14781, sequence_no=2
+        )
+
+        source = DataSource.objects.create(name="Bus Open Data")
+        vehicle = Vehicle.objects.create(
+            code="LJ123",
+            latest_journey_data={"MonitoredVehicleJourney": {"OperatorRef": "TFLO"}},
+        )
+        vehicle.latest_journey = VehicleJourney.objects.create(
+            vehicle=vehicle,
+            source=source,
+            code="255600",
+            route_name="97",
+            date=date(2026, 10, 8),
+            datetime=datetime(2026, 10, 8, 16, 22, tzinfo=UTC),
+        )
+        vehicle.save(update_fields=["latest_journey"])
+
+        response = self.client.get(f"{vehicle.get_absolute_url()}?date=2026-10-08")
+        (prediction,) = response.context_data["predictions"]
+        self.assertEqual(str(prediction), "18:30")
+        self.assertEqual(prediction.line_name, "97")
+        self.assertEqual(prediction.destination_name, "Chingford Station")
+        self.assertNotContains(response, "Chingford Stand")
+
+        # block doesn't run that day in this base version
+        models.BlockCalendarDay.objects.filter(
+            base_version=old, calendar_day=date(2026, 10, 8)
+        ).delete()
+        response = self.client.get(f"{vehicle.get_absolute_url()}?date=2026-10-08")
+        self.assertNotIn("predictions", response.context_data)
