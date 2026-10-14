@@ -747,9 +747,7 @@ class Command(BaseCommand):
         Trips with different calendars are dealt with "on the fly" later
         (see get_parts and chain_split_trips).
         """
-        trips = Trip.objects.filter(
-            route__service=service_id, route__source=self.source
-        ).for_chaining()
+        trips = Trip.objects.filter(route__service=service_id).for_chaining()
 
         by_calendar = defaultdict(list)
         for trip in trips:

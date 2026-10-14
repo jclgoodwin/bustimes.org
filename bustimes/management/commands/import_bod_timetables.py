@@ -278,6 +278,7 @@ def bus_open_data(api_key, specific_operator):
 
         clean_up(source, sources, not source.complete)
 
+        command.source = None  # finish_services is for all this source's sources
         command.service_ids = service_ids
         command.finish_services()
         all_source_ids += [source.id for source in sources]
