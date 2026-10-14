@@ -59,6 +59,7 @@ interactions:
         \   \"XPrevious\": \"-5.934810\",    \"YPrevious\": \"54.597049\",
         \   \"TimestampPrevious\": \"2025-09-27T06:40:14+01:00\",    \"VehicleIdentifier\":
         \"GDR-3225\",    \"RealtimeAvailable\": 1,    \"LineText\": \"G1\",
+        \   \"CurrentStop\": \"700000001636\",    \"NextStop\": \"700000016166\",
         \   \"DirectionText\": \"McKinstry Road\"  },  {    \"ID\": \"3b1ba12b-a80e-460f-81e2-54c0a698956d\",
         \   \"Operator\": \"Ulsterbus\",    \"JourneyIdentifier\": \"2005\",
         \   \"DayOfOperation\": \"27.09.2025\",    \"Delay\": 83,    \"MOTCode\":

@@ -4,6 +4,7 @@ from django.contrib.gis.geos import GEOSGeometry
 from django.db.models import Q
 
 from busstops.models import Operator, Service
+from bustimes.models import Route, Trip
 
 from ...models import Vehicle, VehicleJourney, VehicleLocation
 from ..import_live_vehicles import ImportLiveVehiclesCommand
@@ -88,6 +89,13 @@ class Command(ImportLiveVehiclesCommand):
         ):
             return latest_journey
 
+        date = parse_date(item["DayOfOperation"])
+        if trip := self.get_trip(item, journey, date):
+            journey.trip = trip
+            journey.service = trip.route.service
+            journey.date = date
+            return journey
+
         journey.service = Service.objects.filter(
             Q(route__line_name__iexact=journey.route_name)
             | Q(route__line_name__iexact=f"G{journey.route_name}"),
@@ -103,7 +111,7 @@ class Command(ImportLiveVehiclesCommand):
 
         if journey.service:
             journey.trip = journey.get_trip(
-                date=parse_date(item["DayOfOperation"]),
+                date=date,
                 journey_code=journey.code,
                 next_stop=item.get("CurrentStop"),
                 approximate_datetime=True,
@@ -111,6 +119,40 @@ class Command(ImportLiveVehiclesCommand):
             )
 
         return journey
+
+    def get_trip(self, item, journey, date):
+        routes = Route.objects.filter(
+            Q(line_name__iexact=journey.route_name)
+            | Q(line_name__iexact=f"G{journey.route_name}"),
+            service__current=True,
+            service__operator__in=self.operators,
+        ).active_on(date)
+        trips = list(
+            Trip.objects.filter(route__in=routes, ticket_machine_code=journey.code)
+            .active_on(date)
+            .select_related("route__service")
+        )
+
+        # the same journey identifier might be used for both directions,
+        # or for a same-numbered route elsewhere
+        # - prefer a trip calling at CurrentStop then NextStop
+        if len(trips) > 1 and (current_stop := item.get("CurrentStop")):
+            next_stop = item.get("NextStop")
+
+            def score(trip):
+                stops = list(
+                    trip.stoptime_set.order_by("id").values_list("stop_id", flat=True)
+                )
+                if current_stop not in stops:
+                    return 0
+                if next_stop in stops[stops.index(current_stop) + 1 :]:
+                    return 2
+                return 1
+
+            trips.sort(key=score, reverse=True)
+
+        if trips:
+            return trips[0]
 
     def create_vehicle_location(self, item):
         delay = item.get("Delay")

@@ -1840,9 +1840,11 @@ class Command(BaseCommand):
                 elif atco_code[:3] == "910" and atco_code[:-1] in stops:
                     stops[atco_code_upper] = stops[atco_code[:-1]]
                 else:
-                    stoppoint = get_stop(
-                        stop.element, f"{self.source.id}:{atco_code_upper}"
-                    )
+                    if self.region_id == "NI":
+                        stop_code = atco_code_upper
+                    else:
+                        stop_code = f"{self.source.id}:{atco_code_upper}"
+                    stoppoint = get_stop(stop.element, stop_code)
                     stoppoint.common_name = str(stop)[:48]
                     stoppoint.source = self.source
                     stoppoint.timing_status = ""
