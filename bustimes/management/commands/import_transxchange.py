@@ -755,16 +755,21 @@ class Command(BaseCommand):
         for trip in trips:
             by_calendar[trip.calendar_id].append(trip)
 
-        merged = False
+        merged_route_ids = set()
         for calendar_trips in by_calendar.values():
             for trip_a, *parts in chain_split_trips(calendar_trips, get_end_stops):
                 if parts:
                     self.merge_trips(trip_a, parts)
-                    merged = True
+                    merged_route_ids.add(trip_a.route_id)
+                    merged_route_ids.update(trip.route_id for trip in parts)
+
+        # the database no longer matches the files, so don't skip them next time
+        if merged_route_ids:
+            Route.objects.filter(id__in=merged_route_ids).update(file_hash=None)
 
         # detect after merging - before, trips might chain with another version's
         trip_chaining = get_trip_chaining(list(trips.all()))
-        if trip_chaining != "split" and merged:
+        if trip_chaining != "split" and merged_route_ids:
             return "merge"
         return trip_chaining
 
@@ -1767,9 +1772,7 @@ class Command(BaseCommand):
             # with a name like "TfGM TXC 260225 OpenData" that changes every release
             # even if the file didn't change
 
-            # if trips were merged with another route's (see merge_trips),
-            # the database no longer matches the file
-            if file_hash and not service.trip_chaining:
+            if file_hash:
                 existing_route = self.source.route_set.filter(
                     code=route_code, file_hash=file_hash
                 ).first()
