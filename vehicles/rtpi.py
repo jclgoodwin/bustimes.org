@@ -179,7 +179,7 @@ def _fetch_stop_times(trip_id, date, modified_at=None):
         stop_times = list(stop_times)
 
     route_links = get_route_links(
-        trip.route.service_id, pair_keys(stop_times), modified_at
+        trip.route and trip.route.service_id, pair_keys(stop_times), modified_at
     )
 
     return trip, stop_times, Pairs(stop_times, route_links)

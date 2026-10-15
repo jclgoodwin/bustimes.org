@@ -100,11 +100,8 @@ def apply_trip_update(stops, trip_update: dict) -> None:
 
     for stop_time_update in trip_update["stopTimeUpdate"]:
         sequence = stop_time_update["stopSequence"]
-        stop_time = stops_by_sequence[sequence]
-        assert sequence == stop_time.sequence
-        # if "stopId" in stop_time_update:
-        #     assert stop_time_update["stopId"] == stop_time.stop_id
-        stop_time.update = stop_time_update
+        if stop_time := stops_by_sequence.get(sequence):
+            stop_time.update = stop_time_update
 
     stop_time_update = None
     for stop_time in stops:
