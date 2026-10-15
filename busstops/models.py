@@ -1037,6 +1037,7 @@ class Service(models.Model):
                 calendar_id=calendar_id,
                 detailed=detailed,
                 operators=operators,
+                loose_trip_chaining=self.trip_chaining == "any",
             )
         except (IndexError, UnboundLocalError, AssertionError):
             logger = logging.getLogger(__name__)

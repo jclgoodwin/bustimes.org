@@ -54,10 +54,19 @@ def compare_trips(rows, positions, trip_indices, a, b):
 
 
 class Timetable:
-    def __init__(self, routes, date, calendar_id=None, detailed=False, operators=None):
+    def __init__(
+        self,
+        routes,
+        date,
+        calendar_id=None,
+        detailed=False,
+        operators=None,
+        loose_trip_chaining=False,
+    ):
         self.today = localdate()
 
         self.operators = operators
+        self.loose_trip_chaining = loose_trip_chaining
 
         routes = list(routes.order_by("id").select_related("source"))
         self.routes = self.current_routes = routes
@@ -835,7 +844,9 @@ class Grouping:
 
         self.trips = []
         for trip_a, *parts in chain_split_trips(
-            trips, lambda trip: (trip.times[0].stop_id, trip.times[-1].stop_id)
+            trips,
+            lambda trip: (trip.times[0].stop_id, trip.times[-1].stop_id),
+            self.parent.loose_trip_chaining,
         ):
             for trip_b in parts:
                 trip_a.times[-1].departure = trip_b.times[0].departure

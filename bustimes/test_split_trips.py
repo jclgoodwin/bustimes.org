@@ -1,10 +1,11 @@
-from datetime import date
+from datetime import date, timedelta
+from types import SimpleNamespace
 
-from django.test import TestCase
+from django.test import SimpleTestCase, TestCase
 
 from busstops.models import DataSource, Service, StopPoint
 
-from .models import Calendar, Route, StopTime, Trip
+from .models import Calendar, Route, StopTime, Trip, chain_split_trips
 
 
 class SplitTripsTest(TestCase):
@@ -113,3 +114,47 @@ class SplitTripsTest(TestCase):
             [trip.id for trip in self.trip_1.get_parts(date(2026, 9, 1))],
             [self.trip_1.id],
         )
+
+
+class ChainSameServiceCodeTest(SimpleTestCase):
+    """parts of a journey with the same service code (and different ticket machine
+    codes), each in a separate file (like 757 Luton - London) - only chained if
+    trip_chaining is "any"
+    """
+
+    def trip(self, name, route_id, start, end, stops):
+        route = SimpleNamespace(
+            line_name="757", service_code="PF0000508:488", source_id=1
+        )
+        return SimpleNamespace(
+            name=name,
+            route_id=route_id,
+            route=route,
+            ticket_machine_code=name,
+            operator_id="ARBB",
+            inbound=False,
+            start=timedelta(minutes=start),
+            end=timedelta(minutes=end),
+            stops=stops,
+        )
+
+    def test_loose(self):
+        trips = [
+            self.trip("1071", 1, 35, 50, ("a", "b")),
+            self.trip("1271", 2, 55, 89, ("b", "c")),
+            self.trip("1371", 3, 93, 135, ("c", "d")),
+        ]
+        for loose, expected in (
+            (False, [["1071"], ["1271"], ["1371"]]),
+            (True, [["1071", "1271", "1371"]]),
+        ):
+            with self.subTest(loose=loose):
+                self.assertEqual(
+                    [
+                        [trip.name for trip in chain]
+                        for chain in chain_split_trips(
+                            trips, lambda trip: trip.stops, loose
+                        )
+                    ],
+                    expected,
+                )
