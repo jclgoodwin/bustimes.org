@@ -762,10 +762,13 @@ class Command(ImportLiveVehiclesCommand):
                         vehicle.operator_id = trip.operator_id
                         vehicle.save(update_fields=["operator"])
 
-        if not journey.date and (
-            progress_journey := self.get_progress_journey(item, journey)
+        if (
+            not journey.date
+            and not journey.trip
+            and (progress_journey := self.get_progress_journey(item, journey))
         ):
             # the service date - the start time can be after 24:00
+            # (if there's a trip, its start time determines the date instead)
             journey.date = progress_journey.date
 
         return journey

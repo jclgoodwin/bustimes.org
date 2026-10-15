@@ -1,5 +1,6 @@
 import json
 from datetime import UTC, date, datetime, timedelta
+from unittest import mock
 
 import fakeredis
 from django.core.management import call_command
@@ -266,3 +267,24 @@ class JourneyTest(TestCase):
         self.assertEqual(location["progress"]["prev_stop"], "490001063C")
         self.assertEqual(location["progress"]["next_stop"], "490005181E")
         self.assertAlmostEqual(location["delay"], 0, delta=30)
+
+        # timetable trip starting at 01:34 (not 25:34) - its date wins
+        service = Service.objects.create(line_name="97", current=True)
+        route = Route.objects.create(source=command.source, service=service, code="97")
+        trip = Trip.objects.create(
+            route=route,
+            start=timedelta(hours=1, minutes=34),
+            end=timedelta(hours=2),
+        )
+        item["MonitoredVehicleJourney"]["VehicleRef"] = "LJ16NAD"
+        with (
+            patch_redis_client(redis_client),
+            mock.patch.object(command, "get_service", return_value=service),
+            mock.patch.object(VehicleJourney, "get_trip", return_value=trip),
+        ):
+            command.handle_item(item)
+            command.save()
+
+        journey = VehicleJourney.objects.get(vehicle__code="LJ16NAD")
+        self.assertEqual(journey.trip, trip)
+        self.assertEqual(journey.date, date(2026, 10, 11))
