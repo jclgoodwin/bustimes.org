@@ -23,6 +23,7 @@ urlpatterns = [
     path("trips/<int:pk>/block", views.trip_block, name="block_detail"),
     path("trip_updates", views.trip_updates),
     path("trip_updates/<slug:feed_name>.json", views.trip_updates_json),
+    path("routelinks/snap", views.snap),
     path(
         "routelinks/<int:pk>",
         views.route_link_view,

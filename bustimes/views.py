@@ -44,8 +44,14 @@ from vehicles import rtpi
 from vehicles.forms import DateForm, TripUpdatesFeedForm
 from vehicles.models import Vehicle, VehicleJourney
 
+from . import snap as snap_utils
 from .formatting import format_timedelta
-from .forms import UploadGTFSForm
+from .forms import (
+    RouteLinkFormSet,
+    SaveRouteLinksForm,
+    SnapForm,
+    UploadGTFSForm,
+)
 from .gtfs_utils import handle_gtfs_upload
 from .models import BankHolidayDate, Route, RouteLink, Trip
 
@@ -123,6 +129,123 @@ def route_link_view(request, pk):
     )
 
     return HttpResponse(m.get_root().render())
+
+
+@staff_member_required
+def snap(request):
+    if request.method == "POST":
+        form = SaveRouteLinksForm(request.POST)
+        formset = RouteLinkFormSet(request.POST)
+        if form.is_valid() and formset.is_valid():
+            service = form.cleaned_data["service"]
+            route_links = [
+                RouteLink(
+                    service=service,
+                    from_stop_id=data["from_stop"],
+                    to_stop_id=data["to_stop"],
+                    geometry=data["geometry"],
+                    override=True,
+                )
+                for data in formset.cleaned_data
+                if data["save"]
+            ]
+            RouteLink.objects.bulk_create(
+                route_links,
+                update_conflicts=True,
+                update_fields=["geometry", "override"],
+                unique_fields=["service", "from_stop", "to_stop"],
+            )
+            return render(
+                request, "snap.html", {"service": service, "saved": route_links}
+            )
+        return HttpResponseBadRequest()
+
+    form = SnapForm(request.GET or None)
+    context = {"form": form}
+    if not form.is_valid():
+        return render(request, "snap.html", context)
+
+    journey = form.cleaned_data["journey"]
+    service = form.cleaned_data["service"]
+
+    points = snap_utils.get_points(journey)
+    coords, errors = snap_utils.map_match(points) if len(points) > 1 else ([], [])
+    proposals, problems = (
+        snap_utils.propose(journey, service, coords) if len(coords) > 1 else ([], [])
+    )
+
+    colours = ("#e6194b", "#3cb44b", "#4363d8", "#f58231", "#911eb4", "#008080")
+    m = folium.Map(tiles="Stadia.OSMBright")
+    folium.PolyLine(
+        [(lat, lon) for lon, lat, _ in points], color="#888", weight=1, dash_array="2 4"
+    ).add_to(m)
+    for lon, lat, timestamp in points:
+        folium.CircleMarker(
+            (lat, lon),
+            radius=2,
+            color="#888",
+            tooltip=datetime.fromtimestamp(timestamp).strftime("%H:%M:%S"),
+        ).add_to(m)
+    for i, proposal in enumerate(proposals):
+        proposal.colour = colours[i % len(colours)]
+        if proposal.existing:
+            folium.PolyLine(
+                [(y, x) for x, y in proposal.existing.geometry],
+                color="#000",
+                weight=2,
+                dash_array="6 6",
+                tooltip=f"{i + 1}. existing",
+            ).add_to(m)
+        folium.PolyLine(
+            [(y, x) for x, y in proposal.geometry],
+            color=proposal.colour,
+            weight=5,
+            opacity=0.7,
+            tooltip=f"{i + 1}. {proposal.from_stop} → {proposal.to_stop}",
+        ).add_to(m)
+    stops = {p.from_stop for p in proposals} | {p.to_stop for p in proposals}
+    for stop in stops:
+        folium.CircleMarker(
+            (stop.latlong.y, stop.latlong.x),
+            radius=5,
+            color="#000",
+            fill=True,
+            fill_color="#fff",
+            fill_opacity=1,
+            tooltip=f"{stop} ({stop.atco_code})",
+        ).add_to(m)
+    if points:
+        m.fit_bounds(
+            [
+                (min(p[1] for p in points), min(p[0] for p in points)),
+                (max(p[1] for p in points), max(p[0] for p in points)),
+            ]
+        )
+
+    formset = RouteLinkFormSet(
+        initial=[
+            {
+                "save": proposal.checked,
+                "from_stop": proposal.from_stop.atco_code,
+                "to_stop": proposal.to_stop.atco_code,
+                "geometry": proposal.geometry.wkt,
+            }
+            for proposal in proposals
+        ]
+    )
+    for proposal, link_form in zip(proposals, formset):
+        proposal.form = link_form
+
+    context.update(
+        journey=journey,
+        service=service,
+        save_form=SaveRouteLinksForm(initial={"service": service}),
+        formset=formset,
+        proposals=proposals,
+        problems=errors + problems,
+        map=mark_safe(m._repr_html_()),
+    )
+    return render(request, "snap.html", context)
 
 
 class SourceListView(ListView):

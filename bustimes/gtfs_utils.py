@@ -298,6 +298,7 @@ def do_route_links(
         (rl.service_id, rl.from_stop_id, rl.to_stop_id): rl
         for rl in RouteLink.objects.filter(service__source=source)
     }
+    overridden = {key for key, rl in existing_route_links.items() if rl.override}
     route_links = {}
 
     stop_times = feed.stop_times[feed.stop_times.trip_id.isin(trips.trip_id)]
@@ -325,7 +326,7 @@ def do_route_links(
             )
             key = (service, from_stop_id, to_stop_id)
 
-            if key in route_links:
+            if key in route_links or key in overridden:
                 start_dist = None
                 continue
 
@@ -398,7 +399,9 @@ def do_route_links(
         id__in=[
             rl.id
             for key, rl in existing_route_links.items()
-            if key not in route_links and is_straight(rl.geometry.coords)
+            if key not in route_links
+            and not rl.override
+            and is_straight(rl.geometry.coords)
         ]
     ).delete()
     RouteLink.objects.bulk_update(

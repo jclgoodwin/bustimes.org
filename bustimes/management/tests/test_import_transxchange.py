@@ -836,14 +836,12 @@ class ImportTransXChangeTest(TestCase):
             service_code="SER22A", service=service_22a, source=self.nocs
         )
         service_22a.operator.add(self.fabd, self.fecs)
-        RouteLink.objects.create(
+        override = RouteLink.objects.create(
             from_stop_id="260006514a",
             to_stop_id="0260006515",
             service=service_22a,
-            geometry="SRID=4326;LINESTRING (-1.12267861 52.668932971, -1.122161887 52.669204097, "
-            "-1.121984987 52.669298697, -1.121571887 52.669561097, -1.121253687 52.669807497, "
-            "-1.120949487 52.670157297, -1.120839687 52.670452097, -1.120864987 52.670727597, "
-            "-1.120919287 52.670949997, -1.120982582 52.671208876)",
+            override=True,
+            geometry="SRID=4326;LINESTRING (-1.12267861 52.668932971, -1.120982582 52.671208876)",
         )
 
         garage = Garage.objects.create(code="LE", name="Leicester")
@@ -888,6 +886,10 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual(Service.objects.count(), 3)
         self.assertEqual(RouteLink.objects.count(), 271)
+        self.assertEqual(
+            RouteLink.objects.get(id=override.id).geometry.coords,
+            override.geometry.coords,
+        )
 
         # had 2 operators before running import_transxchange,
         # should now have just 1

@@ -1,19 +1,60 @@
 {% extends 'page.html' %}
 
-{% block title %}snap{% endblock %}
+{% block title %}Snap route links{% endblock %}
 
 {% block canonical %}<meta name="robots" content="noindex,noarchive">{% endblock %}
 
-{% block bodyclass %}{% endblock %}
-
 {% block content %}
 
-<h1>{{ object }}</h1>
+<h1>Snap route links</h1>
 
-{% for route_link in route_links %}
-    <p><a href="{{ route_link.get_absolute_url }}">{{ route_link.from_stop }} to {{ route_link.to_stop }}</a></p>
+{% if saved %}
+    <p>Saved {{ saved|length }} route links for <a href="{{ service.get_absolute_url }}">{{ service }}</a></p>
+{% else %}
+
+<form>
+    {{ form.as_p }}
+    <p><input type="submit" value="Match"></p>
+</form>
+
+{% if journey %}
+    <p>{{ journey.datetime }} {{ journey.route_name }} to {{ journey.destination }}
+    ({{ journey.service.slug }} → <a href="{{ service.get_absolute_url }}">{{ service }}</a>)</p>
+{% endif %}
+
+{% for problem in problems %}
+    <p class="message">{{ problem }}</p>
 {% endfor %}
 
-{{ response }}
+{{ map }}
+
+{% if proposals %}
+<form method="post">
+    {% csrf_token %}
+    {{ save_form }}
+    {{ formset.management_form }}
+    <table>
+        <thead>
+            <tr><th></th><th></th><th>From</th><th>To</th><th>Length</th><th>Existing</th><th>Warnings</th></tr>
+        </thead>
+        <tbody>
+        {% for p in proposals %}
+            <tr>
+                <td>{{ p.form.save }}{% for field in p.form.hidden_fields %}{{ field }}{% endfor %}</td>
+                <td><label for="{{ p.form.save.id_for_label }}" style="color:{{ p.colour }}">■ {{ forloop.counter }}</label></td>
+                <td>{{ p.from_stop }}</td>
+                <td>{{ p.to_stop }}</td>
+                <td>{{ p.length|floatformat:0 }}m</td>
+                <td>{% if p.existing %}<a href="{{ p.existing.get_absolute_url }}">differs by {{ p.difference|floatformat:0 }}m</a>{% endif %}</td>
+                <td>{{ p.warnings|join:", " }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <p><input type="submit" value="Save selected"></p>
+</form>
+{% endif %}
+
+{% endif %}
 
 {% endblock content %}

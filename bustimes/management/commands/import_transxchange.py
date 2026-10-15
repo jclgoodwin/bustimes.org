@@ -329,6 +329,11 @@ def do_route_links(journeys, transxchange, stops, service, task):
                     to_stop.latlong = end_point
                     stops_to_update.append(to_stop)
 
+        for key in service.routelink_set.filter(override=True).values_list(
+            "from_stop", "to_stop"
+        ):
+            route_links_to_create.pop(key, None)
+
         RouteLink.objects.bulk_create(
             route_links_to_create.values(),
             update_conflicts=True,
