@@ -45,7 +45,7 @@ from sql_util.utils import Exists, SubqueryMax, SubqueryMin
 from ukpostcodeutils import validation
 
 from buses.context_processors import ad
-from bustimes.models import StopTime, Trip
+from bustimes.models import Route, StopTime, Trip
 from departures import live
 from disruptions.models import Consequence, Situation
 from fares.models import FareTable
@@ -91,7 +91,13 @@ def get_service_situations(service, operators):
     )
     return (
         Situation.objects.filter(
-            Exists(consequences.filter(situation=OuterRef("id"))),
+            id__in=Consequence.objects.filter(services=service)
+            .values("situation")
+            .union(
+                Consequence.objects.filter(
+                    operators__in=operators, services=None
+                ).values("situation")
+            ),
             publication_window__contains=Now(),
             current=True,
         )
@@ -1795,17 +1801,35 @@ def search(request):
                 ("operators", operators),
                 ("services", services),
             ):
-                if key == "services" and len(query_text) <= 3:
-                    # search for line names like "A" which the full text search would ignore
-                    queryset = queryset.filter(
-                        Q(search_vector=query) | Q(route__line_name__iexact=query_text)
-                    )
+                paginator_count = None
+                if key == "services":
+                    if len(query_text) <= 3:
+                        # search for line names like "A" which the full text search would ignore
+                        search_filter = Q(
+                            id__in=Service.objects.filter(search_vector=query)
+                            .values("id")
+                            .union(
+                                Route.objects.filter(
+                                    line_name__iexact=query_text, service__isnull=False
+                                ).values("service")
+                            )
+                        )
+                    else:
+                        search_filter = Q(search_vector=query)
+                    queryset = queryset.filter(search_filter)
+                    # without the ArrayAgg annotations and GROUP BY
+                    paginator_count = Service.objects.filter(
+                        search_filter, current=True
+                    ).count()
                 else:
                     queryset = queryset.filter(search_vector=query)
 
                 queryset = queryset.annotate(rank=rank).order_by("-rank")
 
-                page = Paginator(queryset, 20).get_page(request.GET.get("page"))
+                paginator = Paginator(queryset, 20)
+                if paginator_count is not None:
+                    paginator.count = paginator_count
+                page = paginator.get_page(request.GET.get("page"))
 
                 # SearchHeadlines for just this page of results
                 field = "description" if key == "services" else "name"

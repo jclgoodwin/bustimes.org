@@ -1,7 +1,7 @@
 from django.db.backends.postgresql.psycopg_any import DateTimeTZRange
 from django.test import TestCase
 
-from busstops.models import DataSource, Region, Service, StopPoint
+from busstops.models import DataSource, Operator, Region, Service, StopPoint
 from bustimes.models import Route, StopTime, Trip
 
 from .models import Consequence, Situation, ValidityPeriod
@@ -177,6 +177,35 @@ class DisruptedTimetableTest(TestCase):
 
         self.assertContains(response, "\u26a0\ufe0f&#xfe0f; Disrupted Place")
         self.assertNotContains(response, "\u26a0\ufe0f&#xfe0f; Safe Place")
+
+    def test_operator_situations(self):
+        operator = Operator.objects.create(noc="BLUE", name="Blue Buses")
+        self.service.operator.add(operator)
+        other_service = Service.objects.create(line_name="157", current=True)
+        window = self.situation.publication_window
+
+        # applies to all the operator's services
+        situation = Situation.objects.create(
+            source=self.situation.source,
+            summary="Driver shortage",
+            publication_window=window,
+        )
+        Consequence.objects.create(situation=situation).operators.add(operator)
+
+        # applies to the operator, but only to another service
+        situation = Situation.objects.create(
+            source=self.situation.source,
+            summary="Diversion on the 157",
+            publication_window=window,
+        )
+        consequence = Consequence.objects.create(situation=situation)
+        consequence.operators.add(operator)
+        consequence.services.add(other_service)
+
+        response = self.client.get(self.service.get_absolute_url())
+        self.assertContains(response, "Stop closed")
+        self.assertContains(response, "Driver shortage")
+        self.assertNotContains(response, "Diversion on the 157")
 
     def test_validity_period_filtering(self):
         # the situation is only in effect for a few days in June 2026
