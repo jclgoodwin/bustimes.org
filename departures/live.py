@@ -251,18 +251,18 @@ def get_departures(stop, services, when) -> dict:
                     for row in departures:
                         if "data" in row and "VehicleRef" in row["data"]:
                             log_vehicle_journey(
-                                (
+                                service=(
                                     row["service"].pk
                                     if type(row["service"]) is Service
                                     else None
                                 ),
-                                row["data"],
-                                row.get("origin_departure_time"),
-                                row.get("date"),
-                                str(row["destination"]),
-                                source.name,
-                                source.url,
-                                (
+                                data=row["data"],
+                                time=row.get("origin_departure_time"),
+                                date=row.get("date"),
+                                destination=str(row["destination"]),
+                                source_name=source.name,
+                                url=source.url,
+                                trip_id=(
                                     row["stop_time"].trip_id
                                     if "stop_time" in row
                                     else None

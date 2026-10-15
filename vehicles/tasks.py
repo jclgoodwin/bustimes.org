@@ -107,7 +107,15 @@ def handle_siri_post(uuid, data: dict):
 
 @db_task()
 def log_vehicle_journey(
-    service: int, data: dict, time, date, destination, source_name, url, trip_id: int
+    *,
+    data: dict,
+    source_name: str,
+    url: str,
+    service: int | None = None,
+    time=None,
+    date=None,
+    destination: str = "",
+    trip_id: int | None = None,
 ):
     operator_ref = data.get("OperatorRef")
     if operator_ref == "SWB":  # Stagecoach

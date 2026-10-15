@@ -380,9 +380,9 @@ class LiveDeparturesTest(TestCase):
             debug_response, '<span style="color: #008000; font-weight: bold">&lt;Siri'
         )
 
-        args = (
-            None,
-            {
+        kwargs = {
+            "service": None,
+            "data": {
                 "LineRef": "X50",
                 "DirectionRef": "O",
                 "FramedVehicleJourneyRef": {
@@ -404,32 +404,34 @@ class LiveDeparturesTest(TestCase):
                     "DepartureStatus": "onTime",
                 },
             },
-            None,
-            None,
-            "EVESHAM Bus Station",
-            "SPT",
-            "http://worcestershire-rt-http.trapezenovus.co.uk:8080",
-            None,
-        )
+            "time": None,
+            "date": None,
+            "destination": "EVESHAM Bus Station",
+            "source_name": "SPT",
+            "url": "http://worcestershire-rt-http.trapezenovus.co.uk:8080",
+            "trip_id": None,
+        }
 
         # test that the task is called
-        mocked_log_vehicle_journey.assert_called_with(*args)
+        mocked_log_vehicle_journey.assert_called_with(**kwargs)
         self.assertEqual(0, VehicleJourney.objects.count())
+
+        kwargs["trip_id"] = self.trip.id
 
         # test the actual task
         with self.assertNumQueries(18):
-            log_vehicle_journey(*args[:-1], self.trip.id)
+            log_vehicle_journey(**kwargs)
 
         with self.assertNumQueries(5):
-            log_vehicle_journey(*args[:-1], self.trip.id)
+            log_vehicle_journey(**kwargs)
 
         Vehicle.objects.update(latest_journey=None)
 
         with self.assertNumQueries(5):
-            log_vehicle_journey(*args[:-1], self.trip.id)
+            log_vehicle_journey(**kwargs)
 
         journey = VehicleJourney.objects.get()
-        self.assertEqual(journey.vehicle.latest_journey_data, args[1])
+        self.assertEqual(journey.vehicle.latest_journey_data, kwargs["data"])
         self.assertEqual(journey.trip, self.trip)
         self.assertEqual(str(journey.datetime), "2019-02-09 12:10:00+00:00")
 

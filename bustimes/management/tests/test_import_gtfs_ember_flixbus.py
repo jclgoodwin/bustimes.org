@@ -190,8 +190,7 @@ class FlixbusTest(TestCase):
         command.do_source()
 
         log_vehicle_journey(
-            None,
-            {
+            data={
                 "Delay": "PT0M0S",
                 "LineRef": "004",
                 "Monitored": "true",
@@ -210,19 +209,15 @@ class FlixbusTest(TestCase):
                 "OriginAimedDepartureTime": "2024-04-01T15:00:00Z",
                 "DestinationAimedArrivalTime": "2026-04-01T18:00:00Z",
             },
-            None,
-            None,
-            None,
-            "",
-            "",
-            None,
+            source_name="",
+            url="",
         )
 
         trip = Trip.objects.get(vehicle_journey_code="UK004-10-1500042024-LVC#NOT-00")
 
         log_vehicle_journey(
-            self.service.id,
-            {
+            service=self.service.id,
+            data={
                 "Delay": "PT0M0S",
                 "LineRef": "004",
                 "Monitored": "true",
@@ -241,12 +236,9 @@ class FlixbusTest(TestCase):
                 "OriginAimedDepartureTime": "2024-04-01T15:00:00Z",
                 "DestinationAimedArrivalTime": "2026-04-01T18:00:00Z",
             },
-            None,
-            None,
-            None,
-            "",
-            "",
-            trip.id,
+            source_name="",
+            url="",
+            trip_id=trip.id,
         )
 
         server = fakeredis.FakeServer()
