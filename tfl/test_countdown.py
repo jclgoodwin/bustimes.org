@@ -17,6 +17,8 @@ FEED = """[4,"1.0",1791889626337]
 [1,"St Mary Axe","490012783W","25","Holborn Viaduct",78232,"SK20AYH",1791890133000]
 [1,"Aldgate","490000004B","25","Holborn Viaduct",78215,"SK20AYT",1791889600000]
 [1,"Bank","490000013S","25","Ilford",51063,"SK20AYT",1791893000000]
+[1,"Bank","490000013S","25","Ilford",51064,null,1791893100000]
+[1,"Loughton",null,"20","Walthamstow",61001,"LX11BBB",1791893200000]
 """
 
 
@@ -37,7 +39,10 @@ class CountdownTest(TestCase):
 
     def test_parse(self):
         vehicles, stops = countdown.parse(FEED)
-        self.assertEqual(len(vehicles), 2)
+        self.assertEqual(len(vehicles), 3)
+        self.assertNotIn(None, vehicles)
+        self.assertNotIn(None, stops)
+        self.assertEqual(len(stops["490000013S"]), 2)
         self.assertEqual(len(stops["490012783W"]), 2)
         self.assertEqual(
             vehicles["SK20AYT"][0],

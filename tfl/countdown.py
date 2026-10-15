@@ -56,24 +56,26 @@ def parse(text) -> tuple[dict, dict]:
         name, atco_code, line_name, destination, trip_id, reg, timestamp = row[1:]
         expected_arrival = datetime.fromtimestamp(timestamp / 1000, UTC).isoformat()
         # (only what api.views and departures.sources need)
-        vehicles[reg].append(
-            {
-                "naptanId": atco_code,
-                "stationName": name,
-                "tripId": str(trip_id),
-                "baseVersion": base_version,
-                "expectedArrival": expected_arrival,
-            }
-        )
-        stops[atco_code].append(
-            {
-                "lineName": line_name,
-                "destinationName": destination,
-                "vehicleId": reg,
-                "expectedArrival": expected_arrival,
-                "modeName": "bus",
-            }
-        )
+        if reg:
+            vehicles[reg].append(
+                {
+                    "naptanId": atco_code,
+                    "stationName": name,
+                    "tripId": str(trip_id),
+                    "baseVersion": base_version,
+                    "expectedArrival": expected_arrival,
+                }
+            )
+        if atco_code:
+            stops[atco_code].append(
+                {
+                    "lineName": line_name,
+                    "destinationName": destination,
+                    "vehicleId": reg,
+                    "expectedArrival": expected_arrival,
+                    "modeName": "bus",
+                }
+            )
 
     return vehicles, stops
 
