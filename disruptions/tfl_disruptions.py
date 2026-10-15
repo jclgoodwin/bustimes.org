@@ -153,6 +153,7 @@ def tfl_disruptions():
         params=settings.TFL,
         timeout=30,
     )
+    response.raise_for_status()
 
     for item in response.json():
         if situation := handle_disruption(item, source):
@@ -163,6 +164,7 @@ def tfl_disruptions():
         params=settings.TFL,
         timeout=30,
     )
+    response.raise_for_status()
 
     for item in response.json():
         for situation in handle_status(item, source):
