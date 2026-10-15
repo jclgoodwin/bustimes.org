@@ -55,4 +55,5 @@ urlpatterns = [
     path("siri/<uuid:uuid>", views.siri_post, name="siri_post"),
     path("overland/<uuid:uuid>", views.overland),
     path("overland", views.overland),
+    path("traccar/<uuid:uuid>", views.traccar),
 ]

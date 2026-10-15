@@ -1198,7 +1198,8 @@ def siri_post(request, uuid):
     if request.method == "GET":
         last_post = cache.get(last_post_key)
         return HttpResponse(
-            last_post["body"], content_type=last_post["headers"]["content-type"]
+            last_post["body"],
+            content_type=last_post["headers"].get("content-type", "text/plain"),
         )
 
     body = request.body.decode()
@@ -1228,6 +1229,54 @@ def siri_post(request, uuid):
     )
 
 
+def queue_device_location(uuid, when, device_id, lon, lat, bearing=None):
+    # device_id is "operator:vehicle:line_name:journey_ref"
+    try:
+        operator, vehicle, line_name, journey_ref = device_id.split(":", 3)
+    except ValueError:
+        operator = vehicle = line_name = journey_ref = ""
+    activity = {
+        "RecordedAtTime": when,
+        "MonitoredVehicleJourney": {
+            "OperatorRef": operator,
+            "VehicleRef": vehicle,
+            "PublishedLineName": line_name,
+            "VehicleJourneyRef": journey_ref,
+            "VehicleLocation": {
+                "Longitude": lon,
+                "Latitude": lat,
+            },
+        },
+    }
+    if bearing is not None and bearing >= 0:
+        activity["MonitoredVehicleJourney"]["Bearing"] = bearing
+
+    queue_siri_post(
+        uuid,
+        {
+            "Siri": {
+                "ServiceDelivery": {
+                    "ResponseTimestamp": when,
+                    "VehicleMonitoringDelivery": {
+                        "VehicleActivity": [activity],
+                    },
+                }
+            }
+        },
+    )
+
+
+def cache_last_post(request, subscription):
+    cache.set(
+        subscription.get_status_key().replace("_status", "_last_post"),
+        {
+            "headers": request.headers,
+            "body": request.body.decode() or request.META["QUERY_STRING"],
+        },
+        None,
+    )
+
+
 @csrf_exempt
 @require_POST
 def overland(request, uuid=None):
@@ -1241,46 +1290,54 @@ def overland(request, uuid=None):
     data = loads(request.body)
 
     for item in data["locations"][-1:]:
-        when = item["properties"]["timestamp"]
-        device_id = item["properties"]["device_id"]
-        try:
-            operator, vehicle, line_name, journey_ref = device_id.split(":", 3)
-        except ValueError:
-            operator = vehicle = line_name = journey_ref = ""
         lon, lat = item["geometry"]["coordinates"]
-        activity = {
-            "RecordedAtTime": when,
-            "MonitoredVehicleJourney": {
-                "OperatorRef": operator,
-                "VehicleRef": vehicle,
-                "PublishedLineName": line_name,
-                "VehicleJourneyRef": journey_ref,
-                "VehicleLocation": {
-                    "Longitude": lon,
-                    "Latitude": lat,
-                },
-            },
-        }
-
-        queue_siri_post(
+        queue_device_location(
             uuid,
-            {
-                "Siri": {
-                    "ServiceDelivery": {
-                        "ResponseTimestamp": when,
-                        "VehicleMonitoringDelivery": {
-                            "VehicleActivity": [activity],
-                        },
-                    }
-                }
-            },
+            item["properties"]["timestamp"],
+            item["properties"]["device_id"],
+            lon,
+            lat,
         )
 
-    cache.set(
-        subscription.get_status_key().replace("_status", "_last_post"),
-        {"headers": request.headers, "body": request.body.decode()},
-        None,
-    )
+    cache_last_post(request, subscription)
 
     # https://github.com/aaronpk/Overland-iOS#api
     return JsonResponse({"result": "ok"})
+
+
+@csrf_exempt
+@require_POST
+def traccar(request, uuid):
+    # OsmAnd protocol, as sent by Traccar Client
+    # https://github.com/traccar/traccar/blob/master/src/main/java/org/traccar/protocol/OsmAndProtocolDecoder.java
+
+    subscription = get_object_or_404(SiriSubscription, uuid=uuid)
+
+    cache_last_post(request, subscription)
+
+    if request.content_type == "application/json":
+        data = loads(request.body)
+        location = data["location"]
+        device_id = data["device_id"]
+        when = location["timestamp"]
+        lon = location["coords"]["longitude"]
+        lat = location["coords"]["latitude"]
+        bearing = location["coords"].get("heading")
+    else:
+        params = request.GET or request.POST
+        device_id = params.get("id") or params["deviceid"]
+        when = params["timestamp"]
+        if when.isdigit():
+            when = int(when)
+            if when > 2**31:  # milliseconds
+                when /= 1000
+            when = datetime.datetime.fromtimestamp(when, datetime.UTC).isoformat()
+        lon = float(params["lon"])
+        lat = float(params["lat"])
+        bearing = params.get("bearing") or params.get("heading")
+        if bearing is not None:
+            bearing = float(bearing)
+
+    queue_device_location(uuid, when, device_id, lon, lat, bearing)
+
+    return HttpResponse()
