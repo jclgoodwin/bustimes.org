@@ -181,3 +181,68 @@ class ApiTest(TestCase):
             [stop_time.stop.common_name for stop_time in trip.stops],
             ["Barnet Hospital", "Granville Road", "Leisure Way", "Nags Head"],
         )
+
+    @override_settings(
+        CACHES={
+            "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}
+        },
+    )
+    def test_tfl_arrivals_out_of_order(self):
+        trip = Trip()
+        trip.stops = [
+            StopTime(
+                stop=StopPoint(atco_code=atco_code, common_name=name),
+                arrival=timedelta(hours=18, minutes=minute),
+            )
+            for atco_code, name, minute in (
+                ("490003637N", "Barnet Hospital", 0),
+                ("490009082S", "Leisure Way", 1),
+                ("490008296M", "Nags Head", 5),
+            )
+        ]
+        journey = VehicleJourney(code="51063", trip=trip, date=date(2026, 10, 8))
+        cache.set(
+            "TflVehicle:LV74TJU",
+            [
+                {
+                    "naptanId": "490003637N",
+                    "stationName": "Barnet Hospital",
+                    "expectedArrival": "2026-10-08T17:00:10Z",
+                    "tripId": "51063",
+                },
+                {
+                    "naptanId": "490009082S",
+                    "stationName": "Leisure Way",
+                    "expectedArrival": "2026-10-08T17:00:05Z",
+                    "tripId": "51063",
+                },
+                {
+                    "naptanId": "490008296M",
+                    "stationName": "Nags Head",
+                    "expectedArrival": "2026-10-08T17:05:00Z",
+                    "tripId": "51063",
+                },
+                # the vehicle's next trip
+                {
+                    "naptanId": "490009082S",
+                    "stationName": "Leisure Way",
+                    "expectedArrival": "2026-10-08T17:30:00Z",
+                    "tripId": "51244",
+                },
+            ],
+        )
+
+        VehicleJourneyViewSet.tfl_arrivals(journey, "LV74TJU")
+
+        self.assertEqual(
+            [stop_time.stop.common_name for stop_time in trip.stops],
+            ["Barnet Hospital", "Leisure Way", "Nags Head"],
+        )
+        self.assertEqual(
+            [str(stop_time.expected_arrival_time) for stop_time in trip.stops],
+            [
+                "2026-10-08 18:00:10+01:00",
+                "2026-10-08 18:00:10+01:00",
+                "2026-10-08 18:05:00+01:00",
+            ],
+        )

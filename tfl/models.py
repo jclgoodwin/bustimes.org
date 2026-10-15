@@ -295,7 +295,7 @@ class Journey(models.Model):
         return format_timedelta(self.start_time, plus_one=True)
 
     @classmethod
-    def from_vehicle_journey(cls, vehicle_journey):
+    def from_vehicle_journey(cls, vehicle_journey, base_version=None):
         """Journey idxs are reused between base versions, so check the line and
         start time, and use the newest base version in which the block runs that day
         """
@@ -305,8 +305,11 @@ class Journey(models.Model):
             date = timezone.localdate(vehicle_journey.datetime)
         else:
             date = vehicle_journey.date
+        journeys = cls.objects.all()
+        if base_version:
+            journeys = journeys.filter(base_version=base_version)
         for journey in (
-            cls.objects.filter(
+            journeys.filter(
                 idx=vehicle_journey.code,
                 pattern__line__service_line_no__iexact=vehicle_journey.route_name,
                 block__calendar_days__runs=True,

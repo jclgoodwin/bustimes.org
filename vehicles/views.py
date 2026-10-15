@@ -71,7 +71,6 @@ from .models import (
     VehicleRevision,
     VehicleRevisionFeature,
 )
-from .rtpi import add_progress_and_delay
 from .tasks import queue_siri_post
 from .utils import apply_revision, get_revision, redis_client
 
@@ -383,16 +382,10 @@ def get_vehicle_locations(
     vehicle_ids=None,
     service_ids=None,
     operator_ids=None,
-    journey_id=None,
-    stop_times=None,
-    tzinfo=None,
 ):
     """Fetch live vehicle locations from Redis (and enrich with cached/db journey info).
 
     Provide exactly one of vehicle_ids, service_ids, or operator_ids.
-
-    `stop_times` (optional) is a pre-fetched list of StopTime objects for the
-    `journey_id` journey, for computing progress/delay if it wasn't done in advance.
     """
     set_names = None
     if service_ids:
@@ -489,14 +482,6 @@ def get_vehicle_locations(
                             f"{vehicle=} {vehicle.latest_journey_id=} {item['journey_id']=}"
                         )
                     item.update(journey)
-
-            if (
-                stop_times
-                and "progress" not in item
-                and item["journey_id"] == journey_id
-            ):
-                # (trip only found at request time, e.g. TfL)
-                add_progress_and_delay(item, stop_times=stop_times, tzinfo=tzinfo)
 
         if (
             service_ids

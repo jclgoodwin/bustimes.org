@@ -35,6 +35,7 @@ from busstops.models import (
 )
 from bustimes.models import Route, Trip
 from bustimes.utils import cache_routes
+from tfl import utils as tfl_utils
 
 from ... import utils
 from ...models import Vehicle, VehicleJourney, VehicleLocation
@@ -761,7 +762,22 @@ class Command(ImportLiveVehiclesCommand):
                         vehicle.operator_id = trip.operator_id
                         vehicle.save(update_fields=["operator"])
 
+        if not journey.date and (
+            progress_journey := self.get_progress_journey(item, journey)
+        ):
+            # the service date - the start time can be after 24:00
+            journey.date = progress_journey.date
+
         return journey
+
+    def get_progress_journey(self, item, journey):
+        if (
+            item["MonitoredVehicleJourney"]["OperatorRef"] == "TFLO"
+            and journey.code
+            and journey.code.isdigit()
+            and journey.datetime
+        ):
+            return tfl_utils.get_progress_journey(journey, journey.service_id)
 
     @staticmethod
     def create_vehicle_location(item):

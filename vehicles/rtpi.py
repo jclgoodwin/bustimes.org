@@ -274,24 +274,17 @@ def get_delay(progress, date, when, tzinfo=None) -> int | None:
 
 def get_progress(
     item: dict,
-    stop_time=None,
-    stop_times=None,
     tzinfo=None,
     modified_at=None,
+    stop_times=None,
+    pairs=None,
 ) -> Progress | None:
+    """`stop_times` and `pairs` (optional) - for a journey without a real Trip
+    (see ImportLiveVehiclesCommand.get_progress_journey)"""
     when = datetime.datetime.fromisoformat(item["datetime"])
     date = datetime.date.fromisoformat(item["date"])
 
-    pairs = None
-    if stop_times is not None:
-        stop_times = [st for st in stop_times if st.stop_id and st.stop.latlong]
-    elif stop_time:
-        stop_times = [
-            st
-            for st in stop_time.trip.stoptime_set.all()  # prefetched earlier
-            if st.stop_id and st.stop.latlong
-        ]
-    elif "trip_id" in item:
+    if pairs is None and "trip_id" in item:
         try:
             trip, stop_times, pairs = get_stop_times(item["trip_id"], date, modified_at)
         except Trip.DoesNotExist:
@@ -301,10 +294,6 @@ def get_progress(
 
     if not stop_times:
         return
-
-    if pairs is None:
-        route_links = get_route_links(item.get("service_id"), pair_keys(stop_times))
-        pairs = Pairs(stop_times, route_links)
 
     with sentry_sdk.start_span(name="nearby pairs"):
         nearby_pairs = pairs.nearby(*item["coordinates"])
@@ -379,12 +368,12 @@ def get_progress(
 
 def add_progress_and_delay(
     item,
-    stop_time=None,
-    stop_times=None,
     tzinfo=None,
     modified_at=None,
+    stop_times=None,
+    pairs=None,
 ):
-    progress = get_progress(item, stop_time, stop_times, tzinfo, modified_at)
+    progress = get_progress(item, tzinfo, modified_at, stop_times, pairs)
     if not progress:
         return
 

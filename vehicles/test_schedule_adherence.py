@@ -329,6 +329,7 @@ class ScheduleAdherenceTest(TestCase):
                     "date": "2023-08-31",
                 },
                 stop_times=[],
+                pairs=rtpi.Pairs([], {}),
             )
         )
 

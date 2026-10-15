@@ -106,6 +106,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
     def get_datetime():
         return
 
+    def get_progress_journey(self, item, journey):
+        """for journeys without a Trip - something with .date, .stop_times and .pairs"""
+        return
+
     @retry(
         wait=wait_exponential(multiplier=1, min=4, max=10),
         before_sleep=before_sleep_log(logger, logging.ERROR),
@@ -329,6 +333,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         location.id = vehicle.id
         location.journey = journey
+        if not journey.trip_id:
+            location.progress_journey = self.get_progress_journey(item, journey)
 
         if location_unchanged and self.same_as_latest(
             json.loads(json.dumps(location.get_redis_json(tz=self.tzinfo))), latest
@@ -451,6 +457,21 @@ class ImportLiveVehiclesCommand(BaseCommand):
                         redis_json,
                         tzinfo=self.tzinfo,
                         modified_at=modified_at,
+                    )
+                except Exception:
+                    logger.exception("error calculating progress and delay")
+            elif (
+                self.eager_progress
+                and location.in_service
+                and (progress_journey := location.progress_journey)
+                and progress_journey.date == location.journey.date
+            ):
+                try:
+                    rtpi.add_progress_and_delay(
+                        redis_json,
+                        stop_times=progress_journey.stop_times,
+                        tzinfo=self.tzinfo,
+                        pairs=progress_journey.pairs,
                     )
                 except Exception:
                     logger.exception("error calculating progress and delay")

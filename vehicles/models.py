@@ -811,6 +811,8 @@ class VehicleLocation:
         # - so don't work out its progress or delay
         self.in_service = in_service
         self.datetime = None
+        # stop times (not a real Trip) for working out progress and delay
+        self.progress_journey = None
 
     def __str__(self):
         if self.datetime:

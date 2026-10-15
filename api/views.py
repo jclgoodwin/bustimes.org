@@ -1,4 +1,5 @@
 import logging
+from collections import defaultdict
 from datetime import datetime, timedelta
 
 import numpy as np
@@ -22,7 +23,9 @@ from busstops.models import Locality, Operator, Service, StopPoint
 from bustimes.models import StopTime, Trip
 from bustimes.utils import contiguous_stoptimes_only
 from departures.gtfsr import maybe_get_and_apply_trip_update
-from tfl.models import Journey, JourneyDriveTime, JourneyWaitTime, StopInPattern
+from tfl import countdown
+from tfl import utils as tfl_utils
+from tfl.models import Journey
 from vehicles.models import (
     Livery,
     Vehicle,
@@ -288,81 +291,36 @@ class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
         return trip
 
     @staticmethod
-    def trip_from_tfl(instance):
-        journey = Journey.from_vehicle_journey(instance)
+    def trip_from_tfl(instance, base_version=None):
+        journey = Journey.from_vehicle_journey(instance, base_version)
         if not journey:
             return
-
-        base_version_id = journey.base_version_id
-
-        stops_in_pattern = list(
-            StopInPattern.objects.filter(
-                base_version_id=base_version_id, pattern_idx=journey.pattern_idx
-            )
-            .select_related("stop__stop_point")
-            .order_by("sequence_no")
-        )
-        if not stops_in_pattern:
+        stop_times = tfl_utils.get_stop_times(journey)
+        if not stop_times:
             return
-
-        drive_times = {
-            (dt.stop_in_pattern_from_idx, dt.stop_in_pattern_to_idx): dt.drive_time
-            for dt in JourneyDriveTime.objects.filter(
-                base_version_id=base_version_id, journey_idx=journey.idx
-            )
-        }
-        wait_times = {
-            wt.stop_in_pattern_idx: wt.wait_time
-            for wt in JourneyWaitTime.objects.filter(
-                base_version_id=base_version_id, journey_idx=journey.idx
-            )
-        }
 
         # start_time can be after 24:00, relative to the previous day -
         # make it relative to instance.date
         start_time = journey.start_time
         if instance.datetime:
-            start_date = timezone.localdate(instance.datetime) - timedelta(
-                days=start_time.days
+            offset = (
+                tfl_utils.get_service_date(journey, instance.datetime) - instance.date
             )
-            start_time += start_date - instance.date
+            if offset:
+                start_time += offset
+                for stop_time in stop_times:
+                    stop_time.arrival += offset
+                    stop_time.departure += offset
 
         trip = Trip(start=start_time)
-
-        trip.stops = []
-        time = start_time
-        previous_idx = None
-        for sip in stops_in_pattern:
-            if previous_idx is not None:
-                time += drive_times.get((previous_idx, sip.idx), timedelta())
-            arrival = time
-            time += wait_times.get(sip.idx, timedelta())
-            tfl_stop = sip.stop
-            # not a NaPTAN stop - a stand, garage, etc
-            passenger = bool(tfl_stop and tfl_stop.naptan_code)
-            stop = tfl_stop and tfl_stop.stop_point
-            if not stop:
-                stop = StopPoint(
-                    common_name=tfl_stop.name if tfl_stop else "",
-                    latlong=tfl_stop.latlong if tfl_stop else None,
-                )
-            trip.stops.append(
-                StopTime(
-                    stop=stop,
-                    arrival=arrival,
-                    departure=time,
-                    sequence=sip.sequence_no,
-                    timing_point=bool(sip.timing_point_code),
-                    pick_up=passenger,
-                    set_down=passenger,
-                )
-            )
-            previous_idx = sip.idx
-
+        trip.stops = stop_times
         return trip
 
     @staticmethod
-    def tfl_arrivals(instance, reg):
+    def get_tfl_arrivals(reg):
+        if (data := countdown.get_vehicle_predictions(reg)) is not None:
+            return data
+
         cache_key = f"TflVehicle:{reg}"
 
         if (data := cache.get(cache_key)) is None:
@@ -379,12 +337,31 @@ class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
                 logger.warning("TfL arrivals error", exc_info=True)
             cache.set(cache_key, data, 60)
 
+        return data
+
+    @staticmethod
+    def get_tfl_base_version(instance, data):
+        for item in data:
+            if item.get("tripId") == instance.code and item.get("baseVersion"):
+                return item["baseVersion"]
+
+    @classmethod
+    def tfl_arrivals(cls, instance, reg):
+        data = [
+            item
+            # (predictions for the vehicle's next trip too)
+            for item in cls.get_tfl_arrivals(reg)
+            if item.get("tripId", instance.code) == instance.code
+        ]
+
         stops = instance.trip.stops
         trip_stops = {stop_time.stop_id: stop_time.stop for stop_time in stops}
         other_stops = StopPoint.objects.in_bulk(
             [item["naptanId"] for item in data if item["naptanId"] not in trip_stops]
         )
 
+        matched = {}  # index in stops: expected arrival time
+        to_insert = defaultdict(list)  # index in stops: unmatched predictions
         position = 0
         pending = []  # unmatched, to be inserted before the next matched stop
         for item in sorted(data, key=lambda item: item["expectedArrival"]):
@@ -392,13 +369,16 @@ class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
                 datetime.fromisoformat(item["expectedArrival"])
             )
             atco_code = item["naptanId"]
+            indices = [
+                i
+                for i, stop_time in enumerate(stops)
+                if stop_time.stop_id == atco_code and i not in matched
+            ]
+            # predictions can be slightly out of order (by a few seconds) -
+            # so match an earlier stop if there's no later one
             index = next(
-                (
-                    i
-                    for i in range(position, len(stops))
-                    if stops[i].stop_id == atco_code
-                ),
-                None,
+                (i for i in indices if i >= position),
+                indices[-1] if indices else None,
             )
             if index is None:
                 stop = (
@@ -410,10 +390,18 @@ class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
                 stop_time.expected_arrival_time = expected_arrival
                 pending.append(stop_time)
             else:
-                stops[index].expected_arrival_time = expected_arrival
-                stops[index:index] = pending
-                position = index + len(pending) + 1
+                matched[index] = expected_arrival
+                to_insert[index] += pending
+                position = max(position, index + 1)
                 pending = []
+
+        previous = None
+        for index in sorted(matched):
+            # times in stop order shouldn't go backwards
+            if previous and matched[index] < previous:
+                matched[index] = previous
+            stops[index].expected_arrival_time = previous = matched[index]
+
         if pending:
             # don't put unmatched predictions before stops scheduled earlier
             midnight = timezone.make_aware(
@@ -424,7 +412,10 @@ class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
                 and midnight + scheduled < pending[0].expected_arrival_time
             ):
                 position += 1
-        stops[position:position] = pending
+            to_insert[position] += pending
+
+        for index in sorted(to_insert, reverse=True):
+            stops[index:index] = to_insert[index]
 
     @action(detail=True)
     def details(self, request, pk=None, **kwargs):
@@ -521,9 +512,16 @@ class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
         )
 
         is_tfl = instance.vehicle and instance.vehicle.is_tfl()
+        if is_tfl:
+            mvj = instance.vehicle.latest_journey_data["MonitoredVehicleJourney"]
 
         if is_tfl and not instance.trip and instance.code.isdigit():
-            instance.trip = self.trip_from_tfl(instance)
+            base_version = None
+            if current_trip:
+                base_version = self.get_tfl_base_version(
+                    instance, self.get_tfl_arrivals(mvj["VehicleRef"])
+                )
+            instance.trip = self.trip_from_tfl(instance, base_version)
 
         if current_trip and not instance.trip:
             instance.trip = self.trip_from_siri(instance)
@@ -539,7 +537,6 @@ class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
                     maybe_get_and_apply_trip_update(instance.trip, instance.trip.stops)
 
             if is_tfl and current_trip:
-                mvj = instance.vehicle.latest_journey_data["MonitoredVehicleJourney"]
                 self.tfl_arrivals(instance, mvj["VehicleRef"])
 
             if locations:
@@ -561,11 +558,8 @@ class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
                 }
             else:
                 params = {"vehicle_ids": [instance.vehicle_id or instance.id]}
-            if instance.trip:
-                params["journey_id"] = instance.id
-                params["stop_times"] = instance.trip.stops
             this = None
-            if live := get_vehicle_locations(**params, tzinfo=tzinfo):
+            if live := get_vehicle_locations(**params):
                 # check that this journey is actually tracking (not an old journey)
                 for item in live:
                     if instance.id == item["journey_id"]:

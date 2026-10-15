@@ -1,12 +1,16 @@
+import json
 from datetime import UTC, date, datetime, timedelta
 
+import fakeredis
 from django.core.management import call_command
 from django.test import TestCase
 
 from api.views import VehicleJourneyViewSet
-from busstops.models import DataSource, Region, Service, StopPoint
+from busstops.models import DataSource, Operator, Region, Service, StopPoint
 from bustimes.models import Route, Trip
-from vehicles.models import Vehicle, VehicleJourney
+from vehicles.management.commands import import_bod_avl
+from vehicles.management.tests.test_bod_avl import patch_redis_client
+from vehicles.models import Livery, Vehicle, VehicleJourney
 
 from . import models
 
@@ -193,3 +197,72 @@ class JourneyTest(TestCase):
         ).delete()
         response = self.client.get(f"{vehicle.get_absolute_url()}?date=2026-10-08")
         self.assertNotIn("predictions", response.context_data)
+
+    def test_import_bod_avl(self):
+        models.Journey.objects.filter(base_version__version=20260926).update(
+            start_time=timedelta(hours=26, minutes=34)
+        )
+        base_version = models.BaseVersion.objects.get(version=20260926)
+        StopPoint.objects.filter(atco_code="490001063C").update(
+            latlong="POINT(0.0094 51.6331)"
+        )
+        StopPoint.objects.create(
+            atco_code="490005181E",
+            common_name="Chingford Mount",
+            latlong="POINT(-0.0004 51.6182)",
+            active=True,
+        )
+        models.Stop.objects.create(
+            base_version=base_version,
+            idx=14781,
+            naptan_code="490005181E",
+            name="Chingford Mount",
+        )
+        models.StopInPattern.objects.create(
+            base_version=base_version,
+            idx=11531,
+            pattern_idx=1316,
+            stop_idx=14781,
+            sequence_no=2,
+        )
+        models.JourneyDriveTime.objects.create(
+            base_version=base_version,
+            journey_idx=255600,
+            stop_in_pattern_from_idx=11530,
+            stop_in_pattern_to_idx=11531,
+            drive_time=timedelta(minutes=10),
+        )
+        Livery.objects.create(id=262, name="TfL", published=True)
+        Operator.objects.create(noc="TFLO", name="Transport for London")
+
+        command = import_bod_avl.Command()
+        command.source = DataSource.objects.create(name="Bus Open Data")
+        item = {
+            "RecordedAtTime": "2026-10-11T01:39:00+00:00",
+            "MonitoredVehicleJourney": {
+                "LineRef": "97",
+                "PublishedLineName": "97",
+                "OperatorRef": "TFLO",
+                "DestinationName": "Chingford Mount",
+                "OriginAimedDepartureTime": "2026-10-11T01:34:00+00:00",
+                # halfway between the stops
+                "VehicleLocation": {"Longitude": "0.0045", "Latitude": "51.62565"},
+                "VehicleJourneyRef": "255600",
+                "VehicleRef": "LJ16NAC",
+            },
+            "Extensions": None,
+        }
+        redis_client = fakeredis.FakeStrictRedis()
+        with patch_redis_client(redis_client):
+            command.handle_item(item)
+            command.save()
+
+        journey = VehicleJourney.objects.get()
+        # after midnight - the service date is the day before
+        self.assertEqual(journey.date, date(2026, 10, 10))
+        self.assertIsNone(journey.trip)
+
+        location = json.loads(redis_client.get(f"vehicle{journey.vehicle_id}"))
+        self.assertEqual(location["progress"]["prev_stop"], "490001063C")
+        self.assertEqual(location["progress"]["next_stop"], "490005181E")
+        self.assertAlmostEqual(location["delay"], 0, delta=30)

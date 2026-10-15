@@ -21,6 +21,7 @@ from xmltodict import unparse
 
 from bustimes.utils import get_stop_times
 from disruptions.models import Call
+from tfl import countdown
 from vehicles.models import VehicleCode, VehicleJourney
 
 TIMEZONE = ZoneInfo("Europe/London")
@@ -163,8 +164,18 @@ class TflDepartures(RemoteDepartures):
             row["vehicle"] = item["vehicleId"]
         return row
 
+    def get_departures(self):
+        if (
+            self.stop.stop_type not in {"FBT", "PLT"}
+            and (data := countdown.get_stop_predictions(self.stop.pk)) is not None
+        ):
+            return self.departures_from_data(data)
+        return super().get_departures()
+
     def departures_from_response(self, res) -> list:
-        data = res.json()
+        return self.departures_from_data(res.json())
+
+    def departures_from_data(self, data) -> list:
         rows = [self.get_row(item) for item in data]
         prefix = "TFLO:"
         codes = [f"{prefix}{row['vehicle']}" for row in rows if "vehicle" in row]
