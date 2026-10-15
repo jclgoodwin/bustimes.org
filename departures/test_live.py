@@ -405,6 +405,7 @@ class LiveDeparturesTest(TestCase):
                 },
             },
             None,
+            None,
             "EVESHAM Bus Station",
             "SPT",
             "http://worcestershire-rt-http.trapezenovus.co.uk:8080",

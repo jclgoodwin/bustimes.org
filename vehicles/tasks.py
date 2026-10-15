@@ -107,7 +107,7 @@ def handle_siri_post(uuid, data: dict):
 
 @db_task()
 def log_vehicle_journey(
-    service: int, data: dict, time, destination, source_name, url, trip_id: int
+    service: int, data: dict, time, date, destination, source_name, url, trip_id: int
 ):
     operator_ref = data.get("OperatorRef")
     if operator_ref == "SWB":  # Stagecoach
@@ -181,7 +181,8 @@ def log_vehicle_journey(
             scheme=source_name, code=vehicle_code_code, vehicle=vehicle
         )
 
-    time = datetime.fromisoformat(time)
+    if isinstance(time, str):
+        time = datetime.fromisoformat(time)
 
     if last_journey := vehicle.latest_journey:
         last_time = last_journey.datetime
@@ -202,7 +203,9 @@ def log_vehicle_journey(
     destination = destination or ""
     route_name = data.get("LineName") or data.get("LineRef")
 
-    date = timezone.localdate(time)
+    if not date:
+        date = timezone.localdate(time)
+
     journeys = vehicle.vehiclejourney_set.filter(date=date)
 
     existing = VehicleJourney.objects.filter(

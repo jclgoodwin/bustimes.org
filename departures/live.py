@@ -257,11 +257,8 @@ def get_departures(stop, services, when) -> dict:
                                     else None
                                 ),
                                 row["data"],
-                                (
-                                    str(row["origin_departure_time"])
-                                    if "origin_departure_time" in row
-                                    else None
-                                ),
+                                row.get("origin_departure_time"),
+                                row.get("date"),
                                 str(row["destination"]),
                                 source.name,
                                 source.url,
