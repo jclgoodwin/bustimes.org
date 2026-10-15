@@ -27,7 +27,7 @@ class Command(BaseCommand):
     def do_line(self, line_id):
         try:
             service = Service.objects.get(
-                line_name__iexact=line_id, region="L", current=1
+                line_name__iexact=line_id, region="L", current=True
             )
         except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
             print("⚠️", line_id, e)
@@ -119,7 +119,7 @@ class Command(BaseCommand):
             line_names = line_names[resume_from:]
 
         existing_service_codes = ServiceCode.objects.filter(
-            scheme="TfL", service__current=1
+            scheme="TfL", service__current=True
         )
 
         service_codes_to_delete = existing_service_codes.exclude(code__in=line_names)
