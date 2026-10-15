@@ -20,9 +20,11 @@ EARTH_RADIUS = 6371008.8  # mean radius - the sphere ST_DistanceSphere uses
 # how close (in metres) a bus has to be to count as between a pair of stops.
 # a route link follows the road, so a bus on it is only as far away as its GPS
 # is wrong. a straight line between the stops can be much further from the road
-# the bus is actually on - 10% of real route links stray more than 190 metres
+# the bus is actually on, and the further apart the stops the worse it gets -
+# 10% of real route links stray more than 0.35 x the distance between their stops
 NEARBY_ROUTE_LINK = 300
 NEARBY_STRAIGHT_LINE = 600
+STRAY_PER_METRE = 0.5
 
 
 def local_metres(coords, cos_latitude):
@@ -113,7 +115,9 @@ class Pairs:
                 coords = np.array((a_coords, b.stop.latlong.coords))
                 lines[i] = shapely.LineString(local_metres(coords, cos_latitude))
                 self.cos_latitudes[i] = cos_latitude
-                self.thresholds[i] = NEARBY_STRAIGHT_LINE
+                self.thresholds[i] = (
+                    NEARBY_STRAIGHT_LINE + STRAY_PER_METRE * lines[i].length
+                )
 
         self.lines = lines
 

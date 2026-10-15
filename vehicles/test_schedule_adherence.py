@@ -278,8 +278,8 @@ class ScheduleAdherenceTest(TestCase):
 
     def test_get_progress_route_link(self):
         item = {
-            # 800 metres south of the straight line from Lattimore Road to the station
-            "coordinates": [-0.3295, 51.7435],
+            # 1.7km south of the straight line from Lattimore Road to the station
+            "coordinates": [-0.3295, 51.735],
             "trip_id": self.journey.trip_id,
             "heading": None,
             "datetime": "2023-08-31T09:50:07Z",
@@ -291,7 +291,7 @@ class ScheduleAdherenceTest(TestCase):
             service=self.service,
             from_stop_id="210021505100",
             to_stop_id="210021505160",
-            geometry="LINESTRING(-0.332185 51.750952, -0.3295 51.7435, -0.326838 51.750598)",
+            geometry="LINESTRING(-0.332185 51.750952, -0.3295 51.735, -0.326838 51.750598)",
         )
         progress = rtpi.get_progress(item)
         self.assertEqual(progress.prev_stop_time.stop_id, "210021505100")
