@@ -15,6 +15,7 @@ from busstops.models import DataSource
 
 from ...models import SiriSubscription, Vehicle
 from ...tasks import SIRI_CHANNEL, handle_siri_post
+from ...views import queue_device_location
 
 
 @override_settings(
@@ -298,3 +299,32 @@ class SiriPostTest(TestCase):
             self.assertEqual(location["heading"], 123)
 
         self.assertEqual(str(vehicle), "MB183")
+
+    def test_queue_device_location(self):
+        for device_id, expected in (
+            ("YN51XMU", ("", "YN51XMU", "", "", None)),
+            ("NADT:MB183", ("NADT", "MB183", "", "", None)),
+            ("NADT:MB183:34", ("NADT", "MB183", "34", "", None)),
+            (
+                "NADT:MB183:34::Bus Station: Stand A",
+                ("NADT", "MB183", "34", "", "Bus Station: Stand A"),
+            ),
+        ):
+            with (
+                self.subTest(device_id),
+                mock.patch("vehicles.views.queue_siri_post") as queue_siri_post,
+            ):
+                queue_device_location("uuid", "2023-12-15T08:24:05Z", device_id, 0, 0)
+                mvj = queue_siri_post.call_args[0][1]["Siri"]["ServiceDelivery"][
+                    "VehicleMonitoringDelivery"
+                ]["VehicleActivity"][0]["MonitoredVehicleJourney"]
+                self.assertEqual(
+                    (
+                        mvj["OperatorRef"],
+                        mvj["VehicleRef"],
+                        mvj["PublishedLineName"],
+                        mvj["VehicleJourneyRef"],
+                        mvj.get("DestinationName"),
+                    ),
+                    expected,
+                )

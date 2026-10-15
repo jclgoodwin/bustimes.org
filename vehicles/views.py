@@ -1230,11 +1230,14 @@ def siri_post(request, uuid):
 
 
 def queue_device_location(uuid, when, device_id, lon, lat, bearing=None):
-    # device_id is "operator:vehicle:line_name:journey_ref"
-    try:
-        operator, vehicle, line_name, journey_ref = device_id.split(":", 3)
-    except ValueError:
-        operator = vehicle = line_name = journey_ref = ""
+    # device_id is "operator:vehicle:line_name:journey_ref:destination",
+    # trailing parts optional, or just "vehicle"
+    parts = device_id.split(":", 4)
+    if len(parts) == 1:
+        parts.insert(0, "")
+    operator, vehicle, line_name, journey_ref, destination = parts + [""] * (
+        5 - len(parts)
+    )
     activity = {
         "RecordedAtTime": when,
         "MonitoredVehicleJourney": {
@@ -1250,6 +1253,8 @@ def queue_device_location(uuid, when, device_id, lon, lat, bearing=None):
     }
     if bearing is not None and bearing >= 0:
         activity["MonitoredVehicleJourney"]["Bearing"] = bearing
+    if destination:
+        activity["MonitoredVehicleJourney"]["DestinationName"] = destination
 
     queue_siri_post(
         uuid,
