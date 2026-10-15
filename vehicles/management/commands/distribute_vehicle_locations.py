@@ -5,6 +5,7 @@ import logging
 from channels.layers import get_channel_layer
 from django.core.management.base import BaseCommand
 from redis.exceptions import ConnectionError
+from tqdm import tqdm
 
 from ...models import VehicleLocation
 from ...time_aware_polyline import (
@@ -131,11 +132,13 @@ class Command(BaseCommand):
 
     async def run(self):
         channel_layer = get_channel_layer()
+        progress = tqdm(unit=" locations", disable=None)
 
         while channel_layer:
             try:
                 message = await channel_layer.receive(VEHICLE_POSITIONS_CHANNEL)
                 await self.handle_items(message["items"])
+                progress.update(len(message["items"]))
             except ConnectionError:
                 logger.exception("error distributing vehicle locations")
                 raise
