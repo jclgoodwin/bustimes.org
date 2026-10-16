@@ -402,6 +402,24 @@ class ImportLiveVehiclesCommand(BaseCommand):
             if not location.latlong:
                 continue
 
+            appendages.append(
+                (
+                    location.journey.get_redis_key(),
+                    int(location.datetime.timestamp()),
+                    location.latlong.x,
+                    location.latlong.y,
+                )
+            )
+
+            # expire 15 minutes after the position's own timestamp
+            expiry = 900
+            if self.source.datetime:
+                expiry -= int(
+                    (self.source.datetime - location.datetime).total_seconds()
+                )
+                if expiry <= 0:
+                    continue  # backlogged - record history, but keep off the live map
+
             # update live map
 
             geoadd += [location.latlong.x, location.latlong.y, vehicle.id]
@@ -473,18 +491,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
             pipeline.set(
                 f"vehicle{vehicle.id}",
                 json.dumps(redis_json),
-                ex=900,  # 900 secs = 15 min
+                ex=min(expiry, 900),
             )
             # can't use 'mset' cos it doesn't let us specify an expiry
-
-            appendages.append(
-                (
-                    location.journey.get_redis_key(),
-                    int(location.datetime.timestamp()),
-                    location.latlong.x,
-                    location.latlong.y,
-                )
-            )
 
         if geoadd:
             pipeline.geoadd("vehicle_location_locations", geoadd)
@@ -497,7 +506,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             logger.exception("error executing redis pipeline")
 
         channel_layer = get_channel_layer()
-        if channel_layer is not None and items:
+        if channel_layer is not None and appendages:
             try:
                 async_to_sync(channel_layer.send)(
                     VEHICLE_POSITIONS_CHANNEL,
