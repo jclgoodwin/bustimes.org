@@ -63,12 +63,13 @@ class Timetable:
         operators=None,
         loose_trip_chaining=False,
     ):
-        self.today = localdate()
-
         self.operators = operators
         self.loose_trip_chaining = loose_trip_chaining
 
         routes = list(routes.order_by("id").select_related("source"))
+        self.today = localdate(
+            timezone=next((route.timezone for route in routes if route.timezone), None)
+        )
         self.routes = self.current_routes = routes
         # self.current_routes is a subset of self.routes
         self.yesterday = None

@@ -1330,7 +1330,7 @@ class ServiceDetailView(DetailView):
                         context["timetable"].calendars
                         and context["timetable"].calendar_ids
                     )
-                    and date < timezone.localdate()
+                    and date < context["timetable"].today
                     and not form.cleaned_data["detailed"]
                 ):
                     return {"redirect_to": self.object}
@@ -1354,7 +1354,10 @@ class ServiceDetailView(DetailView):
             .defer("data")
         )
         stop_situations = build_stop_situations(
-            context["situations"], when=date or timezone.localdate()
+            context["situations"],
+            when=date
+            or (context["timetable"].today if context.get("timetable") else None)
+            or timezone.localdate(),
         )
 
         # mark disrupted stops in the timetable (applied lazily when rendered)
