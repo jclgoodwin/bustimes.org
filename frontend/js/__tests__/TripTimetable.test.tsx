@@ -150,6 +150,8 @@ const vehicle: Vehicle = {
   delay: 252,
 };
 
+Element.prototype.scrollIntoView = jest.fn();
+
 it("renders trip timetable", async () => {
   const { container, rerender } = render(<TripTimetable trip={trip} />);
 

@@ -1229,6 +1229,8 @@ input:not(:checked) + label {
 }
 
 .trip-timetable {
+    scroll-padding-bottom: 100px;
+
     .breadcrumb {
         border: 0;
         margin: -1em -1em 1em;

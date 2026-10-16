@@ -70,7 +70,8 @@ function getDiff(stop: TripTime, vehicle?: Vehicle | null) {
 
 function Row({
   stop,
-  onMouseEnter,
+  onHover,
+  onSelect,
   vehicle,
   aimedColumn,
   expectedColumn,
@@ -78,11 +79,13 @@ function Row({
   highlightedStop,
   diff,
   covered,
+  rowRef,
   first = false,
   last = false,
 }: {
   stop: TripTime;
-  onMouseEnter?: (stop: TripTime) => void;
+  onHover?: (stop: TripTime) => void;
+  onSelect?: (stop: TripTime) => void;
   vehicle?: Vehicle | null;
   aimedColumn: boolean;
   expectedColumn: boolean;
@@ -90,29 +93,18 @@ function Row({
   highlightedStop?: string;
   diff: number | null;
   covered: boolean; // actual column taken by the previous row's vehicle cell
+  rowRef?: React.Ref<HTMLTableRowElement>;
   first: boolean;
   last: boolean;
 }) {
   const handlePointerEnter = React.useCallback(
     (event: React.PointerEvent) => {
-      // on touch there's no hover, so a tap on the stop-name link should follow
-      // it rather than open the popup (otherwise iOS treats the first tap as a
-      // hover and you have to tap a second time). tapping elsewhere on the row
-      // still opens the popup
-      if (
-        event.pointerType === "touch" &&
-        event.target instanceof HTMLElement &&
-        event.target.closest("a")
-      ) {
-        return;
-      }
-      if (onMouseEnter) {
-        if (stop.stop.location) {
-          onMouseEnter(stop);
-        }
+      // on touch there's no hover (and iOS would treat the first tap as one)
+      if (event.pointerType !== "touch" && onHover && stop.stop.location) {
+        onHover(stop);
       }
     },
-    [stop, onMouseEnter],
+    [stop, onHover],
   );
 
   let rowSpan: number | undefined;
@@ -230,7 +222,11 @@ function Row({
 
   return (
     <React.Fragment>
-      <tr className={className} onPointerEnter={handlePointerEnter}>
+      <tr
+        className={className}
+        onPointerEnter={handlePointerEnter}
+        ref={rowRef}
+      >
         <td className="stop-name" rowSpan={rowSpan}>
           {stopName}
         </td>
@@ -251,17 +247,17 @@ function Row({
 
 const TripTimetable = React.memo(function TripTimetable({
   trip,
-  onMouseEnter,
+  onHover,
+  onSelect,
   vehicle,
   highlightedStop,
 }: {
   trip: Trip;
-  onMouseEnter?: (stop: TripTime) => void;
+  onHover?: (stop: TripTime) => void;
+  onSelect?: (stop: TripTime) => void;
   vehicle?: Vehicle | null;
   highlightedStop?: string;
 }) {
-  const [showEarlierStops, setShowEarlierStops] = React.useState(false);
-
   const aimedColumn: boolean = trip.times.some(
     (item) => item.aimed_arrival_time || item.aimed_departure_time,
   );
@@ -273,16 +269,7 @@ const TripTimetable = React.memo(function TripTimetable({
   const actualColumn =
     vehicle || trip.times.some((item) => item.actual_departure_time);
 
-  let earlierStops = false;
-
-  let times = trip.times;
-  if (!showEarlierStops && vehicle && vehicle.progress) {
-    const index = times.findIndex((item) => item.id === vehicle.progress?.id);
-    if (index > 0) {
-      times = times.slice(index);
-      earlierStops = true;
-    }
-  }
+  const times = trip.times;
   const indexOfLastRow = times.length - 1;
   const diffs = times.map((stop) => getDiff(stop, vehicle));
   const vehicleIndex = diffs.indexOf(0);
@@ -291,19 +278,45 @@ const TripTimetable = React.memo(function TripTimetable({
       ? vehicleIndex + 1
       : -1;
 
+  const tableRef = React.useRef<HTMLTableElement>(null);
+  const progressRowRef = React.useRef<HTMLTableRowElement>(null);
+
+  // scroll a stop clicked on the map into view (but not the initial one, from
+  // the referrer)
+  const prevHighlightedStop = React.useRef(highlightedStop);
+  React.useEffect(() => {
+    if (highlightedStop === prevHighlightedStop.current) {
+      return;
+    }
+    prevHighlightedStop.current = highlightedStop;
+    if (highlightedStop) {
+      tableRef.current
+        ?.querySelector(".is-highlighted")
+        ?.scrollIntoView({ block: "nearest" });
+    }
+  }, [highlightedStop]);
+
+  // on navigating to a new trip, scroll to the vehicle's progress (once known),
+  // or else to the top
+  const scrolledToTop = React.useRef<Trip>(undefined);
+  const scrolledToProgress = React.useRef<Trip>(undefined);
+  const progressKnown = vehicleIndex !== -1;
+  React.useLayoutEffect(() => {
+    if (scrolledToProgress.current === trip) {
+      return;
+    }
+    if (progressKnown && progressRowRef.current) {
+      scrolledToProgress.current = trip;
+      progressRowRef.current.scrollIntoView({ block: "center" });
+    } else if (scrolledToTop.current !== trip) {
+      scrolledToTop.current = trip;
+      tableRef.current?.closest(".map-sidebar")?.scrollTo(0, 0);
+    }
+  }, [trip, progressKnown]);
+
   return (
     <React.Fragment>
-      {earlierStops || showEarlierStops ? (
-        <label>
-          <input
-            type="checkbox"
-            checked={showEarlierStops}
-            onChange={() => setShowEarlierStops(!showEarlierStops)}
-          />
-          {" Show previous stops"}
-        </label>
-      ) : null}
-      <table>
+      <table ref={tableRef}>
         <thead>
           <tr>
             <th className="stop-name" />
@@ -319,12 +332,14 @@ const TripTimetable = React.memo(function TripTimetable({
               aimedColumn={aimedColumn}
               expectedColumn={expectedColumn}
               stop={stop}
-              onMouseEnter={onMouseEnter}
+              onHover={onHover}
+              onSelect={onSelect}
               vehicle={vehicle}
               highlightedStop={highlightedStop}
               diff={diffs[i]}
               covered={i === coveredIndex}
-              first={i === 0 && !earlierStops}
+              rowRef={i === vehicleIndex ? progressRowRef : undefined}
+              first={i === 0}
               last={i === indexOfLastRow}
             />
           ))}

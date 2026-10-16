@@ -337,7 +337,8 @@ function TripSidebar(props: {
   tripId?: string;
   vehicle?: VehicleLocation | null;
   highlightedStop?: string;
-  onMouseEnter: (stop: TripTime) => void;
+  onHover: (stop: TripTime) => void;
+  onSelect: (stop: TripTime) => void;
 }) {
   let className = "trip-timetable map-sidebar";
 
@@ -379,7 +380,8 @@ function TripSidebar(props: {
         trip={trip}
         vehicle={props.vehicle}
         highlightedStop={props.highlightedStop}
-        onMouseEnter={props.onMouseEnter}
+        onHover={props.onHover}
+        onSelect={props.onSelect}
       />
       <dl className="contact-details">
         {trip.block ? (
@@ -401,7 +403,8 @@ function JourneySidebar(props: {
   journeyContext?: string | null;
   highlightedStop?: string;
   vehicle?: VehicleLocation | null;
-  onMouseEnter: (stop: TripTime) => void;
+  onHover: (stop: TripTime) => void;
+  onSelect: (stop: TripTime) => void;
 }) {
   let className = "trip-timetable map-sidebar";
 
@@ -512,7 +515,8 @@ function JourneySidebar(props: {
           trip={journey.trip}
           vehicle={props.vehicle}
           highlightedStop={props.highlightedStop}
-          onMouseEnter={props.onMouseEnter}
+          onHover={props.onHover}
+          onSelect={props.onSelect}
         />
       ) : null}
       <dl className="contact-details">
@@ -628,6 +632,17 @@ export default function BigMap(
   const [clickedStopFeature, setClickedStopFeature] = React.useState<
     Stop | undefined
   >();
+
+  // hovering a timetable row opens a popup, but doesn't highlight the row -
+  // only a clicked stop is highlighted
+  const [hoveredStopUrl, setHoveredStopUrl] = React.useState<string>();
+
+  const popupStopUrl = hoveredStopUrl || clickedStopUrl;
+
+  const setStopPopup = React.useCallback((url?: string) => {
+    setHoveredStopUrl(undefined);
+    setClickedStopURL(url);
+  }, []);
 
   const [tripVehicle, setTripVehicle] = React.useState<VehicleLocation | null>(
     null,
@@ -978,6 +993,7 @@ export default function BigMap(
       if (vehicleId) {
         setClickedVehicleMarker(vehicleId);
         setClickedStopURL(undefined);
+        setHoveredStopUrl(undefined);
         setHoveredLocation(null);
         setClickedStopFeature(undefined);
         return;
@@ -992,6 +1008,7 @@ export default function BigMap(
           }
           if (feature.layer.id.startsWith("stops")) {
             const url = feature.properties.url;
+            setHoveredStopUrl(undefined);
             if (url !== clickedStopUrl) {
               setClickedStopURL(url);
               setHoveredLocation(null);
@@ -1015,6 +1032,7 @@ export default function BigMap(
         }
       } else {
         setClickedStopURL(undefined);
+        setHoveredStopUrl(undefined);
         setClickedStopFeature(undefined);
       }
       setClickedVehicleMarker(undefined);
@@ -1092,6 +1110,13 @@ export default function BigMap(
 
   const handleRowHover = React.useCallback((a: TripTime) => {
     if (a.stop.location && a.stop.atco_code) {
+      setHoveredStopUrl(`/stops/${a.stop.atco_code}`);
+    }
+  }, []);
+
+  const handleRowClick = React.useCallback((a: TripTime) => {
+    if (a.stop.location && a.stop.atco_code) {
+      setHoveredStopUrl(undefined);
       setClickedStopURL(`/stops/${a.stop.atco_code}`);
     }
   }, []);
@@ -1178,14 +1203,14 @@ export default function BigMap(
           ) : trip ? (
             <Stops
               times={trip.times}
-              clickedStopUrl={clickedStopUrl}
-              setClickedStop={setClickedStopURL}
+              clickedStopUrl={popupStopUrl}
+              setClickedStop={setStopPopup}
             />
           ) : props.mode === MapMode.Journey && journey?.trip?.times ? (
             <Stops
               times={journey.trip.times}
-              clickedStopUrl={clickedStopUrl}
-              setClickedStop={setClickedStopURL}
+              clickedStopUrl={popupStopUrl}
+              setClickedStop={setStopPopup}
             />
           ) : null}
 
@@ -1236,7 +1261,8 @@ export default function BigMap(
           tripId={props.tripId}
           vehicle={tripVehicle}
           highlightedStop={clickedStopUrl}
-          onMouseEnter={handleRowHover}
+          onHover={handleRowHover}
+          onSelect={handleRowClick}
         />
       ) : null}
 
@@ -1247,7 +1273,8 @@ export default function BigMap(
           journeyContext={journeyContext}
           vehicle={tripVehicle}
           highlightedStop={clickedStopUrl}
-          onMouseEnter={handleRowHover}
+          onHover={handleRowHover}
+          onSelect={handleRowClick}
         />
       ) : null}
     </React.Fragment>
