@@ -17,7 +17,7 @@ export type TripTime = {
   expected_departure_time?: string | null;
   actual_arrival_time?: string | null;
   actual_departure_time?: string;
-  timing_status: string;
+  timing_status: "PTP" | "OTH";
   pick_up?: boolean;
   set_down?: boolean;
   call_condition?: string | null;
@@ -224,7 +224,7 @@ function Row({
     );
   }
 
-  if (stop.timing_status && stop.timing_status !== "PTP") {
+  if (stop.timing_status === "OTH") {
     className = className ? `${className} minor` : "minor";
   }
 

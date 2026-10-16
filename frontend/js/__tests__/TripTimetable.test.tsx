@@ -171,7 +171,7 @@ it("renders trip timetable", async () => {
 it("doesn't add an extra column when the next stop has no id or atco code", () => {
   const stop = {
     aimed_arrival_time: null,
-    timing_status: "PTP",
+    timing_status: "PTP" as const,
   };
   const adHocTrip: Trip = {
     times: [
