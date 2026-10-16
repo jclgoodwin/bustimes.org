@@ -157,11 +157,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 logger.warning(
                     "%s: %s: %s is %s from now", timezone.now(), vehicle, dt, dt - now
                 )
-            else:
-                if not self.max_datetime or dt > self.max_datetime:
-                    self.max_datetime = dt
-                if now and now - dt > timedelta(minutes=15):
-                    return  # older than 15 minutes
+            elif not self.max_datetime or dt > self.max_datetime:
+                self.max_datetime = dt
 
         location = None
         if vehicle is None:
@@ -402,10 +399,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
         appendages = []
 
         for location, vehicle in self.to_save:
-            if not location.latlong or (
-                self.source.datetime
-                and (self.source.datetime - location.datetime).total_seconds() > 600
-            ):
+            if not location.latlong:
                 continue
 
             # update live map
@@ -638,7 +632,20 @@ class ImportLiveVehiclesCommand(BaseCommand):
             else:
                 vehicle_identities.add(vehicle_identity)
 
-            if (
+            if vehicle_identity not in self.identifiers:
+                # on a cold start, skip vehicles not heard from in a while
+                # (but keep handling known vehicles through an upstream backlog)
+                dt = self.get_datetime(item)
+                if (
+                    dt
+                    and dt.year != 1970
+                    and self.source.datetime
+                    and self.source.datetime - dt > timedelta(minutes=15)
+                ):
+                    self.identifiers[vehicle_identity] = self.get_item_identity(item)
+                    self.journeys_ids[vehicle_identity] = journey_identity
+                    continue
+            elif (
                 self.identifiers.get(vehicle_identity) == self.get_item_identity(item)
                 and journey_identity == self.journeys_ids[vehicle_identity]
             ):

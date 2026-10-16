@@ -231,7 +231,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 <td>11:50:58</td>
                 <td>-7300258.0</td>
                 <td>50</td>
-                <td>50</td>
+                <td>2</td>
                 <td>0.00</td>
             </tr>
             <tr>
