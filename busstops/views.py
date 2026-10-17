@@ -884,7 +884,7 @@ class StopPointDetailView(DetailView):
 
         same_name = None
         if self.object.locality or self.object.admin_area:
-            same_name = Q(common_name=self.object.common_name)
+            same_name = Q(common_name__iexact=self.object.common_name)
             if self.object.locality:
                 same_name &= Q(locality=self.object.locality)
             else:
