@@ -1,5 +1,6 @@
 import logging
 import math
+import re
 from pathlib import Path
 
 import gtfs_kit
@@ -26,6 +27,10 @@ from ...gtfs_utils import (
 from ...models import Route, StopTime, Trip
 
 logger = logging.getLogger(__name__)
+
+
+# all-caps town name, then a stop name with some lowercase letters
+TOWN_IN_STOP_NAME = re.compile(r"([A-ZÀ-Þ'-]+(?: [A-ZÀ-Þ'-]+)*) (.*[a-zß-ÿ].*)")
 
 
 def get_platform_code(stop) -> str:
@@ -65,6 +70,9 @@ class Command(BaseCommand):
         logger.info(f"{source} {last_modified}")
 
         feed = gtfs_kit.read_feed(path, dist_units="km")
+        if "location_type" in feed.stops:
+            # not stations, entrances etc
+            feed.stops = feed.stops[feed.stops.location_type.fillna(0) == 0]
 
         set_stop_time_defaults(feed)
 
@@ -101,11 +109,17 @@ class Command(BaseCommand):
             )
             for stop in feed.stops.itertuples()
         ]
+        for stop in new_stops:
+            if feed_config.town_in_stop_names and (
+                match := TOWN_IN_STOP_NAME.fullmatch(stop.common_name)
+            ):
+                stop.town, stop.common_name = match.groups()
+            stop.common_name = stop.common_name[:48]
         StopPoint.objects.bulk_create(
             new_stops,
             update_conflicts=True,
             unique_fields=["atco_code"],
-            update_fields=["common_name", "indicator", "latlong", "bearing"],
+            update_fields=["common_name", "indicator", "latlong", "bearing", "town"],
         )
         for stop in new_stops:
             stops[stop.atco_code.removeprefix(prefix)] = stop

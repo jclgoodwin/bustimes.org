@@ -19,6 +19,7 @@ from vehicles.models import Vehicle, VehicleJourney
 
 from ...gtfs_feeds import FEEDS
 from ...models import Trip
+from ..commands.import_gtfs_feed import TOWN_IN_STOP_NAME
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
@@ -358,3 +359,15 @@ class NevadaTest(TestCase):
             ).SerializeToString()
             gtfsr_alerts.import_alerts("rtcsnv")
             self.assertFalse(Situation.objects.filter(current=True).exists())
+
+
+class TownInStopNameTest(TestCase):
+    def test_town_in_stop_name(self):
+        for name, groups in (
+            ("SAINT-PIERRE-EGLISE Collège", ("SAINT-PIERRE-EGLISE", "Collège")),
+            ("LE VAST Place", ("LE VAST", "Place")),
+            ("MONTEBOURG Z.A. du Haut Gelé", ("MONTEBOURG", "Z.A. du Haut Gelé")),
+        ):
+            self.assertEqual(TOWN_IN_STOP_NAME.fullmatch(name).groups(), groups)
+        for name in ("AGORA", "CHERBOURG-GARE", "LES AIGUILLONS"):
+            self.assertIsNone(TOWN_IN_STOP_NAME.fullmatch(name))

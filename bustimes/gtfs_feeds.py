@@ -13,6 +13,7 @@ class GTFSFeed:
     stop_id_prefix: str = ""
     alert_ids_change: bool = False  # entity ids are different in every response
     skip_alert_headers: tuple = ()
+    town_in_stop_names: bool = False  # e.g. "VALOGNES Le Gravier"
 
 
 FEEDS = {
@@ -34,6 +35,16 @@ FEEDS = {
         trip_updates_url="https://www.zditm.szczecin.pl/storage/gtfs/gtfs-rt-trips.pb",
         alerts_url="https://www.zditm.szczecin.pl/storage/gtfs/gtfs-rt-alerts.pb",
         stop_id_prefix="zditm-",
+    ),
+    "capcotentin": GTFSFeed(
+        source_name="Cap Cotentin",
+        noc="CAPCOT",
+        timezone="Europe/Paris",
+        static_url="https://www.data.gouv.fr/api/1/datasets/r/2e97c9b3-a59f-42dd-9b9e-a232fa771f21",
+        vehicle_positions_url="https://app.pysae.com/api/v2/groups/transdev-cotentin/gtfs-rt",
+        trip_updates_url="https://app.pysae.com/api/v2/groups/transdev-cotentin/gtfs-rt",
+        stop_id_prefix="capcotentin-",
+        town_in_stop_names=True,
     ),
     # static data and vehicle positions have their own importers
     "ember": GTFSFeed(
