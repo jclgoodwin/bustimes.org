@@ -211,7 +211,7 @@ class Command(ImportLiveVehiclesCommand):
 
     def create_vehicle_location(self, item):
         location = VehicleLocation(
-            heading=item.vehicle.position.bearing or None,
+            heading=item.vehicle.position.bearing % 360 or None,
             latlong=GEOSGeometry(
                 f"POINT({item.vehicle.position.longitude} {item.vehicle.position.latitude})"
             ),
