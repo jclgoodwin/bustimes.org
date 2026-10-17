@@ -1330,6 +1330,8 @@ def traccar(request, uuid):
         bearing = location["coords"].get("heading")
     else:
         params = request.GET or request.POST
+        if "timestamp" not in params:
+            return HttpResponse()
         device_id = params.get("id") or params["deviceid"]
         when = params["timestamp"]
         if when.isdigit():

@@ -252,6 +252,10 @@ class SiriPostTest(TestCase):
             url = "/traccar/475d1d1f-5708-4ee1-8f51-c63d948bc0b9"
 
             for response in (
+                client.post(
+                    url,
+                    {"id": "NADT:MB183:34:1983", "notificationToken": "abc"},
+                ),
                 # current Traccar Client
                 client.post(
                     url,
