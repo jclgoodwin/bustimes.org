@@ -21,7 +21,6 @@ occupancies = {
     4: "Crushed standing room only",
     5: "Full",
     6: "Not accepting passengers",
-    7: "No data available",
     8: "Not boardable",
 }
 
@@ -220,6 +219,11 @@ class Command(ImportLiveVehiclesCommand):
             if item.vehicle.HasField("occupancy_status")
             else None,
         )
+        match item.vehicle.vehicle.wheelchair_accessible:
+            case gtfs_realtime_pb2.VehicleDescriptor.WHEELCHAIR_ACCESSIBLE:
+                location.wheelchair = "accessible"
+            case gtfs_realtime_pb2.VehicleDescriptor.WHEELCHAIR_INACCESSIBLE:
+                location.wheelchair = "not accessible"
         if item.vehicle.stop_id:
             stop_id = f"{self.stop_id_prefix}{item.vehicle.stop_id}"
             if (

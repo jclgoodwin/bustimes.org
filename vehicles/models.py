@@ -802,6 +802,7 @@ class VehicleLocation:
         self.seated_capacity = None
         self.wheelchair_occupancy = None
         self.wheelchair_capacity = None
+        self.wheelchair = None  # "accessible" or "not accessible"
         self.occupancy_thresholds = None
         self.block = block
         # the stops the data source says the vehicle is between (either can be None)
@@ -903,6 +904,8 @@ class VehicleLocation:
                 json["wheelchair"] = "free"
             else:
                 json["wheelchair"] = "occupied"
+        elif self.wheelchair:
+            json["wheelchair"] = self.wheelchair
 
         return json
 

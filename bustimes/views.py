@@ -653,15 +653,8 @@ def tfl_vehicle(request, reg: str):
 
 
 trip_updates_sources = {
-    "flixbus": {
-        "source_name": "FlixBus",
-    },
-    "ember": {
-        "source_name": "Ember",
-    },
-    "ntaie": {
-        "source_name": "Realtime Transport Operators",
-    },
+    feed_name: {"source_name": source_name}
+    for source_name, feed_name in gtfsr.FEED_NAMES.items()
 }
 
 

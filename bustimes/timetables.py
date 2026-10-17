@@ -67,6 +67,7 @@ class Timetable:
         self.loose_trip_chaining = loose_trip_chaining
 
         routes = list(routes.order_by("id").select_related("source"))
+        # today where the service runs (e.g. Las Vegas), not necessarily in London
         self.today = localdate(
             timezone=next((route.timezone for route in routes if route.timezone), None)
         )
