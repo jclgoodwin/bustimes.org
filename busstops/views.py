@@ -882,15 +882,18 @@ class StopPointDetailView(DetailView):
             .filter(service__current=True)
         )
 
-        same_name = None
-        if self.object.locality or self.object.admin_area:
-            same_name = Q(common_name__iexact=self.object.common_name)
-            if self.object.locality:
-                same_name &= Q(locality=self.object.locality)
-            else:
-                same_name &= Q(admin_area=self.object.admin_area)
-                if self.object.town:
-                    same_name &= Q(town=self.object.town)
+        same_name = Q(common_name__iexact=self.object.common_name)
+        if self.object.locality:
+            same_name &= Q(locality=self.object.locality)
+        elif self.object.admin_area:
+            same_name &= Q(admin_area=self.object.admin_area)
+            if self.object.town:
+                same_name &= Q(town=self.object.town)
+        elif self.object.source_id:
+            # e.g. GTFS stops outside the UK
+            same_name &= Q(source=self.object.source_id, town=self.object.town)
+        else:
+            same_name = None
 
         # NaPTAN stop areas are often incomplete (e.g. a new stop opposite not added to the pair)
         if self.object.stop_area_id is not None:
