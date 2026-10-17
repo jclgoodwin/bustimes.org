@@ -1,6 +1,7 @@
 from datetime import timedelta
 from http import HTTPStatus
 from unittest.mock import patch
+from zoneinfo import ZoneInfo
 
 import fakeredis
 import time_machine
@@ -188,6 +189,15 @@ class GTFSRTTest(TestCase):
         self.assertEqual(
             str(gtfsr.get_expected_time(time, update, "arrival")),
             "2024-09-03 08:39:18+01:00",
+        )
+
+        self.assertEqual(
+            str(
+                gtfsr.get_expected_time(
+                    time, update, "arrival", ZoneInfo("Europe/Paris")
+                )
+            ),
+            "2024-09-03 09:39:18+02:00",
         )
 
         time += timedelta(minutes=10)

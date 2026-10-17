@@ -634,4 +634,5 @@ class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
                     "datetime": timezone.localtime(previous_journey.datetime, tzinfo),
                 }
 
-        return Response(serializer.data | extra_data)
+        with timezone.override(tzinfo or timezone.get_current_timezone()):
+            return Response(serializer.data | extra_data)

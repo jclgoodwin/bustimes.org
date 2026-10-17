@@ -63,7 +63,7 @@ def maybe_get_and_apply_trip_update(trip, stops: list):
         return False  # source not supported
 
     if trip_update := get_trip_update(trip, feed_name):
-        apply_trip_update(stops, trip_update)
+        apply_trip_update(stops, trip_update, trip.route.timezone)
         return True
 
 
@@ -76,21 +76,21 @@ def get_trip_update(trip, feed_name: str) -> dict:
         return trip_updates[trip_id]
 
 
-def get_expected_time(scheduled_time, stop_time_update, key):
+def get_expected_time(scheduled_time, stop_time_update, key, tzinfo=None):
     if key in stop_time_update:
         update = stop_time_update[key]
         if scheduled_time and "delay" in update:
             expected_time = scheduled_time + timedelta(seconds=update["delay"])
         elif "time" in update:
             return datetime.fromtimestamp(
-                int(update["time"]), tz=ZoneInfo("Europe/Dublin")
+                int(update["time"]), tz=tzinfo or ZoneInfo("Europe/Dublin")
             )
         else:
             return
         return format_timedelta(expected_time)
 
 
-def apply_trip_update(stops, trip_update: dict) -> None:
+def apply_trip_update(stops, trip_update: dict, tzinfo=None) -> None:
     if "stopTimeUpdate" not in trip_update:
         return
 
@@ -115,10 +115,10 @@ def apply_trip_update(stops, trip_update: dict) -> None:
             if stop_time_update.get("scheduleRelationship") == "SKIPPED":
                 continue
             stop_time.expected_arrival_time = get_expected_time(
-                stop_time.arrival, stop_time_update, "arrival"
+                stop_time.arrival, stop_time_update, "arrival", tzinfo
             )
             stop_time.expected_departure_time = get_expected_time(
-                stop_time.departure, stop_time_update, "departure"
+                stop_time.departure, stop_time_update, "departure", tzinfo
             )
 
 
