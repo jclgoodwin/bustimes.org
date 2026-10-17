@@ -100,6 +100,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
         self.journeys_ids = {}
         self.journeys_ids_ids = {}
         self.duplicate_vehicles = set()  # vehicles on 'two journeys at once'
+        self.recent_positions = {}  # vehicle id: hashes of last few coordinates
         self.max_datetime = None  # newest item timestamp in the current update
 
     @staticmethod
@@ -201,6 +202,12 @@ class ImportLiveVehiclesCommand(BaseCommand):
                         location_unchanged = location is not None
                     else:
                         return
+                elif hash(location.latlong.coords) in self.recent_positions.get(
+                    vehicle.id, ()
+                ):
+                    # back to a position it's already reported and moved on from -
+                    # e.g. a stale feed (or a forgotten ticket machine) alongside a live one
+                    return
 
         latest_journey = vehicle.latest_journey
         if keep_journey:
@@ -338,6 +345,11 @@ class ImportLiveVehiclesCommand(BaseCommand):
         ):
             return  # nothing new
 
+        if location.latlong:
+            self.recent_positions[vehicle.id] = (
+                hash(location.latlong.coords),
+                *self.recent_positions.get(vehicle.id, ())[:4],
+            )
         self.to_save.append((location, vehicle))
 
         return location, vehicle
@@ -592,7 +604,14 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 )
 
                 if result:
-                    _location, vehicle = result
+                    location, vehicle = result
+                    if location.latlong:
+                        # in case the vehicle is in this batch again (under another identity)
+                        vehicle_locations[vehicle.id] = {
+                            "coordinates": location.latlong.coords,
+                            "datetime": location.datetime.isoformat(),
+                            "heading": location.heading,
+                        }
 
                 handled[vehicle_identity] = (journey_identity, vehicle)
 

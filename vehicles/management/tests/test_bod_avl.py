@@ -1,4 +1,5 @@
 import asyncio
+import json
 from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
@@ -24,7 +25,7 @@ from busstops.models import (
 )
 from bustimes.models import Calendar, Garage, Route, Trip
 
-from ...models import Livery, Vehicle, VehicleJourney
+from ...models import Livery, Vehicle, VehicleCode, VehicleJourney
 from ...utils import get_statuses
 from ..commands import distribute_vehicle_locations, import_bod_avl
 
@@ -1617,3 +1618,76 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertEqual(journey.route_name, "T3")
         self.assertEqual(journey.source, bods)
         self.assertEqual(journey.code, "0732")
+
+    def test_stale_position_from_second_feed(self):
+        # (like Stagecoach) the vehicle is in the feed twice, under two VehicleRefs,
+        # and one of them keeps reporting the same old position with new timestamps
+        command = import_bod_avl.Command()
+        command.source = self.source
+
+        vehicle = Vehicle.objects.create(code="10070", reg="SK63AUT")
+        VehicleCode.objects.bulk_create(
+            [
+                VehicleCode(code="SCOX:10070", scheme="BODS", vehicle=vehicle),
+                VehicleCode(code="SCOX:SK63AUT", scheme="BODS", vehicle=vehicle),
+            ]
+        )
+
+        def item(vehicle_ref, recorded_at, longitude, latitude):
+            return {
+                "RecordedAtTime": recorded_at,
+                "MonitoredVehicleJourney": {
+                    "LineRef": "S4",
+                    "PublishedLineName": "S4",
+                    "DirectionRef": "outbound",
+                    "OperatorRef": "SCOX",
+                    "FramedVehicleJourneyRef": {
+                        "DataFrameRef": "2026-10-16",
+                        "DatedVehicleJourneyRef": "1001",
+                    },
+                    "OriginAimedDepartureTime": "2026-10-16T05:45:00+01:00",
+                    "VehicleLocation": {"Longitude": longitude, "Latitude": latitude},
+                    "VehicleRef": vehicle_ref,
+                },
+            }
+
+        def cycle(items, when):
+            command.source.datetime = datetime.fromisoformat(when)
+            (changed, changed_journey, ci, cj, _) = command.get_changed_items(items)
+            command.handle_items(changed_journey, cj)
+            command.handle_items(changed, ci)
+
+        with patch_redis_client() as redis_client:
+
+            def coordinates():
+                return json.loads(redis_client.get(f"vehicle{vehicle.id}"))[
+                    "coordinates"
+                ]
+
+            cycle(
+                [
+                    item(
+                        "SK63AUT", "2026-10-16T05:54:04+01:00", "-1.33022", "52.04579"
+                    ),
+                    item("10070", "2026-10-16T05:54:13+01:00", "-1.33057", "52.04478"),
+                ],
+                "2026-10-16T05:54:30+01:00",
+            )
+            self.assertEqual(coordinates(), [-1.33057, 52.04478])
+
+            cycle(
+                [
+                    item("10070", "2026-10-16T05:54:28+01:00", "-1.32886", "52.04319"),
+                    item(
+                        "SK63AUT", "2026-10-16T05:54:24+01:00", "-1.33022", "52.04579"
+                    ),
+                ],
+                "2026-10-16T05:54:40+01:00",
+            )
+            self.assertEqual(coordinates(), [-1.32886, 52.04319])
+
+            cycle(
+                [item("SK63AUT", "2026-10-16T05:54:44+01:00", "-1.33022", "52.04579")],
+                "2026-10-16T05:54:50+01:00",
+            )
+            self.assertEqual(coordinates(), [-1.32886, 52.04319])
