@@ -338,7 +338,6 @@ function TripSidebar(props: {
   vehicle?: VehicleLocation | null;
   highlightedStop?: string;
   onHover: (stop: TripTime) => void;
-  onSelect: (stop: TripTime) => void;
 }) {
   let className = "trip-timetable map-sidebar";
 
@@ -381,7 +380,6 @@ function TripSidebar(props: {
         vehicle={props.vehicle}
         highlightedStop={props.highlightedStop}
         onHover={props.onHover}
-        onSelect={props.onSelect}
       />
       <dl className="contact-details">
         {trip.block ? (
@@ -404,7 +402,6 @@ function JourneySidebar(props: {
   highlightedStop?: string;
   vehicle?: VehicleLocation | null;
   onHover: (stop: TripTime) => void;
-  onSelect: (stop: TripTime) => void;
 }) {
   let className = "trip-timetable map-sidebar";
 
@@ -516,7 +513,6 @@ function JourneySidebar(props: {
           vehicle={props.vehicle}
           highlightedStop={props.highlightedStop}
           onHover={props.onHover}
-          onSelect={props.onSelect}
         />
       ) : null}
       <dl className="contact-details">
@@ -1262,7 +1258,6 @@ export default function BigMap(
           vehicle={tripVehicle}
           highlightedStop={clickedStopUrl}
           onHover={handleRowHover}
-          onSelect={handleRowClick}
         />
       ) : null}
 
@@ -1274,7 +1269,6 @@ export default function BigMap(
           vehicle={tripVehicle}
           highlightedStop={clickedStopUrl}
           onHover={handleRowHover}
-          onSelect={handleRowClick}
         />
       ) : null}
     </React.Fragment>

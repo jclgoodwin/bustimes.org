@@ -71,11 +71,9 @@ function getDiff(stop: TripTime, vehicle?: Vehicle | null) {
 function Row({
   stop,
   onHover,
-  onSelect,
   vehicle,
   aimedColumn,
   expectedColumn,
-  // actualColumn,
   highlightedStop,
   diff,
   covered,
@@ -85,11 +83,9 @@ function Row({
 }: {
   stop: TripTime;
   onHover?: (stop: TripTime) => void;
-  onSelect?: (stop: TripTime) => void;
   vehicle?: Vehicle | null;
   aimedColumn: boolean;
   expectedColumn: boolean;
-  // actualColumn: boolean;
   highlightedStop?: string;
   diff: number | null;
   covered: boolean; // actual column taken by the previous row's vehicle cell
@@ -97,15 +93,11 @@ function Row({
   first: boolean;
   last: boolean;
 }) {
-  const handlePointerEnter = React.useCallback(
-    (event: React.PointerEvent) => {
-      // on touch there's no hover (and iOS would treat the first tap as one)
-      if (event.pointerType !== "touch" && onHover && stop.stop.location) {
-        onHover(stop);
-      }
-    },
-    [stop, onHover],
-  );
+  const handlePointerEnter = React.useCallback(() => {
+    if (onHover && stop.stop.location) {
+      onHover(stop);
+    }
+  }, [stop, onHover]);
 
   let rowSpan: number | undefined;
   if (
@@ -248,13 +240,11 @@ function Row({
 const TripTimetable = React.memo(function TripTimetable({
   trip,
   onHover,
-  onSelect,
   vehicle,
   highlightedStop,
 }: {
   trip: Trip;
   onHover?: (stop: TripTime) => void;
-  onSelect?: (stop: TripTime) => void;
   vehicle?: Vehicle | null;
   highlightedStop?: string;
 }) {
@@ -333,7 +323,6 @@ const TripTimetable = React.memo(function TripTimetable({
               expectedColumn={expectedColumn}
               stop={stop}
               onHover={onHover}
-              onSelect={onSelect}
               vehicle={vehicle}
               highlightedStop={highlightedStop}
               diff={diffs[i]}
