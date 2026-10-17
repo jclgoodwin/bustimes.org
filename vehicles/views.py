@@ -70,6 +70,7 @@ from .models import (
     VehicleJourney,
     VehicleRevision,
     VehicleRevisionFeature,
+    get_text_colour,
 )
 from .tasks import queue_siri_post
 from .utils import apply_revision, get_revision, redis_client
@@ -434,6 +435,7 @@ def get_vehicle_locations(
                 service_line_name=F("latest_journey__trip__route__line_name"),
                 service_slug=F("latest_journey__service__slug"),
                 colour=F("livery__colour"),
+                service_colour=F("latest_journey__service__colour__background"),
             )
             .defer("data", "latest_journey_data")
         ).in_bulk(
@@ -468,6 +470,14 @@ def get_vehicle_locations(
                     continue  # vehicle was deleted?
                 else:
                     journey = {"vehicle": vehicle.get_json()}
+                    # no livery - use the service colour
+                    if vehicle.service_colour and not (
+                        vehicle.livery_id or vehicle.colours
+                    ):
+                        journey["vehicle"]["css"] = vehicle.service_colour
+                        journey["vehicle"]["text_colour"] = get_text_colour(
+                            vehicle.service_colour
+                        )
                     if vehicle.service_slug:
                         journey["service"] = {
                             "url": f"/services/{vehicle.service_slug}",
