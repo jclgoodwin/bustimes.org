@@ -122,7 +122,12 @@ class Command(GTFSRCommand):
         if self.feed.trip_updates_url == self.url:
             self.cache_trip_updates(feed)
 
-        return [item for item in feed.entity if item.HasField("vehicle")]
+        # (Cap Cotentin sometimes lists vehicles with a trip but no position)
+        return [
+            item
+            for item in feed.entity
+            if item.HasField("vehicle") and item.vehicle.HasField("position")
+        ]
 
     def cache_trip_updates(self, feed):
         trip_updates = {
@@ -146,7 +151,10 @@ class Command(GTFSRCommand):
         )
 
     def get_journey(self, item, vehicle):
-        now = self.get_datetime(item).astimezone(self.tzinfo)
+        now = self.get_datetime(item)
+        if now.year == 1970:  # no timestamp
+            now = self.source.datetime
+        now = now.astimezone(self.tzinfo)
         journey = VehicleJourney(code=item.vehicle.trip.trip_id, date=now.date())
 
         start_date = None

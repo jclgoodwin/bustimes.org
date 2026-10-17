@@ -94,7 +94,18 @@ class NevadaTest(TestCase):
                                 "latitude": 36.10913,
                                 "longitude": -115.17262,
                             },
-                            "timestamp": "1785751500",  # 03:05 Pacific Time
+                            # no timestamp - header timestamp 03:05 Pacific Time used
+                        },
+                    },
+                    {
+                        "id": "99999",
+                        "vehicle": {
+                            "trip": {
+                                "tripId": "358024702",
+                                "startDate": "20260803",
+                            },
+                            "vehicle": {"id": "99999", "label": "99999"},
+                            # no position
                         },
                     },
                     {
@@ -202,6 +213,8 @@ class NevadaTest(TestCase):
         item = json.loads(redis_client.get(f"vehicle{vehicle.id}"))
         self.assertNotIn("seats", item)
         self.assertNotIn("wheelchair", item)
+
+        self.assertFalse(Vehicle.objects.filter(code="99999").exists())
 
         journey = VehicleJourney.objects.get(code="358022630")
         # start_time "26:25:00" and date 2026-08-03
