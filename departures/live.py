@@ -155,9 +155,7 @@ def get_departures(stop, services, when) -> dict:
                         if (
                             "overdue" not in departure
                             or "progress" in item
-                            and rtpi.is_before_stop(
-                                item, stop_time.id, stop_time.trip_id
-                            )
+                            and rtpi.is_before_stop(item, stop_time)
                         ):
                             delay = item["delay"]
 

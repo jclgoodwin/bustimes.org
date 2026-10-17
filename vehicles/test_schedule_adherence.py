@@ -602,6 +602,7 @@ class SplitTripDeparturesTest(TestCase):
         self.assertEqual(item["delay"], 300)
         self.assertEqual(item["trip_ids"], [self.trip_1.id, self.trip_2.id])
         self.assertEqual(item["progress"]["trip_id"], self.trip_1.id)
+        self.assertEqual(item["progress"]["prev_time"], 9 * 3600)
 
         redis_client = fakeredis.FakeStrictRedis()
         redis_client.sadd(f"service{self.trip_1.route.service_id}vehicles", 1)
@@ -629,6 +630,38 @@ class SplitTripDeparturesTest(TestCase):
             with time_machine.travel("2026-09-07T08:06:00Z"):
                 times = self.client.get("/stops/c/times.json").json()["times"]
                 self.assertNotIn("delay", times[0])
+
+    def test_is_before_stop(self):
+        def is_before_stop(stop_id, hour, **progress):
+            progress = {
+                "id": 100,
+                "prev_stop": "a",
+                "prev_time": 9 * 3600,
+                "next_stop": "b",
+                "progress": 0.5,
+            } | progress
+            item = {"progress": {k: v for k, v in progress.items() if v is not None}}
+            stop_time = StopTime(
+                id=50,
+                trip_id=self.trip_1.id,
+                stop_id=stop_id,
+                departure=datetime.timedelta(hours=hour),
+            )
+            return rtpi.is_before_stop(item, stop_time)
+
+        # stop time ids from before the timetable was reimported
+        self.assertFalse(is_before_stop("x", 8, id=1))
+        self.assertTrue(is_before_stop("x", 10, id=1000))
+
+        # same time
+        self.assertFalse(is_before_stop("a", 9, id=1))
+        self.assertTrue(is_before_stop("a", 9, id=1000, progress=0))
+        self.assertTrue(is_before_stop("b", 9, id=1000))
+        self.assertTrue(is_before_stop("x", 9, id=1))
+        self.assertFalse(is_before_stop("x", 9, id=1000))
+
+        # no prev_time
+        self.assertTrue(is_before_stop("x", 8, id=1, prev_time=None))
 
     def test_adjacent_pair(self):
         # 3/4 of the way from a to b, but also near enough to b-c
