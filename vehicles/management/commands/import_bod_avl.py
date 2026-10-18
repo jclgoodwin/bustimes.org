@@ -836,16 +836,14 @@ class Command(ImportLiveVehiclesCommand):
         if self.last_modified:
             headers["if-modified-since"] = http_date(self.last_modified.timestamp())
 
-        response = self.session.get(self.source.url, headers=headers, timeout=(11, 31))
+        response = self.session.get(self.source.url, headers=headers, timeout=(11, 20))
         self.fetched_at = timezone.now()
 
         self.not_modified = response.status_code == HTTPStatus.NOT_MODIFIED
         if self.not_modified:
             return
 
-        if not response.ok:
-            logger.warning("%s %s %s", response, response.headers, response.content)
-            return
+        response.raise_for_status()
 
         # when this archive was published - a steadier guide to when to poll
         # next than the ResponseTimestamp inside it, which lags it by a
@@ -979,11 +977,15 @@ class Command(ImportLiveVehiclesCommand):
 
             if self.not_modified:
                 # nothing new published yet, and the 304 cost us nothing,
-                # so try again shortly rather than waiting out the cycle
+                # so try again in a second rather than waiting out the cycle
                 since = (timezone.now() - self.last_modified).total_seconds()
                 if since < 20:
-                    return 0.5
-                return 10 - (since % 10) + 0.5
+                    return 1
+                return 10 - (since % 10) + 1
+
+            if not total_items:
+                # error page or old data
+                return 10
 
             age = int((self.fetched_at - self.source.datetime).total_seconds())
             if age > 0:

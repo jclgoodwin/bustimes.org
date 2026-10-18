@@ -10,6 +10,7 @@ import time_machine
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.test import TestCase, override_settings
+from requests.exceptions import HTTPError
 from vcr import use_cassette
 
 from busstops.models import (
@@ -190,6 +191,11 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         command.last_modified = datetime(2020, 4, 30, 23, 59, 36, tzinfo=UTC)
         with mock.patch.object(command.session, "get", return_value=response):
             self.assertEqual(command.update(), 5.5)
+
+        # error page or old data
+        command.not_modified = False
+        with mock.patch.object(command, "get_items", return_value=None):
+            self.assertEqual(command.update(), 10)
 
     @time_machine.travel("2020-05-01", tick=False)
     def test_new_bod_avl_a(self):
@@ -1541,10 +1547,9 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.source.url = "https://bustimes.org/404"
         with (
             use_cassette(str(self.vcr_path / "bod_avl_error.yaml")),
-            self.assertLogs("vehicles.management.commands.import_bod_avl", "WARNING"),
+            self.assertRaises(HTTPError),
         ):
-            items = command.get_items()
-        self.assertIsNone(items)
+            command.get_items()
 
     def test_tfw_bods_coexistence(self):
         tfw = DataSource.objects.create(name="Transport for Wales")
