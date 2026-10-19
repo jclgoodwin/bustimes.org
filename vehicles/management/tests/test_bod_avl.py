@@ -185,12 +185,12 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
         # 11s since it was published - check again shortly, don't wait it out
         with mock.patch.object(command.session, "get", return_value=response):
-            self.assertEqual(command.update(), 0.5)
+            self.assertEqual(command.update(), 1)
 
         # but if BODS has stalled, fall back to the 10 second grid
         command.last_modified = datetime(2020, 4, 30, 23, 59, 36, tzinfo=UTC)
         with mock.patch.object(command.session, "get", return_value=response):
-            self.assertEqual(command.update(), 5.5)
+            self.assertEqual(command.update(), 6)
 
         # error page or old data
         command.not_modified = False
