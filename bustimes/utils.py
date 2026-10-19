@@ -191,20 +191,23 @@ def get_service_routes(service, when) -> list:
     if cache is None:
         return list(service.route_set.select_related("source").active_on(when))
 
-    version = (service.modified_at, when)
     entry = cache.get(service.id)
+    if not entry or entry[0] != service.modified_at:
+        entry = (service.modified_at, {})
+        cache[service.id] = entry
 
-    if entry and entry[0] == version:
+    routes_by_date = entry[1]
+    if when in routes_by_date:
         cache.hits += 1
     else:
         cache.misses += 1
-        entry = (
-            version,
-            list(service.route_set.select_related("source").active_on(when)),
+        for stale in [date for date in routes_by_date if abs(date - when).days > 1]:
+            del routes_by_date[stale]
+        routes_by_date[when] = list(
+            service.route_set.select_related("source").active_on(when)
         )
-        cache[service.id] = entry
 
-    return entry[1]
+    return routes_by_date[when]
 
 
 def get_trip(
@@ -229,10 +232,17 @@ def get_trip(
     if not date:
         date = timezone.localdate(departure_time or datetime)
 
-    # TODO: get routes for previous day, in case journey starts after midnight
     routes = get_service_routes(journey.service, date)
-    if routes:
-        trips = Trip.objects.filter(route__in=routes)
+    if timezone.localtime(departure_time or datetime).hour < 7:
+        # might be timetabled as part of the previous day (start after 24:00)
+        yesterday_routes = get_service_routes(journey.service, date - timedelta(days=1))
+    else:
+        yesterday_routes = []
+    if routes or yesterday_routes:
+        trips = Trip.objects.filter(
+            Q(route__in=routes, start__lt=timedelta(days=1))
+            | Q(route__in=yesterday_routes, start__gte=timedelta(days=1))
+        )
     else:
         trips = Trip.objects.filter(route__service=journey.service)
 
@@ -261,7 +271,7 @@ def get_trip(
             start |= Exists(
                 "stoptime", filter=Q(stop=origin_ref, departure=start_timedelta)
             )
-        if start_time.hour < 6:
+        if start_time.hour < 7:
             start |= Q(start=start_timedelta + timedelta(days=1))
             if origin:
                 start |= Exists(
@@ -275,7 +285,7 @@ def get_trip(
         hours = int(journey_code[:-2])
         minutes = int(journey_code[-2:])
         start = Q(start=timedelta(hours=hours, minutes=minutes))
-        if hours < 6:
+        if hours < 7:
             start |= Q(start=timedelta(days=1, hours=hours, minutes=minutes))
     else:
         start = Q()
@@ -283,7 +293,7 @@ def get_trip(
     if arrival_time:
         arrival_time = timezone.localtime(arrival_time)
         end = Q(end=timedelta(hours=arrival_time.hour, minutes=arrival_time.minute))
-        if arrival_time.hour < 6:
+        if arrival_time.hour < 7:
             end |= Q(
                 end=timedelta(
                     days=1, hours=arrival_time.hour, minutes=arrival_time.minute
@@ -331,7 +341,7 @@ def get_trip(
         start_time = timezone.localtime(datetime)
         start_time = timedelta(hours=start_time.hour, minutes=start_time.minute)
 
-        if start_time < timedelta(hours=6):
+        if start_time < timedelta(hours=7):
             # might be timetabled as part of the previous day
             start_times = (start_time, start_time + timedelta(days=1))
         else:
