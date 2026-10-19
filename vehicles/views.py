@@ -37,7 +37,7 @@ from django.utils.cache import (
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST, require_safe
+from django.views.decorators.http import require_GET, require_POST, require_safe
 from django.views.generic.detail import DetailView
 from django_orjson.http import JsonResponse
 from haversine import haversine
@@ -1200,17 +1200,27 @@ def debug(request):
     return render(request, "vehicles/debug.html", {"form": form, "result": result})
 
 
-@csrf_exempt
-def siri_post(request, uuid):
-    subscription = get_object_or_404(SiriSubscription, uuid=uuid)
+@require_GET
+def siri_get(request, **kwargs):
+    subscription = get_object_or_404(SiriSubscription, **kwargs)
     last_post_key = subscription.get_status_key().replace("_status", "_last_post")
 
+    last_post = cache.get(last_post_key)
+
+    content_type = last_post["headers"].get("content-type")
+    if content_type not in ("application/json", "application/xml", "text/xml"):
+        content_type = "text_plain"
+
+    return HttpResponse(last_post["body"], content_type=content_type)
+
+
+@csrf_exempt
+def siri_post(request, uuid):
     if request.method == "GET":
-        last_post = cache.get(last_post_key)
-        return HttpResponse(
-            last_post["body"],
-            content_type=last_post["headers"].get("content-type", "text/plain"),
-        )
+        return siri_get(request, uuid=uuid)
+
+    subscription = get_object_or_404(SiriSubscription, uuid=uuid)
+    last_post_key = subscription.get_status_key().replace("_status", "_last_post")
 
     body = request.body.decode()
     data = xmltodict.parse(body, force_list=["VehicleActivity"])
