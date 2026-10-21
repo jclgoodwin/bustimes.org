@@ -366,6 +366,16 @@ class NevadaTest(TestCase):
                 running_late.publication_window.upper.timestamp(), 1786000000
             )
 
+            # end before start
+            alerts.entity[1].alert.active_period[0].end = 1785600000
+            alerts_response.content = alerts.SerializeToString()
+            gtfsr_alerts.import_alerts("rtcsnv")
+            running_late.refresh_from_db()
+            self.assertEqual(
+                running_late.publication_window.upper,
+                running_late.publication_window.lower,
+            )
+
             # alerts gone
             alerts_response.content = gtfs_realtime_pb2.FeedMessage(
                 header=alerts.header

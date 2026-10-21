@@ -149,7 +149,11 @@ def handle_alert(situation_number, alert, feed, source, operator, current_situat
     situation.reason = get_reason(alert)
 
     periods = [
-        (get_datetime(period.start), get_datetime(period.end))
+        (
+            get_datetime(period.start),
+            # Ember sometimes sends an end before the start
+            get_datetime(period.end and max(period.start, period.end)),
+        )
         for period in alert.active_period
     ]
     starts = [start for start, _ in periods]
