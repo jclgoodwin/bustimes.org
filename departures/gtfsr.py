@@ -25,7 +25,6 @@ def _get_feed():
                 url,
                 headers={"x-api-key": settings.NTA_API_KEY},
                 timeout=10,
-                verify=False,
             )
             response.raise_for_status()
         except requests.RequestException:
