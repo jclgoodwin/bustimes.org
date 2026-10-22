@@ -439,7 +439,7 @@ def stagecoach(specific_operator=None):
         modified, last_modified = download_if_modified(path, command.source, session)
         sha1 = get_sha1(path)
 
-        if command.source.datetime != last_modified:
+        if last_modified and command.source.datetime != last_modified:
             modified = True
 
         if modified:
