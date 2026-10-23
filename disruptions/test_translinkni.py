@@ -54,3 +54,6 @@ Subject to change.""",
 
         consequence = situation.consequence_set.first()
         self.assertEqual("/services/338a", consequence.get_absolute_url())
+
+        response = self.client.get(situation.get_absolute_url())
+        self.assertContains(response, "urlText")

@@ -1,7 +1,6 @@
 """Import timetable data "fresh from the cow" """
 
 import logging
-import xml.etree.ElementTree as ET
 import zipfile
 from datetime import datetime
 from pathlib import Path
@@ -109,7 +108,7 @@ def handle_file(command, path, qualify_filename=False):
                         filename = str(Path(path) / filename)
                     try:
                         command.handle_file(open_file, filename)
-                    except (ET.ParseError, ValueError, AttributeError, DataError):
+                    except (SyntaxError, ValueError, AttributeError, DataError):
                         if filename.endswith(".xml"):
                             logger.info(filename)
                             logger.exception("error handling file")

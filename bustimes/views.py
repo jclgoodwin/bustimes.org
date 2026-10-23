@@ -1,4 +1,3 @@
-import xml.etree.ElementTree as ET
 import zipfile
 from collections import defaultdict
 from datetime import datetime, timedelta
@@ -508,7 +507,7 @@ def stop_debug(request, atco_code: str):
         try:
             # XML
             response_text = format_xml(response.text)
-        except ET.ParseError:
+        except SyntaxError:
             # JSON
             response_text = format_json(response.json())
         responses.append(

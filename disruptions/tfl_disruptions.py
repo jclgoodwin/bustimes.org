@@ -1,3 +1,4 @@
+import json
 import logging
 from hashlib import sha256
 
@@ -52,6 +53,7 @@ def handle_disruption(item: dict, source: DataSource):
     situation.text = situation.text.replace(". ", ".\n\n")
     situation.publication_window = window
     situation.reason = item["type"]
+    situation.data = json.dumps(item)
     situation.save()
 
     try:
@@ -119,6 +121,7 @@ def handle_status(item: dict, source: DataSource):
         situation.text = situation.text.replace(". ", ".\n\n")
 
         situation.current = True
+        situation.data = json.dumps(status)
         situation.save()
 
         if created:

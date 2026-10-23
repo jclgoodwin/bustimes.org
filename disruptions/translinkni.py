@@ -1,3 +1,4 @@
+import json
 import logging
 
 import requests
@@ -23,8 +24,11 @@ def handle_item(item: dict, source: DataSource, current_situations: dict):
 
     situation = current_situations.get(situation_number)
 
+    data = json.dumps(item)
+
     if situation:
-        # return situation.id  # hasn't changed
+        if situation.data == data:
+            return situation.id  # hasn't changed
         created = False
     else:
         situation = Situation(
@@ -45,6 +49,7 @@ def handle_item(item: dict, source: DataSource, current_situations: dict):
     situation.text = item["infoLinks"][0]["content"]
     soup = BeautifulSoup(situation.text, "lxml")
     situation.text = soup.get_text().strip().replace("\n\xa0\n", "\n\n")
+    situation.data = data
     situation.save()
 
     for i, period_element in enumerate(item["timestamps"]["validity"]):
