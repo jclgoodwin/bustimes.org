@@ -30,7 +30,9 @@ class TranslinkNorthernIrelandTest(TestCase):
 
             cassette.rewind()
 
-            with self.assertNumQueries(43):
+            Situation.objects.filter(situation_number="ems-7682").update(data="")
+
+            with self.assertNumQueries(12):
                 translink_disruptions("")
 
         situation = Situation.objects.get(situation_number="ems-7682")
