@@ -37,8 +37,7 @@ class Situation(models.Model):
         default=236,
     )
     situation_number = models.CharField(max_length=36, blank=True)
-    reason = models.CharField(max_length=25, blank=True)
-    severity = models.CharField(max_length=25, blank=True)
+    reason = models.CharField(max_length=50, blank=True)
     summary = models.CharField(max_length=255, blank=True, help_text="(title)")
     show_summary = models.BooleanField(default=True)
     participant_ref = models.CharField(max_length=36, blank=True)
@@ -156,7 +155,7 @@ class Situation(models.Model):
 
 
 class Link(models.Model):
-    url = models.URLField()
+    url = models.URLField(max_length=255)
     situation = models.ForeignKey(Situation, models.DB_CASCADE)
 
     def __str__(self):
@@ -184,8 +183,15 @@ class Consequence(models.Model):
     operators = models.ManyToManyField(
         "busstops.Operator", blank=True, through="ConsequenceOperator"
     )
+    admin_areas = models.ManyToManyField(
+        "busstops.AdminArea", blank=True, through="ConsequenceAdminArea"
+    )
     text = models.TextField(blank=True)
     data = models.TextField(blank=True)
+    severity = models.CharField(max_length=25, blank=True)
+    vehicle_mode = models.CharField(max_length=25, blank=True)
+    direction = models.CharField(max_length=25, blank=True)
+    delay = models.DurationField(null=True, blank=True)
 
     def __str__(self):
         return self.text
@@ -235,6 +241,19 @@ class ConsequenceOperator(models.Model):
     class Meta:
         db_table = "disruptions_consequence_operators"
         unique_together = ("consequence", "operator")
+
+
+class ConsequenceAdminArea(models.Model):
+    # as ConsequenceStop
+    consequence = models.ForeignKey(
+        Consequence, models.DB_CASCADE, related_name="consequenceadminarea+"
+    )
+    adminarea = models.ForeignKey(
+        "busstops.AdminArea", models.DO_NOTHING, related_name="consequenceadminarea+"
+    )
+
+    class Meta:
+        unique_together = ("consequence", "adminarea")
 
 
 class AffectedJourney(models.Model):

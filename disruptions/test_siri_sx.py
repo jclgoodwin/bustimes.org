@@ -1,8 +1,12 @@
+import xml.etree.ElementTree as ET
+from datetime import timedelta
+
 from django.conf import settings
 from django.test import TestCase
 from vcr import use_cassette
 
 from busstops.models import (
+    AdminArea,
     DataSource,
     Operator,
     OperatorCode,
@@ -13,6 +17,7 @@ from busstops.models import (
 )
 
 from .models import Situation
+from .siri_sx import handle_item
 from .tasks import bods_disruptions
 
 VCR_DIR = settings.BASE_DIR / "fixtures" / "vcr"
@@ -100,6 +105,7 @@ class SiriSXTest(TestCase):
             ]
         )
         StopUsage.objects.create(service=service, stop_id="2800S11053A", order=69)
+        AdminArea.objects.create(id=73, atco_code="080", name="Cornwall", region=region)
 
     def test_siri_sx_request(self):
         with use_cassette(str(VCR_DIR / "siri_sx.yaml")) as cassette:
@@ -177,3 +183,65 @@ class SiriSXTest(TestCase):
             response,
             "subjected to restrictions, at Liverpool Road, from Monday 17 February 2020",
         )
+
+    def test_consequence_details(self):
+        xml = f"""<PtSituationElement>
+            <CreationTime>2026-10-22T13:25:31Z</CreationTime>
+            <ParticipantRef>Cornwall</ParticipantRef>
+            <SituationNumber>b42df1bb-f3b7-4159-bfdb-7ab997badb24</SituationNumber>
+            <Source><TimeOfCommunication>2026-10-23T10:16:45.192Z</TimeOfCommunication></Source>
+            <Progress>open</Progress>
+            <PublicationWindow><StartTime>2026-10-22T14:00:00.000Z</StartTime></PublicationWindow>
+            <EquipmentReason>defectivePublicAnnouncementSystem</EquipmentReason>
+            <Summary>Storm Austen - Friday 23rd October</Summary>
+            <Description>Storm Austen - Friday 23rd October</Description>
+            <InfoLinks><InfoLink><Uri>https://example.com/{"a" * 230}</Uri></InfoLink></InfoLinks>
+            <Consequences>
+                <Consequence>
+                    <Severity>verySevere</Severity>
+                    <Affects>
+                        <Operators><AllOperators /></Operators>
+                        <Networks><AffectedNetwork><VehicleMode>bus</VehicleMode><AllLines /></AffectedNetwork></Networks>
+                        <Places><AffectedPlace>
+                            <PlaceRef>073</PlaceRef>
+                            <PlaceName>Cornwall</PlaceName>
+                            <PlaceCategory>AdministrativeArea</PlaceCategory>
+                        </AffectedPlace></Places>
+                    </Affects>
+                    <Advice><Details>Stay at home</Details></Advice>
+                </Consequence>
+                <Consequence>
+                    <Severity>slight</Severity>
+                    <Affects><Networks><AffectedNetwork>
+                        <VehicleMode>bus</VehicleMode>
+                        <AffectedLine>
+                            <AffectedOperator><OperatorRef>HATT</OperatorRef></AffectedOperator>
+                            <LineRef>156</LineRef>
+                            <Direction><DirectionRef>inboundTowardsTown</DirectionRef></Direction>
+                        </AffectedLine>
+                    </AffectedNetwork></Networks></Affects>
+                    <Advice><Details>Expect delays</Details></Advice>
+                    <Delays><Delay>PT60M</Delay></Delays>
+                </Consequence>
+            </Consequences>
+        </PtSituationElement>"""
+        source = DataSource.objects.create(name="Bus Open Data")
+
+        situation_id = handle_item(ET.fromstring(xml), source, {})
+
+        situation = Situation.objects.get(id=situation_id)
+        self.assertEqual(situation.reason, "defectivePublicAnnouncementSystem")
+        self.assertEqual(len(situation.link_set.get().url), 250)
+
+        network, line = situation.consequence_set.order_by("id")
+        self.assertEqual(network.severity, "verySevere")
+        self.assertEqual(network.vehicle_mode, "bus")
+        self.assertEqual(network.direction, "")
+        self.assertIsNone(network.delay)
+        self.assertEqual(network.admin_areas.get().name, "Cornwall")
+
+        self.assertEqual(line.severity, "slight")
+        self.assertEqual(line.direction, "inboundTowardsTown")
+        self.assertEqual(line.delay, timedelta(hours=1))
+        self.assertEqual(line.services.get().line_name, "156")
+        self.assertFalse(line.admin_areas.exists())

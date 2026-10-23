@@ -7,8 +7,9 @@ from datetime import datetime
 import requests
 from django.db.backends.postgresql.psycopg_any import DateTimeTZRange
 from django.db.models import Q
+from django.utils.dateparse import parse_duration
 
-from busstops.models import DataSource, Operator, Service, StopPoint
+from busstops.models import AdminArea, DataSource, Operator, Service, StopPoint
 
 from .models import Consequence, Link, Situation, ValidityPeriod
 
@@ -55,7 +56,12 @@ def handle_item(item: ET.Element, source: DataSource, current_situations: dict):
 
     assert item.findtext("Progress") == "open"
 
-    reason = item.findtext("MiscellaneousReason")
+    reason = (
+        item.findtext("MiscellaneousReason")
+        or item.findtext("EquipmentReason")
+        or item.findtext("EnvironmentReason")
+        or item.findtext("PersonnelReason")
+    )
     if reason:
         situation.reason = reason
 
@@ -99,9 +105,38 @@ def handle_item(item: ET.Element, source: DataSource, current_situations: dict):
             except Consequence.DoesNotExist:
                 pass
 
+        had_places = "<AffectedPlace>" in consequence.data
+
         consequence.text = consequence_element.find("Advice/Details").text
         consequence.data = ET.tostring(consequence_element, encoding="unicode")
+        consequence.severity = consequence_element.findtext("Severity") or ""
+        consequence.vehicle_mode = (
+            consequence_element.findtext("Affects/Networks/AffectedNetwork/VehicleMode")
+            or ""
+        )
+        consequence.direction = (
+            consequence_element.findtext(
+                "Affects/Networks/AffectedNetwork/AffectedLine/Direction/DirectionRef"
+            )
+            or ""
+        )
+        if delay := consequence_element.findtext("Delays/Delay"):
+            consequence.delay = parse_duration(delay)
+        else:
+            consequence.delay = None
         consequence.save()
+
+        area_refs = [
+            place.findtext("PlaceRef")
+            for place in consequence_element.findall("Affects/Places/AffectedPlace")
+            if place.findtext("PlaceCategory") == "AdministrativeArea"
+        ]
+        if area_refs or had_places:
+            consequence.admin_areas.set(
+                AdminArea.objects.filter(
+                    id__in=[int(ref) for ref in area_refs if ref.isdigit()]
+                )
+            )
 
         stops = consequence_element.findall("Affects/StopPoints/AffectedStopPoint")
         stops = [stop.find("StopPointRef").text for stop in stops]
