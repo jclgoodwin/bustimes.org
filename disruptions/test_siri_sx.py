@@ -248,6 +248,53 @@ class SiriSXTest(TestCase):
         self.assertEqual(line.services.get().line_name, "156")
         self.assertFalse(line.admin_areas.exists())
 
+    def test_admin_area_situations(self):
+        def area_situation(situation_number, summary, vehicle_mode):
+            return f"""<PtSituationElement>
+                <CreationTime>2026-10-22T13:25:31Z</CreationTime>
+                <ParticipantRef>Cornwall</ParticipantRef>
+                <SituationNumber>{situation_number}</SituationNumber>
+                <Source><TimeOfCommunication /></Source>
+                <Progress>open</Progress>
+                <PublicationWindow><StartTime>2026-10-22T14:00:00.000Z</StartTime></PublicationWindow>
+                <Summary>{summary}</Summary>
+                <Description>{summary}</Description>
+                <Consequences><Consequence>
+                    <Affects>
+                        <Operators><AllOperators /></Operators>
+                        <Networks><AffectedNetwork>
+                            <VehicleMode>{vehicle_mode}</VehicleMode><AllLines />
+                        </AffectedNetwork></Networks>
+                        <Places><AffectedPlace>
+                            <PlaceRef>073</PlaceRef>
+                            <PlaceCategory>AdministrativeArea</PlaceCategory>
+                        </AffectedPlace></Places>
+                    </Affects>
+                    <Advice><Details>{summary}</Details></Advice>
+                </Consequence></Consequences>
+            </PtSituationElement>"""
+
+        source = DataSource.objects.create(name="Bus Open Data")
+        for element in (
+            area_situation("storm", "Storm Austen", "bus"),
+            area_situation("engineering", "Engineering works", "rail"),
+        ):
+            handle_item(ET.fromstring(element), source, {})
+
+        stop = StopPoint.objects.create(
+            atco_code="0800COB00001", admin_area_id=73, active=True
+        )
+        service = Service.objects.create(line_name="1", service_code="1", current=True)
+        StopUsage.objects.create(service=service, stop=stop, order=1)
+
+        for url in (stop.get_absolute_url(), service.get_absolute_url()):
+            response = self.client.get(url)
+            self.assertContains(response, "Storm Austen")
+            self.assertNotContains(response, "Engineering works")
+
+        response = self.client.get("/stops/2800S11031B")  # not in Cornwall
+        self.assertNotContains(response, "Storm Austen")
+
     def test_bad_situation(self):
         situation_number = "RGlzcnVwdGlvbk5vZGU6MTA3NjM="
         save = Link.save

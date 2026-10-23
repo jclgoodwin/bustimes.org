@@ -84,10 +84,23 @@ def get_colours(services):
         return ServiceColour.objects.filter(id__in=colours)
 
 
+def get_vehicle_mode(mode):
+    """Service.mode as a SIRI VehicleMode"""
+    if mode == "ferry":
+        return "ferryService"
+    return mode or "bus"
+
+
 def get_service_situations(service, operators):
-    """Currently-published situations affecting a service (or its operators)."""
+    """Currently-published situations affecting a service,
+    or one of its operators,
+    or one of its stops' administrative areas."""
+    areas = Q(
+        admin_areas__in=StopPoint.objects.filter(service=service).values("admin_area"),
+        vehicle_mode=get_vehicle_mode(service.mode),
+    )
     consequences = Consequence.objects.filter(
-        Q(services=service) | (Q(operators__in=operators, services=None))
+        Q(services=service) | (Q(operators__in=operators, services=None)) | areas
     )
     return (
         Situation.objects.filter(
@@ -96,7 +109,8 @@ def get_service_situations(service, operators):
             .union(
                 Consequence.objects.filter(
                     operators__in=operators, services=None
-                ).values("situation")
+                ).values("situation"),
+                Consequence.objects.filter(areas).values("situation"),
             ),
             publication_window__contains=Now(),
             current=True,
@@ -922,14 +936,29 @@ class StopPointDetailView(DetailView):
                 # stop area (if it is not an on-street pair)
                 context["breadcrumb"].append(self.object.stop_area)
 
-        consequences = Consequence.objects.filter(stops=self.object)
+        stop_consequences = Q(stops=self.object)
+        situation_ids = Consequence.objects.filter(stop_consequences).values(
+            "situation"
+        )
+        if self.object.admin_area_id and context["modes"]:
+            area_consequences = Q(
+                admin_areas=self.object.admin_area_id,
+                vehicle_mode__in=[get_vehicle_mode(mode) for mode in context["modes"]],
+            )
+            situation_ids = situation_ids.union(
+                Consequence.objects.filter(area_consequences).values("situation")
+            )
+            consequences = Consequence.objects.filter(
+                stop_consequences | area_consequences
+            )
+        else:
+            consequences = Consequence.objects.filter(stop_consequences)
         context["situations"] = (
             Situation.objects.filter(
                 publication_window__contains=Now(),
-                consequence__stops=self.object,
+                id__in=situation_ids,
                 current=True,
             )
-            .distinct()
             .order_by("publication_window")
             .prefetch_related(
                 Prefetch(
