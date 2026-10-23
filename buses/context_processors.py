@@ -2,6 +2,7 @@ def ad(request):
     path = request.path
     if (
         request.user.is_authenticated
+        and not request.user.is_superuser
         or "/edit" in path
         or path.endswith("/debug")
         or path.startswith(("/accounts/", "/fares/", "/sources/"))
