@@ -9,7 +9,7 @@ from django.db.models import Q
 
 from busstops.models import DataSource, Service
 
-from .models import Consequence, Situation, ValidityPeriod
+from .models import Consequence, Situation, ValidityPeriod, delete_old_situations
 
 logger = logging.getLogger(__name__)
 
@@ -133,6 +133,4 @@ def translink_disruptions(api_key):
             situation_id = situation and situation.id
         if situation_id:
             situations.append(situation_id)
-    source.situation_set.filter(current=True).exclude(id__in=situations).update(
-        current=False
-    )
+    delete_old_situations(source, situations)

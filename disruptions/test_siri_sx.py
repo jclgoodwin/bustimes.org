@@ -295,6 +295,24 @@ class SiriSXTest(TestCase):
         response = self.client.get("/stops/2800S11031B")  # not in Cornwall
         self.assertNotContains(response, "Storm Austen")
 
+    def test_old_situations(self):
+        source = DataSource.objects.create(name="Bus Open Data")
+        gone = Situation.objects.create(source=source, situation_number="gone")
+
+        with use_cassette(str(VCR_DIR / "siri_sx.yaml")) as cassette:
+            bods_disruptions()
+            self.assertFalse(Situation.objects.filter(id=gone.id).exists())
+
+            hidden = Situation.objects.first()
+            hidden.current = False
+            hidden.save(update_fields=["current"])
+
+            cassette.rewind()
+            bods_disruptions()
+
+        hidden.refresh_from_db()
+        self.assertFalse(hidden.current)
+
     def test_bad_situation(self):
         situation_number = "RGlzcnVwdGlvbk5vZGU6MTA3NjM="
         save = Link.save

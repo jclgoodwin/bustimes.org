@@ -14,7 +14,14 @@ from bustimes.formatting import format_timedelta
 from bustimes.gtfs_feeds import FEEDS
 from bustimes.models import Trip
 
-from .models import AffectedJourney, Consequence, Link, Situation, ValidityPeriod
+from .models import (
+    AffectedJourney,
+    Consequence,
+    Link,
+    Situation,
+    ValidityPeriod,
+    delete_old_situations,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -213,7 +220,7 @@ def import_alerts(feed_name: str):
 
     current_situations = {
         situation.situation_number: situation
-        for situation in source.situation_set.filter(current=True)
+        for situation in source.situation_set.all()
     }
 
     situations = []
@@ -224,9 +231,7 @@ def import_alerts(feed_name: str):
             ):
                 situations.append(situation_id)
 
-        source.situation_set.filter(current=True).exclude(id__in=situations).update(
-            current=False
-        )
+        delete_old_situations(source, situations, empty_feed_ok=True)
 
 
 def gtfsr_alerts():

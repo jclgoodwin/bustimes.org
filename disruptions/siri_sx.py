@@ -12,7 +12,13 @@ from django.utils.dateparse import parse_duration
 
 from busstops.models import AdminArea, DataSource, Operator, Service, StopPoint
 
-from .models import Consequence, Link, Situation, ValidityPeriod
+from .models import (
+    Consequence,
+    Link,
+    Situation,
+    ValidityPeriod,
+    delete_old_situations,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -227,6 +233,4 @@ def bods_disruptions():
             if situation := current_situations.get(situation_number):
                 situations.append(situation.id)
 
-    source.situation_set.filter(current=True).exclude(id__in=situations).update(
-        current=False
-    )
+    delete_old_situations(source, situations)

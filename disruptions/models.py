@@ -11,7 +11,8 @@ from busstops.templatetags.date_range import date_range
 
 
 def from_now():
-    return [timezone.now()]
+    """default publication_window"""
+    return [timezone.now(), None]
 
 
 def time_range(lower, upper):
@@ -152,6 +153,16 @@ class Situation(models.Model):
             else:
                 return [date_range(lower=first[0], upper=last[1])]
         return result
+
+
+def delete_old_situations(source, situation_ids, empty_feed_ok=False):
+    """Delete a source's situations that weren't in its latest feed -
+    unless the feed was empty, which (for some feeds) is probably an error"""
+    if not (situation_ids or empty_feed_ok):
+        return
+    old_situations = source.situation_set.exclude(id__in=situation_ids)
+    while ids := list(old_situations.values_list("id", flat=True)[:1000]):
+        Situation.objects.filter(id__in=ids).delete()
 
 
 class Link(models.Model):

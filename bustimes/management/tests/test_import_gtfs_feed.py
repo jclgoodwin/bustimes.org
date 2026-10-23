@@ -381,7 +381,7 @@ class NevadaTest(TestCase):
                 header=alerts.header
             ).SerializeToString()
             gtfsr_alerts.import_alerts("rtcsnv")
-            self.assertFalse(Situation.objects.filter(current=True).exists())
+            self.assertFalse(Situation.objects.exists())
 
 
 class TownInStopNameTest(TestCase):
