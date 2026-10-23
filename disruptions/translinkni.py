@@ -3,6 +3,7 @@ import logging
 
 import requests
 from bs4 import BeautifulSoup
+from django.db import transaction
 from django.db.backends.postgresql.psycopg_any import DateTimeTZRange
 from django.db.models import Q
 
@@ -31,10 +32,10 @@ def handle_item(item: dict, source: DataSource, current_situations: dict):
             return situation.id  # hasn't changed
         created = False
     else:
-        situation = Situation(
-            source=source, situation_number=situation_number, current=True
-        )
+        situation = Situation(source=source, situation_number=situation_number)
         created = True
+
+    situation.current = True
 
     situation.created_at = item["timestamps"]["creation"]
     situation.modified_at = item["timestamps"]["lastModification"]
@@ -122,7 +123,15 @@ def translink_disruptions(api_key):
     }
 
     for element in elements:
-        if situation_id := handle_item(element, source, current_situations):
+        try:
+            with transaction.atomic():
+                situation_id = handle_item(element, source, current_situations)
+        except Exception:
+            logger.exception("situation %s", element["id"])
+            # keep showing the previous version
+            situation = current_situations.get(element["id"])
+            situation_id = situation and situation.id
+        if situation_id:
             situations.append(situation_id)
     source.situation_set.filter(current=True).exclude(id__in=situations).update(
         current=False

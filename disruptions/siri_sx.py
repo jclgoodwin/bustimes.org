@@ -5,6 +5,7 @@ import zipfile
 from datetime import datetime
 
 import requests
+from django.db import transaction
 from django.db.backends.postgresql.psycopg_any import DateTimeTZRange
 from django.db.models import Q
 from django.utils.dateparse import parse_duration
@@ -216,7 +217,15 @@ def bods_disruptions():
     }
 
     for element in elements:
-        situations.append(handle_item(element, source, current_situations))
+        situation_number = element.findtext("SituationNumber")
+        try:
+            with transaction.atomic():
+                situations.append(handle_item(element, source, current_situations))
+        except Exception:
+            logger.exception("situation %s", situation_number)
+            # keep showing the previous version
+            if situation := current_situations.get(situation_number):
+                situations.append(situation.id)
 
     source.situation_set.filter(current=True).exclude(id__in=situations).update(
         current=False

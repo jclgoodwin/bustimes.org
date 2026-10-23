@@ -1,7 +1,9 @@
 import xml.etree.ElementTree as ET
 from datetime import timedelta
+from unittest.mock import patch
 
 from django.conf import settings
+from django.db import DataError
 from django.test import TestCase
 from vcr import use_cassette
 
@@ -16,7 +18,7 @@ from busstops.models import (
     StopUsage,
 )
 
-from .models import Situation
+from .models import Link, Situation
 from .siri_sx import handle_item
 from .tasks import bods_disruptions
 
@@ -109,18 +111,18 @@ class SiriSXTest(TestCase):
 
     def test_siri_sx_request(self):
         with use_cassette(str(VCR_DIR / "siri_sx.yaml")) as cassette:
-            with self.assertNumQueries(126):
+            with self.assertNumQueries(144):
                 bods_disruptions()
 
             cassette.rewind()
 
-            with self.assertNumQueries(3):
+            with self.assertNumQueries(21):
                 bods_disruptions()
 
             cassette.rewind()
             Situation.objects.all().update(data="")
 
-            with self.assertNumQueries(140):
+            with self.assertNumQueries(158):
                 bods_disruptions()
 
         situation = Situation.objects.first()
@@ -245,3 +247,31 @@ class SiriSXTest(TestCase):
         self.assertEqual(line.delay, timedelta(hours=1))
         self.assertEqual(line.services.get().line_name, "156")
         self.assertFalse(line.admin_areas.exists())
+
+    def test_bad_situation(self):
+        situation_number = "RGlzcnVwdGlvbk5vZGU6MTA3NjM="
+        save = Link.save
+
+        def bad_save(link, *args, **kwargs):
+            if link.situation.situation_number == situation_number:
+                raise DataError
+            save(link, *args, **kwargs)
+
+        with use_cassette(str(VCR_DIR / "siri_sx.yaml")) as cassette:
+            bods_disruptions()
+
+            cassette.rewind()
+            Situation.objects.all().update(data="")
+
+            with (
+                patch.object(Link, "save", autospec=True, side_effect=bad_save),
+                self.assertLogs("disruptions.siri_sx", "ERROR"),
+            ):
+                bods_disruptions()
+
+        # rolled back, so will be retried next time
+        bad = Situation.objects.get(situation_number=situation_number)
+        self.assertEqual(bad.data, "")
+        self.assertTrue(bad.current)
+
+        self.assertFalse(Situation.objects.filter(data="").exclude(id=bad.id).exists())
