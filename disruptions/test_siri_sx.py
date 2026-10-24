@@ -233,6 +233,7 @@ class SiriSXTest(TestCase):
 
         situation = Situation.objects.get(id=situation_id)
         self.assertEqual(situation.reason, "defectivePublicAnnouncementSystem")
+        self.assertEqual(situation.text, "")
         self.assertEqual(len(situation.link_set.get().url), 250)
 
         network, line = situation.consequence_set.order_by("id")

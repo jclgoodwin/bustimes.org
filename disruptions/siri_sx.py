@@ -75,6 +75,10 @@ def handle_item(item: ET.Element, source: DataSource, current_situations: dict):
     situation.participant_ref = item.find("ParticipantRef").text
     situation.summary = item.find("Summary").text
     situation.text = item.find("Description").text
+    if situation.text == situation.summary:
+        situation.text = ""
+    else:
+        situation.text = situation.text.removeprefix(f"{situation.summary}\n\n")
     situation.save()
 
     for i, link_element in enumerate(item.findall("InfoLinks/InfoLink/Uri")):
