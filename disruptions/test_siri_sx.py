@@ -161,6 +161,8 @@ class SiriSXTest(TestCase):
         with self.assertNumQueries(13):
             response = self.client.get("/services/156")
 
+        # long text so collapsed by default
+        self.assertContains(response, '<details class="situation">')
         self.assertContains(
             response,
             "<p>East Lancashire Road will be subjected to restrictions,"

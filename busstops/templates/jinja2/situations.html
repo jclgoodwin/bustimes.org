@@ -4,7 +4,7 @@
     {% if situation.summary != 'Does not stop here' %}
 
         {% if situation.summary and situation.show_summary %}
-            <details class="situation"{% if loop.first and loop.last and loop.text|length < 100 %} open{% endif %}>
+            <details class="situation"{% if loop.first and loop.last and situation.text|length < 100 %} open{% endif %}>
             <summary>
                 {{ situation.summary }}
                 {% for validity_period in situation.list_validity_periods() %}
