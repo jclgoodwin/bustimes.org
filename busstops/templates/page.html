@@ -24,8 +24,8 @@
 {% block head %}{% endblock %}
 
 {% block fuse %}
-{% if ad %}
 <script src="{% static 'consent.js' %}"></script>
+{% if ad %}
 <script>(function(){
     if(window.top!==window.self||!window.__tcfapi||!Array.prototype.toSorted||navigator.webdriver){window.noAds=true;return}
     var s=document.getElementsByTagName("script")[0];
@@ -55,8 +55,33 @@
 <script>
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
+gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    wait_for_update: 500
+});
+if (window.__tcfapi) {
+    window.__tcfapi('addEventListener', 2, function(tcData, success) {
+        if (!success || tcData.eventStatus !== 'tcloaded' && tcData.eventStatus !== 'useractioncomplete') return;
+        var p = tcData.purpose && tcData.purpose.consents || {},
+            v = tcData.vendor && tcData.vendor.consents && tcData.vendor.consents[755],
+            all = !tcData.gdprApplies;
+        function c(ok) { return all || ok ? 'granted' : 'denied'; }
+        gtag('consent', 'update', {
+            ad_storage: c(p[1] && v),
+            ad_user_data: c(p[1] && p[7] && v),
+            ad_personalization: c(p[3] && p[4] && v),
+            analytics_storage: c(p[1] && p[8])
+        });
+    });
+}
 gtag('js', new Date());
-gtag('config', 'G-X2Z0KM7Z5C');
+gtag('config', 'G-X2Z0KM7Z5C', {
+    timezone: window.Intl && Intl.DateTimeFormat().resolvedOptions().timeZone,
+    webdriver: navigator.webdriver ? 'true' : 'false'
+});
 </script>
 {% endblock fuse %}
 
